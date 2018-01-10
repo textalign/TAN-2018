@@ -1,0 +1,13 @@
+# The following files are suppressed
+*.html
+*.xhtml
+*.pdf
+*.xml_xslt
+*.sh
+*.bak
+*0400.xml
+testing*
+private*
+*[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]*
+guidelines/xhtml/
+.DS_Store

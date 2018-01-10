@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar ns="tag:textalign.net,2015:ns" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:local="tag:textalign.net,2015:ns" xmlns="http://relaxng.org/ns/structure/1.0">
+  <include href="TAN-core.rng">
+    <define name="source-list">
+      <a:documentation>Class 3 files allow zero or many sources</a:documentation>
+      <zeroOrMore>
+        <ref name="source-item"/>
+      </zeroOrMore>
+    </define>
+    <define name="source-id-opt">
+      <optional>
+        <ref name="internal-xml-id"/>
+      </optional>
+    </define>
+    <define name="definition-non-core">
+      <interleave>
+        <ref name="definition-class-3"/>
+        <ref name="definition-non-class-3"/>
+      </interleave>
+    </define>
+    <define name="alter-non-core">
+      <interleave>
+        <ref name="alter-class-3"/>
+        <ref name="alter-non-class-3"/>
+      </interleave>
+    </define>
+    <define name="body-content-non-core">
+      <interleave>
+        <ref name="body-content-class-3"/>
+        <ref name="body-content-non-class-3"/>
+      </interleave>
+    </define>
+  </include>
+  <define name="definition-class-3">
+    <zeroOrMore>
+      <ref name="defn-group-type"/>
+    </zeroOrMore>
+  </define>
+  <define name="definition-non-class-3">
+    <empty/>
+  </define>
+  <define name="alter-class-3">
+    <empty/>
+  </define>
+  <define name="alter-non-class-3">
+    <empty/>
+  </define>
+  <define name="body-content-class-3">
+    <empty/>
+  </define>
+  <define name="body-content-non-class-3">
+    <empty/>
+  </define>
+</grammar>

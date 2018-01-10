@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar ns="tag:textalign.net,2015:ns" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:local="tag:textalign.net,2015:ns" xmlns="http://relaxng.org/ns/structure/1.0">
+  <include href="incl/TAN-class-2.rng">
+    <start>
+      <element name="TAN-A-tok">
+        <a:documentation>specifies that the file is a token-based TAN alignment file. Root element.</a:documentation>
+        <ref name="TAN-root"/>
+      </element>
+    </start>
+    <define name="source-list">
+      <a:documentation>TAN-A-tok files take exactly two sources</a:documentation>
+      <ref name="source-item"/>
+      <ref name="source-item"/>
+    </define>
+    <define name="defn-id-ref-opt">
+      <a:documentation>all definitions must have ids</a:documentation>
+      <ref name="internal-xml-id"/>
+    </define>
+    <define name="source-id-opt">
+      <a:documentation>TAN-A-tok sources must be named</a:documentation>
+      <ref name="internal-xml-id"/>
+    </define>
+    <define name="definition-non-class-2">
+      <interleave>
+        <oneOrMore>
+          <ref name="defn-brel"/>
+        </oneOrMore>
+        <oneOrMore>
+          <ref name="defn-reus"/>
+        </oneOrMore>
+      </interleave>
+    </define>
+    <define name="alter-non-class-2">
+      <empty/>
+    </define>
+    <define name="body-attributes-non-core">
+      <ref name="bitext-relation-attr"/>
+      <ref name="reuse-type-attr"/>
+    </define>
+    <define name="body-content-non-class-2">
+      <interleave>
+        <zeroOrMore>
+          <ref name="body-group"/>
+        </zeroOrMore>
+        <zeroOrMore>
+          <ref name="body-item"/>
+        </zeroOrMore>
+      </interleave>
+    </define>
+    <define name="body-item">
+      <ref name="alignment"/>
+    </define>
+  </include>
+  <define name="defn-brel">
+    <element name="bitext-relation">
+      <a:documentation>identifies how the text on one text-bearing object relates to that on another by specifying a relationship, e.g., B is a direct copy of A, B and A descent from a commont parent, etc. See main.xml#tan-a-tok for theoretical background.</a:documentation>
+      <a:documentation>In most cases, there will be need for only one of these elements. But multiple values may be helpful for cases where a bitext has a complex history, for example, a textual object that was created over time, and in different phases.</a:documentation>
+      <a:documentation>This element should not be used to describe any activities (e.g., translation, copying), reserved for &lt;reuse-type&gt;. </a:documentation>
+      <a:documentation>For examples see main.xml# keywords-bitext-relation</a:documentation>
+      <ref name="defn-pattern-default"/>
+    </element>
+  </define>
+  <define name="defn-reus">
+    <oneOrMore>
+      <element name="reuse-type">
+        <a:documentation>identifies a category of text reuse (e.g., translation, mistranslation, paraphrase, ridicule). See main.xml#tan-a-tok for theoretical background.</a:documentation>
+        <a:documentation>For examples see main.xml# keywords-reuse-type</a:documentation>
+        <ref name="defn-pattern-default"/>
+      </element>
+    </oneOrMore>
+  </define>
+  <define name="bitext-relation-attr">
+    <attribute name="bitext-relation">
+      <a:documentation>points to one or more &lt;bitext-relation&gt; @xml:id values that qualify the type of relation that holds. Multiple values assume inclusive or (A or B or A and B)</a:documentation>
+      <a:documentation>This attribute is inheritable. See main.xml#inheritable_attributes</a:documentation>
+    </attribute>
+  </define>
+  <define name="reuse-type-attr">
+    <attribute name="reuse-type">
+      <a:documentation>points to one or more &lt;reuse-type&gt; @xml:id values that qualify the type of textual reuse that holds. Multiple values assume inclusive or (A or B or A and B)</a:documentation>
+      <a:documentation>This attribute is inheritable. See main.xml#inheritable_attributes</a:documentation>
+    </attribute>
+  </define>
+  <define name="alignment">
+    <element name="align">
+      <a:documentation>declares one or more groups of words that should be aligned with each other. &lt;align&gt; specifies that all the tokens invoked for one source collectively align with the tokens in the other. </a:documentation>
+      <choice>
+        <ref name="alignment-inclusion-opt"/>
+        <group>
+          <ref name="alignment-attributes-non-class-2"/>
+          <ref name="certainty-stamp"/>
+          <ref name="non-class-2-opt"/>
+          <interleave>
+            <zeroOrMore>
+              <ref name="comment"/>
+            </zeroOrMore>
+            <ref name="alignment-content-non-class-2"/>
+          </interleave>
+        </group>
+      </choice>
+    </element>
+  </define>
+  <define name="non-class-2-opt">
+    <optional>
+      <ref name="group-ref"/>
+    </optional>
+  </define>
+  <define name="alignment-inclusion-opt">
+    <ref name="inclusion"/>
+  </define>
+  <define name="alignment-attributes-non-class-2">
+    <a:documentation>alignments may claim bitext relations and reuse type</a:documentation>
+    <optional>
+      <ref name="internal-xml-id"/>
+    </optional>
+    <optional>
+      <ref name="bitext-relation-attr"/>
+    </optional>
+    <optional>
+      <ref name="reuse-type-attr"/>
+    </optional>
+  </define>
+  <define name="alignment-content-non-class-2">
+    <a:documentation>alignments must contain one or more toks</a:documentation>
+    <oneOrMore>
+      <ref name="tok-ref"/>
+    </oneOrMore>
+  </define>
+</grammar>

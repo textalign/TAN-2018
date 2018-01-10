@@ -1,0 +1,11 @@
+default namespace = ""
+
+start =
+  element collection {
+    attribute stable { xsd:boolean },
+    element doc {
+      attribute href { text },
+      attribute id { xsd:anyURI },
+      attribute root { xsd:NCName }
+    }+
+  }

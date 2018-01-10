@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../schemas/TAN-key.rnc" type="application/relax-ng-compact-syntax"?>
+<?xml-model href="../schemas/TAN-key.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<TAN-key xmlns="tag:textalign.net,2015:ns" TAN-version="2018" id="tag:textalign.net,2015:tan-key:verbs">
+    <head>
+        <name>TAN keywords for verbs</name>
+        <desc>This file has been created ad hoc to some basic terms for verbs involved in the
+            creation and editing of TAN files.</desc>
+        <master-location href="http://textalign.net/release/TAN-2018/TAN-key/verbs.TAN-key.xml"/>
+        <license>
+            <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
+            <name>Creative Commons Attribution 4.0 International License</name>
+            <desc>This license is granted independent of rights and licenses associated with the
+                source. </desc>
+        </license>
+        <licensor who="kalvesmaki"/>
+        <definitions>
+            <group-type xml:id="text-subject">
+                <IRI>tag:textalign.net,2015:verb:group:text-subject</IRI>
+                <name>Verbs that have subjects that are text-bearing objects: persons, agents,
+                    scripta, versions, works.</name>
+            </group-type>
+            <group-type xml:id="text-object">
+                <IRI>tag:textalign.net,2015:verb:group:text-object</IRI>
+                <name>Verbs that have objects that are text-bearing objects: persons, agents,
+                    scripta, versions, works.</name>
+            </group-type>
+            <group-type xml:id="claim-object">
+                <IRI>tag:textalign.net,2015:verb:group:claim-object</IRI>
+                <name>Verbs that have objects that are claims.</name>
+            </group-type>
+            <group-type xml:id="object-required">
+                <IRI>tag:textalign.net,2015:verb:group:object-required</IRI>
+                <name>Verbs that require objects</name>
+            </group-type>
+            <group-type xml:id="object-disallowed">
+                <IRI>tag:textalign.net,2015:verb:group:object-disallowed</IRI>
+                <name>Verbs that may not take objects</name>
+            </group-type>
+            <group-type xml:id="near-verbatim">
+                <IRI>tag:textalign.net,2015:verb:group:verbatim70-100</IRI>
+                <name>Verbs that indicate a passage of text in each of the subject and object where
+                    there is agreement of 70% or greater.</name>
+                <desc>If subject and object are in the same language, the quantity is measured by
+                    agreement after normalization, ignoring accentuation, capitalization,
+                    punctuation, and word spaces. If they are in different languages, the quantity
+                    is measured by the number of words in one source that correspond to words in the
+                    other.</desc>
+            </group-type>
+            <group-type xml:id="similar">
+                <IRI>tag:textalign.net,2015:verb:group:verbatim40-70</IRI>
+                <name>Verbs that indicate a passage of text in each of the subject and object where
+                    there is agreement of 40% to 70%.</name>
+                <desc>See description for verbatim.</desc>
+            </group-type>
+            <group-type xml:id="somewhat-similar">
+                <IRI>tag:textalign.net,2015:verb:group:verbatim5-40</IRI>
+                <name>Verbs that indicate a passage of text in each of the subject and object where
+                    there is agreement of 5% to 40%.</name>
+                <desc>See description for verbatim.</desc>
+            </group-type>
+            <group-type xml:id="cf">
+                <IRI>tag:textalign.net,2015:verb:group:confer</IRI>
+                <name>Verbs that indicate comparisons between subject and object.</name>
+            </group-type>
+            <group-type xml:id="symmetry">
+                <IRI>tag:textalign.net,2015:verb:group:symmetry</IRI>
+                <name>Verbs that establish symmetrical relationships between subject and object. If
+                    X [verb] Y then Y [verb] X.</name>
+            </group-type>
+            <group-type xml:id="transitivity">
+                <IRI>tag:textalign.net,2015:verb:group:transitivity</IRI>
+                <name>Verbs that establish transitive relationships between subject and object. If X
+                    [verb] Y and Y [verb] Z then X [verb] Z.</name>
+            </group-type>
+            <group-type xml:id="locus-based">
+                <IRI>tag:textalign.net,2015:verb:group:locus-based</IRI>
+                <name>Verbs that require or or more &lt;locus&gt;.</name>
+                <desc>These verbs are intended to support claims about how specific persons or
+                    scripta corroborate or depart from the reading of a particular locus of
+                    text.</desc>
+            </group-type>
+            <person xml:id="kalvesmaki">
+                <IRI>http://viaf.org/viaf/299582703</IRI>
+                <IRI>tag:textalign.net,2015:agent:kalvesmaki:joel</IRI>
+                <name xml:lang="eng">Joel Kalvesmaki</name>
+            </person>
+            <algorithm xml:id="xslt1"><IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI><name>Stylesheet to populate a TAN-A-div file from collections.</name><desc>Stylesheet at: ../do%20things/convert/convert%20TAN%202017%20to%20TAN%202018.xsl</desc></algorithm>
+            <role xml:id="creator">
+                <IRI>http://schema.org/creator</IRI>
+                <IRI>http://purl.org/dc/terms/creator</IRI>
+                <IRI>tag:textalign.net,2015:role:creator</IRI>
+                <name>creator</name>
+            </role>
+            <role xml:id="stylesheet1" which="stylesheet"/>
+        </definitions>
+        <alter>
+        </alter>
+        <resp roles="creator" who="kalvesmaki"/>
+        <resp who="xslt1" roles="stylesheet1"/>
+        <change when="2017-03-07" who="kalvesmaki">Started file</change>
+        <change who="xslt1" when="2017-11-02T23:06:32.528-04:00">TAN file updated to 2018 schemas.</change>
+    </head>
+    <body in-progress="false" affects-element="verb">
+        <group type="object-required">
+            <item group="text-subject cf">
+                <IRI>http://schema.org/about</IRI>
+                <IRI>tag:textalign.net,2015:verb:about</IRI>
+                <name>is about</name>
+                <name>discusses</name>
+                <desc>The textual subject is about the object, normally a topic.</desc>
+            </item>
+            <group type="text-subject text-object">
+                <item group="cf">
+                    <IRI>tag:textalign.net,2015:verb:paraphrases</IRI>
+                    <name>paraphrases</name>
+                    <desc>The textual subject paraphrases the textual object. Relationship may be direct or
+                        indirect.</desc>
+                </item>
+                <item group="near-verbatim">
+                    <IRI>tag:textalign.net,2015:verb:quotes</IRI>
+                    <name>quotes</name>
+                    <desc>The textual subject quotes from the textual object. Relationship may be direct or
+                        indirect. This implies that the subject postdates the object.</desc>
+                </item>
+                <item group="cf">
+                    <IRI>tag:textalign.net,2015:verb:alludes-or-refers-to</IRI>
+                    <name>alludes or refers to</name>
+                    <name>refers or alludes to</name>
+                    <desc>The textual subject alludes to or refers to the textual object. The
+                        allusion or reference may be direct or indirect. This implies that the
+                        subject postdates the object.</desc>
+                    <desc>Although some people may distinguish alluding from refering, this
+                        vocabulary item does not, since the distinction is very frequently hard to
+                        identify, and many people use the terms interchangeably. If gradation is
+                        needed, @cert should be used.</desc>
+                </item>
+                <item group="symmetry cf">
+                    <IRI>tag:textalign.net,2015:verb:parallels</IRI>
+                    <name>parallels</name>
+                    <desc>The textual subject is topically or textually parallel to the textual
+                        object. Any textual relationship that exists may go from roughly similar up
+                        through verbatim. Nothing is implied about whether subject quotes from
+                        object, vice versa, or both draw from a common source. Nothing is implied
+                        about the chronological priority of the object or subject.</desc>
+                </item>
+                <item>
+                    <IRI>http://rdaregistry.info/Elements/w/P10116</IRI>
+                    <IRI>tag:textalign.net,2015:verb:comments-on</IRI>
+                    <name>comments on</name>
+                    <name>is commentary in (work)</name>
+                    <desc>Relates a work to a work that contains a set of explanatory or critical
+                        notes on a described work. See http://rdaregistry.info/Elements/w.xml</desc>
+                </item>
+            </group>
+        </group>
+        <group type="locus-based text-subject">
+            <item group="object-disallowed">
+                <IRI>tag:textalign.net,2015:verb:omits</IRI>
+                <name>omits</name>
+                <desc>The subject omits the reading at the locus. The claim takes no object.</desc>
+            </item>
+            <item group="object-disallowed">
+                <IRI>tag:textalign.net,2015:verb:agrees</IRI>
+                <name>agrees</name>
+                <desc>The subject agrees with the reading at the locus. The claim takes no
+                    object.</desc>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:verb:prepends</IRI>
+                <name>prepends</name>
+                <name>praeposuit</name>
+                <desc>The subject adds words defined by the object to the beginning of the locus.</desc>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:verb:appends</IRI>
+                <name>appends</name>
+                <name>postposuit</name>
+                <desc>The subject adds words defined by the object to the end of the locus.</desc>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:verb:replaces</IRI>
+                <name>replaces</name>
+                <name>has other reading</name>
+                <desc>The subject replaces the reading at the locus with the words defined by the
+                    object.</desc>
+            </item>
+        </group>
+        <group type="text-subject claim-object object-required">
+            <item>
+                <IRI>tag:textalign.net,2015:verb:indicates</IRI>
+                <name>indicates</name>
+                <name>provides written evidence that</name>
+                <desc>The subject provides evidence for a certain claim.</desc>
+            </item>
+        </group>
+    </body>
+</TAN-key>

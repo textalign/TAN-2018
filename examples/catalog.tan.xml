@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href ="../schemas/catalog.tan.rnc" type="application/relax-ng-compact-syntax"?>
+<?xml-model href ="../schemas/catalog.tan.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<collection stable="true">
+     <doc href="ar.cat.eng.1926.edghill.obj.xml"
+          id="tag:kalvesmaki.com,2014:tan-t:ar.cat.eng.1926.edghill:model-object-refs" root="TAN-T"/>
+     
+     <doc href="ar.cat.eng.1926.edghill.sem.xml"
+          id="tag:kalvesmaki.com,2014:tan-t:ar.cat.eng.1926.edghill:semantic-refs" root="TAN-T"/>
+     <doc href="ar.cat.fra.1844.saint-hilaire.sem-native.xml"
+          id="tag:kalvesmaki.com,2014:tan-t:ar.cat.fra.1844.saint-hilaire:semantic-refs"
+          root="TAN-T"/>
+     <doc href="ar.cat.fra.1844.saint-hilaire.sem.xml"
+          id="tag:kalvesmaki.com,2014:tan-t:ar.cat.fra.1844.saint-hilaire:semantic-refs-realigned"
+          root="TAN-T"/>
+     <doc href="ar.cat.grc.1949.minio-paluello-obj.xml"
+          id="tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:object-refs" root="TAN-T"/>
+     <doc href="ar.cat.grc.1949.minio-paluello-sem.xml"
+          id="tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:semantic-refs"
+          root="TAN-T"/>
+     <doc href="ar.cat.lat.1961.minio-paluello-obj-nat.xml"
+          id="tag:kalvesmaki.com,2014:tan-t:ar.cat.lat.1961.a.minio-paluello:object-refs"
+          root="TAN-T"/>
+     <doc href="gomme.1989.ring-o-roses.xml"
+          id="tag:parkj@textalign.net,2015:gomme.1898.ring-o-roses" root="TEI"/>
+     <doc href="patricius.confessio.2003.eng.xml"
+          id="tag:parkj@textalign.net,2015:patricius.confession.2003.eng" root="TEI"/>
+     <doc href="ring-o-roses.deu.1897.xml" id="tag:hans@beispiel.com,2014:ringel" root="TAN-T"/>
+     <doc href="ring-o-roses.eng.1881.xml" id="tag:parkj@textalign.net,2015:ring01" root="TAN-T"/>
+     <doc href="ring-o-roses.eng.1957.xml" id="tag:parkj@textalign.net,2015:ring04" root="TEI"/>
+     <doc href="ring-o-roses.eng.1987.xml" id="tag:parkj@textalign.net,2015:ring02" root="TAN-T"/>
+     <doc href="TAN-A-div/ar.cat.tan-a-div.claims.xml"
+          id="tag:parkj@textalign.net,2015:ar.cat.tan-a-div:claims" root="TAN-A-div"/>
+     <doc href="TAN-A-div/ar.cat.tan-a-div.xml" id="tag:parkj@textalign.net,2015:ar.cat.tan-a-div"
+          root="TAN-A-div"/>
+     <doc href="TAN-A-div/ringoroses.div.1.xml"
+          id="tag:parkj@textalign.net,2015:ring01-TAN-A-ring02" root="TAN-A-div"/>
+     <doc href="TAN-A-lm/ar.cat.grc.1949.minio-paluello-sem-TAN-LM-sample.xml"
+          id="tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:semantic-refs:TAN-A-lm:2016-04-05T07:07:40.033-04:00"
+          root="TAN-A-lm"/>
+     <doc href="TAN-A-lm/ring-o-roses.eng.1881.lm.xml" id="tag:parkj@textalign.net,2015:ring01-lm"
+          root="TAN-A-lm"/>
+     <doc href="TAN-A-tok/ringoroses.01+02.token.1.xml"
+          id="tag:parkj@textalign.net,2015:TAN-A-tok,ring01+ring02" root="TAN-A-tok"/>
+     <doc href="TAN-A-tok/ringoroses.01+03.token.1.xml"
+          id="tag:parkj@textalign.net,2015:TAN-A-tok,ring01+ring03" root="TAN-A-tok"/>
+     <doc href="TAN-A-tok/ringoroses.01+03.token.2.xml"
+          id="tag:parkj@textalign.net,2015:TAN-A-tok,ring01+ring03:alt" root="TAN-A-tok"/>
+     <doc href="TAN-key/ar.cat.TAN-key.xml" id="tag:parkj@textalign.net,2015:TAN-key:ar.cat"
+          root="TAN-key"/>
+     <doc href="TAN-mor/eng.kalvesmaki.com,2014.2.xml"
+          id="tag:kalvesmaki.com,2014:tan-r-mor:eng:penn" root="TAN-mor"/>
+</collection>

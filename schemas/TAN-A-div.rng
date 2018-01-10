@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar ns="tag:textalign.net,2015:ns" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:local="tag:textalign.net,2015:ns" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <include href="incl/TAN-class-2.rng">
+    <start>
+      <element name="TAN-A-div">
+        <a:documentation>specifies that the file is a div-based TAN alignment file. Root element.</a:documentation>
+        <ref name="TAN-root"/>
+      </element>
+    </start>
+    <define name="source-list">
+      <a:documentation>TAN-A-div files must have one or more sources</a:documentation>
+      <oneOrMore>
+        <ref name="source-item"/>
+      </oneOrMore>
+    </define>
+    <define name="defn-id-ref-opt">
+      <a:documentation>definitions by default have ids</a:documentation>
+      <ref name="internal-xml-id"/>
+    </define>
+    <define name="source-id-opt">
+      <a:documentation>TAN-A-div sources must be named</a:documentation>
+      <ref name="internal-xml-id"/>
+    </define>
+    <define name="definition-non-class-2">
+      <ref name="defn-claims"/>
+    </define>
+    <define name="alter-non-class-2">
+      <empty/>
+    </define>
+    <define name="tok-sources-ref-opt">
+      <empty/>
+    </define>
+    <define name="tok-cert-opt">
+      <empty/>
+    </define>
+    <define name="body-content-non-class-2">
+      <a:documentation>Redefining TAN-body-core not only defines what is in the body of a TAN-A-div but also excludes groups from it.</a:documentation>
+      <optional>
+        <ref name="claimant-ref"/>
+      </optional>
+      <optional>
+        <ref name="subject-ref"/>
+      </optional>
+      <optional>
+        <ref name="object-ref"/>
+      </optional>
+      <optional>
+        <ref name="verb-ref"/>
+      </optional>
+      <zeroOrMore>
+        <ref name="claim"/>
+      </zeroOrMore>
+    </define>
+  </include>
+  <define name="work-ref">
+    <attribute name="work">
+      <a:documentation>refers to a work by means of a source ID as a proxy. The attribute will be treated as indicating all sources that share the same work as the one mentioned.</a:documentation>
+      <a:documentation>If you wish to avoid making a claim applying to all other versions of a work, use @src instead.</a:documentation>
+    </attribute>
+  </define>
+  <!-- claims -->
+  <define name="defn-claims">
+    <interleave>
+      <zeroOrMore>
+        <ref name="defn-work"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="defn-place"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="defn-unit"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="defn-mode"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="defn-vers"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="defn-scri"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="defn-topic"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="defn-verb"/>
+      </zeroOrMore>
+    </interleave>
+  </define>
+  <define name="defn-place">
+    <element name="place">
+      <a:documentation>contains an IRI + name pattern identifying a spatial location, usually somewhere on earth</a:documentation>
+      <ref name="defn-pattern-default"/>
+    </element>
+  </define>
+  <define name="defn-scri">
+    <element name="scriptum">
+      <a:documentation>contains an IRI + name pattern identifying a text-bearing object.</a:documentation>
+      <ref name="defn-pattern-default"/>
+    </element>
+  </define>
+  <define name="defn-topic">
+    <element name="topic">
+      <a:documentation>declares one or more topics, to be used in conjunction with @topic under &lt;align&gt; to associate alignments with specific topics instead of verbatim parallels.  </a:documentation>
+      <ref name="defn-pattern-default"/>
+    </element>
+  </define>
+  <define name="defn-verb">
+    <element name="verb">
+      <a:documentation>contains an IRI + name pattern identifying a property, relationship, action, or something else that is used to say something about something. </a:documentation>
+      <a:documentation>The preferred term "verb" is equivalent to RDF "predicate." The latter term is avoided as misleading, since in ordinary usage the term "predicate" implies everything in a sentence that is not the subject.</a:documentation>
+      <optional>
+        <ref name="object-constraint"/>
+      </optional>
+      <ref name="defn-pattern-default"/>
+    </element>
+  </define>
+  <define name="object-constraint">
+    <ref name="object-datatype"/>
+    <optional>
+      <ref name="object-lexical-constraint"/>
+    </optional>
+  </define>
+  <define name="object-datatype">
+    <attribute name="object-datatype">
+      <a:documentation>specifies the type of data that the object must take. This attribute is intended to specify that a particular verb governs raw units, not entities definable by the IRI + name pattern. Use this attribute if and only if the verb may not govern objects defined in &lt;definitions&gt;.</a:documentation>
+      <data type="string">
+        <param name="pattern">string|boolean|decimal|float|double|duration|dateTime|time|date|gYearMonth|gYear|gMonthDay|gDay|gMonth|hexBinary|base64Binary|anyURI|QName|normalizedString|token|language|NMTOKEN|NMTOKENS|Name|NCName|ID|IDREF|IDREFS|ENTITY|ENTITIES|integer|nonPositiveInteger|negativeInteger|long|int|short|byte|nonNegativeInteger|unsignedLong|unsignedInt|unsignedShort|unsignedByte|positiveInteger</param>
+      </data>
+    </attribute>
+  </define>
+  <define name="object-lexical-constraint">
+    <attribute name="object-lexical-constraint">
+      <a:documentation>specifies a regular expression that constrains the value of any &lt;object&gt;. </a:documentation>
+      <a:documentation>Note that the regular expression will be strictly followed, e.g., "\d+" will be satisfied by "a1". If you wish to constrain the entire value, be sure to use ^ and $, e.g., "^\d+$". </a:documentation>
+    </attribute>
+  </define>
+  <define name="defn-unit">
+    <element name="unit">
+      <a:documentation>contains an IRI + name pattern identifying a unit type (e.g., millimeters, seconds, Euros), to be used in conjunction with &lt;object&gt; to specify the meaning of a value</a:documentation>
+      <ref name="defn-pattern-default"/>
+    </element>
+  </define>
+  <define name="defn-mode">
+    <element name="modal">
+      <a:documentation>contains an IRI + name pattern identifying a modal or adverb that qualifies the verb of an assertion.</a:documentation>
+      <a:documentation>See main.xml# keywords-modal for standard vocabulary.</a:documentation>
+      <ref name="defn-pattern-default"/>
+    </element>
+  </define>
+  <define name="claim">
+    <element name="claim">
+      <a:documentation>makes one or more claims.</a:documentation>
+      <choice>
+        <ref name="inclusion"/>
+        <group>
+          <optional>
+            <ref name="ed-stamp"/>
+          </optional>
+          <optional>
+            <ref name="cert-claim"/>
+          </optional>
+          <optional>
+            <ref name="claimant-ref"/>
+          </optional>
+          <optional>
+            <ref name="period-ref"/>
+          </optional>
+          <optional>
+            <ref name="modal-ref"/>
+          </optional>
+          <optional>
+            <ref name="verb-ref"/>
+          </optional>
+          <optional>
+            <ref name="place-ref"/>
+          </optional>
+          <interleave>
+            <optional>
+              <ref name="subject"/>
+            </optional>
+            <optional>
+              <ref name="object"/>
+            </optional>
+            <optional>
+              <ref name="locus"/>
+            </optional>
+          </interleave>
+        </group>
+      </choice>
+    </element>
+  </define>
+  <define name="claimant-ref">
+    <attribute name="claimant">
+      <a:documentation>points to an &lt;agent&gt; or &lt;person&gt; who makes a claim. @claimant within &lt;body&gt; indicates the default persons to be credited or blamed for an assertion.</a:documentation>
+      <a:documentation>Claimants are not to be confused with the editor of a TAN file. If an editor X writes a TAN-c file that says that person Y makes such-and-such a claim, then the implication is that X claims that Y claims that....  </a:documentation>
+      <a:documentation>This attribute is taken into account before all other attributes. That is, @claimant is to be interpreted to mean: "@claimant states the following:...." Multiple values of @claimant are interpreted to mean "and", resulting in distribution of the claim (e.g., claimant="x y" becomes "x claims that..." and "y claims that...").</a:documentation>
+      <a:documentation>If you wish to claim that claimant X claimed that claimant Y claimed that claimant Z...., only the original claimant is given to @claimant, and each of the other claimants are placed in a @subject in an embedded &lt;claim&gt; that serves as the object of the master &lt;claim&gt;. </a:documentation>
+      <a:documentation>This attribute is inheritable. See main.xml#inheritable_attributes</a:documentation>
+    </attribute>
+  </define>
+  <define name="subject">
+    <choice>
+      <ref name="subject-ref"/>
+      <oneOrMore>
+        <ref name="complex-subject"/>
+      </oneOrMore>
+    </choice>
+  </define>
+  <define name="subject-ref">
+    <attribute name="subject">
+      <a:documentation>points to one or more ID refs of entities defined in &lt;head&gt; that serve as the grammatical subject of a claim. @subject within &lt;body&gt; indicates the default subject(s) for &lt;claim&gt;s. </a:documentation>
+      <a:documentation> Multiple values of @subject are interpreted to mean "and", resulting in distribution of the claim (e.g., subject="x y" becomes "x [verby]..." and "y [verb]...").</a:documentation>
+    </attribute>
+  </define>
+  <define name="complex-subject">
+    <element name="subject">
+      <a:documentation>points to text references that act as the subject of the claim.</a:documentation>
+      <a:documentation> Multiple values of &lt;subject&gt; are interpreted to mean "and", resulting in distribution of the claim (e.g., subject="x y" becomes "x [verby]..." and "y [verb]...").</a:documentation>
+      <optional>
+        <ref name="ed-stamp"/>
+      </optional>
+      <ref name="textual-reference"/>
+    </element>
+  </define>
+  <define name="modal-ref">
+    <attribute name="adverb">
+      <a:documentation>names a &lt;modal&gt; that qualifies the claim.</a:documentation>
+      <a:documentation> Multiple values of @adverb are interpreted to mean "and" with intersection. No distribution takes place (e.g., adverb="x y" means "[subject] x &amp; y [verby]...", not "[subject] x [verb]..." and "[subject] y [verb]...").</a:documentation>
+    </attribute>
+  </define>
+  <define name="verb-ref">
+    <attribute name="verb">
+      <a:documentation>points to one or more &lt;verb&gt;s that serve to assert something of the @subject.</a:documentation>
+      <a:documentation>The preferred term "verb" is equivalent to RDF "predicate." The latter term is avoided as being misleading -- most who use TAN will understand "predicate," grammatically speaking, to refer to everything in a sentence that is not the subject.</a:documentation>
+      <a:documentation> Multiple values of @verb are interpreted to mean "and", resulting in distribution of the claim (e.g., verb="x y" becomes "[subject] x ..." and "[subject] y...").</a:documentation>
+    </attribute>
+  </define>
+  <define name="place-ref">
+    <attribute name="where">
+      <a:documentation>restricts the &lt;claim&gt; to a specific &lt;place&gt;.
+ Multiple values of @where are interpreted to mean "or" with union. No distribution takes place (e.g., where="x y" means "[subject] x or y [verby]...", not "[subject] x [verb]..." and "[subject] y [verb]...").</a:documentation>
+    </attribute>
+  </define>
+  <define name="object">
+    <choice>
+      <ref name="object-ref"/>
+      <oneOrMore>
+        <ref name="complex-object"/>
+      </oneOrMore>
+    </choice>
+  </define>
+  <define name="object-ref">
+    <attribute name="object">
+      <a:documentation>takes one or more ID refs of entities defined in &lt;head&gt; that serve as the grammatical object of a claim. For example, if you wish to say that work A is a commentary on work B, then the object would have the ID ref for work B. If you wish to make more complex assertions, use &lt;object&gt;.</a:documentation>
+      <a:documentation> Multiple values of @object are interpreted to mean "and", resulting in distribution of the claim (e.g., object="x y" becomes "[subject] [verb] x" and "[subject] [verb] y...").</a:documentation>
+      <a:documentation>In RDF, the concept of object (the third element of a triple) is required. In TAN-c, it is not required, since some &lt;verb&gt;s may be intransitive (e.g., "Charlie slept.").</a:documentation>
+    </attribute>
+  </define>
+  <define name="complex-object">
+    <choice>
+      <ref name="object-element"/>
+      <oneOrMore>
+        <ref name="claim"/>
+      </oneOrMore>
+    </choice>
+  </define>
+  <define name="object-element">
+    <element name="object">
+      <a:documentation>is similar to @object, but for complex content, mainly concepts that do not lend themselves to the IRI + name pattern, particularly languages and units or passages of text.</a:documentation>
+      <optional>
+        <ref name="ed-stamp"/>
+      </optional>
+      <choice>
+        <ref name="nontextual-reference"/>
+        <ref name="textual-reference"/>
+      </choice>
+    </element>
+  </define>
+  <define name="nontextual-reference">
+    <optional>
+      <choice>
+        <ref name="lang-of-content"/>
+        <ref name="units"/>
+      </choice>
+    </optional>
+    <text/>
+  </define>
+  <define name="textual-reference">
+    <choice>
+      <ref name="simple-textual-reference"/>
+      <ref name="complex-textual-reference-set"/>
+    </choice>
+  </define>
+  <define name="simple-textual-reference">
+    <choice>
+      <ref name="sources-ref"/>
+      <ref name="work-ref"/>
+    </choice>
+    <ref name="pointer-to-div-range"/>
+  </define>
+  <define name="complex-textual-reference-set">
+    <choice>
+      <ref name="sources-ref"/>
+      <ref name="work-ref"/>
+    </choice>
+    <oneOrMore>
+      <ref name="complex-text-ref"/>
+    </oneOrMore>
+  </define>
+  <define name="complex-text-ref">
+    <choice>
+      <ref name="div-ref-range"/>
+      <ref name="tok-ref"/>
+    </choice>
+  </define>
+  <define name="units">
+    <attribute name="units">
+      <a:documentation>points to the ID ref of a &lt;unit&gt;, defining the type of units.</a:documentation>
+    </attribute>
+  </define>
+  <define name="locus">
+    <oneOrMore>
+      <element name="locus">
+        <a:documentation>restricts a claim to a particular location within a scriptum or work.</a:documentation>
+        <a:documentation>This element functions much like &lt;place&gt;, but the geography is textual rather than spatial.</a:documentation>
+        <optional>
+          <ref name="ed-stamp"/>
+        </optional>
+        <ref name="textual-reference"/>
+      </element>
+    </oneOrMore>
+  </define>
+</grammar>

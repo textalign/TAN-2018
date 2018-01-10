@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar ns="tag:textalign.net,2015:ns" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <include href="incl/TAN-class-2.rng">
+    <start>
+      <element name="TAN-A-lm">
+        <a:documentation>specifies that the file is a TAN file containing lexico-morphology data about a text. Root element.</a:documentation>
+        <ref name="TAN-root"/>
+      </element>
+    </start>
+    <!-- No more than one source; one without a source is considered to apply to a language -->
+    <define name="source-list">
+      <optional>
+        <ref name="source-item"/>
+      </optional>
+    </define>
+    <!-- TAN-A-lm files must each have at least one lexicon and one TAN-mor definition -->
+    <define name="definition-non-class-2">
+      <interleave>
+        <oneOrMore>
+          <ref name="defn-lexi"/>
+        </oneOrMore>
+        <oneOrMore>
+          <ref name="defn-morph"/>
+        </oneOrMore>
+      </interleave>
+    </define>
+    <define name="alter-non-class-2">
+      <empty/>
+    </define>
+    <define name="sources-ref">
+      <a:documentation>Because TAN-A-lm files depend on only one source, no id references to sources are needed</a:documentation>
+      <empty/>
+    </define>
+    <define name="id-option">
+      <empty/>
+    </define>
+    <define name="body-content-non-class-2">
+      <optional>
+        <ref name="lang-preface"/>
+      </optional>
+      <interleave>
+        <zeroOrMore>
+          <ref name="body-item"/>
+        </zeroOrMore>
+        <zeroOrMore>
+          <ref name="body-group"/>
+        </zeroOrMore>
+      </interleave>
+    </define>
+    <define name="body-attributes-non-core">
+      <ref name="lexicon-attr"/>
+      <ref name="grammar-attr"/>
+    </define>
+    <define name="body-item">
+      <ref name="TAN-A-lm-item"/>
+    </define>
+  </include>
+  <define name="defn-morph">
+    <element name="morphology">
+      <a:documentation>identifies a &lt;TAN-mor&gt; file that defines the parts of speech for a language, the codes for those parts, and the rules for combining them</a:documentation>
+      <optional>
+        <ref name="ed-stamp"/>
+      </optional>
+      <choice>
+        <ref name="inclusion"/>
+        <group>
+          <ref name="internal-xml-id"/>
+          <zeroOrMore>
+            <ref name="lang-outside"/>
+          </zeroOrMore>
+          <choice>
+            <ref name="keyword-ref"/>
+            <ref name="entity-digital-tan-other-ref"/>
+          </choice>
+        </group>
+      </choice>
+    </element>
+  </define>
+  <define name="defn-lexi">
+    <element name="lexicon">
+      <a:documentation>names a lexicographical authority. This element is optional, because the lexical informat could be based upon the knowledge of the &lt;agent&gt;s who wrote the data.</a:documentation>
+      <optional>
+        <ref name="ed-stamp"/>
+      </optional>
+      <choice>
+        <ref name="inclusion"/>
+        <group>
+          <ref name="internal-xml-id"/>
+          <choice>
+            <ref name="entity-digital-generic-ref"/>
+            <ref name="entity-nondigital-ref"/>
+          </choice>
+        </group>
+      </choice>
+    </element>
+  </define>
+  <define name="lexicon-attr">
+    <attribute name="lexicon">
+      <a:documentation>points to one or more &lt;lexicon&gt; or &lt;agent&gt; IDs</a:documentation>
+      <a:documentation>This attribute is inheritable. See main.xml#inheritable_attributes</a:documentation>
+    </attribute>
+  </define>
+  <define name="grammar-attr">
+    <attribute name="morphology">
+      <a:documentation>points to one or more &lt;morphology&gt; IDs</a:documentation>
+      <a:documentation>This attribute is inheritable. See main.xml#inheritable_attributes</a:documentation>
+    </attribute>
+  </define>
+  <define name="lang-preface">
+    <zeroOrMore>
+      <ref name="lang-outside"/>
+    </zeroOrMore>
+  </define>
+  <define name="TAN-A-lm-item">
+    <element name="ana">
+      <a:documentation>contains a one or more assertions about the lexical or morphological properties of one or more tokens.</a:documentation>
+      <a:documentation>Claims within an &lt;ana&gt; are distributive. That is, every combination of &lt;l&gt; and &lt;m&gt; within an &lt;lm&gt; is asserted of every &lt;tok&gt;.</a:documentation>
+      <choice>
+        <group>
+          <optional>
+            <ref name="ed-stamp"/>
+          </optional>
+          <ref name="inclusion"/>
+        </group>
+        <group>
+          <optional>
+            <ref name="certainty-stamp"/>
+          </optional>
+          <optional>
+            <ref name="group-ref"/>
+          </optional>
+          <interleave>
+            <zeroOrMore>
+              <ref name="comment"/>
+            </zeroOrMore>
+            <group>
+              <oneOrMore>
+                <ref name="lm-tok-ref"/>
+              </oneOrMore>
+              <oneOrMore>
+                <element name="lm">
+                  <a:documentation>contains lexical or morphological data.</a:documentation>
+                  <a:documentation>Claims within an &lt;lm&gt; are distributive. That is, every &lt;l&gt; is asserted against every &lt;m&gt; within an &lt;lm&gt; is asserted of every &lt;tok&gt;.</a:documentation>
+                  <optional>
+                    <ref name="certainty-stamp"/>
+                  </optional>
+                  <interleave>
+                    <zeroOrMore>
+                      <ref name="comment"/>
+                    </zeroOrMore>
+                    <choice>
+                      <group>
+                        <oneOrMore>
+                          <ref name="lexeme"/>
+                        </oneOrMore>
+                        <zeroOrMore>
+                          <ref name="morph"/>
+                        </zeroOrMore>
+                      </group>
+                      <group>
+                        <zeroOrMore>
+                          <ref name="lexeme"/>
+                        </zeroOrMore>
+                        <oneOrMore>
+                          <ref name="morph"/>
+                        </oneOrMore>
+                      </group>
+                    </choice>
+                  </interleave>
+                </element>
+              </oneOrMore>
+            </group>
+          </interleave>
+        </group>
+      </choice>
+    </element>
+  </define>
+  <define name="lm-tok-ref">
+    <choice>
+      <ref name="tok-ref"/>
+      <ref name="abstract-tok-ref"/>
+    </choice>
+  </define>
+  <!-- an abstract token reference states that the data holds true for this particular token no matter where it is found, either in the source (if there is one) or the language (if there is no source) -->
+  <define name="abstract-tok-ref">
+    <element name="tok">
+      <optional>
+        <ref name="certainty-stamp"/>
+      </optional>
+      <ref name="token-value-ref"/>
+    </element>
+  </define>
+  <define name="lexeme">
+    <element name="l">
+      <a:documentation>names a lexeme, by points to the main word entry in the lexicon defined by the element's inherited value of @lexicon. This element should not be used to point to roots, only to lexical headwords. </a:documentation>
+      <a:documentation>In many languages, especially those that are lightly inflected, this word will be identical to the word token itself. In those cases, &lt;l&gt; may be left empty, indicating that the value of &lt;tok&gt; is to be supplied.</a:documentation>
+      <a:documentation>Because there is no TAN format for lexicons, values in this element will not be validated.</a:documentation>
+      <optional>
+        <ref name="lexicon-attr"/>
+      </optional>
+      <optional>
+        <attribute name="def-ref">
+          <a:documentation>identifies which definition is meant. This attribute is essential in cases where a lexicon has multiple entries for lexemes that are orthographically indistinguishable. </a:documentation>
+          <a:documentation>Because there is no TAN format for lexicons, the value in this attribute will not be validated.</a:documentation>
+        </attribute>
+      </optional>
+      <optional>
+        <ref name="certainty-stamp"/>
+      </optional>
+      <text/>
+    </element>
+  </define>
+  <define name="morph">
+    <element name="m">
+      <a:documentation>carries a morphological code that conforms to the rules or patterns defined in the TAN-mor file upon which the data depends.</a:documentation>
+      <a:documentation>Codes are space-delimited. If a value of &lt;m&gt; violates the rules established by the TAN-mor file, an error will be generated. For more about how codes are built, and how they function, see main.xml#tan-a-lm.</a:documentation>
+      <optional>
+        <ref name="certainty-stamp"/>
+      </optional>
+      <optional>
+        <ref name="grammar-attr"/>
+      </optional>
+      <data type="string">
+        <param name="pattern">[^\+\s]+(\s+[^\+\s]+)*</param>
+      </data>
+    </element>
+  </define>
+</grammar>

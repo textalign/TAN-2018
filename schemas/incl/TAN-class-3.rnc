@@ -1,0 +1,16 @@
+default namespace local = "tag:textalign.net,2015:ns"
+
+include "TAN-core.rnc" {
+    ## Class 3 files allow zero or many sources
+    source-list = source-item*
+    source-id-opt = internal-xml-id?
+    definition-non-core = definition-class-3 & definition-non-class-3
+    alter-non-core = alter-class-3 & alter-non-class-3
+    body-content-non-core = body-content-class-3 & body-content-non-class-3
+}
+definition-class-3 = defn-group-type*
+definition-non-class-3 = empty
+alter-class-3 = empty
+alter-non-class-3 = empty
+body-content-class-3 = empty
+body-content-non-class-3 = empty

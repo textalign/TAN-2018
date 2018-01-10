@@ -1,0 +1,107 @@
+default namespace = "tag:textalign.net,2015:ns"
+
+include "incl/TAN-class-2.rnc" {
+start =
+    
+    ## specifies that the file is a TAN file containing lexico-morphology data about a text. Root element.
+    element TAN-A-lm { TAN-root }
+    
+    # No more than one source; one without a source is considered to apply to a language
+    source-list = source-item?
+    # TAN-A-lm files must each have at least one lexicon and one TAN-mor definition
+    definition-non-class-2 =
+        defn-lexi+
+        & defn-morph+
+    
+    alter-non-class-2 = empty
+    
+    ## Because TAN-A-lm files depend on only one source, no id references to sources are needed
+    sources-ref = empty
+    id-option = empty
+    body-content-non-class-2 = lang-preface?, (body-item* & body-group*)
+    body-attributes-non-core = lexicon-attr, grammar-attr
+    body-item = TAN-A-lm-item
+}
+defn-morph =
+    
+    ## identifies a <TAN-mor> file that defines the parts of speech for a language, the codes for those parts, and the rules for combining them
+    element morphology {
+        ed-stamp?,
+        (inclusion
+         | (internal-xml-id, lang-outside*, (keyword-ref | entity-digital-tan-other-ref)))
+    }
+defn-lexi =
+    
+    ## names a lexicographical authority. This element is optional, because the lexical informat could be based upon the knowledge of the <agent>s who wrote the data.
+    element lexicon {
+        ed-stamp?,
+        (inclusion
+         | (internal-xml-id, (entity-digital-generic-ref | entity-nondigital-ref)))
+    }
+lexicon-attr =
+    
+    ## points to one or more <lexicon> or <agent> IDs
+    
+    ## This attribute is inheritable. See main.xml#inheritable_attributes
+    attribute lexicon { text }
+grammar-attr =
+    
+    ## points to one or more <morphology> IDs
+    
+    ## This attribute is inheritable. See main.xml#inheritable_attributes
+    attribute morphology { text }
+lang-preface = lang-outside*
+TAN-A-lm-item =
+    
+    ## contains a one or more assertions about the lexical or morphological properties of one or more tokens.
+    
+    ## Claims within an <ana> are distributive. That is, every combination of <l> and <m> within an <lm> is asserted of every <tok>.
+    element ana {
+        (ed-stamp?, inclusion)
+        | (certainty-stamp?,
+           group-ref?,
+           (comment*
+            & (lm-tok-ref+,
+               
+               ## contains lexical or morphological data.
+               
+                   ## Claims within an <lm> are distributive. That is, every <l> is asserted against every <m> within an <lm> is asserted of every <tok>.
+
+               element lm {
+                   certainty-stamp?,
+                   (comment*
+                    & ((lexeme+, morph*) | (lexeme*, morph+)))
+               }+)))
+    }
+lm-tok-ref = tok-ref | abstract-tok-ref
+# an abstract token reference states that the data holds true for this particular token no matter where it is found, either in the source (if there is one) or the language (if there is no source)
+abstract-tok-ref = element tok {
+    certainty-stamp?, token-value-ref
+}
+lexeme =
+    
+    ## names a lexeme, by points to the main word entry in the lexicon defined by the element's inherited value of @lexicon. This element should not be used to point to roots, only to lexical headwords. 
+    
+    ## In many languages, especially those that are lightly inflected, this word will be identical to the word token itself. In those cases, <l> may be left empty, indicating that the value of <tok> is to be supplied.
+    
+    ## Because there is no TAN format for lexicons, values in this element will not be validated.
+    element l {
+        lexicon-attr?,
+        
+        ## identifies which definition is meant. This attribute is essential in cases where a lexicon has multiple entries for lexemes that are orthographically indistinguishable. 
+        
+        ## Because there is no TAN format for lexicons, the value in this attribute will not be validated.
+        attribute def-ref { text }?,
+        certainty-stamp?,
+        text
+    }
+morph =
+    
+    ## carries a morphological code that conforms to the rules or patterns defined in the TAN-mor file upon which the data depends.
+    
+    ## Codes are space-delimited. If a value of <m> violates the rules established by the TAN-mor file, an error will be generated. For more about how codes are built, and how they function, see main.xml#tan-a-lm.
+    element m {
+        certainty-stamp?,
+        grammar-attr?,
+        xsd:string { pattern = "[^\+\s]+(\s+[^\+\s]+)*" }
+    }

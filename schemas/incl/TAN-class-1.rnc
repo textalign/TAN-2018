@@ -1,0 +1,55 @@
+default namespace local = "tag:textalign.net,2015:ns"
+
+include "TAN-core.rnc" {
+    definition-non-core = defn-class-1 & defn-non-class-1
+    body-group = empty
+    alter-non-core = alt-norm* & alt-repl*
+    body-content-non-core = body-content-class-1 & body-content-non-class-1
+}
+
+body-content-class-1 = empty
+body-content-non-class-1 = empty
+defn-class-1 = defn-work & defn-vers? & defn-div-type+ & defn-tok-def*
+
+## Reserved for definitions specific to individual types of class 1 files
+defn-non-class-1 = empty
+defn-div-type =
+    
+    ## declares a type of textual division (e.g., title, paragraph, stanza). You may have as many <div-types> as you wish, and they need not all be used.
+    
+    ## For more information, see main.xml#reference_system
+    
+    ## This element takes a reserved keyword or IRI + name pattern. See main.xml#keywords-div-type for suggested values. 
+    element div-type { defn-pattern-id }
+alt-norm =
+    
+    ## specifies an alteration made to a source file to bring the transcription into conformity with standards or common expectations. This element is used typically for minor corrections, e.g., suppression of discretionary hyphenation. You should declare every change you have made to the source.
+    
+    ## <normalization> is especially helpful in reference to nondigital sources, but it may be made also for digital sources, to declare global changes that would be cumbersome, difficult, or impossible to describe in <replace>. 
+    
+    ## See main.xml#keywords-normalization for suggested IRI + name values for normalizations. For general discussion see main.xml#normalizing_transcriptions 
+    element normalization {
+        ed-stamp?,
+        (inclusion
+         | (defn-id-ref-opt, (comment* & entity-nondigital-ref)))
+    }
+
+## Replacements that have been made to an XML source file. 
+alt-repl = func-replace
+func-replace =
+    
+    ## contains the equivalent of the XPath replace() function plus parameters, indicating a replacement operation that should be, or has been, applied to a digital file.
+    
+    ## Multiple <replace>s will be assumed to have been implemented in document order.
+    
+    ## The conventions of this element and its children accord with the definition of the function and its parameters provided at http://www.w3.org/TR/xpath-functions-30/#func-replace
+    element replace {
+        ed-stamp?,
+        (inclusion
+         | (comment*
+            & (func-param-pattern,
+               
+               ## contains a string used to replace any occurrence of <pattern> 
+               attribute replacement { text },
+               func-param-flags?)))
+    }

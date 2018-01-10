@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar ns="tag:textalign.net,2015:ns" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:local="tag:textalign.net,2015:ns" xmlns="http://relaxng.org/ns/structure/1.0">
+  <include href="TAN-core.rng">
+    <define name="definition-non-core">
+      <interleave>
+        <ref name="defn-class-1"/>
+        <ref name="defn-non-class-1"/>
+      </interleave>
+    </define>
+    <define name="body-group">
+      <empty/>
+    </define>
+    <define name="alter-non-core">
+      <interleave>
+        <zeroOrMore>
+          <ref name="alt-norm"/>
+        </zeroOrMore>
+        <zeroOrMore>
+          <ref name="alt-repl"/>
+        </zeroOrMore>
+      </interleave>
+    </define>
+    <define name="body-content-non-core">
+      <interleave>
+        <ref name="body-content-class-1"/>
+        <ref name="body-content-non-class-1"/>
+      </interleave>
+    </define>
+  </include>
+  <define name="body-content-class-1">
+    <empty/>
+  </define>
+  <define name="body-content-non-class-1">
+    <empty/>
+  </define>
+  <define name="defn-class-1">
+    <interleave>
+      <ref name="defn-work"/>
+      <optional>
+        <ref name="defn-vers"/>
+      </optional>
+      <oneOrMore>
+        <ref name="defn-div-type"/>
+      </oneOrMore>
+      <zeroOrMore>
+        <ref name="defn-tok-def"/>
+      </zeroOrMore>
+    </interleave>
+  </define>
+  <define name="defn-non-class-1">
+    <a:documentation>Reserved for definitions specific to individual types of class 1 files</a:documentation>
+    <empty/>
+  </define>
+  <define name="defn-div-type">
+    <element name="div-type">
+      <a:documentation>declares a type of textual division (e.g., title, paragraph, stanza). You may have as many &lt;div-types&gt; as you wish, and they need not all be used.</a:documentation>
+      <a:documentation>For more information, see main.xml#reference_system</a:documentation>
+      <a:documentation>This element takes a reserved keyword or IRI + name pattern. See main.xml#keywords-div-type for suggested values. </a:documentation>
+      <ref name="defn-pattern-id"/>
+    </element>
+  </define>
+  <define name="alt-norm">
+    <element name="normalization">
+      <a:documentation>specifies an alteration made to a source file to bring the transcription into conformity with standards or common expectations. This element is used typically for minor corrections, e.g., suppression of discretionary hyphenation. You should declare every change you have made to the source.</a:documentation>
+      <a:documentation>&lt;normalization&gt; is especially helpful in reference to nondigital sources, but it may be made also for digital sources, to declare global changes that would be cumbersome, difficult, or impossible to describe in &lt;replace&gt;. </a:documentation>
+      <a:documentation>See main.xml#keywords-normalization for suggested IRI + name values for normalizations. For general discussion see main.xml#normalizing_transcriptions </a:documentation>
+      <optional>
+        <ref name="ed-stamp"/>
+      </optional>
+      <choice>
+        <ref name="inclusion"/>
+        <group>
+          <ref name="defn-id-ref-opt"/>
+          <interleave>
+            <zeroOrMore>
+              <ref name="comment"/>
+            </zeroOrMore>
+            <ref name="entity-nondigital-ref"/>
+          </interleave>
+        </group>
+      </choice>
+    </element>
+  </define>
+  <define name="alt-repl">
+    <a:documentation>Replacements that have been made to an XML source file. </a:documentation>
+    <ref name="func-replace"/>
+  </define>
+  <define name="func-replace">
+    <element name="replace">
+      <a:documentation>contains the equivalent of the XPath replace() function plus parameters, indicating a replacement operation that should be, or has been, applied to a digital file.</a:documentation>
+      <a:documentation>Multiple &lt;replace&gt;s will be assumed to have been implemented in document order.</a:documentation>
+      <a:documentation>The conventions of this element and its children accord with the definition of the function and its parameters provided at http://www.w3.org/TR/xpath-functions-30/#func-replace</a:documentation>
+      <optional>
+        <ref name="ed-stamp"/>
+      </optional>
+      <choice>
+        <ref name="inclusion"/>
+        <interleave>
+          <zeroOrMore>
+            <ref name="comment"/>
+          </zeroOrMore>
+          <group>
+            <ref name="func-param-pattern"/>
+            <attribute name="replacement">
+              <a:documentation>contains a string used to replace any occurrence of &lt;pattern&gt; </a:documentation>
+            </attribute>
+            <optional>
+              <ref name="func-param-flags"/>
+            </optional>
+          </group>
+        </interleave>
+      </choice>
+    </element>
+  </define>
+</grammar>

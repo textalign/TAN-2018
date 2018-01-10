@@ -1,0 +1,172 @@
+default namespace local = "tag:textalign.net,2015:ns"
+
+include "incl/TAN-class-2.rnc" {
+start =
+    
+    ## specifies that the file is a div-based TAN alignment file. Root element.
+    element TAN-A-div { TAN-root }
+    
+    ## TAN-A-div files must have one or more sources
+    source-list = source-item+
+    
+    ## definitions by default have ids
+    defn-id-ref-opt = internal-xml-id
+    
+    ## TAN-A-div sources must be named
+    source-id-opt = internal-xml-id
+    definition-non-class-2 = defn-claims
+    alter-non-class-2 = empty
+    tok-sources-ref-opt = empty
+    tok-cert-opt = empty
+    
+    ## Redefining TAN-body-core not only defines what is in the body of a TAN-A-div but also excludes groups from it.
+    body-content-non-class-2 = claimant-ref?, subject-ref?, object-ref?, verb-ref?, claim*
+}
+work-ref =
+    
+    ## refers to a work by means of a source ID as a proxy. The attribute will be treated as indicating all sources that share the same work as the one mentioned.
+    
+    ## If you wish to avoid making a claim applying to all other versions of a work, use @src instead.
+    attribute work { text }
+# claims
+defn-claims =
+    defn-work*
+    & defn-place*
+    & defn-unit*
+    & defn-mode*
+    & defn-vers*
+    & defn-scri*
+    & defn-topic*
+    & defn-verb*
+defn-place =
+    
+    ## contains an IRI + name pattern identifying a spatial location, usually somewhere on earth
+    element place { defn-pattern-default }
+defn-scri =
+    
+    ## contains an IRI + name pattern identifying a text-bearing object.
+    element scriptum { defn-pattern-default }
+defn-topic =
+    
+    ## declares one or more topics, to be used in conjunction with @topic under <align> to associate alignments with specific topics instead of verbatim parallels.  
+    element topic { defn-pattern-default }
+defn-verb =
+    
+    ## contains an IRI + name pattern identifying a property, relationship, action, or something else that is used to say something about something. 
+    
+    ## The preferred term "verb" is equivalent to RDF "predicate." The latter term is avoided as misleading, since in ordinary usage the term "predicate" implies everything in a sentence that is not the subject.
+    element verb { object-constraint?, defn-pattern-default }
+object-constraint = object-datatype, object-lexical-constraint?
+object-datatype =
+    
+    ## specifies the type of data that the object must take. This attribute is intended to specify that a particular verb governs raw units, not entities definable by the IRI + name pattern. Use this attribute if and only if the verb may not govern objects defined in <definitions>.
+    attribute object-datatype {
+        xsd:string {
+            pattern =
+                "string|boolean|decimal|float|double|duration|dateTime|time|date|gYearMonth|gYear|gMonthDay|gDay|gMonth|hexBinary|base64Binary|anyURI|QName|normalizedString|token|language|NMTOKEN|NMTOKENS|Name|NCName|ID|IDREF|IDREFS|ENTITY|ENTITIES|integer|nonPositiveInteger|negativeInteger|long|int|short|byte|nonNegativeInteger|unsignedLong|unsignedInt|unsignedShort|unsignedByte|positiveInteger"
+        }
+    }
+object-lexical-constraint =
+    
+    ## specifies a regular expression that constrains the value of any <object>. 
+    
+    ## Note that the regular expression will be strictly followed, e.g., "\d+" will be satisfied by "a1". If you wish to constrain the entire value, be sure to use ^ and $, e.g., "^\d+$". 
+    attribute object-lexical-constraint { text }
+defn-unit =
+    
+    ## contains an IRI + name pattern identifying a unit type (e.g., millimeters, seconds, Euros), to be used in conjunction with <object> to specify the meaning of a value
+    element unit { defn-pattern-default }
+defn-mode =
+    
+    ## contains an IRI + name pattern identifying a modal or adverb that qualifies the verb of an assertion.
+    
+    ## See main.xml# keywords-modal for standard vocabulary.
+    element modal { defn-pattern-default }
+claim =
+    
+    ## makes one or more claims.
+    element claim {
+        inclusion
+        | (ed-stamp?,
+           cert-claim?,
+           claimant-ref?,
+           period-ref?,
+           modal-ref?,
+           verb-ref?,
+           place-ref?,
+           (subject? & object? & locus?))
+    }
+claimant-ref =
+    
+    ## points to an <agent> or <person> who makes a claim. @claimant within <body> indicates the default persons to be credited or blamed for an assertion.
+    
+    ## Claimants are not to be confused with the editor of a TAN file. If an editor X writes a TAN-c file that says that person Y makes such-and-such a claim, then the implication is that X claims that Y claims that....  
+    
+    ## This attribute is taken into account before all other attributes. That is, @claimant is to be interpreted to mean: "@claimant states the following:...." Multiple values of @claimant are interpreted to mean "and", resulting in distribution of the claim (e.g., claimant="x y" becomes "x claims that..." and "y claims that...").
+    
+    ## If you wish to claim that claimant X claimed that claimant Y claimed that claimant Z...., only the original claimant is given to @claimant, and each of the other claimants are placed in a @subject in an embedded <claim> that serves as the object of the master <claim>. 
+    
+    ## This attribute is inheritable. See main.xml#inheritable_attributes
+    attribute claimant { text }
+subject = subject-ref | complex-subject+
+subject-ref =
+    
+    ## points to one or more ID refs of entities defined in <head> that serve as the grammatical subject of a claim. @subject within <body> indicates the default subject(s) for <claim>s. 
+    
+    ##  Multiple values of @subject are interpreted to mean "and", resulting in distribution of the claim (e.g., subject="x y" becomes "x [verby]..." and "y [verb]...").
+    attribute subject { text }
+complex-subject =
+    
+    ## points to text references that act as the subject of the claim.
+    
+    ##  Multiple values of <subject> are interpreted to mean "and", resulting in distribution of the claim (e.g., subject="x y" becomes "x [verby]..." and "y [verb]...").
+    element subject { ed-stamp?, textual-reference }
+modal-ref =
+    
+    ## names a <modal> that qualifies the claim.
+    
+    ##  Multiple values of @adverb are interpreted to mean "and" with intersection. No distribution takes place (e.g., adverb="x y" means "[subject] x & y [verby]...", not "[subject] x [verb]..." and "[subject] y [verb]...").
+    attribute adverb { text }
+verb-ref =
+    
+    ## points to one or more <verb>s that serve to assert something of the @subject.
+    
+    ## The preferred term "verb" is equivalent to RDF "predicate." The latter term is avoided as being misleading -- most who use TAN will understand "predicate," grammatically speaking, to refer to everything in a sentence that is not the subject.
+    
+    ##  Multiple values of @verb are interpreted to mean "and", resulting in distribution of the claim (e.g., verb="x y" becomes "[subject] x ..." and "[subject] y...").
+    attribute verb { text }
+place-ref =
+    
+    ## restricts the <claim> to a specific <place>.
+    ##  Multiple values of @where are interpreted to mean "or" with union. No distribution takes place (e.g., where="x y" means "[subject] x or y [verby]...", not "[subject] x [verb]..." and "[subject] y [verb]...").
+    attribute where { text }
+object = object-ref | complex-object+
+object-ref =
+    
+    ## takes one or more ID refs of entities defined in <head> that serve as the grammatical object of a claim. For example, if you wish to say that work A is a commentary on work B, then the object would have the ID ref for work B. If you wish to make more complex assertions, use <object>.
+    
+    ##  Multiple values of @object are interpreted to mean "and", resulting in distribution of the claim (e.g., object="x y" becomes "[subject] [verb] x" and "[subject] [verb] y...").
+    
+    ## In RDF, the concept of object (the third element of a triple) is required. In TAN-c, it is not required, since some <verb>s may be intransitive (e.g., "Charlie slept.").
+    attribute object { text }
+complex-object = object-element | claim+
+object-element =
+    
+    ## is similar to @object, but for complex content, mainly concepts that do not lend themselves to the IRI + name pattern, particularly languages and units or passages of text.
+    element object { ed-stamp?, (nontextual-reference | textual-reference) }
+nontextual-reference = (lang-of-content | units)?, text
+textual-reference = simple-textual-reference | complex-textual-reference-set
+
+simple-textual-reference = (sources-ref | work-ref), pointer-to-div-range
+complex-textual-reference-set = (sources-ref | work-ref), complex-text-ref+
+complex-text-ref = div-ref-range | tok-ref
+units =
+    
+    ## points to the ID ref of a <unit>, defining the type of units.
+    attribute units { text }
+locus =
+
+## restricts a claim to a particular location within a scriptum or work.
+
+## This element functions much like <place>, but the geography is textual rather than spatial.
+element locus { ed-stamp?, textual-reference }+

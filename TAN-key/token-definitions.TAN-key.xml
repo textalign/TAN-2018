@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../schemas/TAN-key.rnc" type="application/relax-ng-compact-syntax"?>
+<?xml-model href="../schemas/TAN-key.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<TAN-key xmlns="tag:textalign.net,2015:ns" TAN-version="2018" id="tag:textalign.net,2015:tan-key:tokenizations">
+    <head>
+        <name>TAN keywords for types of token definitions</name>
+        <desc>Definitive list of key terms used to name standard token definitions.</desc>
+        <master-location href="http://textalign.net/release/TAN-2018/TAN-key/token-definitions.TAN-key.xml"/>
+        <license>
+            <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
+            <name>Creative Commons Attribution 4.0 International License</name>
+            <desc>This license is granted independent of rights and licenses associated with the
+                source. </desc>
+        </license>
+        <licensor who="kalvesmaki"/>
+        <definitions>
+            <person xml:id="kalvesmaki">
+                <IRI>http://viaf.org/viaf/299582703</IRI>
+                <IRI>tag:textalign.net,2015:agent:kalvesmaki:joel</IRI>
+                <name xml:lang="eng">Joel Kalvesmaki</name>
+            </person>
+            <algorithm xml:id="xslt1"><IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI><name>Stylesheet to populate a TAN-A-div file from collections.</name><desc>Stylesheet at: ../do%20things/convert/convert%20TAN%202017%20to%20TAN%202018.xsl</desc></algorithm>
+            <role xml:id="creator">
+                <IRI>http://schema.org/creator</IRI>
+                <name xml:lang="eng">creator</name>
+            </role>
+            <role xml:id="stylesheet1" which="stylesheet"/></definitions>
+        <alter>
+        </alter>
+        <resp roles="creator" who="kalvesmaki"/>
+        <resp who="xslt1" roles="stylesheet1"/>
+        <change when="2016-02-02" who="kalvesmaki">Started file</change>
+        <change when="2016-02-22" who="kalvesmaki">Revised to suit new
+            &lt;token-definition&gt;</change>
+        <change who="xslt1" when="2017-11-02T23:06:29.935-04:00">TAN file updated to 2018 schemas.</change>
+    </head>
+    <body in-progress="false" affects-element="token-definition">
+        <item>
+            <token-definition pattern="[\w­​‍]+"/>
+            <name>letters</name>
+            <name>letters only</name>
+            <name>general word-characters only</name>
+            <name>general ignore punctuation</name>
+            <name>gwo</name>
+            <desc>General tokenization pattern for any language, words only. Non-letters such as
+                punctuation are ignored.</desc>
+        </item>
+        <item>
+            <token-definition pattern="\w+|[^\w\s]"/>
+            <name>letters and punctuation</name>
+            <name>general non-space characters</name>
+            <name>general include punctuation</name>
+            <desc>General tokenization pattern for any language, treating not only series of letters
+                as word tokens but also individual non-letter characters (e.g., punctuation).</desc>
+        </item>
+        <item>
+            <token-definition pattern="\S+"/>
+            <name>nonspace</name>
+            <desc>General tokenization pattern for any language, treating any contiguous run of
+                nonspace marks as a word.</desc>
+        </item>
+    </body>
+</TAN-key>

@@ -1,0 +1,29 @@
+/* CSS file intended to be used to configure how TAN files are rendered by oXygen Author */
+/* FONTS */
+*:lang(syr){
+    font-family: noto, 'Serto Urhoy', 'Estrangelo Nisibin';
+    text-align: right;
+    font-size: larger;
+}
+*:lang(cop){
+    font-family: antinoou;
+}
+*:lang(grc){
+    font-family: 'Gentium Plus', 'Garamond Premiere Pro', 'Gentium Plus', serif;
+}
+div:before{
+    content: attr(type) '.' attr(n) ' ';
+}
+/* DISPLAY */
+div,
+ana,
+lm{
+    display: block;
+}
+comment{
+    display: list-item;
+}
+/* COLORS */
+div:before{
+    color: blue
+}
