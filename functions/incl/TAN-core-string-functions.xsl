@@ -7,18 +7,6 @@
 
     <!-- General functions that process strings -->
 
-    <xsl:function name="tan:escape" as="xs:string*">
-        <!-- Input: any sequence of strings -->
-        <!-- Output: each string prepared for regular expression searches, i.e., with reserved characters escaped out. -->
-        <xsl:param name="strings" as="xs:string*"/>
-        <xsl:copy-of
-            select="
-                for $i in $strings
-                return
-                    replace($i, concat('(', $regex-escaping-characters, ')'), '\\$1')"
-        />
-    </xsl:function>
-
     <xsl:function name="tan:batch-replace" as="xs:string?">
         <!-- Input: a string, a sequence of <[ANY NAME] pattern="" replacement="" [flags=""]> -->
         <!-- Output: the string, after those replaces are processed in order -->
@@ -722,13 +710,14 @@
                                         </xsl:copy>
                                     </xsl:for-each>
                                 </xsl:when>
-                                <xsl:when test="current-grouping-key() = 'u'">
+                                <!-- Commented out because it produced false results. A collation of 'ah', 'an', and 'oho' doubled up the 'o' -->
+                                <!--<xsl:when test="current-grouping-key() = 'u'">
                                     <xsl:for-each-group select="current-group()" group-by="text()">
                                         <u w="{string-join(current-group()/@w,' ')}">
                                             <xsl:value-of select="current-grouping-key()"/>
                                         </u>
                                     </xsl:for-each-group>
-                                </xsl:when>
+                                </xsl:when>-->
                                 <xsl:otherwise>
                                     <xsl:copy-of select="current-group()"/>
                                 </xsl:otherwise>
@@ -769,6 +758,9 @@
                         </xsl:for-each-group>
                     </collation>
                 </xsl:variable>
+                <!-- diagnostics, results -->
+                <!--<xsl:copy-of select="$this-collation"/>-->
+                <!--<xsl:copy-of select="$consolidated-collation"/>-->
                 <xsl:copy-of select="$collation-with-base-marked"/>
             </xsl:otherwise>
         </xsl:choose>
