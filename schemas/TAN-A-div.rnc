@@ -33,6 +33,7 @@ defn-claims =
     defn-work*
     & defn-place*
     & defn-unit*
+    & defn-div-type*
     & defn-mode*
     & defn-vers*
     & defn-scri*
@@ -55,23 +56,7 @@ defn-verb =
     ## contains an IRI + name pattern identifying a property, relationship, action, or something else that is used to say something about something. 
     
     ## The preferred term "verb" is equivalent to RDF "predicate." The latter term is avoided as misleading, since in ordinary usage the term "predicate" implies everything in a sentence that is not the subject.
-    element verb { object-constraint?, defn-pattern-default }
-object-constraint = object-datatype, object-lexical-constraint?
-object-datatype =
-    
-    ## specifies the type of data that the object must take. This attribute is intended to specify that a particular verb governs raw units, not entities definable by the IRI + name pattern. Use this attribute if and only if the verb may not govern objects defined in <definitions>.
-    attribute object-datatype {
-        xsd:string {
-            pattern =
-                "string|boolean|decimal|float|double|duration|dateTime|time|date|gYearMonth|gYear|gMonthDay|gDay|gMonth|hexBinary|base64Binary|anyURI|QName|normalizedString|token|language|NMTOKEN|NMTOKENS|Name|NCName|ID|IDREF|IDREFS|ENTITY|ENTITIES|integer|nonPositiveInteger|negativeInteger|long|int|short|byte|nonNegativeInteger|unsignedLong|unsignedInt|unsignedShort|unsignedByte|positiveInteger"
-        }
-    }
-object-lexical-constraint =
-    
-    ## specifies a regular expression that constrains the value of any <object>. 
-    
-    ## Note that the regular expression will be strictly followed, e.g., "\d+" will be satisfied by "a1". If you wish to constrain the entire value, be sure to use ^ and $, e.g., "^\d+$". 
-    attribute object-lexical-constraint { text }
+    element verb { defn-pattern-constrained }
 defn-unit =
     
     ## contains an IRI + name pattern identifying a unit type (e.g., millimeters, seconds, Euros), to be used in conjunction with <object> to specify the meaning of a value

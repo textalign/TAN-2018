@@ -63,6 +63,7 @@
             <ref name="entity-digital-tan-other-ref"/>
             <ref name="entity-digital-generic-ref"/>
             <ref name="entity-nondigital-ref"/>
+            <ref name="entity-nondigital-with-constraints-ref"/>
             <ref name="entity-tok-def"/>
           </choice>
         </group>

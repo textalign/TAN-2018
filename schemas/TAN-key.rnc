@@ -26,5 +26,6 @@ TAN-key-item =
             (entity-digital-tan-other-ref
              | entity-digital-generic-ref
              | entity-nondigital-ref
+             | entity-nondigital-with-constraints-ref
              | entity-tok-def)))
     }

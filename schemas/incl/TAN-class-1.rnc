@@ -13,14 +13,6 @@ defn-class-1 = defn-work & defn-vers? & defn-div-type+ & defn-tok-def*
 
 ## Reserved for definitions specific to individual types of class 1 files
 defn-non-class-1 = empty
-defn-div-type =
-    
-    ## declares a type of textual division (e.g., title, paragraph, stanza). You may have as many <div-types> as you wish, and they need not all be used.
-    
-    ## For more information, see main.xml#reference_system
-    
-    ## This element takes a reserved keyword or IRI + name pattern. See main.xml#keywords-div-type for suggested values. 
-    element div-type { defn-pattern-id }
 alt-norm =
     
     ## specifies an alteration made to a source file to bring the transcription into conformity with standards or common expectations. This element is used typically for minor corrections, e.g., suppression of discretionary hyphenation. You should declare every change you have made to the source.

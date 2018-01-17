@@ -159,7 +159,7 @@ pointer-to-div-range =
 pointer-to-div-item = attribute ref { div-item-ref }
 token-value-ref =
     
-    ## specifies a particular word token by means of its string value. Treated as a constrained regular expression (the expression must match the entire token).
+    ## specifies a particular word token by means of its string value. Treated as a constrained regular expression (the expression must match the entire token, case-sensitive).
     
     ## For more see main.xml#attr_pos_and_val
     attribute val {

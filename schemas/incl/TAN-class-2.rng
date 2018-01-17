@@ -334,7 +334,7 @@
   </define>
   <define name="token-value-ref">
     <attribute name="val">
-      <a:documentation>specifies a particular word token by means of its string value. Treated as a constrained regular expression (the expression must match the entire token).</a:documentation>
+      <a:documentation>specifies a particular word token by means of its string value. Treated as a constrained regular expression (the expression must match the entire token, case-sensitive).</a:documentation>
       <a:documentation>For more see main.xml#attr_pos_and_val</a:documentation>
       <data type="string">
         <param name="pattern">.+</param>

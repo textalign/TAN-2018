@@ -1,7 +1,6 @@
 default namespace = "tag:textalign.net,2015:ns"
 
 start = element TAN-T { empty }
-
 # PART ONE OF THREE: PATTERNS REPEATEDLY USED ACROSS DIFFERENT TAN FILES 
 
 #   1A. ATOMIC PATTERNS (alphabetical)
@@ -55,7 +54,9 @@ ed-time =
     attribute ed-when { xsd:dateTime | xsd:date }
 element-scope =
     
-    ## names one or more TAN elements that the keywords apply to
+    ## names one or more TAN elements that the keywords apply to.
+    
+    ## This attribute is non-cumulatively inheritable. An element will be affected only by its values of @affects-element and not those of its ancestors.
     attribute affects-element { text }
 error-flag =
     
@@ -82,6 +83,8 @@ func-param-flags =
 group-ref =
     
     ## identifies one or more <group-type>s under which the parent element, and its children, should be grouped.
+    
+    ## This attribute is cumulatively inheritable. An <item> will be affected by its values of @group and those of its ancestors.
     attribute group { text }
 help-opt =
     
@@ -167,6 +170,21 @@ licensor =
     
     ## Nothing should be inferred from a missing @licensor from <rights-source-only>. Its absence does not mean that the rightsholder is unknown or nonexistent. For more, see main.xml#license
     attribute licensor { text }
+object-datatype =
+    
+    ## specifies the type of data that the object must take. This attribute is intended to specify that a particular verb governs raw units, not entities definable by the IRI + name pattern. Use this attribute if and only if the verb may not govern objects defined in <definitions>.
+    attribute object-datatype {
+        xsd:string {
+            pattern =
+                "string|boolean|decimal|float|double|duration|dateTime|time|date|gYearMonth|gYear|gMonthDay|gDay|gMonth|hexBinary|base64Binary|anyURI|QName|normalizedString|token|language|NMTOKEN|NMTOKENS|Name|NCName|ID|IDREF|IDREFS|ENTITY|ENTITIES|integer|nonPositiveInteger|negativeInteger|long|int|short|byte|nonNegativeInteger|unsignedLong|unsignedInt|unsignedShort|unsignedByte|positiveInteger"
+        }
+    }
+object-lexical-constraint =
+    
+    ## specifies a regular expression that constrains the value of any <object>. 
+    
+    ## Note that the regular expression will be strictly followed, e.g., "\d+" will be satisfied by "a1" (because there is at least on digit). If you wish to constrain the entire value, be sure to use ^ and $, e.g., "^\d+$". 
+    attribute object-lexical-constraint { text }
 role-ref =
     
     ## refers to the ID of one or more <role>s
@@ -222,6 +240,8 @@ comment =
     
     ## discusses issues relevant to nearby data. Must credit an <agent>, specified by @who, and a time the comment was made, specified by @when.
     element comment { when-claim, agent-ref, text }
+constraints-on-entity = constraints-on-verb
+constraints-on-verb = object-datatype, object-lexical-constraint?
 
 ## Editorial stamp: who created or edited the enclosed data and when. 
 ed-stamp = ed-agent, ed-time
@@ -239,6 +259,12 @@ entity-digital-tan-self-ref = metadata-human, loc-self*
 
 ## Reference to an external non-digital entity (e.g., persons, roles, works, topics)
 entity-nondigital-ref = (IRI-gen-ref+, metadata-human) | keyword-ref
+
+## Reference to a nondigital entity that has constraints on its use
+entity-nondigital-with-constraints-ref =
+    (constraints-on-entity, IRI-gen-ref+, metadata-human) | keyword-ref
+
+## Reference to a definition of a token
 entity-tok-def = defn-tok-def, metadata-human
 inclusion = inclusion-att, help-opt?
 IRI-gen-ref =
@@ -474,6 +500,11 @@ defn-pattern-id =
 defn-pattern-no-id =
     ed-stamp?,
     (inclusion | (comment* & entity-nondigital-ref))
+# definitions that are constrained (verbs)
+defn-pattern-constrained =
+    ed-stamp?,
+    (inclusion
+     | (defn-id-ref-opt, (comment* & entity-nondigital-with-constraints-ref)))
 # definitions for languages
 defn-pattern-language =
     ed-stamp?,
@@ -506,6 +537,14 @@ defn-alg =
     
     ## Algorithm covers any set of computational instructions. It does not include the hardware or software used to run the algorithm. For example, a set of XSLT styleshteets is an algorithm, but the engine (e.g., Saxon) or software (e.g., oXygen) is not.  
     element algorithm { defn-pattern-id }
+defn-div-type =
+    
+    ## declares a type of textual division (e.g., title, paragraph, stanza). You may have as many <div-types> as you wish, and they need not all be used.
+    
+    ## For more information, see main.xml#reference_system
+    
+    ## This element takes a reserved keyword or IRI + name pattern. See main.xml#keywords-div-type for suggested values. 
+    element div-type { defn-pattern-id }
 defn-group-type =
     
     ## defines types of <group>s. See main.xml# keywords-group-type
@@ -563,14 +602,6 @@ defn-tok-def =
          | (sources-ref,
             (keyword-ref | (func-param-pattern, func-param-flags?))))
     }
-defn-work =
-    
-    ## identifies a creative textual work, understood conceptually, not physically (e.g., Homer's Iliad, not a particular version or copy of it).
-    
-    ## The term "work" is only loosely defined in TAN. Any text that has enough unity to be referred to in ordinary conversation as a single entity may be identified as a work. A work may be composed of other works, be a part of other works, or even overlap with other works. E.g., the Lord's Prayer, the Gospel of Luke, the Tetravengelion, the New Testament, and the Bible are all valid works, despite the complex relationship between each of them.
-    
-    ## This element takes the IRI + name pattern. For more, see main.xml#conceptual_works
-    element work { defn-pattern-default }
 defn-vers =
     
     ## identifies the version of a work. Applicable to sources that contain multiple versions, e.g., original text and facing translations. Like <work>, <version> points to a conceptual entity, not a physical one.
@@ -581,3 +612,11 @@ defn-vers =
     
     ## For more, see main.xml#conceptual_works
     element version { defn-pattern-default }
+defn-work =
+    
+    ## identifies a creative textual work, understood conceptually, not physically (e.g., Homer's Iliad, not a particular version or copy of it).
+    
+    ## The term "work" is only loosely defined in TAN. Any text that has enough unity to be referred to in ordinary conversation as a single entity may be identified as a work. A work may be composed of other works, be a part of other works, or even overlap with other works. E.g., the Lord's Prayer, the Gospel of Luke, the Tetravengelion, the New Testament, and the Bible are all valid works, despite the complex relationship between each of them.
+    
+    ## This element takes the IRI + name pattern. For more, see main.xml#conceptual_works
+    element work { defn-pattern-default }

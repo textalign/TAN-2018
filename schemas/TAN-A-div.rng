@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<grammar ns="tag:textalign.net,2015:ns" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:local="tag:textalign.net,2015:ns" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+<grammar ns="tag:textalign.net,2015:ns" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:local="tag:textalign.net,2015:ns" xmlns="http://relaxng.org/ns/structure/1.0">
   <include href="incl/TAN-class-2.rng">
     <start>
       <element name="TAN-A-div">
@@ -71,6 +71,9 @@
         <ref name="defn-unit"/>
       </zeroOrMore>
       <zeroOrMore>
+        <ref name="defn-div-type"/>
+      </zeroOrMore>
+      <zeroOrMore>
         <ref name="defn-mode"/>
       </zeroOrMore>
       <zeroOrMore>
@@ -109,31 +112,8 @@
     <element name="verb">
       <a:documentation>contains an IRI + name pattern identifying a property, relationship, action, or something else that is used to say something about something. </a:documentation>
       <a:documentation>The preferred term "verb" is equivalent to RDF "predicate." The latter term is avoided as misleading, since in ordinary usage the term "predicate" implies everything in a sentence that is not the subject.</a:documentation>
-      <optional>
-        <ref name="object-constraint"/>
-      </optional>
-      <ref name="defn-pattern-default"/>
+      <ref name="defn-pattern-constrained"/>
     </element>
-  </define>
-  <define name="object-constraint">
-    <ref name="object-datatype"/>
-    <optional>
-      <ref name="object-lexical-constraint"/>
-    </optional>
-  </define>
-  <define name="object-datatype">
-    <attribute name="object-datatype">
-      <a:documentation>specifies the type of data that the object must take. This attribute is intended to specify that a particular verb governs raw units, not entities definable by the IRI + name pattern. Use this attribute if and only if the verb may not govern objects defined in &lt;definitions&gt;.</a:documentation>
-      <data type="string">
-        <param name="pattern">string|boolean|decimal|float|double|duration|dateTime|time|date|gYearMonth|gYear|gMonthDay|gDay|gMonth|hexBinary|base64Binary|anyURI|QName|normalizedString|token|language|NMTOKEN|NMTOKENS|Name|NCName|ID|IDREF|IDREFS|ENTITY|ENTITIES|integer|nonPositiveInteger|negativeInteger|long|int|short|byte|nonNegativeInteger|unsignedLong|unsignedInt|unsignedShort|unsignedByte|positiveInteger</param>
-      </data>
-    </attribute>
-  </define>
-  <define name="object-lexical-constraint">
-    <attribute name="object-lexical-constraint">
-      <a:documentation>specifies a regular expression that constrains the value of any &lt;object&gt;. </a:documentation>
-      <a:documentation>Note that the regular expression will be strictly followed, e.g., "\d+" will be satisfied by "a1". If you wish to constrain the entire value, be sure to use ^ and $, e.g., "^\d+$". </a:documentation>
-    </attribute>
   </define>
   <define name="defn-unit">
     <element name="unit">

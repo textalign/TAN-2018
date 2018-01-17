@@ -51,14 +51,6 @@
     <a:documentation>Reserved for definitions specific to individual types of class 1 files</a:documentation>
     <empty/>
   </define>
-  <define name="defn-div-type">
-    <element name="div-type">
-      <a:documentation>declares a type of textual division (e.g., title, paragraph, stanza). You may have as many &lt;div-types&gt; as you wish, and they need not all be used.</a:documentation>
-      <a:documentation>For more information, see main.xml#reference_system</a:documentation>
-      <a:documentation>This element takes a reserved keyword or IRI + name pattern. See main.xml#keywords-div-type for suggested values. </a:documentation>
-      <ref name="defn-pattern-id"/>
-    </element>
-  </define>
   <define name="alt-norm">
     <element name="normalization">
       <a:documentation>specifies an alteration made to a source file to bring the transcription into conformity with standards or common expectations. This element is used typically for minor corrections, e.g., suppression of discretionary hyphenation. You should declare every change you have made to the source.</a:documentation>
