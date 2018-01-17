@@ -164,6 +164,9 @@
          <xsl:if test="exists(tan:for-lang) and exists(root(.)/tan:TAN-A-lm/tan:head/tan:source)">
             <xsl:copy-of select="tan:error('tlm01')"/>
          </xsl:if>
+         <xsl:if test="not(exists(tan:for-lang) or exists(root(.)/tan:TAN-A-lm/tan:head/tan:source))">
+            <xsl:copy-of select="tan:error('tlm05')"/>
+         </xsl:if>
          <xsl:apply-templates mode="#current"/>
       </xsl:copy>
    </xsl:template>

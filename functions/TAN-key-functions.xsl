@@ -89,6 +89,9 @@
             </xsl:variable>
             <xsl:copy-of select="tan:error('tky04', (), $this-fix, 'prepend-content')"/>
          </xsl:if>
+         <xsl:if test="not(every $i in $these-affects-elements satisfies $i = 'verb') and (exists(@object-datatype) or exists(@object-lexical-constraint))">
+            <xsl:copy-of select="tan:error('tky05')"/>
+         </xsl:if>
          <xsl:apply-templates mode="#current">
             <xsl:with-param name="reserved-keyword-items" select="$reserved-keyword-items"/>
             <xsl:with-param name="inherited-affects-elements" select="$these-affects-elements"

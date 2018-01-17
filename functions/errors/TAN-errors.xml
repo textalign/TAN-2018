@@ -234,6 +234,7 @@
     <!-- TAN-A-lm ERRORS -->
     <group affects-element="for-lang source">
         <error xml:id="tlm01"><rule>&lt;for-lang> and &lt;source> are mutually exclusive in a TAN-A-lm file.</rule></error>
+        <error xml:id="tlm05"><rule>A TAN-A-lm file must have either &lt;for-lang> or &lt;source></rule></error>
     </group>
     <group affects-element="m">
         <error xml:id="tlm02"><rule>When using a category-based morphology, the number of feature codes in an &lt;m> may not exceed the number of categories.</rule></error>
@@ -253,6 +254,9 @@
     </group>
     <group affects-element="IRI item">
         <error xml:id="tky04"><rule>Every item in a reserved TAN-key must have at least one IRI with a tag URN in the TAN namespace</rule></error>
+    </group>
+    <group affects-element="item" affects-attribute="object-datatype object-lexical-constraint">
+        <error xml:id="tky05"><rule>An item may take @object-datatype and @object-lexical-constraint only if the governing @affects-element is set to 'verb'</rule></error>
     </group>
     
     <!-- TAN-mor ERRORS -->

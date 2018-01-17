@@ -1831,7 +1831,7 @@
                         <xsl:variable name="this-text"
                            select="
                               if ($first-item-to-process/tan:tok) then
-                                 string-join($first-item-to-process/(tan:tok, tan), '')
+                                 string-join($first-item-to-process/(tan:tok, tan:non-tok), '')
                               else
                                  $first-item-to-process/text()"/>
                         <xsl:variable name="this-text-norm"

@@ -610,8 +610,15 @@
                select="$id-idrefs/tan:id-idrefs/tan:id[tan:idrefs/@attribute = $this-attribute-name]/tan:element"/>
             <xsl:variable name="all-possible-valid-entities"
                select="$head//*[name(.) = $should-refer-to-which-element]"/>
+            <xsl:variable name="this-attribute-value"
+               select="
+                  if (string-length(.) lt 1) then
+                     concat($help-trigger, '#')
+                  else
+                     ."
+            />
             <attribute name="{$this-attribute-name}">
-               <xsl:for-each select="tokenize(normalize-space(.), ' ')">
+               <xsl:for-each select="tokenize(normalize-space($this-attribute-value), ' ')">
                   <xsl:variable name="this-val-checked" select="tan:help-extracted(.)"/>
                   <xsl:variable name="this-val" select="$this-val-checked/text()"/>
                   <xsl:variable name="this-val-resolved" as="xs:string*"
