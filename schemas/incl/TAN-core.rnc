@@ -262,7 +262,7 @@ entity-nondigital-ref = (IRI-gen-ref+, metadata-human) | keyword-ref
 
 ## Reference to a nondigital entity that has constraints on its use
 entity-nondigital-with-constraints-ref =
-    (constraints-on-entity, IRI-gen-ref+, metadata-human) | keyword-ref
+    (constraints-on-entity?, IRI-gen-ref+, metadata-human) | keyword-ref
 
 ## Reference to a definition of a token
 entity-tok-def = defn-tok-def, metadata-human

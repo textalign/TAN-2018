@@ -4,7 +4,7 @@
 <TAN-A-lm xmlns="tag:textalign.net,2015:ns" TAN-version="2018" id="tag:parkj@textalign.net,2015:ring01-lm">
     <head>
         <name>Part-of-speech analysis of 1881 version of Ring a Ring o' Roses</name>
-        <master-location href="http://textalign.net/release/TAN-2018/examples/TAN-LM/ring-o-roses.eng.1881.lm.xml"/>
+        <master-location href="http://textalign.net/release/TAN-2018/examples/TAN-A-lm/ring-o-roses.eng.1881.lm.xml"/>
         <license>
             <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
             <name>Creative Commons Attribution 4.0 International License</name>

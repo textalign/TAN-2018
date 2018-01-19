@@ -390,7 +390,9 @@
     <a:documentation>Reference to a nondigital entity that has constraints on its use</a:documentation>
     <choice>
       <group>
-        <ref name="constraints-on-entity"/>
+        <optional>
+          <ref name="constraints-on-entity"/>
+        </optional>
         <oneOrMore>
           <ref name="IRI-gen-ref"/>
         </oneOrMore>

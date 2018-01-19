@@ -8,7 +8,7 @@
     <head>
         <name>Comments and claims on Aristotle's Categories</name>
         <master-location
-            href="http://textalign.net/release/TAN-2018/examples/TAN-A-div/ar.cat.tan-a-div-claims.xml"/>
+            href="http://textalign.net/release/TAN-2018/examples/TAN-A-div/ar.cat.tan-a-div.claims.xml"/>
         <license>
             <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
             <name>Creative Commons Attribution 4.0 International License</name>
