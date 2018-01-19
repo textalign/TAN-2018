@@ -32,7 +32,7 @@
     <!-- The following points to an empty sample TAN-TEI file that serves as the mold into which the input TEI document will be poured -->
 
     <xsl:param name="TAN-TEI-template-url-relative-to-this-stylesheet" as="xs:string?"
-        select="'../configure%20templates/blank-TAN-TEI.xml'"/>
+        select="'../configure%20templates/template-TAN-TEI.xml'"/>
     <xsl:param name="TAN-TEI-template-url-relative-to-input" as="xs:string?"/>
     <xsl:variable name="TAN-TEI-template-url-resolved"
         select="
@@ -65,13 +65,7 @@
     <xsl:variable name="stylesheet-iri"
         select="'tag:textalign.net,2015:stylesheet:convert-tei-to-tan-tei'"/>
     <xsl:variable name="this-stylesheet-uri" select="static-base-uri()"/>
-    <xsl:variable name="change-element" as="element()">
-        <xsl:element name="change" namespace="tag:textalign.net,2015:ns">
-            <xsl:attribute name="who" select="$stylesheet-id"/>
-            <xsl:attribute name="when" select="current-dateTime()"/>
-            <xsl:text>TEI file converted to TAN-TEI.</xsl:text>
-        </xsl:element>
-    </xsl:variable>
+    <xsl:variable name="change-message" as="xs:string">Converted from TAN-TEI to TAN-T.</xsl:variable>
 
     <xsl:variable name="href-regex"
         select="concat('(href=[', $quot, $apos, '])([^', $quot, $apos, ']+)([', $quot, $apos, '])')"/>
