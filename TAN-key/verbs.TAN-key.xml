@@ -185,6 +185,13 @@
                 <desc>The subject replaces the reading at the locus with the words defined by the
                     object.</desc>
             </item>
+            <item group="object-required" object-datatype="string">
+                <IRI>tag:textalign.net,2015:verb:begins-new-div</IRI>
+                <name>moves to a new physical division</name>
+                <name>resumes at</name>
+                <desc>The beginning of the locus coincides with the beginning of a new physical
+                    division in the subject. This verb is comparable to &lt;tei:milestone></desc>
+            </item>
         </group>
         <group type="text-subject claim-object object-required">
             <item>
