@@ -628,7 +628,7 @@
                         else
                            tan:resolve-idref($this-val, $aliases)"/>
                   <xsl:for-each select="$this-val-resolved">
-                     <xsl:variable name="this-val2" select="."/>
+                     <xsl:variable name="this-val2" select="tan:escape(.)"/>
                      <xsl:variable name="entities-pointed-to"
                         select="$all-possible-valid-entities[(@xml:id, @id) = $this-val2]"/>
                      <xsl:element name="{$this-attribute-name}">

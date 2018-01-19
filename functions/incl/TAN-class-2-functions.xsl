@@ -264,7 +264,7 @@
                   if ($is-alter-action) then
                      $this-element/(self::tan:tok/tan:ref, tan:tok/tan:ref, parent::tan:tok/tan:ref)
                   else
-                     $this-element/(tan:ref, tan:range/tan:ref)">
+                     $this-element/(self::tan:tok, parent::tan:tok, tan:range)/tan:ref">
                <xsl:variable name="this-ref-text" select="text()"/>
                <xsl:variable name="that-div"
                   select="
@@ -540,6 +540,8 @@
             <xsl:when test="exists($these-tok-refs)">
                <xsl:copy-of select="$these-tok-refs"/>
             </xsl:when>
+            <!-- But if it's a tan:tok we ignore any div refs -->
+            <xsl:when test="self::tan:tok"/>
             <xsl:otherwise>
                <xsl:copy-of select="$these-div-refs"/>
             </xsl:otherwise>

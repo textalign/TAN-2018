@@ -1315,7 +1315,6 @@
    </xsl:template>
    <xsl:template match="tan:div" mode="dependency-expansion-verbose">
       <xsl:param name="class-2-claims" tunnel="yes"/>
-      <xsl:param name="doc-format" tunnel="yes"/>
       <xsl:variable name="this-ref" select="tan:ref/text()"/>
       <xsl:variable name="is-leaf-div" select="not(exists(tan:div))"/>
       <xsl:variable name="these-div-claims"

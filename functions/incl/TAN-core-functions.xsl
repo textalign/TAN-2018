@@ -277,6 +277,9 @@
    <!-- token definitions -->
    <xsl:variable name="token-definitions-reserved"
       select="$TAN-keywords//tan:token-definition"/>
+   <xsl:variable name="token-definition-letters-only" select="$token-definitions-reserved[../tan:name = 'letters only']"/>
+   <xsl:variable name="token-definition-letters-and-punctuation" select="$token-definitions-reserved[../tan:name = 'letters and punctuation']"/>
+   <xsl:variable name="token-definition-nonspace" select="$token-definitions-reserved[../tan:name = 'nonspace']"/>
    <xsl:variable name="token-definition-default" select="$token-definitions-reserved[1]"/>
 
    <!-- morphologies -->

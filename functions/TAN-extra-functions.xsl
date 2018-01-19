@@ -406,6 +406,23 @@
 
    <!-- Functions: nodes -->
 
+   <xsl:function name="tan:node-type" as="xs:string*">
+      <!-- Input: any XML items -->
+      <!-- Output: the node types of each item -->
+      <xsl:param name="xml-items" as="item()*"/>
+      <xsl:for-each select="$xml-items">
+         <xsl:choose>
+            <xsl:when test=". instance of document-node()">document-node</xsl:when>
+            <xsl:when test=". instance of comment()">comment</xsl:when>
+            <xsl:when test=". instance of processing-instruction()">processing-instruction</xsl:when>
+            <xsl:when test=". instance of element()">element</xsl:when>
+            <xsl:when test=". instance of attribute()">attribute</xsl:when>
+            <xsl:when test=". instance of text()">text</xsl:when>
+            <xsl:otherwise>undefined</xsl:otherwise>
+         </xsl:choose>
+      </xsl:for-each>
+   </xsl:function>
+
    <xsl:function name="tan:group-elements" as="element()*">
       <!-- Input: any elements that should be grouped; parameters specifying minimum size of grouping and the name of a label to prepend -->
       <!-- Output: those elements grouped -->
@@ -437,6 +454,69 @@
    <xsl:template match="* | comment() | processing-instruction()" mode="text-only">
       <xsl:apply-templates mode="#current"/>
    </xsl:template>
+   
+   <xsl:template match="* | processing-instruction() | comment()" mode="prepend-line-break">
+      <!-- Useful for breaking up XML content that is not indented -->
+      <xsl:text>&#xa;</xsl:text>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:apply-templates mode="#current"/>
+      </xsl:copy>
+   </xsl:template>
+   
+   <xsl:function name="tan:element-fingerprint" as="xs:string?">
+      <!-- Input: any element -->
+      <!-- Output: a string representing a value of the element based on the element's name, its namespace, its attributes, and all descendant nodes -->
+      <!-- This function is useful for determining whether two elements are deeply equal, particularly to be used as a key for grouping -->
+      <xsl:param name="element" as="element()?"/>
+      <xsl:variable name="results" as="xs:string*">
+         <xsl:apply-templates select="$element" mode="element-fingerprint"/>
+      </xsl:variable>
+      <xsl:value-of select="string-join($results,'')"/>
+   </xsl:function>
+   <xsl:template match="*" mode="element-fingerprint">
+      <xsl:text>e#</xsl:text>
+      <xsl:value-of select="name()"/>
+      <xsl:text>ns#</xsl:text>
+      <xsl:value-of select="namespace-uri()"/>
+      <xsl:text>aa#</xsl:text>
+      <xsl:for-each select="@*">
+         <xsl:sort select="name()"/>
+         <xsl:text>a#</xsl:text>
+         <xsl:value-of select="name()"/>
+         <xsl:text>#</xsl:text>
+         <xsl:value-of select="normalize-space(.)"/>
+         <xsl:text>#</xsl:text>
+      </xsl:for-each>
+      <xsl:apply-templates select="node()" mode="#current"/>
+   </xsl:template>
+   <!-- We presume (perhaps wrongly) that comments and pi's in an element don't matter -->
+   <xsl:template match="comment() | processing-instruction()" mode="element-fingerprint"/>
+   <xsl:template match="text()" mode="element-fingerprint">
+         <xsl:if test="matches(., '\S')">
+            <xsl:text>t#</xsl:text>
+            <xsl:value-of select="normalize-space(.)"/>
+            <xsl:text>#</xsl:text>
+         </xsl:if>
+   </xsl:template>
+   
+   <xsl:function name="tan:add-attribute" as="element()*">
+      <!-- Input: elements; a string and a value -->
+      <!-- Output: Each element with an attribute given the name of the string and a value of the value -->
+      <xsl:param name="elements-to-change" as="element()*"/>
+      <xsl:param name="attribute-name" as="xs:string?"/>
+      <xsl:param name="attribute-value" as="item()?"/>
+      <xsl:for-each select="$elements-to-change">
+         <xsl:copy>
+            <xsl:copy-of select="@*"/>
+            <xsl:attribute name="{$attribute-name}">
+               <xsl:value-of select="$attribute-value"/>
+            </xsl:attribute>
+            <xsl:copy-of select="node()"/>
+         </xsl:copy>
+      </xsl:for-each>
+   </xsl:function>
+   
 
    <!-- Functions: sequences-->
 
