@@ -277,7 +277,8 @@
       <xsl:variable name="this-doc-id" select="root(.)/*/@id"/>
       <xsl:variable name="this-pos" select="count(preceding-sibling::*[name(.) = $this-name]) + 1"/>
       <xsl:variable name="this-class" select="tan:class-number(.)"/>
-      <xsl:variable name="this-relationship-IRIs" select="tan:relationship/tan:IRI"/>
+      <xsl:variable name="this-relationship-idrefs" select="tan:relationship"/>
+      <xsl:variable name="this-relationship-IRIs" select="../tan:definitions/tan:relationship[@xml:id = $this-relationship-idrefs]/tan:IRI"/>
       <xsl:variable name="this-TAN-reserved-relationships"
          select="
             if (exists($this-relationship-IRIs)) then

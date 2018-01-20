@@ -1834,6 +1834,7 @@
       <xsl:param name="TAN-elements" as="element()*"/>
       <xsl:for-each select="$TAN-elements">
          <xsl:variable name="is-master-location" select="exists(self::tan:master-location)"/>
+         <xsl:variable name="is-see-also" select="exists(self::tan:see-also)"/>
          <xsl:variable name="this-element" select="."/>
          <xsl:variable name="this-class" select="tan:class-number(.)"/>
          <xsl:variable name="first-la" select="tan:first-loc-available(.)"/>
@@ -1896,7 +1897,7 @@
             <xsl:otherwise>
                <xsl:variable name="this-doc" select="doc($first-la)"/>
                <xsl:choose>
-                  <xsl:when test="($this-doc/*/@id = $this-id) and not($is-master-location)">
+                  <xsl:when test="($this-doc/*/@id = $this-id) and not($is-master-location or $is-see-also)">
                      <xsl:document>
                         <xsl:copy-of select="tan:error('tan16')"/>
                      </xsl:document>
