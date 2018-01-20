@@ -23,12 +23,12 @@
       </legalnotice>
       <revhistory>
          <info>
-            <releaseinfo>Latest version: <link
+            <releaseinfo>Latest stable version: <link
                   xlink:href="http://textalign.net/release/TAN-2018/guidelines/"
                   >http://textalign.net/release/TAN-2018/guidelines/</link>.</releaseinfo>
          </info>
          <revision>
-            <revnumber>2018</revnumber>
+            <revnumber>dev</revnumber>
             <date>2018-01-09</date>
             <revdescription>
                <para>Formats: <link
@@ -38,6 +38,10 @@
                      >PDF</link> • <link
                      xlink:href="http://textalign.net/release/TAN-2018/guidelines/main.xml"
                      >Docbook</link> (master)</para>
+               <warning>
+                  <para>These guidelines describe the development version of TAN, which is unstable.
+                     See above for the latest stable version.</para>
+               </warning>
                <warning>
                   <para>In case of contradictions, apparent or not, between these guidelines and the
                      core TAN files, priority should be given to the RELAX-NG schemas (compact
@@ -51,6 +55,38 @@
       <title>General Overview</title>
       <chapter>
          <title>Introduction</title>
+         <section xml:id="this_version">
+            <title>About this version</title>
+            <para>These guidelines were written for the development version of the TAN format. This
+               version is unstable.</para>
+            <section>
+               <title>Changes made since last stable version</title>
+               <para>The following changes have been made since the last stable version, and are not
+                  documented in these development guidelines. See the git log for a more
+                  comprehensive list of changes.</para>
+               <para>TAN-A-lm:<itemizedlist>
+                  <listitem>
+                     <para>New errors introduced: tlm05</para>
+                  </listitem>
+               </itemizedlist></para>
+               <para>TAN-A-key:<itemizedlist>
+                  <listitem>
+                     <para>New errors introduced: tky05</para>
+                  </listitem>
+               </itemizedlist></para>
+               <para>Extra functions:<itemizedlist>
+                  <listitem>
+                     <para>tan:node-type()</para></listitem><listitem>
+                     <para>template text-only</para></listitem>
+                  <listitem>
+                     <para>tan:element-fingerprint()</para>
+                  </listitem>
+                  <listitem>
+                     <para>tan:add-attribute()</para>
+                  </listitem>
+               </itemizedlist></para>
+            </section>
+         </section>
          <section xml:id="tan_definition">
             <title>Definition and purpose </title>
             <para>The Text Alignment Network (TAN) is a suite of highly regulated XML formats
@@ -189,13 +225,6 @@
                         numerous or enormous files.</para>
                   </listitem>
                </itemizedlist></para>
-         </section>
-         <section>
-            <title>About this version</title>
-            <para>These guidelines were written for version 2018 of the TAN format. This version is
-               semi-stable. Changes will be made quite reluctantly to the RELAX-NG schema files.
-               Other files may be changed, the most work will be going into the next version of
-               TAN.</para>
          </section>
          <section xml:id="tan_participation">
             <title>Participation</title>
