@@ -12,7 +12,7 @@
    <xsl:include href="xslt-for-docx/open-and-save-docx.xsl"/>
 
    <!--<xsl:output indent="no"/>-->
-   <xsl:output indent="yes"/>
+   <xsl:output indent="yes" use-character-maps="tan"/>
 
    <!-- This stylesheet is written primarily to help files of one type be converted to another. -->
    <!-- In normal use, a master stylesheet would import this one, re-defining (if need be) any parameters below, and detailing the stages that should take place at each level of transformation -->
@@ -43,7 +43,8 @@
 
    <!-- Main parameter: Input -->
    <xsl:param name="input-items" as="item()*" select="$self-expanded"/>
-   <xsl:variable name="input-base-uri" select="(tan:base-uri($input-items[1]), static-base-uri())[1]"/>
+   <xsl:param name="input-base-uri" select="(tan:base-uri($input-items[1]), static-base-uri())[1]"/>
+   
 
 
 
@@ -66,7 +67,7 @@
             <xsl:copy-of select="tan:open-docx($template-url-resolved)"/>
          </xsl:when>
          <xsl:when test="doc-available($template-url-resolved)">
-            <xsl:copy-of select="doc($template-url-resolved)"/>
+            <xsl:sequence select="doc($template-url-resolved)"/>
          </xsl:when>
          <xsl:when test="unparsed-text-available($template-url-resolved)">
             <xsl:document>
