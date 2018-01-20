@@ -131,6 +131,18 @@
                 <desc>Text divisions whose termination forces the next text division to start a new
                     page</desc>
             </item>
+            <item>
+                <IRI>tag:textalign.net,2015:group-type:div:semantic</IRI>
+                <name>semantic</name>
+                <desc>Text division is based on semantics, e.g., sentence, paragraph. Contrasts with
+                    physical divisions.</desc>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:group-type:div:physical</IRI>
+                <name>physical</name>
+                <desc>Text division is based on a physical feature in the scriptum, e.g., page,
+                    column, line. Contrasts with semantic divisions.</desc>
+            </item>
         </group>
         <group type="n">
             <item>
