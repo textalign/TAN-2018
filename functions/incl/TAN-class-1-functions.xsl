@@ -1548,14 +1548,23 @@
    <!-- INFUSION -->
 
    <xsl:function name="tan:div-to-div-transfer" as="item()*">
-      <!-- Input: (1) any set of divs with content to be transferred into the structure of (2) another set of divs. -->
-      <!-- Output: The div structure of (2), infused with the content of (1). The content is allocated  proportionately, with preference given to punctuation, within a certain range, and then word breaks. -->
-      <!-- This function is useful for converting class-1 documents from one reference system to another. Normally the conversion is flawed, because two versions of the same work rarely synchronize, but this function provides a good estimate, or a starting point for manual correction. -->
+      <!-- Two-parameter version of the fuller one, below -->
       <xsl:param name="items-with-div-content-to-be-transferred" as="item()*"/>
       <xsl:param name="items-whose-divs-should-be-infused-with-new-content" as="item()*"/>
+      <xsl:copy-of
+         select="tan:div-to-div-transfer($items-with-div-content-to-be-transferred, $items-whose-divs-should-be-infused-with-new-content, '\s+')"/>
+   </xsl:function>
+   <xsl:function name="tan:div-to-div-transfer" as="item()*">
+      <!-- Input: (1) any set of divs with content to be transferred into the structure of (2) another set of divs; and (3) a snap marker. -->
+      <!-- Output: The div structure of (2), infused with the content of (1). The content is allocated  proportionately, with preference given to punctuation, within a certain range, and then word breaks. -->
+      <!-- This function is useful for converting class-1 documents from one reference system to another. Normally the conversion is flawed, because two versions of the same work rarely synchronize, but this function provides a good estimate, or a starting point for manual correction. -->
+      <!-- The raw text will be tokenized based on the third parameter, so that words, clauses, or sentences are not broken up. -->
+      <xsl:param name="items-with-div-content-to-be-transferred" as="item()*"/>
+      <xsl:param name="items-whose-divs-should-be-infused-with-new-content" as="item()*"/>
+      <xsl:param name="break-at-regex" as="xs:string"/>
       <xsl:variable name="content" select="tan:text-join($items-with-div-content-to-be-transferred)"/>
       <xsl:copy-of
-         select="tan:infuse-divs($content, $items-whose-divs-should-be-infused-with-new-content)"/>
+         select="tan:infuse-divs($content, $items-whose-divs-should-be-infused-with-new-content, $break-at-regex)"/>
    </xsl:function>
 
    <xsl:function name="tan:infuse-divs" as="item()*">
@@ -1563,6 +1572,29 @@
       <!-- Output: the latter, infused with the former, following infusing text proportionate to the relative quantities of text being replaced -->
       <xsl:param name="new-content-to-be-transferred" as="xs:string?"/>
       <xsl:param name="items-whose-divs-should-be-infused-with-new-content" as="item()*"/>
+      <xsl:param name="break-at-regex" as="xs:string"/>
+      <xsl:variable name="snap-marker"
+         select="
+            if (string-length($break-at-regex) lt 1) then
+               '\s+'
+            else
+               $break-at-regex"
+      />
+      <xsl:variable name="new-content-analyzed" as="element()*">
+         <xsl:analyze-string select="$new-content-to-be-transferred" regex="{$snap-marker}">
+            <xsl:matching-substring>
+               <br><xsl:value-of select="."/></br>
+            </xsl:matching-substring>
+            <xsl:non-matching-substring>
+               <nbr><xsl:value-of select="."/></nbr>
+            </xsl:non-matching-substring>
+         </xsl:analyze-string>
+      </xsl:variable>
+      <xsl:variable name="new-content-tokenized" as="xs:string*">
+         <xsl:for-each-group select="$new-content-analyzed" group-ending-with="tan:br">
+            <xsl:value-of select="string-join(current-group(), '')"/>
+         </xsl:for-each-group> 
+      </xsl:variable>
       <xsl:variable name="attribute-names"
          select="
             for $i in $items-whose-divs-should-be-infused-with-new-content//@*
@@ -1583,8 +1615,9 @@
       </xsl:variable>
       <xsl:variable name="mold-infused" as="element()">
          <xsl:apply-templates select="$mold" mode="infuse-tokenized-text">
-            <xsl:with-param name="raw-content-tokenized"
-               select="tokenize($new-content-to-be-transferred, ' ')" tunnel="yes"/>
+            <xsl:with-param name="raw-content-tokenized" select="$new-content-tokenized"
+               tunnel="yes"/>
+            <xsl:with-param name="token-count-plus-1" select="count($new-content-tokenized) + 1" tunnel="yes"/>
             <xsl:with-param name="total-length"
                select="sum(($mold//*:div)[last()]/(@string-length, @string-pos))" tunnel="yes"/>
          </xsl:apply-templates>
@@ -1596,16 +1629,29 @@
 
    <xsl:template match="*:div[not(*:div)]" mode="infuse-tokenized-text">
       <xsl:param name="raw-content-tokenized" as="xs:string*" tunnel="yes"/>
+      <xsl:param name="token-count-plus-1" tunnel="yes" as="xs:integer"/>
       <xsl:param name="total-length" as="xs:double" tunnel="yes"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:variable name="this-first" as="xs:double?"
-            select="ceiling(@string-pos div $total-length * count($raw-content-tokenized))"/>
+            select="ceiling(@string-pos div $total-length * $token-count-plus-1)"/>
          <xsl:variable name="next-first" as="xs:double?"
-            select="ceiling((@string-pos + @string-length) div $total-length * count($raw-content-tokenized))"/>
+            select="ceiling((@string-pos + @string-length) div $total-length * $token-count-plus-1)"/>
          <xsl:variable name="text-sequence"
             select="subsequence($raw-content-tokenized, $this-first, ($next-first - $this-first))"/>
-         <xsl:copy-of select="string-join($text-sequence, ' ')"/>
+         <!--<test20a><xsl:copy-of select="$this-first"/></test20a>
+         <test20b><xsl:copy-of select="$next-first"/></test20b>
+         <xsl:text>&#xa;                </xsl:text>
+         <test32a><xsl:value-of select="(@string-pos + @string-length) div $total-length"/></test32a>
+         <test32b><xsl:value-of select="(@string-pos + @string-length) div $total-length * count($raw-content-tokenized)"/></test32b>
+         <xsl:text>&#xa;                </xsl:text>
+         <test20c><xsl:value-of select="@string-pos"/></test20c>
+         <test20d><xsl:value-of select="@string-length"/></test20d>
+         <xsl:text>&#xa;                </xsl:text>
+         <test20e><xsl:value-of select="$total-length"/></test20e>
+         <test20f><xsl:value-of select="count($raw-content-tokenized)"/></test20f>
+         <xsl:text>&#xa;                </xsl:text>-->
+         <xsl:copy-of select="string-join($text-sequence, '')"/>
       </xsl:copy>
    </xsl:template>
    <xsl:template match="tan:div" mode="infuse-tokenized-div">
