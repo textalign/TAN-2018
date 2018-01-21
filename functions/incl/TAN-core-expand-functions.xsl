@@ -794,8 +794,12 @@
    </xsl:template>
 
    <xsl:template match="/*" mode="core-expansion-terse" priority="-2">
+      <xsl:variable name="this-last-change-agent" select="tan:last-change-agent(root())"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
+         <xsl:if test="exists($this-last-change-agent/self::tan:algorithm)">
+            <xsl:copy-of select="tan:error('wrn07','The last change was made by an algorithm.')"/>
+         </xsl:if>
          <expansion>terse</expansion>
          <xsl:if test="@TAN-version = $previous-TAN-versions">
             <xsl:variable name="prev-version-uri" select="'../../do%20things/convert/convert%20TAN%202017%20to%20TAN%202018.xsl'"/>
@@ -1011,8 +1015,6 @@
       <xsl:variable name="this-name-common" select="tan:normalize-text($this-name, true())"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
-         <!--<test1><xsl:copy-of select="$is-reserved"/></test1>-->
-         <!--<test2><xsl:copy-of select="$reserved-keyword-items"/></test2>-->
          <xsl:if
             test="($reserved-keyword-items/tan:name = ($this-name, $this-name-common)) and ($is-reserved = false())">
             <xsl:copy-of select="tan:error('tky01')"/>
@@ -1025,7 +1027,6 @@
             <xsl:copy-of select="@*"/>
             <!-- we add @common, to distinguish it from the master, for error checking -->
             <xsl:attribute name="common"/>
-            <!--<xsl:copy-of select="*"/>-->
             <xsl:value-of select="$this-name-common"/>
          </xsl:copy>
       </xsl:if>

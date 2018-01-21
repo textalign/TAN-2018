@@ -64,6 +64,14 @@
                <para>The following changes have been made since the last stable version, and are not
                   documented in these development guidelines. See the git log for a more
                   comprehensive list of changes.</para>
+               <para>General:<itemizedlist>
+                  <listitem>
+                     <para>New errors introduced: wrn07</para>
+                  </listitem>
+                  <listitem>
+                     <para>New functions: tan:last-change-agent()</para>
+                  </listitem>
+               </itemizedlist></para>
                <para>TAN-A-lm:<itemizedlist>
                   <listitem>
                      <para>New errors introduced: tlm05</para>

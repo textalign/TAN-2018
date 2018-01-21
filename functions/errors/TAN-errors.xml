@@ -10,6 +10,7 @@
         <error-id>wrn04</error-id>
         <error-id>rea03</error-id>
         <error-id>ref02</error-id>
+        <error-id>cl102</error-id>
     </squelch>
     <squelch phase="normal">
         <error-id>ref02</error-id>
@@ -19,6 +20,7 @@
     <group affects-element="TAN-T TEI TAN-A-div TAN-A-tok TAN-A-lm TAN-key TAN-mor">
         <warning xml:id="wrn04"><rule>Users should be warned about versions of TAN that are under development.</rule><message>This version of TAN is under development, and is subject to change. Participants in developing the TAN schemas, functions, and guidelines are welcome. See http://textalign.net for details.</message></warning>
         <warning xml:id="wrn06"><rule>Users should be warned about versions of TAN that are semi-stable.</rule><message>This version of TAN is semi-stable. RELAX-NG schemas will be changed only to correct egregious errors. Other files might be edited, but most efforts on improvement will be spent on future versions.</message></warning>
+        <warning xml:id="wrn07"><rule>Users should be warned about TAN files whose last change was made by an algorithm.</rule></warning>
     </group>
     <group affects-attribute="TAN-version">
         <error xml:id="tan20"><rule>Files that point to older versions of TAN rules will be pointed to conversion stylesheets.</rule></error>
@@ -56,9 +58,6 @@
     <group affects-attribute="regex matches-m matches-tok val">
         <error xml:id="tan07"><rule>Attributes that take a regular expression must use escape sequences recognized by XML schema or TAN escape extensions (\u{}). See http://www.w3.org/TR/xmlschema-2/#regexs</rule></error>
     </group>
-    <!--<group affects-attribute="n ref">
-        <error xml:id="tan12"><rule>No single set of references may mix Roman numerals, alphabetic numerals, and numerals that are ambiguously either.</rule></error>
-    </group>-->
     <group affects-attribute="idrefs" affects-element="alias">
         <error xml:id="tan13"><rule>An &lt;alias> may not mix idrefs from different elements.</rule></error>
         <error xml:id="tan14"><rule>&lt;alias> references must not be circular.</rule></error>

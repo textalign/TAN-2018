@@ -143,10 +143,14 @@
                tan:div-type = $these-div-types/@xml:id
             else
                true()]"/>
+      <xsl:variable name="this-last-change-agent" select="tan:last-change-agent(root())"/>
       <TAN-T>
          <xsl:copy-of select="@*"/>
          <xsl:if test="exists($this-work-group)">
             <xsl:attribute name="work" select="$this-work-group/@n"/>
+         </xsl:if>
+         <xsl:if test="exists($this-last-change-agent/self::tan:algorithm)">
+            <xsl:copy-of select="tan:error('wrn07','The last change was made by an algorithm.')"/>
          </xsl:if>
          <expansion>terse</expansion>
          <xsl:variable name="these-skips"

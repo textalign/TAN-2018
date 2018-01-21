@@ -1608,6 +1608,25 @@
          </history>
       </xsl:for-each>
    </xsl:function>
+   
+   <xsl:function name="tan:last-change-agent" as="element()*">
+      <!-- Input: any TAN document -->
+      <!-- Output: the <person>, <organization>, or <algorithm> who made the last change -->
+      <xsl:param name="TAN-doc" as="document-node()*"/>
+      <xsl:for-each select="$TAN-doc">
+         <xsl:variable name="change-log-sorted" as="element()*">
+            <xsl:for-each select="root()/*/tan:head/tan:change">
+               <xsl:sort select="tan:dateTime-to-decimal(@when)" order="descending"/>
+               <xsl:copy-of select="."/>
+            </xsl:for-each>
+         </xsl:variable>
+         <xsl:variable name="last-change-agent-idref"
+            select="tokenize($change-log-sorted[1]/@who, '\s+')"/>
+         <xsl:copy-of
+            select="root()/*/tan:head/tan:definitions/*[@xml:id = $last-change-agent-idref]"/>
+      </xsl:for-each>
+
+   </xsl:function>
 
    <xsl:function name="tan:conditions-hold" as="xs:boolean?">
       <!-- 2-param version of the master one, below -->
