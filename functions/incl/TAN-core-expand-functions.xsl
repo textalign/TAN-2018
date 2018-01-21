@@ -323,6 +323,7 @@
          select="$target-1st-da-resolved/*/tan:head/tan:see-also[tan:definition(tan:relationship) = 'new version']"/>
       <xsl:variable name="target-hist" select="tan:get-doc-hist($target-1st-da-resolved)"/>
       <xsl:variable name="target-id" select="$target-1st-da-resolved/*/@id"/>
+      <xsl:variable name="target-last-change-agent" select="tan:last-change-agent($target-1st-da-resolved)"/>
       <!-- We change TEI to TAN-T, just so that TEI and TAN-T files can be treated as copies of each other -->
       <xsl:variable name="prov-root-name" select="replace(name(root(.)/*), '^TEI$', 'TAN-T')"/>
       <xsl:variable name="target-accessed"
@@ -457,6 +458,9 @@
          </xsl:if>
          <xsl:if test="self::tan:source and $target-is-faulty = true() and $this-class = 2">
             <xsl:copy-of select="tan:error('cl201')"/>
+         </xsl:if>
+         <xsl:if test="exists($target-last-change-agent/self::tan:algorithm)">
+            <xsl:copy-of select="tan:error('wrn07','The last change in the dependency was made by an algorithm.')"/>
          </xsl:if>
          <xsl:apply-templates mode="#current">
             <xsl:with-param name="target-id" select="$target-id"/>

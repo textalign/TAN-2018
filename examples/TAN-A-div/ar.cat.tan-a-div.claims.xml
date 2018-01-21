@@ -137,7 +137,7 @@
 
             <verb xml:id="omits" which="omits"/>
             <verb xml:id="agrees" which="agrees"/>
-            <verb xml:id="replaces" which="replaces" object-datatype="string"/>
+            <verb xml:id="replaces" which="replaces"/>
             <verb xml:id="quotes" which="quotes"/>
             <verb which="refers or alludes to" xml:id="refers-to"/>
 
