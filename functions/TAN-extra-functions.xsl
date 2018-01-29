@@ -61,6 +61,10 @@
       as="xs:string?"/>
    <xsl:param name="searches-suppress-what-text" as="xs:string?" select="'[\p{M}]'"/>
 
+   <!-- regular expressions to detect the end of sentences, clauses, and words -->
+   <xsl:param name="sentence-end-regex" select="'[\.\?!]+\p{P}*\s*'"/>
+   <xsl:param name="clause-end-regex" select="'\w\p{P}+\s*'"/>
+   <xsl:param name="word-end-regex" select="'\s+'"/>
 
    <!-- Functions: numerics -->
 
@@ -383,6 +387,20 @@
          <xsl:value-of select="concat('^', $pass2, '$')"/>
       </xsl:for-each>
    </xsl:function>
+   
+   <xsl:function name="tan:unique-char" as="xs:string?">
+      <!-- Input: any sequence of strings -->
+      <!-- Output: a single character that is not to be found in those strings -->
+      <!-- This function was written to help join and make strings that are contextually unique -->
+      <xsl:param name="context-strings" as="xs:string*"/>
+      <xsl:variable name="codepoints-used" as="xs:integer*"
+         select="
+            for $i in ($context-strings)
+            return
+               string-to-codepoints($i)"
+      />
+      <xsl:copy-of select="codepoints-to-string(max($codepoints-used) + 1)"/>      
+   </xsl:function>
 
 
    <!-- Functions: booleans -->
@@ -517,6 +535,107 @@
       </xsl:for-each>
    </xsl:function>
    
+   <xsl:function name="tan:tree-to-sequence" as="item()*">
+      <!-- Input: any XML fragment -->
+      <!-- Output: a sequence of XML nodes representing the original fragment. Each element is given a new @level specifying the level of hierarchy the element had in the original. -->
+      <xsl:param name="xml-fragment" as="item()*"/>
+      <xsl:apply-templates select="$xml-fragment" mode="tree-to-sequence">
+         <xsl:with-param name="current-level" select="1"/>
+      </xsl:apply-templates>
+   </xsl:function>
+   <xsl:template match="*" mode="tree-to-sequence">
+      <xsl:param name="current-level"/>
+      <xsl:variable name="next-text-sibling" select="following-sibling::node()[1]/self::text()"/>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:attribute name="level" select="$current-level"/>
+         <xsl:attribute name="next-sibling-text-length" select="string-length($next-text-sibling)"/>
+      </xsl:copy>
+      <xsl:apply-templates mode="#current">
+         <xsl:with-param name="current-level" select="$current-level + 1"/>
+      </xsl:apply-templates>
+   </xsl:template>
+   
+   <xsl:function name="tan:sequence-to-tree" as="item()*">
+      <!-- Input: a result of tan:tree-to-sequence() -->
+      <!-- Output: the original tree -->
+      <xsl:param name="sequence-to-reconstruct" as="item()*"/>
+      <xsl:variable name="sequence-prepped" as="element()">
+         <tree>
+            <xsl:copy-of select="$sequence-to-reconstruct"/>
+         </tree>
+      </xsl:variable>
+      <xsl:variable name="results" as="element()">
+         <xsl:apply-templates select="$sequence-prepped" mode="sequence-to-tree">
+            <xsl:with-param name="level-so-far" select="0"/>
+         </xsl:apply-templates>
+      </xsl:variable>
+      <xsl:copy-of select="$results/node()"/>
+   </xsl:function>
+   <xsl:template match="*" mode="sequence-to-tree">
+      <xsl:param name="level-so-far" as="xs:integer"/>
+      <xsl:variable name="this-element" select="."/>
+      <xsl:variable name="level-to-process" select="$level-so-far + 1"/>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:for-each-group select="node()" group-starting-with="*[@level = $level-to-process]">
+            <xsl:variable name="this-head" select="current-group()[1]"/>
+            <xsl:variable name="this-tail-text"
+               select="
+                  if (count(current-group()) gt 1) then
+                     current-group()[last()]/self::text()
+                  else
+                     ()"
+            />
+            <xsl:variable name="this-next-sibling-text-memo" select="$this-head/@next-sibling-text-length"/>
+            <xsl:variable name="this-sibling-length"
+               select="(xs:integer($this-head/@next-sibling-text-length), 0)[1]"/>
+            <xsl:variable name="this-tail-length"
+               select="
+                  if ($this-tail-text instance of text()) then
+                     string-length($this-tail-text)
+                  else
+                     ()"
+            />
+            <xsl:variable name="this-tail-section-to-be-child"
+               select="
+                  if ($this-tail-text instance of text()) then
+                     substring($this-tail-text, 1, ($this-tail-length - $this-sibling-length))
+                  else
+                     ()"
+            />
+            <xsl:variable name="this-tail-section-to-be-sibling"
+               select="
+                  if ($this-tail-text instance of text()) then
+                     substring($this-tail-text, ($this-tail-length - $this-sibling-length) + 1)
+                  else
+                     ()"
+            />
+            <xsl:variable name="the-rest" select="current-group() except ($this-head, $this-tail-text)"/>
+            <xsl:variable name="new-group" as="item()*">
+               <xsl:if test="$this-head/@level = $level-to-process">
+                  <xsl:element name="{name($this-head)}" namespace="{namespace-uri($this-head)}">
+                     <xsl:copy-of select="$this-head/(@* except (@level, @next-sibling-text-length))"/>
+                     <xsl:copy-of select="$the-rest"/>
+                     <xsl:copy-of select="$this-tail-section-to-be-child"/>
+                  </xsl:element>
+                  <xsl:value-of select="$this-tail-section-to-be-sibling"/>
+               </xsl:if>
+            </xsl:variable>
+            <xsl:choose>
+               <xsl:when test="not(exists($new-group))">
+                  <xsl:copy-of select="current-group()"/>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:apply-templates select="$new-group" mode="#current">
+                     <xsl:with-param name="level-so-far" select="$level-to-process"/>
+                  </xsl:apply-templates>
+               </xsl:otherwise>
+            </xsl:choose>
+         </xsl:for-each-group>
+      </xsl:copy>
+   </xsl:template>
+   
 
    <!-- Functions: sequences-->
 
@@ -532,6 +651,38 @@
          </xsl:if>
       </xsl:for-each-group>
    </xsl:function>
+   
+   
+   <xsl:function name="tan:collate-sequences"> <!--  as="xs:string*" -->
+      <!-- Input: two sequences of strings -->
+      <!-- Output: a collation of the two strings, preserving their order -->
+      <xsl:param name="string-sequence-1" as="xs:string*"/>
+      <xsl:param name="string-sequence-2" as="xs:string*"/>
+      <xsl:variable name="this-delimiter" select="tan:unique-char(($string-sequence-1, $string-sequence-2))"/>
+      <xsl:variable name="string-1" select="string-join($string-sequence-1, $this-delimiter)"/>
+      <xsl:variable name="string-2" select="string-join($string-sequence-2, $this-delimiter)"/>
+      <xsl:variable name="string-diff" select="tan:diff($string-1, $string-2, false())"/>
+      <xsl:variable name="results-without-delimiter" as="element()*">
+         <xsl:apply-templates select="$string-diff/*" mode="collate-sequence">
+            <xsl:with-param name="delimiter" select="$this-delimiter"/>
+         </xsl:apply-templates>
+      </xsl:variable>
+      <xsl:copy-of select="$results-without-delimiter"/>
+      <!--<xsl:for-each-group select="$results-without-delimiter" group-adjacent="text()">
+         <xsl:value-of select="current-grouping-key()"/>
+      </xsl:for-each-group>--> 
+   </xsl:function>
+   <xsl:template match="*[text()]" mode="collate-sequence">
+      <xsl:param name="delimiter" as="xs:string"/>
+      <xsl:variable name="this-name" select="name()"/>
+      <xsl:analyze-string select="." regex="{tan:escape($delimiter)}">
+         <xsl:non-matching-substring>
+            <xsl:element name="{$this-name}">
+               <xsl:value-of select="."/>
+            </xsl:element>
+         </xsl:non-matching-substring>
+      </xsl:analyze-string>
+   </xsl:template>
 
 
    <!-- Functions: accessors and manipulation of uris -->
