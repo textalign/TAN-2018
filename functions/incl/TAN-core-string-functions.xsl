@@ -83,6 +83,32 @@
             </xsl:analyze-string>
         </xsl:if>
     </xsl:function>
+    <xsl:function name="tan:chop-string" as="xs:string*">
+        <!-- Input: any string, a regular expression -->
+        <!-- Output: the input string broken into strings using the regular expression as a signal that a new item should be started -->
+        <!-- This function is useful for conserving a string but dividing it into words, clauses, sentences, etc. -->
+        <xsl:param name="input" as="xs:string?"/>
+        <xsl:param name="chop-after-regex" as="xs:string"/>
+        <xsl:if test="string-length($input) gt 0">
+            <xsl:variable name="input-analyzed" as="element()*">
+                <xsl:analyze-string select="$input" regex="{$chop-after-regex}">
+                    <xsl:matching-substring>
+                        <br>
+                            <xsl:value-of select="."/>
+                        </br>
+                    </xsl:matching-substring>
+                    <xsl:non-matching-substring>
+                        <nbr>
+                            <xsl:value-of select="."/>
+                        </nbr>
+                    </xsl:non-matching-substring>
+                </xsl:analyze-string>
+            </xsl:variable>
+            <xsl:for-each-group select="$input-analyzed" group-ending-with="tan:br">
+                <xsl:value-of select="string-join(current-group(), '')"/>
+            </xsl:for-each-group>
+        </xsl:if>
+    </xsl:function>
     
     <xsl:function name="tan:tokenize-text" as="element()*">
         <!-- one-parameter version of the function below -->
@@ -157,7 +183,7 @@
     <xsl:function name="tan:diff" as="element()">
         <!-- Input: any two strings; boolean indicating whether results should snap to nearest word -->
         <!-- Output: an element with <a>, <b>, and <common> children showing where strings a and b match and depart -->
-        <!-- This function was written after tan:diff, intended to be a cruder and faster way to check two strings against each other, suitable for validation without hanging due to nested recursion objections. -->
+        <!-- This function was written to be a rough, fast way to check two strings against each other, suitable for validation while avoiding too much nested recursion. -->
         <xsl:param name="string-a" as="xs:string?"/>
         <xsl:param name="string-b" as="xs:string?"/>
         <xsl:param name="snap-to-word" as="xs:boolean"/>
@@ -927,5 +953,4 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
-
 </xsl:stylesheet>
