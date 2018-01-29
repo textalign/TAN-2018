@@ -22,11 +22,6 @@
    <xsl:variable name="special-end-div-chars-regex"
       select="concat('[', string-join($special-end-div-chars, ''), ']$')" as="xs:string"/>
 
-   <!--<xsl:function name="tan:text-join" as="xs:string">
-      <!-\- one-parameter version of main one, below -\->
-      <xsl:param name="items" as="item()*"/>
-      <xsl:copy-of select="tan:text-join($items, true())"/>
-   </xsl:function>-->
    <xsl:function name="tan:text-join" as="xs:string?">
       <!-- Input: any document fragment of a TAN class 1 body, whether raw, resolved, or expanded  -->
       <!-- Output: a single string that joins and normalizes the leaf div text according to TAN rules: -->
@@ -42,7 +37,7 @@
       <xsl:apply-templates select="*" mode="text-join"/>
    </xsl:template>
    <xsl:template match="*:div[not(*:div)]" mode="text-join">
-      <xsl:variable name="text-nodes" select="text()[matches(.,'\S')]"/>
+      <xsl:variable name="text-nodes" select="text()[matches(., '\S')]"/>
       <xsl:variable name="string-val" as="xs:string?">
          <xsl:choose>
             <xsl:when test="exists(tan:tok)">
@@ -90,8 +85,7 @@
          <xsl:with-param name="token-definitions" select="$token-definitions" tunnel="yes"/>
       </xsl:apply-templates>
    </xsl:function>
-   <xsl:template match="tan:div[not((tan:div, tan:tok))]/text()"
-      mode="tokenize-div">
+   <xsl:template match="tan:div[not((tan:div, tan:tok))]/text()" mode="tokenize-div">
       <xsl:param name="token-definition" as="element()?" tunnel="yes"/>
       <xsl:copy-of select="tan:tokenize-text(., $token-definition, true())/*"/>
    </xsl:template>
@@ -124,9 +118,8 @@
       mode="core-resolution-arabic-numerals core-expansion-terse-attributes">
       <xsl:copy-of select="."/>
    </xsl:template>
-   
-   <xsl:template match="tan:TAN-T | tei:TEI"
-      mode="core-expansion-terse dependency-expansion-terse">
+
+   <xsl:template match="tan:TAN-T | tei:TEI" mode="core-expansion-terse dependency-expansion-terse">
       <!-- Homogenize tei:TEI to tan:TAN-T -->
       <xsl:param name="class-2-doc" tunnel="yes" as="document-node()?"/>
       <!--<xsl:param name="definitions" tunnel="yes" as="element()*"/>-->
@@ -150,7 +143,7 @@
             <xsl:attribute name="work" select="$this-work-group/@n"/>
          </xsl:if>
          <xsl:if test="exists($this-last-change-agent/self::tan:algorithm)">
-            <xsl:copy-of select="tan:error('wrn07','The last change was made by an algorithm.')"/>
+            <xsl:copy-of select="tan:error('wrn07', 'The last change was made by an algorithm.')"/>
          </xsl:if>
          <expansion>terse</expansion>
          <xsl:variable name="these-skips"
@@ -221,7 +214,7 @@
                </xsl:when>
                <xsl:otherwise>
                   <!-- joining must happen first, in case there are comments breaking up the text -->
-                  <xsl:value-of select="normalize-space(string-join(text(),''))"/>
+                  <xsl:value-of select="normalize-space(string-join(text(), ''))"/>
                </xsl:otherwise>
             </xsl:choose>
          </xsl:if>
@@ -1029,7 +1022,8 @@
             else
                tan:resolve-doc(tan:get-1st-doc($see-also-model))"
          as="document-node()?"/>
-      <xsl:variable name="this-model-expanded" select="tan:expand-doc($this-model-resolved)"/>
+      <xsl:variable name="this-model-expanded"
+         select="tan:expand-doc($this-model-resolved, 'terse')"/>
       <xsl:variable name="self-and-model-merged"
          select="
             if (exists($see-also-model)) then
@@ -1221,9 +1215,14 @@
                      </xsl:for-each>
                   </xsl:variable>
                   <xsl:for-each select="$replacements">
+                     <xsl:variable name="this-diff" select="tan:diff($this-text, .)"/>
+                     <xsl:variable name="this-diff-trimmed" select="tan:trim-long-text($this-diff, 17)"/>
                      <xsl:copy-of
-                        select="tan:error('cl104', concat('Text in copy: ', .), ., 'replace-text')"
+                        select="tan:error('cl104', concat('Differs with copy (= a): ',tan:xml-to-string($this-diff-trimmed)), ., 'replace-text')"
                      />
+                     <!--<xsl:copy-of
+                        select="tan:error('cl104', concat('Text in copy: ', .), ., 'replace-text')"
+                     />-->
                   </xsl:for-each>
                </xsl:if>
 
@@ -1267,7 +1266,8 @@
                <xsl:if test="not(exists(tan:div))">
                   <xsl:variable name="go-up-to" select="20"/>
                   <xsl:variable name="opening-text" select="substring($this-text, 1, $go-up-to)"/>
-                  <xsl:variable name="opening-text-analyzed" select="tan:analyze-numbers-in-string($opening-text, true())"/>
+                  <xsl:variable name="opening-text-analyzed"
+                     select="tan:analyze-numbers-in-string($opening-text, true())"/>
                   <xsl:variable name="opening-text-as-numerals"
                      select="tan:string-to-numerals($opening-text, true(), true())"/>
                   <xsl:variable name="opening-text-replacement"
@@ -1306,8 +1306,7 @@
             $class-2-claims[if ($this-format = 'TAN-T-merge') then
                (../tan:work = $this-work)
             else
-               ((tan:src, tan:tok-ref/tan:src) = $this-src)]"
-      />
+               ((tan:src, tan:tok-ref/tan:src) = $this-src)]"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <expansion>verbose</expansion>
@@ -1366,8 +1365,7 @@
                if (exists(tan:val)) then
                   tan:matches($this-val, tan:val)
                else
-                  false()]"
-      />
+                  false()]"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:for-each select="$relevant-claims">
@@ -1392,7 +1390,7 @@
 
 
    <!-- MERGING -->
-   
+
    <xsl:template match="tan:TAN-T/tan:head" mode="merge-expanded-docs-prep">
       <xsl:copy>
          <xsl:copy-of select="@*"/>
@@ -1556,7 +1554,8 @@
       <xsl:param name="items-with-div-content-to-be-transferred" as="item()*"/>
       <xsl:param name="items-whose-divs-should-be-infused-with-new-content" as="item()*"/>
       <xsl:copy-of
-         select="tan:div-to-div-transfer($items-with-div-content-to-be-transferred, $items-whose-divs-should-be-infused-with-new-content, '\s+')"/>
+         select="tan:div-to-div-transfer($items-with-div-content-to-be-transferred, $items-whose-divs-should-be-infused-with-new-content, '\s+')"
+      />
    </xsl:function>
    <xsl:function name="tan:div-to-div-transfer" as="item()*">
       <!-- Input: (1) any set of divs with content to be transferred into the structure of (2) another set of divs; and (3) a snap marker. -->
@@ -1568,7 +1567,8 @@
       <xsl:param name="break-at-regex" as="xs:string"/>
       <xsl:variable name="content" select="tan:text-join($items-with-div-content-to-be-transferred)"/>
       <xsl:copy-of
-         select="tan:infuse-divs($content, $items-whose-divs-should-be-infused-with-new-content, $break-at-regex)"/>
+         select="tan:infuse-divs($content, $items-whose-divs-should-be-infused-with-new-content, $break-at-regex)"
+      />
    </xsl:function>
 
    <xsl:function name="tan:infuse-divs" as="item()*">
@@ -1582,22 +1582,18 @@
             if (string-length($break-at-regex) lt 1) then
                '\s+'
             else
-               $break-at-regex"
-      />
-      <xsl:variable name="new-content-analyzed" as="element()*">
-         <xsl:analyze-string select="$new-content-to-be-transferred" regex="{$snap-marker}">
-            <xsl:matching-substring>
-               <br><xsl:value-of select="."/></br>
-            </xsl:matching-substring>
-            <xsl:non-matching-substring>
-               <nbr><xsl:value-of select="."/></nbr>
-            </xsl:non-matching-substring>
-         </xsl:analyze-string>
-      </xsl:variable>
-      <xsl:variable name="new-content-tokenized" as="xs:string*">
-         <xsl:for-each-group select="$new-content-analyzed" group-ending-with="tan:br">
-            <xsl:value-of select="string-join(current-group(), '')"/>
-         </xsl:for-each-group> 
+               $break-at-regex"/>
+
+      <xsl:variable name="new-content-tokenized"
+         select="tan:chop-string($new-content-to-be-transferred, $snap-marker)"/>
+      <xsl:variable name="new-content-key" as="xs:integer*">
+         <!-- This variable is a key between the characters and the tokens (sometimes complete sentences), to provide better predictive accuracy -->
+         <xsl:for-each select="$new-content-tokenized">
+            <xsl:variable name="this-pos" select="position()"/>
+            <xsl:for-each select="tan:chop-string(.)">
+               <xsl:value-of select="$this-pos"/>
+            </xsl:for-each>
+         </xsl:for-each>
       </xsl:variable>
       <xsl:variable name="attribute-names"
          select="
@@ -1614,78 +1610,77 @@
       </xsl:variable>
       <xsl:variable name="mold" as="element()">
          <xsl:apply-templates select="$mold-prep-1" mode="analyze-string-length-pass-2">
-            <xsl:with-param name="parent-pos" select="0"/>
+            <xsl:with-param name="parent-pos" select="0" tunnel="yes"/>
          </xsl:apply-templates>
       </xsl:variable>
       <xsl:variable name="mold-infused" as="element()">
          <xsl:apply-templates select="$mold" mode="infuse-tokenized-text">
             <xsl:with-param name="raw-content-tokenized" select="$new-content-tokenized"
                tunnel="yes"/>
-            <xsl:with-param name="token-count-plus-1" select="count($new-content-tokenized) + 1" tunnel="yes"/>
+            <xsl:with-param name="raw-content-key" select="$new-content-key" tunnel="yes"/>
+            <xsl:with-param name="char-count-plus-1" select="count($new-content-key) + 1"
+               tunnel="yes"/>
             <xsl:with-param name="total-length"
                select="sum(($mold//*:div)[last()]/(@string-length, @string-pos))" tunnel="yes"/>
          </xsl:apply-templates>
       </xsl:variable>
-      <xsl:apply-templates select="$mold-infused/*" mode="strip-all-attributes-except">
-         <xsl:with-param name="attributes-to-keep" select="$attribute-names" tunnel="yes"/>
+      <xsl:variable name="ks-to-ditch" as="element()*">
+         <xsl:for-each-group select="$mold-infused//tan:k" group-by="@pos">
+            <xsl:for-each select="current-group()">
+               <xsl:sort select="xs:integer(@qty)" order="descending"/>
+               <xsl:if test="position() gt 1">
+                  <xsl:copy-of select="."/>
+               </xsl:if>
+            </xsl:for-each>
+         </xsl:for-each-group>
+      </xsl:variable>
+      <!-- diagnostics, results -->
+      <!--<xsl:copy-of select="$ks-to-ditch"/>-->
+      <!--<xsl:copy-of select="$mold-infused"/>-->
+      <xsl:apply-templates select="$mold-infused/*" mode="infuse-tokenized-text-cleanup">
+         <xsl:with-param name="bad-ks" select="$ks-to-ditch" tunnel="yes"/>
       </xsl:apply-templates>
    </xsl:function>
 
    <xsl:template match="*:div[not(*:div)]" mode="infuse-tokenized-text">
       <xsl:param name="raw-content-tokenized" as="xs:string*" tunnel="yes"/>
-      <xsl:param name="token-count-plus-1" tunnel="yes" as="xs:integer"/>
+      <xsl:param name="raw-content-key" as="xs:integer*" tunnel="yes"/>
+      <xsl:param name="char-count-plus-1" tunnel="yes" as="xs:integer"/>
       <xsl:param name="total-length" as="xs:double" tunnel="yes"/>
+      <xsl:variable name="this-div-id" select="generate-id()"/>
+      <xsl:variable name="this-n" select="@n"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:variable name="this-first" as="xs:double?"
-            select="ceiling(@string-pos div $total-length * $token-count-plus-1)"/>
+            select="ceiling(@string-pos div $total-length * $char-count-plus-1)"/>
          <xsl:variable name="next-first" as="xs:double?"
-            select="ceiling((@string-pos + @string-length) div $total-length * $token-count-plus-1)"/>
-         <xsl:variable name="text-sequence"
-            select="subsequence($raw-content-tokenized, $this-first, ($next-first - $this-first))"/>
-         <!--<test20a><xsl:copy-of select="$this-first"/></test20a>
-         <test20b><xsl:copy-of select="$next-first"/></test20b>
-         <xsl:text>&#xa;                </xsl:text>
-         <test32a><xsl:value-of select="(@string-pos + @string-length) div $total-length"/></test32a>
-         <test32b><xsl:value-of select="(@string-pos + @string-length) div $total-length * count($raw-content-tokenized)"/></test32b>
-         <xsl:text>&#xa;                </xsl:text>
-         <test20c><xsl:value-of select="@string-pos"/></test20c>
-         <test20d><xsl:value-of select="@string-length"/></test20d>
-         <xsl:text>&#xa;                </xsl:text>
-         <test20e><xsl:value-of select="$total-length"/></test20e>
-         <test20f><xsl:value-of select="count($raw-content-tokenized)"/></test20f>
-         <xsl:text>&#xa;                </xsl:text>-->
-         <xsl:copy-of select="string-join($text-sequence, '')"/>
+            select="ceiling((@string-pos + @string-length) div $total-length * $char-count-plus-1)"/>
+         <xsl:variable name="text-key"
+            select="subsequence($raw-content-key, $this-first, ($next-first - $this-first))"/>
+         <xsl:for-each-group select="$text-key" group-by=".">
+            <k pos="{current-grouping-key()}" qty="{count(current-group())}" id="{$this-div-id}">
+               <xsl:value-of select="$raw-content-tokenized[current-grouping-key()]"/>
+            </k>
+         </xsl:for-each-group>
       </xsl:copy>
    </xsl:template>
-   <xsl:template match="tan:div" mode="infuse-tokenized-div">
-      <xsl:param name="div-clay-tokenized" as="element()*" tunnel="yes"/>
-      <xsl:param name="infuse-deeply" as="xs:boolean?" tunnel="yes"/>
+
+   <xsl:template match="*:div" mode="infuse-tokenized-text-cleanup">
       <xsl:copy>
-         <xsl:copy-of select="($div-clay-tokenized//@src)[1]"/>
-         <xsl:copy-of select="@* except @src"/>
-         <xsl:choose>
-            <xsl:when test="exists(tan:div) and $infuse-deeply = true()">
-               <xsl:apply-templates mode="#current"/>
-            </xsl:when>
-            <xsl:otherwise>
-               <xsl:variable name="leaf-div-pos"
-                  select="
-                     count(if ($infuse-deeply = true()) then
-                        preceding::tan:div[not(tan:div)]
-                     else
-                        preceding-sibling::tan:div) + 1"/>
-               <xsl:variable name="that-clay" select="$div-clay-tokenized[$leaf-div-pos]"/>
-               <xsl:for-each select="$that-clay//tan:div[tan:ver]">
-                  <ver>
-                     <xsl:copy-of select="@*"/>
-                     <xsl:value-of select="normalize-space(.)"/>
-                  </ver>
-               </xsl:for-each>
-            </xsl:otherwise>
-         </xsl:choose>
+         <xsl:copy-of select="@* except (@string-length, @string-pos)"/>
+         <xsl:apply-templates mode="#current"/>
       </xsl:copy>
    </xsl:template>
+   <xsl:template match="tan:k" mode="infuse-tokenized-text-cleanup">
+      <xsl:param name="bad-ks" tunnel="yes" as="element()*"/>
+      <xsl:if
+         test="
+            not(some $i in $bad-ks
+               satisfies $i/@id = @id and $i/@pos = @pos)">
+         <xsl:value-of select="."/>
+      </xsl:if>
+   </xsl:template>
+
 
 
    <!-- ANALYSIS -->
@@ -1717,19 +1712,17 @@
       <xsl:variable name="pass-1" as="item()*">
          <xsl:apply-templates select="$resolved-class-1-doc-or-fragment"
             mode="analyze-string-length-pass-1">
-            <xsl:with-param name="mark-only-leaf-divs" select="$mark-only-leaf-divs"
-               tunnel="yes"/>
+            <xsl:with-param name="mark-only-leaf-divs" select="$mark-only-leaf-divs" tunnel="yes"/>
          </xsl:apply-templates>
       </xsl:variable>
       <!-- diagnostics, results -->
       <!--<xsl:copy-of select="$pass-1"/>-->
       <xsl:apply-templates select="$pass-1" mode="analyze-string-length-pass-2">
-         <xsl:with-param name="parent-pos" select="0"/>
+         <xsl:with-param name="parent-pos" select="0" tunnel="yes"/>
          <xsl:with-param name="mark-only-leaf-elements" select="$mark-only-leaf-divs" tunnel="yes"/>
       </xsl:apply-templates>
    </xsl:function>
-   <xsl:template
-      match="*:body | tan:div | tan:tok | tan:non-tok | tei:*"
+   <xsl:template match="*:body | tan:div | tan:tok | tan:non-tok | tei:*"
       mode="analyze-string-length-pass-1">
       <xsl:param name="mark-only-leaf-divs" as="xs:boolean?" tunnel="yes"/>
       <xsl:variable name="is-leaf" select="not(exists(*:div))" as="xs:boolean"/>
@@ -1751,8 +1744,7 @@
                      tan:string-length(if ($is-tok) then
                         .
                      else
-                        tan:text-join(.))"
-               />
+                        tan:text-join(.))"/>
                <xsl:choose>
                   <xsl:when test="$is-leaf and $mark-only-leaf-divs">
                      <xsl:copy-of select="node()"/>
@@ -1779,8 +1771,9 @@
          <xsl:copy-of select="text()"/>
       </xsl:copy>
    </xsl:template>
-   <xsl:template match="*" mode="analyze-string-length-pass-2">
-      <xsl:param name="parent-pos" as="xs:integer"/>
+   <xsl:template match="*[@string-length or @s1-length or @s2-length]"
+      mode="analyze-string-length-pass-2">
+      <xsl:param name="parent-pos" as="xs:integer" tunnel="yes"/>
       <xsl:param name="mark-only-leaf-elements" as="xs:boolean?" tunnel="yes"/>
       <xsl:variable name="is-tei" select="exists(self::tei:*)" as="xs:boolean"/>
       <xsl:variable name="preceding-nodes"
@@ -1791,8 +1784,7 @@
                if ($mark-only-leaf-elements = true()) then
                   preceding-sibling::*//descendant-or-self::*[not(*)]
                else
-                  preceding-sibling::*"
-      />
+                  preceding-sibling::*"/>
       <xsl:variable name="preceding-string-lengths" select="$preceding-nodes/@string-length"/>
       <xsl:variable name="preceding-sibling-pos" as="xs:integer">
          <xsl:choose>
@@ -1822,7 +1814,7 @@
             <xsl:attribute name="s2-pos" select="sum(preceding-sibling::*/@s2-length) + 1"/>
          </xsl:if>
          <xsl:apply-templates mode="#current">
-            <xsl:with-param name="parent-pos" select="$this-string-pos"/>
+            <xsl:with-param name="parent-pos" select="$this-string-pos" tunnel="yes"/>
          </xsl:apply-templates>
       </xsl:copy>
    </xsl:template>
