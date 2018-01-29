@@ -66,12 +66,42 @@
                   comprehensive list of changes.</para>
                <para>General:<itemizedlist>
                   <listitem>
-                     <para>New errors introduced: wrn07</para>
+                     <para>New errors introduced: wrn07, wrn08</para>
                   </listitem>
                   <listitem>
-                     <para>New functions: tan:last-change-agent()</para>
+                     <para>New functions: tan:last-change-agent(), tan:trim-long-text(),
+                           tan:catalogs(), tan:chop-string() (2 parameters)</para>
                   </listitem>
+                     <listitem>
+                        <para>New global variables: $shy (same as $dhy), $doc-catalogs,
+                           $local-catalog, $relationships-reserved, $relationship-model,
+                           $relationship-resegmented-copy</para>
+                     </listitem>
+                     <listitem>
+                        <para>New frameworks file added, to enhance oXygen functionality</para>
+                     </listitem>
+                     <listitem>
+                        <para>Introduced the concept of catalogs</para>
+                     </listitem>
                </itemizedlist></para>
+               <para>TAN-T(EI):<itemizedlist>
+                     <listitem>
+                        <para>It should be emphasized that if there is a &lt;see-also> that points
+                           to a model, it means that the reference system may not (indeed, probably
+                           will not) exactly match the transcription. For example, if you have an
+                           English translation of Aristotle's Categories, in Greek, and you're
+                           following the very precise Bekker numbers, it is impossible to divide the
+                           text exactly by those Bekker numbers. You do an approximation, and the
+                           &lt;model> tells other users not to expect the division system to be
+                           strictly accurate.</para>
+                     </listitem>
+                     <listitem>
+                        <para>The importance of models and resegmented copies has been recognized.
+                           There will probably be changes so that current &lt;see-also>s that fall
+                           in this categories can simply be &lt;model> and
+                           &lt;resegmented-copy>.</para>
+                     </listitem>
+                  </itemizedlist></para>
                <para>TAN-A-lm:<itemizedlist>
                   <listitem>
                      <para>New errors introduced: tlm05</para>
@@ -92,7 +122,32 @@
                   <listitem>
                      <para>tan:add-attribute()</para>
                   </listitem>
+                     <listitem>
+                        <para>tan:unique-char()</para>
+                     </listitem>
+                     <listitem>
+                        <para>tan:tree-to-sequence() and tan:sequence-to-tree()</para>
+                     </listitem>
+                     <listitem>
+                        <para>tan:collate-sequences()</para>
+                     </listitem>
+                     <listitem>
+                        <para>global variables to define the ends of words, clauses,
+                           sentences</para>
+                     </listitem>
                </itemizedlist></para>
+               <para>Advanced / recommended best practices<itemizedlist>
+                     <listitem>
+                        <para>Class 1 filenames should terminate in something that expresses the
+                           principal type of reference system (semantic or physical) followed by a
+                           string indicating whether the reference system is native to the scriptum
+                           or if it follows some other reference system. Example:
+                           ar.cat.fra.1844.saint-hilaire.sem-native.xml indicates that the semantic
+                           reference system is native to the French edition. But
+                           ar.cat.fra.1844.saint-hilaire.sem-after-grc.xml suggests that the
+                           semantic referenc system follows the Greek archetype.</para>
+                     </listitem>
+                  </itemizedlist></para>
             </section>
          </section>
          <section xml:id="tan_definition">
