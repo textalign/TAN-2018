@@ -140,9 +140,6 @@
       </xsl:apply-templates>
    </xsl:param>
 
-   <xsl:template match="tan:head" mode="infuse-template">
-      <xsl:apply-templates select="." mode="credit-stylesheet"/>
-   </xsl:template>
    <xsl:template match="*" mode="infuse-template">
       <xsl:param name="new-content" tunnel="yes"/>
       <!-- we arrange the text value this way because some docx files will have text content that's split between <w:r>s -->
@@ -185,7 +182,10 @@
             </xsl:analyze-string>
         </xsl:processing-instruction>
    </xsl:template>
-   <xsl:template match="@href" mode="revise-infused-template">
+   <xsl:template match="tan:head" mode="revise-infused-template">
+      <xsl:apply-templates select="." mode="credit-stylesheet"/>
+   </xsl:template>
+   <xsl:template match="@href" mode="revise-infused-template credit-stylesheet">
       <xsl:attribute name="{name(.)}"
          select="tan:uri-relative-to(resolve-uri(., $template-url-resolved), $output-url-resolved)"
       />
@@ -230,8 +230,10 @@
             <xsl:variable name="this-suffix" select="."/>
             <xsl:variable name="this-suffix-encoded-for-uri" select="encode-for-uri(.)"/>
             <xsl:variable name="this-pos" select="position()"/>
+            
             <xsl:variable name="this-target-uri"
                select="replace($output-url-resolved, '(.+)(\.[^\.]+)$', concat('$1', $this-suffix-encoded-for-uri, '$2'))"/>
+            <xsl:message select="concat('Saving output to ', $this-target-uri)"/>
             <xsl:choose>
                <xsl:when test="$template-is-openxml">
                   <xsl:variable name="this-output"
