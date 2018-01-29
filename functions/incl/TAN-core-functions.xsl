@@ -59,6 +59,7 @@
    <xsl:variable name="apos" select='"&apos;"'/>
    <xsl:variable name="zwj" select="'&#x200d;'"/>
    <xsl:variable name="dhy" select="'&#xad;'"/>
+   <xsl:variable name="shy" select="$dhy"/>
    <xsl:variable name="empty-doc" as="document-node()">
       <xsl:document/>
    </xsl:variable>
@@ -239,6 +240,10 @@
    <xsl:variable name="primary-agent"
       select="($head/tan:definitions/(tan:person, tan:organization, tan:algorithm)[tan:IRI[matches(., concat('^tag:', $doc-namespace))]])[1]"/>
 
+   <!-- catalogs -->
+   <xsl:variable name="doc-catalogs" select="tan:catalogs(/)"/>
+   <xsl:variable name="local-catalog" select="$doc-catalogs[1]"/>
+   
    <!-- inclusions -->
    <xsl:variable name="inclusions-1st-da" select="tan:get-1st-doc(/*/tan:head/tan:inclusion)"/>
    <xsl:variable name="inclusions-resolved"
@@ -274,6 +279,12 @@
    <xsl:variable name="see-alsos-1st-da" select="tan:get-1st-doc($head/tan:see-also)"/>
    <xsl:variable name="see-alsos-resolved" select="tan:resolve-doc($see-alsos-1st-da)"/>
 
+   <!-- relationships -->
+   <xsl:variable name="relationships-reserved" select="tan:glossary('relationship')"/>
+   <xsl:variable name="relationship-model" select="$relationships-reserved[tan:name = 'model']"/>
+   <xsl:variable name="relationship-resegmented-copy"
+      select="$relationships-reserved[tan:name = 'resegmented copy']"/>
+   
    <!-- token definitions -->
    <xsl:variable name="token-definitions-reserved"
       select="$TAN-keywords//tan:token-definition"/>
@@ -714,7 +725,32 @@
          <xsl:value-of select="."/>
       </xsl:if>
    </xsl:template>
-
+   
+   <xsl:function name="tan:trim-long-text" as="item()*">
+      <!-- Input: an XML fragment; an integer -->
+      <!-- Output: the fragment with text nodes longer than the integer value abbreviated with an ellipsis -->
+      <xsl:param name="xml-fragment" as="item()*"/>
+      <xsl:param name="too-long" as="xs:integer"/>
+      <xsl:apply-templates select="$xml-fragment" mode="trim-long-text">
+         <xsl:with-param name="too-long" select="$too-long" tunnel="yes"/>
+      </xsl:apply-templates>
+   </xsl:function>
+   <xsl:template match="text()" mode="trim-long-text">
+      <xsl:param name="too-long" as="xs:integer" tunnel="yes"/>
+      <xsl:variable name="this-length" select="string-length(.)"/>
+      <xsl:choose>
+         <xsl:when test="$this-length ge $too-long and $too-long ge 3">
+            <xsl:variable name="portion-length" select="($too-long - 1) idiv 2"/>
+            <xsl:value-of select="substring(., 1, $portion-length)"/>
+            <xsl:text>…</xsl:text>
+            <xsl:value-of select="substring(., ($this-length - $portion-length))"/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:value-of select="."/>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:template>
+   
    <xsl:template match="*" mode="strip-all-attributes-except">
       <xsl:param name="attributes-to-keep" as="xs:string*" tunnel="yes"/>
       <xsl:copy>
@@ -1624,6 +1660,24 @@
             select="tokenize($change-log-sorted[1]/@who, '\s+')"/>
          <xsl:copy-of
             select="root()/*/tan:head/tan:definitions/*[@xml:id = $last-change-agent-idref]"/>
+      </xsl:for-each>
+   </xsl:function>
+   
+   <xsl:function name="tan:catalogs" as="document-node()*">
+      <!-- Input: a node from an XML file -->
+      <!-- Output: the TAN catalog documents available, beginning with the most local path and proceeding rootward -->
+      <xsl:param name="input-node" as="node()?"/>
+      <xsl:variable name="this-uri" select="tan:base-uri($input-node)"/>
+      <xsl:variable name="doc-uri-steps" select="tokenize(string($this-uri), '/')"/>
+      <xsl:for-each select="2 to count($doc-uri-steps)">
+         <xsl:sort order="descending"/>
+         <xsl:variable name="this-pos" select="."/>
+         <xsl:variable name="this-dir-to-check"
+            select="string-join($doc-uri-steps[position() le $this-pos],'/')"/>
+         <xsl:variable name="this-uri-to-check" select="concat($this-dir-to-check, '/catalog.tan.xml')"/>
+         <xsl:if test="doc-available($this-uri-to-check)">
+            <xsl:sequence select="doc($this-uri-to-check)"/>
+         </xsl:if>
       </xsl:for-each>
 
    </xsl:function>

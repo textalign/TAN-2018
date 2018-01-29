@@ -5,6 +5,7 @@
 
     <!-- Indicate which errors should be squelched at certain phases -->
     <squelch phase="terse">
+        <error-id>cl101</error-id>
         <error-id>wrn02</error-id>
         <error-id>wrn03</error-id>
         <error-id>wrn04</error-id>
@@ -84,6 +85,7 @@
         <error xml:id="loc03"><rule>No element may point to a TAN file that has an identical @id value; the only exception is a &lt;see-also> pointing to an older or new version.</rule></error>
         <warning xml:id="wrn03"><rule>If a target file does not explicitly give the &lt;body>'s @in-progress the value of true() a warning will be returned.</rule><message>Target file is marked as being in progress.</message></warning>
         <warning xml:id="wrn05"><rule>If a target file has a &lt;see-also> marked as a new version (update) a warning will be returned.</rule></warning>
+        <warning xml:id="wrn08"><rule>If an element's &lt;location> is faulty and if a catalog file entry is found pointing to a document with the same IRI, location information on those alternative locations will be returned</rule></warning>
     </group>
     <group affects-element="location inclusion see-also source key" affects-attribute="when-accessed">
         <warning xml:id="wrn02"><rule>If @when-accessed predates one or more dates in a target file, a warning will be returned.</rule></warning>
