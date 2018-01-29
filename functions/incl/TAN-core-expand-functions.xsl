@@ -275,6 +275,7 @@
       <!-- Look for errors in a document referred to -->
       <xsl:variable name="this-name" select="name(.)"/>
       <xsl:variable name="this-doc-id" select="root(.)/*/@id"/>
+      <xsl:variable name="this-base-uri" select="tan:base-uri(.)"/>
       <xsl:variable name="this-pos" select="count(preceding-sibling::*[name(.) = $this-name]) + 1"/>
       <xsl:variable name="this-class" select="tan:class-number(.)"/>
       <xsl:variable name="this-relationship-idrefs" select="tan:relationship"/>
@@ -461,6 +462,32 @@
          </xsl:if>
          <xsl:if test="exists($target-last-change-agent/self::tan:algorithm)">
             <xsl:copy-of select="tan:error('wrn07','The last change in the dependency was made by an algorithm.')"/>
+         </xsl:if>
+         <xsl:if test="$target-is-faulty">
+            <xsl:variable name="these-catalogs"
+               select="
+                  if ($this-doc-id = $doc-id) then
+                     $doc-catalogs
+                  else
+                     tan:catalogs(.)"
+            />
+            <xsl:variable name="these-iris" select="tan:IRI"/>
+            <xsl:variable name="catalog-matches" select="$these-catalogs/collection/doc[@id = $these-iris]"/>
+            <xsl:variable name="possible-uris"
+               select="
+                  for $i in $catalog-matches
+                  return
+                     resolve-uri($i/@href, xs:string(tan:base-uri($i)))[not(. = $this-base-uri)]"
+            />
+            <xsl:variable name="this-fix" as="element()*">
+               <xsl:for-each select="$possible-uris">
+                  <location href="{tan:uri-relative-to(xs:string(.), xs:string($this-base-uri))}"
+                     when-accessed="{current-date()}"/>
+               </xsl:for-each> 
+            </xsl:variable>
+            <xsl:if test="exists($possible-uris)">
+               <xsl:copy-of select="tan:error('wrn08', (), $this-fix, 'append-content')"/>
+            </xsl:if>
          </xsl:if>
          <xsl:apply-templates mode="#current">
             <xsl:with-param name="target-id" select="$target-id"/>
@@ -917,12 +944,13 @@
       <!-- In terse mode, we do only basic checks on <see also>. The deep checks we do for inclusions and keys are reserved for the normal mode. -->
       <xsl:variable name="these-iris" select="tan:IRI"/>
       <xsl:variable name="this-see-also-doc" select="$see-alsos-resolved[*/@id = $these-iris]"/>
+      <xsl:variable name="target-1st-da" select="tan:get-1st-doc(.)"/>
       <xsl:variable name="target-doc"
          select="
             if (exists($this-see-also-doc)) then
                $this-see-also-doc
             else
-               tan:resolve-doc(tan:get-1st-doc(.))"/>
+               tan:resolve-doc($target-1st-da)"/>
       <xsl:variable name="this-relationship" select="tan:definition(tan:relationship)"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
@@ -953,6 +981,7 @@
                <xsl:copy-of select="tan:error('cl106')"/>
             </xsl:if>
          </xsl:if>
+         
          <xsl:apply-templates mode="#current"/>
       </xsl:copy>
    </xsl:template>
@@ -1062,14 +1091,7 @@
    <!-- CORE EXPANSION VERBOSE -->
 
    <xsl:template match="/*" mode="core-expansion-verbose">
-      <xsl:variable name="this-local-catalog-uri"
-         select="resolve-uri('catalog.tan.xml', string(tan:base-uri(.)))"/>
-      <xsl:variable name="this-local-catalog" as="document-node()?"
-         select="
-            if (doc-available($this-local-catalog-uri)) then
-               doc($this-local-catalog-uri)
-            else
-               ()"/>
+      <xsl:variable name="this-local-catalog" as="document-node()?" select="tan:catalogs(.)[1]"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <expansion>verbose</expansion>
@@ -1082,7 +1104,11 @@
                <xsl:variable name="this-local-catalog-errors"
                   select="$this-local-catalog-expanded//(tan:error, tan:warning)"/>
                <xsl:variable name="this-local-collection"
-                  select="collection($this-local-catalog-uri)"/>
+                  select="
+                     for $i in $this-local-catalog
+                     return
+                        collection($i)"
+               />
                <xsl:if test="not(@id = $this-local-catalog/collection/doc/@id)">
                   <xsl:copy-of select="tan:error('cat06')"/>
                </xsl:if>
