@@ -11,19 +11,28 @@
 *:lang(grc){
     font-family: 'Gentium Plus', 'Garamond Premiere Pro', 'Gentium Plus', serif;
 }
+/* COLORS */
+*:before{
+    color: blue
+}
+/* CONTENT */
+head *:before{
+    content: '<' oxy_local-name() oxy_attributes() '>' ;
+}
 div:before{
     content: attr(type) '.' attr(n) ' ';
 }
 /* DISPLAY */
 div,
 ana,
-lm{
+lm,
+head *{
     display: block;
 }
 comment{
     display: list-item;
 }
-/* COLORS */
-div:before{
-    color: blue
+/* INDENT */
+* {
+    margin-left: 6px;
 }
