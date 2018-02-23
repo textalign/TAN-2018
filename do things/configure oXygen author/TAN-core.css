@@ -1,9 +1,55 @@
 /* CSS file intended to be used to configure how TAN files are rendered by oXygen Author */
+
+/* BACKGROUND */
+head{
+    background: tan
+}
+definitions{
+    background: #eadbc8
+}
+
+/* BORDERS */
+group{
+    border: 1px solid black
+}
+
+/* COLORS */
+*:before(9){
+    color: blue
+}
+*:before(8){
+    color: green
+}
+
+/* CONTENT */
+*:root,
+head *:before(9),
+group *:before(9),
+TAN-key > body *:before(9){
+    content: '<' oxy_local-name()'>' ;
+}
+*:root/*,
+head *:before(8),
+group *:before(8),
+TAN-key > body *:before(8)*/{
+    content: oxy_attributes();
+}
+
+div:before(8){
+    content: attr(type) '.' attr(n) ' ';
+}
+/* DISPLAY */
+*{
+    display: block;
+}
+comment{
+    display: list-item;
+}
 /* FONTS */
 *:lang(syr){
     font-family: noto, 'Serto Urhoy', 'Estrangelo Nisibin';
     text-align: right;
-    font-size: larger;
+    font-size: 24px;
 }
 *:lang(cop){
     font-family: antinoou;
@@ -11,28 +57,46 @@
 *:lang(grc){
     font-family: 'Gentium Plus', 'Garamond Premiere Pro', 'Gentium Plus', serif;
 }
-/* COLORS */
-*:before{
-    color: blue
+IRI{
+    font-family: monospace;
+    font-size: smaller;
 }
-/* CONTENT */
-head *:before{
-    content: '<' oxy_local-name() oxy_attributes() '>' ;
-}
-div:before{
-    content: attr(type) '.' attr(n) ' ';
-}
-/* DISPLAY */
-div,
-ana,
-lm,
-head *{
-    display: block;
-}
-comment{
-    display: list-item;
-}
-/* INDENT */
+/* MARGINS */
 * {
-    margin-left: 6px;
+    margin-left: 8px;
+}
+item {
+    margin-top: 8px;
+}
+/* SPECIAL OXYGEN */
+
+*[who]:before(7){
+    content: 
+    oxy_combobox(
+edit, "@who", 
+values, oxy_xpath("string-join(root()/*/head/definitions/(person, organization, algorithm)/@xml:id, ', ')")
+)
+ oxy_label(text, oxy_xpath("for $i in tokenize(@who,' ') return root()/*/head/definitions/(person, organization, algorithm)[@xml:id = $i]/name[1]/text()"), color, "gray");
+}
+*[when]:before(8){
+    content: oxy_datePicker(
+edit, "@when", 
+format, "yyyy-MM-dd")
+}
+
+*[href]{
+    content: 
+    oxy_urlChooser(
+edit, "@href", 
+columns 25);
+}
+*:has(IRI){
+    -oxy-foldable:true;
+    -oxy-folded:true;
+}
+
+div:has(div),
+item,
+group{
+    -oxy-foldable: true
 }
