@@ -21,6 +21,9 @@
    <xsl:variable name="special-end-div-chars" select="($zwj, $dhy)" as="xs:string+"/>
    <xsl:variable name="special-end-div-chars-regex"
       select="concat('[', string-join($special-end-div-chars, ''), ']$')" as="xs:string"/>
+   <!-- regular expression to detect parts of a transcription that specify a line, column, or page break; these should be excluded from transcriptions and be rendered with markup -->
+   <xsl:param name="break-marker-regex">[\|‖  ⁣￺]</xsl:param>
+   
 
    <xsl:function name="tan:text-join" as="xs:string?">
       <!-- Input: any document fragment of a TAN class 1 body, whether raw, resolved, or expanded  -->
@@ -47,14 +50,11 @@
                <xsl:value-of select="$text-nodes"/>
             </xsl:when>
             <xsl:when test="exists(tei:*)">
-               <xsl:value-of select="normalize-space(string-join(.//tei:*/text(), ''))"/>
+               <xsl:value-of select="normalize-space(string-join(descendant-or-self::tei:*/text(), ''))"/>
             </xsl:when>
          </xsl:choose>
       </xsl:variable>
       <xsl:value-of select="tan:normalize-div-text($string-val)"/>
-   </xsl:template>
-   <xsl:template match="tei:*[not(self::tei:div)]" mode="text-join">
-      <xsl:value-of select="normalize-space(string-join(.//text(), ''))"/>
    </xsl:template>
 
    <xsl:function name="tan:normalize-div-text" as="xs:string*">
@@ -224,9 +224,6 @@
          <xsl:copy-of select="$this-n-analyzed/*"/>
          <xsl:copy-of select="$new-refs"/>
          <xsl:if test="$is-tei">
-            <xsl:if test="exists(tei:div) and exists(tei:*[not(self::tei:div)])">
-               <xsl:copy-of select="tan:error('tei01')"/>
-            </xsl:if>
             <xsl:if test="exists(@include) and exists(@*[not(name() = ('ed-who', 'ed-when'))])">
                <xsl:copy-of select="tan:error('tei02')"/>
             </xsl:if>
@@ -249,6 +246,10 @@
       <xsl:param name="alter-equates" tunnel="yes" as="element()*"/>
       <xsl:param name="parent-orig-refs" as="element()*" select="$empty-element"/>
       <xsl:param name="parent-new-refs" as="element()*" select="$empty-element"/>
+      <xsl:variable name="diagnostics" as="xs:boolean" select="false()"/>
+      <xsl:if test="$diagnostics">
+         <xsl:message>Diagnostics turned on for template mode dependency-expansion-terse</xsl:message>
+      </xsl:if>
       <xsl:variable name="is-tei" select="namespace-uri() = 'http://www.tei-c.org/ns/1.0'"
          as="xs:boolean"/>
       <xsl:variable name="this-type-analyzed" select="tan:analyze-sequence(@type, 'type', false())"/>
@@ -310,7 +311,6 @@
                select="
                   $alter-renames[not(exists(tan:div-type))
                   or tan:div-type = $this-type-analyzed/*]"/>
-            <xsl:variable name="ns-to-be-equated" select="$alter-equates/tan:equate[tan:n]"/>
 
             <xsl:variable name="new-ns" as="element()*">
                <xsl:for-each select="$this-n-analyzed/*">
@@ -369,9 +369,11 @@
                   <!-- now supply alias via equated n's -->
                   <xsl:for-each select="$pass-1-rename">
                      <xsl:variable name="this-n" select="text()"/>
+                     <xsl:if test="$diagnostics">
+                        <xsl:message select="$this-n"/>
+                     </xsl:if>
                      <xsl:copy-of select="."/>
-                     <xsl:copy-of
-                        select="$ns-to-be-equated[tan:n = $this-n]/tan:n[not(. = $this-n)]"/>
+                     <xsl:copy-of select="$alter-equates[tan:n = $this-n]/tan:n[not(. = $this-n)]"/>
                   </xsl:for-each>
                </xsl:for-each>
             </xsl:variable>
@@ -496,9 +498,6 @@
                   <xsl:copy-of select="tan:error('cl117')"/>
                </xsl:if>
                <xsl:if test="$is-tei">
-                  <xsl:if test="exists(tei:div) and exists(tei:*[not(self::tei:div)])">
-                     <xsl:copy-of select="tan:error('tei01')"/>
-                  </xsl:if>
                   <xsl:if
                      test="exists(@include) and exists(@*[not(name() = ('ed-who', 'ed-when'))])">
                      <xsl:copy-of select="tan:error('tei02')"/>
@@ -536,7 +535,7 @@
       <xsl:variable name="next-text" select="following-sibling::node()[1]/self::text()"/>
       <xsl:variable name="next-text-check" as="xs:string*">
          <xsl:if test="exists($next-text)">
-            <xsl:analyze-string select="$next-text" regex="^\s*[\|‖  ⁣￺]" flags="x">
+            <xsl:analyze-string select="$next-text" regex="^\s*{$break-marker-regex}" flags="x">
                <xsl:matching-substring>
                   <xsl:value-of select="concat('match: ', .)"/>
                </xsl:matching-substring>
@@ -896,7 +895,10 @@
    <!-- VERBOSE EXPANSION -->
 
    <xsl:template match="/*" mode="class-1-expansion-verbose">
-
+      <xsl:variable name="diagnostics" select="false()"/>
+      <xsl:if test="$diagnostics">
+         <xsl:message>Diagnostics turned on for template class-1-expansion-verbose</xsl:message>
+      </xsl:if>
       <!-- Evaluate each alternatively divided edition (ade) -->
       <xsl:variable name="see-also-ades"
          select="tan:head/tan:see-also[tan:definition(tan:relationship)/tan:name = 'alternatively divided edition']"/>
@@ -1033,14 +1035,19 @@
 
       <xsl:copy>
          <xsl:copy-of select="@*"/>
-         <!-- diagnostics, results -->
-         <!--<test0><xsl:copy-of select="$these-ade-diffs"/></test0>-->
-         <!--<test1><xsl:copy-of select="$relevant-ade-diffs"/></test1>-->
-         <!--<test2><xsl:copy-of select="$ade-diffs-prepped"/></test2>-->
-         <!--<test3a><xsl:copy-of select="$this-model-expanded"/></test3a>-->
-         <!--<test3>
-            <xsl:copy-of select="$self-and-model-merged"/>
-         </test3>-->
+         <xsl:if test="$diagnostics">
+            <!--<test14a><xsl:value-of select="string-length($this-doc-text)"/></test14a>-->
+            <!--<test14b><xsl:value-of select="string-length(tan:text-join($these-ades[1]/*/(tan:body, tei:text/tei:body)))"/></test14b>-->
+            <!--<xsl:variable name="test14c" select="tan:analyze-leaf-div-string-length($these-ade-diffs[1])"/>-->
+            <!--<test14c><xsl:copy-of select="tan:trim-long-text($test14c, 21)"/></test14c>-->
+            <!--<xsl:copy-of select="$these-ade-diffs"/>-->
+            <!--<test1><xsl:copy-of select="$relevant-ade-diffs"/></test1>-->
+            <!--<test2><xsl:copy-of select="$ade-diffs-prepped"/></test2>-->
+            <!--<test3a><xsl:copy-of select="$this-model-expanded"/></test3a>-->
+            <!--<test3>
+               <xsl:copy-of select="$self-and-model-merged"/>
+            </test3>-->
+         </xsl:if>
          <xsl:apply-templates mode="#current">
             <xsl:with-param name="bad-see-alsos" select="$relevant-see-also-ades" tunnel="yes"/>
             <xsl:with-param name="text-alternatives" select="$ade-diffs-prepped" tunnel="yes"/>
@@ -1218,11 +1225,8 @@
                      <xsl:variable name="this-diff" select="tan:diff($this-text, .)"/>
                      <xsl:variable name="this-diff-trimmed" select="tan:trim-long-text($this-diff, 17)"/>
                      <xsl:copy-of
-                        select="tan:error('cl104', concat('Differs with copy (= a): ',tan:xml-to-string($this-diff-trimmed)), ., 'replace-text')"
+                        select="tan:error('cl104', concat('Differs with copy (= b): ',tan:xml-to-string($this-diff-trimmed)), ., 'replace-text')"
                      />
-                     <!--<xsl:copy-of
-                        select="tan:error('cl104', concat('Text in copy: ', .), ., 'replace-text')"
-                     />-->
                   </xsl:for-each>
                </xsl:if>
 
@@ -1451,9 +1455,60 @@
       </xsl:apply-templates>
    </xsl:function>
 
+   <xsl:function name="tan:group-divs" as="element()*">
+      <!-- Input: expanded <div>s -->
+      <!-- Output: those <div>s grouped in <group>s according to their <ref> values -->
+      <!-- Attempt is made to preserve original orders by means of <src> -->
+      <xsl:param name="divs-to-group" as="element()*"/>
+      <xsl:variable name="diagnostics" select="false()" as="xs:boolean"/>
+      <!-- Begin looking for overlaps between divs -->
+      <xsl:variable name="ref-group-prep" as="element()*">
+         <xsl:for-each select="$divs-to-group">
+            <xsl:copy>
+               <xsl:for-each select="tan:ref">
+                  <xsl:copy>
+                     <xsl:value-of select="text()"/>
+                  </xsl:copy>
+               </xsl:for-each>
+            </xsl:copy>
+         </xsl:for-each>
+      </xsl:variable>
+      <xsl:variable name="ref-groups"
+         select="tan:group-elements-by-shared-node-values($ref-group-prep, 'ref')" as="element()*"/>
+      <xsl:variable name="sort-key-prep" as="element()*">
+         <xsl:for-each-group select="$divs-to-group" group-by="tan:src">
+            <a src="{current-grouping-key()}">
+               <xsl:for-each select="current-group()/tan:ref[1]">
+                  <xsl:variable name="this-first-ref" select="text()"/>
+                  <ref>
+                     <xsl:value-of select="$ref-groups[tan:div/tan:ref = $this-first-ref]/tan:div[1]/tan:ref[1]"/>
+                  </ref>
+               </xsl:for-each>
+            </a>
+         </xsl:for-each-group> 
+      </xsl:variable>
+      <xsl:variable name="sort-key" select="tan:collate-sequences($sort-key-prep)" as="xs:string*"/>
+      <xsl:for-each-group select="$divs-to-group"
+         group-by="
+            for $i in tan:ref[1]/text()
+            return
+               $ref-groups[tan:div/tan:ref = $i]/tan:div[1]/tan:ref[1]">
+         <xsl:sort select="(index-of($sort-key, current-grouping-key()))[1]"/>
+         <group>
+            <xsl:copy-of select="current-group()"/>
+         </group>
+      </xsl:for-each-group>
+      <xsl:if test="$diagnostics">
+         <xsl:message select="$ref-groups"/>
+         <xsl:message select="$sort-key-prep"/>
+      </xsl:if>
+   </xsl:function>
+
    <xsl:template match="tan:body" mode="merge-divs">
+      <!--<xsl:variable name="these-children-divs-regrouped" as="element()*"
+         select="tan:group-elements-by-shared-node-values(tan:div, '^ref$')"/>-->
       <xsl:variable name="these-children-divs-regrouped" as="element()*"
-         select="tan:group-elements-by-shared-node-values(tan:div, '^ref$')"/>
+         select="tan:group-divs(tan:div)"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:copy-of select="node() except tan:div"/>
@@ -1482,7 +1537,9 @@
       <xsl:variable name="distinct-refs" select="distinct-values($children-divs/tan:ref/text())"/>
       <div>
          <xsl:copy-of select="$children-divs/@*"/>
-         <xsl:choose>
+         <xsl:copy-of
+            select="$children-divs/(* except (tan:div, tan:tok, tan:non-tok, tan:ref, tei:*))"/>
+         <!--<xsl:choose>
             <xsl:when test="$itemize-leaf-divs">
                <xsl:copy-of select="$children-divs/tan:src"/>
             </xsl:when>
@@ -1491,7 +1548,7 @@
                   select="$children-divs/(* except (tan:div, tan:tok, tan:non-tok, tan:ref, tei:*))"
                />
             </xsl:otherwise>
-         </xsl:choose>
+         </xsl:choose>-->
          <xsl:for-each-group select="$children-divs/tan:ref" group-by="text()">
             <ref>
                <xsl:copy-of select="current-group()[1]/tan:n"/>
@@ -1503,8 +1560,10 @@
             <xsl:choose>
                <xsl:when test="current-grouping-key()">
                   <!-- if children divs are not leaf divs, then continue the process -->
-                  <xsl:apply-templates
+                  <!--<xsl:apply-templates
                      select="tan:group-elements-by-shared-node-values(current-group()/tan:div, '^ref$')"
+                     mode="#current"/>-->
+                  <xsl:apply-templates select="tan:group-divs(current-group()/tan:div)"
                      mode="#current"/>
                </xsl:when>
                <xsl:when test="$itemize-leaf-divs">
@@ -1691,7 +1750,7 @@
       <xsl:copy-of select="tan:analyze-string-length($resolved-class-1-doc-or-fragment, false())"/>
    </xsl:function>
    <xsl:function name="tan:analyze-string-length" as="item()*">
-      <!-- Input: any class-1 document or fragment; an indication whether string lengths should be added only to leaf divs, or to every div. -->
+      <!-- Input: any class-1 document or fragment (or a result of tan:diff()); an indication whether string lengths should be added only to leaf divs, or to every div. -->
       <!-- Output: the same document, with @string-length and @string-pos added to every element -->
       <!-- Function to calculate string lengths of each leaf elements and their relative position, so that a raw text can be segmented proportionally and given the structure of a model exemplar. NB: any $special-end-div-chars that terminate a <div> not only will not be counted, but the
          assumed space that follows will also not be counted. On the other hand, the lack of a special
