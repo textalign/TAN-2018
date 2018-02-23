@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- This is a blank TAN-T file meant to be used to fill out the parameters a project might need to construct in preparing a collection of TEI files for TAN-T. -->
 <!-- Certain elements below are rendered invalid because of the use of curly braces. This file is meant to be used
-by a stylesheet, which will evaluate strings within the curly braces as XPath expressions, using the input document 
+by a stylesheet that evaluates strings within the curly braces as XPath expressions, using the input document 
 as the context -->
 <!-- Items that you will need to fill out by hand, or think about are marked in comments below with "Manually edit:" -->
 <!-- It is common practice to include processing instructions for both local and web-based versions of the schemas, with one pair commented out -->

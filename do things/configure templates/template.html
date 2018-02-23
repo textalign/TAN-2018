@@ -1,0 +1,32 @@
+<!DOCTYPE html SYSTEM "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <title></title>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
+      <link rel="stylesheet" type="text/css" href="../../../output/css/tan/tan2018.css"></link>
+      <script type="text/javascript" src="../../../output/js/jquery.js"></script>
+      <script type="application/javascript" src="../../../output/js/jquery-ui-1.12.1/jquery-ui.js"></script>
+      <script type="application/javascript" src="../../../output/js/tan/TAN-A-div-sortable.js"></script>
+      <link rel="stylesheet" type="text/css" href="../../../output/tablesorter/css/theme.default.css"></link>
+      <script type="text/javascript" src="../../../output/tablesorter/js/jquery.tablesorter.combined.js"/>
+      <script type="text/javascript" src="tablesorter/js/jquery.tablesorter.combined.js"></script>
+      <script type="text/javascript">
+                $(function(){
+                $('table').tablesorter({
+                widgets: ["filter"],
+                widgetOptions : {
+                filter_external : '.search',
+                filter_defaultFilter: { 1 : '~{query}' },
+                filter_columnFilters: false,
+                filter_placeholder: { search : 'Search...' },
+                filter_saveFilters : true,
+                filter_reset: '.reset'}
+                });
+                });
+            </script>
+   </head>
+   <body>
+      <div>new-content</div>
+      <script type="text/javascript" src="../../../output/js/tan/tan2018.js"></script>
+   </body>
+</html>
