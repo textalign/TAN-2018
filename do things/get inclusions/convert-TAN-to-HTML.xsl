@@ -5,33 +5,66 @@
     xmlns:tan="tag:textalign.net,2015:ns" exclude-result-prefixes="#all" version="2.0">
 
     <!-- Basic conversion utility for TAN to html -->
-    <!-- Companion stylesheet to convert.xsl -->
+    <!-- Must be included by a master stylesheet that also includes the TAN function library, perhaps by also importing convert.xsl -->
 
     <xsl:param name="tables-via-css" as="xs:boolean" select="true()"/>
 
-    <xsl:param name="attributes-to-add-to-class-attribute" as="xs:string*" select="('')"/>
-    <xsl:param name="elements-to-add-to-class-attribute" as="xs:string*" select="('type')"/>
+    <xsl:param name="attribute-values-to-add-to-class-attribute" as="xs:string*" select="('')"/>
+    <xsl:param name="children-element-values-to-add-to-class-attribute" as="xs:string*" select="('type')"/>
     <xsl:param name="elements-to-be-labeled" as="xs:string*" select="()"/>
+
+    <xsl:function name="tan:tan-to-html" as="item()*">
+        <xsl:param name="tan-input" as="item()*"/>
+        <xsl:variable name="diagnostics" as="xs:boolean" select="false()"/>
+        <xsl:if test="$diagnostics">
+            <xsl:message>diagnostics turned on for tan:tan-to-html()</xsl:message>
+        </xsl:if>
+        <xsl:variable name="pass-1" as="item()*">
+            <xsl:apply-templates select="$tan-input" mode="tan-to-html-pass-1"/>
+        </xsl:variable>
+        <xsl:variable name="pass-2" as="item()*">
+            <xsl:apply-templates select="$pass-1" mode="tan-to-html-pass-2"/>
+        </xsl:variable>
+        <xsl:variable name="pass-3" as="item()*">
+            <xsl:apply-templates select="$pass-2" mode="tan-to-html-pass-3"/>
+        </xsl:variable>
+        <!-- diagnostics, results -->
+        <xsl:choose>
+            <xsl:when test="$diagnostics">
+                <xsl:copy-of select="$pass-2"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:copy-of select="$pass-3"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+    
+    <xsl:template match="html:*" mode="tan-to-html-pass-1 tan-to-html-pass-2 tan-to-html-pass-3">
+        <xsl:copy>
+            <xsl:copy-of select="@*"/>
+            <xsl:apply-templates mode="#current"/>
+        </xsl:copy>
+    </xsl:template>
 
     <!-- pass 1: get rid of unnecessary things, and start building @class -->
 
     <!-- generally speaking, TAN comments, p-i's, and attributes may be ignored (expansion converts overloaded attributes into elements) -->
     <xsl:template match="attribute::* | comment() | processing-instruction()"
-        mode="input-pass-1"/>
-    <xsl:template match="tan:cf | tan:see-q" mode="input-pass-1"/>
+        mode="tan-to-html-pass-1"/>
+    <xsl:template match="tan:cf | tan:see-q" mode="tan-to-html-pass-1"/>
     
-    <xsl:template match="@q | @id" mode="input-pass-1">
+    <xsl:template match="@q | @id" mode="tan-to-html-pass-1">
         <xsl:attribute name="id" select="."/>
     </xsl:template>
     
-    <xsl:template match="*" mode="input-pass-1">
+    <xsl:template match="*" mode="tan-to-html-pass-1">
         <!-- Prepare html @class -->
         <xsl:variable name="this-namespace" select="namespace-uri(.)"/>
         <xsl:variable name="parent-namespace" select="namespace-uri(..)"/>
         <xsl:variable name="class-attributes"
-            select="@*[name(.) = $attributes-to-add-to-class-attribute]"/>
+            select="@*[name(.) = $attribute-values-to-add-to-class-attribute]"/>
         <xsl:variable name="class-elements"
-            select="*[name(.) = $elements-to-add-to-class-attribute]"/>
+            select="*[name(.) = $children-element-values-to-add-to-class-attribute]"/>
         <xsl:variable name="other-class-values-to-add" as="xs:string*">
             <xsl:value-of select="name(.)"/>
             <xsl:choose>
@@ -70,6 +103,10 @@
             </xsl:if>
             <xsl:for-each select="tan:src">
                 <xsl:value-of select="concat('src--', .)"/>
+                <xsl:variable name="this-src-order" select="index-of($src-ids, .)"/>
+                <xsl:if test="exists($this-src-order)">
+                    <xsl:value-of select="concat('src--', string($this-src-order[1]))"/>
+                </xsl:if>
             </xsl:for-each>
         </xsl:variable>
         <xsl:variable name="all-class-attribute-values"
@@ -88,27 +125,19 @@
         </xsl:copy>
     </xsl:template>
 
+    <!-- pass 2: up to individual situations (e.g., TAN-T-merge might need to untangle sources a bit) -->
+
 
     <!-- pass 3: convert everything to html <div> -->
     
-    <xsl:template match="*" mode="input-pass-3">
+    <xsl:template match="tan:*" mode="tan-to-html-pass-3">
         <div>
             <xsl:copy-of select="@*"/>
             <xsl:apply-templates mode="#current"/>
         </div>
     </xsl:template>
 
-    <!--<xsl:template match="/tan:TAN-T-merge" mode="input-pass-3">
-        
-        <xsl:copy>
-            <xsl:copy-of select="@*"/>
-            <xsl:apply-templates mode="tan-merge-to-html-tables">
-                <xsl:with-param name="src-order" select="$src-order" tunnel="yes"/>
-            </xsl:apply-templates>
-        </xsl:copy>
-    </xsl:template>-->
-
-    <xsl:template match="/*" mode="input-pass-3">
+    <xsl:template match="/tan:*" mode="tan-to-html-pass-3">
         <xsl:variable name="src-order" select="tan:head/tan:src"/>
         <!-- add a label to the root elements -->
         <div>
@@ -119,7 +148,7 @@
             </xsl:apply-templates>
         </div>
     </xsl:template>
-    <xsl:template match="tan:head | tei:teiHeader" mode="input-pass-3">
+    <xsl:template match="tan:head | tei:teiHeader" mode="tan-to-html-pass-3">
         <!-- Some children items should be grouped and labeled, to make it easier to understand the data -->
         <div>
             <xsl:copy-of select="@*"/>
@@ -143,13 +172,13 @@
         </div>
     </xsl:template>
     
-    <xsl:template match="tan:head/tan:src" mode="input-pass-3">
+    <xsl:template match="tan:head/tan:src" mode="tan-to-html-pass-3">
         <!-- Primarily for TAN-T-merge files, which have multiple <head>s, and can be used for filtering and reording the merged contents -->
         <div class="switch"><div class="on">☑</div><div class="off" style="display:none">☐</div></div>
         <div class="label"><xsl:value-of select="."/></div>
     </xsl:template>
     
-    <xsl:template match="tan:div[tan:div[tokenize(@class, ' ') = 'td']]" mode="input-pass-3">
+    <xsl:template match="tan:div[tan:div[tokenize(@class, ' ') = 'td']]" mode="tan-to-html-pass-3">
         <!--<xsl:param name="src-order" tunnel="yes"/>-->
         <!--<xsl:variable name="content-text" select="tan:text-join(.)"/>-->
         <xsl:variable name="content-text" select="normalize-space(tan:value-of(.))"/>
@@ -174,7 +203,7 @@
             </xsl:for-each-group>
         </div> 
     </xsl:template>
-    <xsl:template match="tan:div[tokenize(@class, ' ') = 'td']" mode="input-pass-3">
+    <xsl:template match="tan:div[tokenize(@class, ' ') = 'td']" mode="tan-to-html-pass-3">
         <xsl:param name="context-string-length"/>
         <!--<xsl:variable name="this-text" select="tan:text-join(.)"/>-->
         <xsl:variable name="this-text" select="normalize-space(tan:value-of(.))"/>
@@ -185,7 +214,7 @@
         </div>
     </xsl:template>
     
-    <xsl:template match="*[tokenize(@class, ' ') = 'make-html-table']" mode="input-pass-3">
+    <xsl:template match="*[tokenize(@class, ' ') = ('make-html-table', 'table')]" mode="tan-to-html-pass-3">
         <xsl:param name="src-order" tunnel="yes"/>
         <table>
             <caption>
@@ -262,7 +291,7 @@
             <xsl:apply-templates mode="#current"/>
         </td>
     </xsl:template>-->
-    <xsl:template match="tan:ref | tan:div/tan:n" mode="input-pass-3">
+    <xsl:template match="tan:ref | tan:div/tan:n" mode="tan-to-html-pass-3">
         <div>
             <xsl:copy-of select="@*"/>
             <xsl:apply-templates mode="#current"/>

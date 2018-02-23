@@ -50,7 +50,7 @@
 
    <!-- Main parameter: Template -->
    <xsl:param name="template-url-relative-to-this-stylesheet" as="xs:string?"
-      select="'../configure%20templates/template.html'"/>
+      select="''"/>
    <xsl:param name="template-url-relative-to-input" as="xs:string?"/>
    <xsl:variable name="template-url-resolved"
       select="
@@ -97,7 +97,6 @@
 
 
    <!-- Main parameter: Output -->
-   <xsl:param name="output-url-relative-to-this-stylesheet" as="xs:string?" select="''"/>
    <xsl:param name="output-url-relative-to-input" as="xs:string?" select="''"/>
    <xsl:param name="output-url-relative-to-template" as="xs:string?" select="''"/>
 
@@ -107,11 +106,7 @@
          if (string-length($output-url-relative-to-template) gt 0) then
             resolve-uri($output-url-relative-to-template, $template-url-resolved)
          else
-            
-            if (string-length($output-url-relative-to-input) gt 0) then
-               resolve-uri($output-url-relative-to-input, $input-base-uri)
-            else
-               resolve-uri($output-url-relative-to-this-stylesheet, static-base-uri())"/>
+            resolve-uri($output-url-relative-to-input, $input-base-uri)"/>
    <xsl:variable name="output-suffix-count" select="count($suffixes-for-multiple-output)"/>
 
 
@@ -131,7 +126,12 @@
    <xsl:param name="input-pass-4" as="item()*">
       <xsl:apply-templates select="$input-pass-3" mode="input-pass-4"/>
    </xsl:param>
-
+   <!--<xsl:template match="node() | @*" priority="-2"
+      mode="input-pass-1 input-pass-2 input-pass-3 input-pass-4">
+      <xsl:copy-of select="."/>
+   </xsl:template>-->
+   
+   
 
    <!-- Infuse the template with the input -->
    <xsl:param name="template-infused-with-revised-input" as="document-node()*">
@@ -183,26 +183,32 @@
         </xsl:processing-instruction>
    </xsl:template>
    <xsl:template match="tan:head" mode="revise-infused-template">
-      <xsl:apply-templates select="." mode="credit-stylesheet"/>
+      <xsl:variable name="this-credited-head" as="element()">
+         <xsl:apply-templates select="." mode="credit-stylesheet"/>
+      </xsl:variable>
+      <head xmlns="tag:textalign.net,2015:ns">
+         <xsl:copy-of select="$this-credited-head/@*"/>
+         <xsl:apply-templates select="$this-credited-head/node()" mode="#current"/>
+      </head>
    </xsl:template>
+   <!-- Caution: if you have relative @hrefs in the input, they should be resolved before being inserted into the template -->
    <xsl:template match="@href" mode="revise-infused-template credit-stylesheet">
-      <xsl:attribute name="{name(.)}"
+      <xsl:attribute name="href"
+         select="tan:uri-relative-to(resolve-uri(., $template-url-resolved), $output-url-resolved)"
+      />
+   </xsl:template>
+   <xsl:template match="html:script/@src" mode="revise-infused-template">
+      <xsl:attribute name="src"
          select="tan:uri-relative-to(resolve-uri(., $template-url-resolved), $output-url-resolved)"
       />
    </xsl:template>
 
 
 
-
    <!-- Generate results -->
+   
    <xsl:template match="/">
-      <!-- feedback, diagnostics, results -->
-      <!--<xsl:copy-of select="$input-pass-1"/>-->
-      <!--<xsl:copy-of select="$input-pass-2"/>-->
-      <!--<xsl:copy-of select="$input-pass-3"/>-->
-      <!--<xsl:copy-of select="$input-pass-4"/>-->
-      <!--<xsl:copy-of select="$template-infused-with-revised-input"/>-->
-      <!--<xsl:copy-of select="$infused-template-revised"/>-->
+      <!-- for feedback, diagnostics, results, create a default template in the importing stylesheet -->
       <xsl:if test="string-length($output-url-resolved) gt 0">
          <xsl:variable name="output" select="$infused-template-revised"/>
          <xsl:variable name="distinct-output-base-uris"
@@ -235,6 +241,9 @@
                select="replace($output-url-resolved, '(.+)(\.[^\.]+)$', concat('$1', $this-suffix-encoded-for-uri, '$2'))"/>
             <xsl:message select="concat('Saving output to ', $this-target-uri)"/>
             <xsl:choose>
+            <xsl:when test="$this-target-uri = static-base-uri()">
+               <xsl:message>Attempt has been made to overwrite </xsl:message>
+            </xsl:when>
                <xsl:when test="$template-is-openxml">
                   <xsl:variable name="this-output"
                      select="$output[*/@base-uri = $distinct-output-base-uris[$this-pos]]"/>
