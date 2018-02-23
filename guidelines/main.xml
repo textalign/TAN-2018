@@ -70,18 +70,41 @@
                   </listitem>
                   <listitem>
                      <para>New functions: tan:last-change-agent(), tan:trim-long-text(),
-                           tan:catalogs(), tan:chop-string() (2 parameters)</para>
+                           tan:catalogs(), tan:chop-string() (2 parameters),
+                           tan:collate-sequences(), tan:collate-pair-of-sequences(),
+                           tan:catalog-uris(), tan:collection(), tan:unique-char()</para>
                   </listitem>
                      <listitem>
-                        <para>New global variables: $shy (same as $dhy), $doc-catalogs,
-                           $local-catalog, $relationships-reserved, $relationship-model,
-                           $relationship-resegmented-copy</para>
+                        <para>New global variables: $shy (same as $dhy), $doc-catalog-uris,
+                           $doc-catalogs, $local-catalog, $relationships-reserved,
+                           $relationship-model, $relationship-resegmented-copy, $break-marker-regex,
+                           $loop-tolerance</para>
                      </listitem>
                      <listitem>
                         <para>New frameworks file added, to enhance oXygen functionality</para>
                      </listitem>
                      <listitem>
                         <para>Introduced the concept of catalogs</para>
+                     </listitem>
+                     <listitem>
+                        <para>Some functions provided $diagnostics</para>
+                     </listitem>
+                     <listitem>
+                        <para>some enhancement of functions: </para>
+                        <itemizedlist>
+                           <listitem>
+                              <para>tan:resolve-href() has a longer version that provides
+                                 breadcrumbs.</para>
+                           </listitem>
+                           <listitem>
+                              <para>tan:diff() greatly revised. If a string is considerably long, a
+                                 search is first done for sequences of unique words that are shared
+                                 between the strings, then the pieces between are fed to tan:diff();
+                                 if the string is not too long, it follows the normal routine, now
+                                 converted to a two-loop process easier to diagnose. Snap-to-word
+                                 has been made more reliable.</para>
+                           </listitem>
+                        </itemizedlist>
                      </listitem>
                </itemizedlist></para>
                <para>TAN-T(EI):<itemizedlist>
@@ -98,8 +121,16 @@
                      <listitem>
                         <para>The importance of models and resegmented copies has been recognized.
                            There will probably be changes so that current &lt;see-also>s that fall
-                           in this categories can simply be &lt;model> and
-                           &lt;resegmented-copy>.</para>
+                           in this categories can simply be &lt;model> and &lt;redivision>. Possibly
+                           other important relationships will join?: &lt;predecessor>,
+                           &lt;successor>, &lt;annotation>.</para>
+                     </listitem>
+                     <listitem>
+                        <para>In the service of merging different sources, the new tan:group-divs()
+                           groups together &lt;div>s that might have multiple &lt;ref>s and be in
+                           their own peculiar sequence. It was written to preserve as best as
+                           possible the original sequence of each reference within a given
+                           source.</para>
                      </listitem>
                   </itemizedlist></para>
                <para>TAN-A-lm:<itemizedlist>
@@ -135,17 +166,24 @@
                         <para>global variables to define the ends of words, clauses,
                            sentences</para>
                      </listitem>
+                     <listitem>
+                        <para>tan:int-to-aaa()</para>
+                     </listitem>
+                     <listitem>
+                        <para>tan:acronym()</para>
+                     </listitem>
                </itemizedlist></para>
                <para>Advanced / recommended best practices<itemizedlist>
                      <listitem>
                         <para>Class 1 filenames should terminate in something that expresses the
-                           principal type of reference system (semantic or physical) followed by a
-                           string indicating whether the reference system is native to the scriptum
-                           or if it follows some other reference system. Example:
-                           ar.cat.fra.1844.saint-hilaire.sem-native.xml indicates that the semantic
-                           reference system is native to the French edition. But
-                           ar.cat.fra.1844.saint-hilaire.sem-after-grc.xml suggests that the
-                           semantic referenc system follows the Greek archetype.</para>
+                           principal type of reference system (logical or scriptum-based) followed
+                           by a string indicating whether the reference system is native to the
+                           scriptum or if it follows some other reference system. Example:
+                           ar.cat.fra.1844.saint-hilaire.ref-logical-native.xml indicates that the
+                           logical (i.e., non-scriptum-based) reference system is native to the
+                           French edition. But
+                           ar.cat.fra.1844.saint-hilaire.ref-logical-after-grc.xml indicates that
+                           the reference system follows the Greek archetype.</para>
                      </listitem>
                   </itemizedlist></para>
             </section>
