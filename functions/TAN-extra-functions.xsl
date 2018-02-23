@@ -7,12 +7,15 @@
 
    <xsl:include href="extra/TAN-function-functions.xsl"/>
    <xsl:include href="extra/TAN-schema-functions.xsl"/>
+   <xsl:include href="extra/TAN-search-functions.xsl"/>
 
    <!-- Functions that are not central to validating TAN files, but could be helpful in creating, editing, or reusing them -->
 
-   <!-- Global variables and parameters -->
-   <!-- An xpath pattern looks like this: {PATTERN} -->
+   <!-- GLOBAL VARIABLES AND PARAMETERS -->
+   
+   <!-- An xpath pattern built into a text node or an attribute value looks like this: {PATTERN} -->
    <xsl:variable name="xpath-pattern" select="'\{[^\}]+?\}'"/>
+   
    <xsl:variable name="namespaces-and-prefixes" as="element()">
       <namespaces>
          <ns prefix="" uri=""/>
@@ -24,6 +27,7 @@
          <ns prefix="m" uri="http://schemas.openxmlformats.org/officeDocument/2006/math"/>
          <ns prefix="mc" uri="http://schemas.openxmlformats.org/markup-compatibility/2006"/>
          <ns prefix="mo" uri="http://schemas.microsoft.com/office/mac/office/2008/main"/>
+         <ns prefix="mods" uri="http://www.loc.gov/mods/v3"/>
          <ns prefix="mv" uri="urn:schemas-microsoft-com:mac:vml"/>
          <ns prefix="o" uri="urn:schemas-microsoft-com:office:office"/>
          <ns prefix="r" uri="http://schemas.openxmlformats.org/officeDocument/2006/relationships"/>
@@ -45,6 +49,7 @@
          <ns prefix="xs" uri="http://www.w3.org/2001/XMLSchema"/>
          <ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
          <ns prefix="xsl" uri="http://www.w3.org/1999/XSL/Transform"/>
+         <ns prefix="zs" uri="http://www.loc.gov/zing/srw/"/>
       </namespaces>
    </xsl:variable>
    
@@ -65,6 +70,16 @@
    <xsl:param name="sentence-end-regex" select="'[\.\?!]+\p{P}*\s*'"/>
    <xsl:param name="clause-end-regex" select="'\w\p{P}+\s*'"/>
    <xsl:param name="word-end-regex" select="'\s+'"/>
+   
+   <!--<xsl:variable name="local-TAN-collection" as="document-node()*"
+      select="tan:collection($local-catalog, (), (), ())"/>-->
+   <xsl:variable name="local-TAN-collection" as="document-node()*"
+      select="collection(concat(resolve-uri('catalog.tan.xml', $doc-uri),'?on-error=warning'))"/>
+   <xsl:variable name="local-TAN-key-collection" select="$local-TAN-collection[name(*) = 'TAN-key']"/>
+
+   <xsl:variable name="today-iso" select="format-date(current-date(), '[Y0001]-[M01]-[D01]')"/>
+
+   <!-- FUNCTIONS -->
 
    <!-- Functions: numerics -->
 
@@ -99,6 +114,24 @@
                   else
                      $orig-numeral-seq[$i]"/>
          <xsl:value-of select="tan:letter-to-number(string-join($duplicates-stripped, ''))"/>
+      </xsl:for-each>
+   </xsl:function>
+   
+   <xsl:function name="tan:int-to-aaa" as="xs:string*">
+      <!-- Input: any integers -->
+      <!-- Output: the alphabetic representation of those numerals -->
+      <xsl:param name="integers" as="xs:integer*"/>
+      <xsl:for-each select="$integers">
+         <xsl:variable name="this-integer" select="."/>
+         <xsl:variable name="this-letter-codepoint" select="(. mod 26) + 96"/>
+         <xsl:variable name="this-number-of-letters" select="(. idiv 26) + 1"/>
+         <xsl:variable name="these-codepoints"
+            select="
+               for $i in (1 to $this-number-of-letters)
+               return
+                  $this-letter-codepoint"
+         />
+         <xsl:value-of select="codepoints-to-string($these-codepoints)"/>
       </xsl:for-each>
    </xsl:function>
 
@@ -206,7 +239,7 @@
          select="
             for $i in $numbers
             return
-               if ($i instance of xs:string) then
+               if ($i castable as xs:double) then
                   number($i)
                else
                   $i"/>
@@ -239,6 +272,10 @@
       <!-- Input: any sequence of numbers -->
       <!-- Output: outliers in the sequence, -->
       <xsl:param name="numbers" as="xs:anyAtomicType*"/>
+      <xsl:variable name="diagnostics" select="false()"/>
+      <xsl:if test="$diagnostics">
+         <xsl:message>Diagnostics turned on for tan:outliers()</xsl:message>
+      </xsl:if>
       <xsl:variable name="numbers-sorted" select="tan:number-sort($numbers)" as="xs:anyAtomicType*"/>
       <xsl:variable name="half-point" select="count($numbers) idiv 2"/>
       <xsl:variable name="top-half" select="$numbers-sorted[position() le $half-point]"/>
@@ -252,6 +289,7 @@
       <xsl:variable name="bottom-fence" select="$q3 + $outer-fences"/>
       <xsl:variable name="top-outliers" select="$top-half[. lt $top-fence]"/>
       <xsl:variable name="bottom-outliers" select="$bottom-half[. gt $bottom-fence]"/>
+      
       <xsl:for-each select="$numbers">
          <xsl:variable name="this-number"
             select="
@@ -263,6 +301,9 @@
             <xsl:copy-of select="."/>
          </xsl:if>
       </xsl:for-each>
+      <xsl:if test="$diagnostics">
+         <xsl:message select="$numbers-sorted"/>
+      </xsl:if>
    </xsl:function>
 
    <xsl:function name="tan:no-outliers" as="xs:anyAtomicType*">
@@ -284,56 +325,92 @@
             for $i in $arg
             return
                math:pow(($i - $this-avg), 2)"/>
+      <xsl:variable name="max-deviation" select="max($these-deviations)"/>
       <xsl:variable name="this-variance" select="avg($these-deviations)"/>
       <xsl:variable name="this-standard-deviation" select="math:sqrt($this-variance)"/>
       <stats>
-         <xsl:attribute name="count" select="count($arg)"/>
-         <xsl:attribute name="sum" select="sum($arg)"/>
-         <xsl:attribute name="avg" select="$this-avg"/>
-         <xsl:attribute name="max" select="max($arg)"/>
-         <xsl:attribute name="min" select="min($arg)"/>
-         <xsl:attribute name="var" select="$this-variance"/>
-         <xsl:attribute name="std" select="$this-standard-deviation"/>
+         <count>
+            <xsl:copy-of select="count($arg)"/>
+         </count>
+         <sum>
+            <xsl:copy-of select="sum($arg)"/>
+         </sum>
+         <avg>
+            <xsl:copy-of select="$this-avg"/>
+         </avg>
+         <max>
+            <xsl:copy-of select="max($arg)"/>
+         </max>
+         <min>
+            <xsl:copy-of select="min($arg)"/>
+         </min>
+         <var>
+            <xsl:copy-of select="$this-variance"/>
+         </var>
+         <std>
+            <xsl:copy-of select="$this-standard-deviation"/>
+         </std>
          <xsl:for-each select="$arg">
             <xsl:variable name="pos" select="position()"/>
-            <xsl:element name="d" namespace="tag:textalign.net,2015:ns">
-               <xsl:attribute name="dev" select="$these-deviations[$pos]"/>
+            <xsl:variable name="this-dev" select="$these-deviations[$pos]"/>
+            <d dev="{$these-deviations[$pos]}">
+               <xsl:if test="$this-dev = $max-deviation">
+                  <xsl:attribute name="max"/>
+               </xsl:if>
                <xsl:value-of select="."/>
-            </xsl:element>
+            </d>
          </xsl:for-each>
       </stats>
    </xsl:function>
 
    <xsl:function name="tan:merge-analyzed-stats" as="element()">
-      <!-- Takes a group of elements that follow the pattern that results from tan:analyze-stats and synthesizes them into a single element. If $add-stats is true, then they are added; if false, the sum of the 2nd - last elements is subtracted from the first; if neither true nor false, nothing happens. Will work on elements of any name, so long as they have tan:d children, with the data points to be merged. -->
+      <!-- Input: Results from tan:analyze-stats(); a boolean -->
+      <!-- Output: A synthesis of the results. If the second parameter is true, the stats are added; if false, the first statistic will be compared to the sum of all subsequent ones. -->
       <xsl:param name="analyzed-stats" as="element()*"/>
       <xsl:param name="add-stats" as="xs:boolean?"/>
+      <xsl:variable name="diagnostics" select="false()"/>
       <xsl:variable name="datum-counts" as="xs:integer*"
          select="
             for $i in $analyzed-stats
             return
                count($i/tan:d)"/>
-      <xsl:variable name="data-summed" as="xs:anyAtomicType*"
-         select="
-            for $i in (1 to $datum-counts[1])
-            return
-               sum($analyzed-stats/tan:d[$i])"/>
+      <xsl:variable name="this-count" select="avg($analyzed-stats[position() gt 1]/tan:count)"/>
+      <xsl:variable name="this-sum" select="avg($analyzed-stats[position() gt 1]/tan:sum)"/>
+      <xsl:variable name="this-avg" select="avg($analyzed-stats[position() gt 1]/tan:avg)"/>
+      <xsl:variable name="this-max" select="avg($analyzed-stats[position() gt 1]/tan:max)"/>
+      <xsl:variable name="this-min" select="avg($analyzed-stats[position() gt 1]/tan:min)"/>
+      <xsl:variable name="this-var" select="avg($analyzed-stats[position() gt 1]/tan:var)"/>
+      <xsl:variable name="this-std" select="avg($analyzed-stats[position() gt 1]/tan:std)"/>
+      <xsl:variable name="this-count-diff" select="$this-count - $analyzed-stats[1]/tan:count"/>
+      <xsl:variable name="this-sum-diff" select="$this-sum - $analyzed-stats[1]/tan:sum"/>
+      <xsl:variable name="this-avg-diff" select="$this-avg - $analyzed-stats[1]/tan:avg"/>
+      <xsl:variable name="this-max-diff" select="$this-max - $analyzed-stats[1]/tan:max"/>
+      <xsl:variable name="this-min-diff" select="$this-min - $analyzed-stats[1]/tan:min"/>
+      <xsl:variable name="this-var-diff" select="$this-var - $analyzed-stats[1]/tan:var"/>
+      <xsl:variable name="this-std-diff" select="$this-std - $analyzed-stats[1]/tan:std"/>
       <xsl:variable name="data-diff" as="element()">
          <stats>
-            <xsl:attribute name="count"
-               select="(avg($analyzed-stats[position() gt 1]/@count)) - $analyzed-stats[1]/@count"/>
-            <xsl:attribute name="sum"
-               select="(avg($analyzed-stats[position() gt 1]/@sum)) - $analyzed-stats[1]/@sum"/>
-            <xsl:attribute name="avg"
-               select="(avg($analyzed-stats[position() gt 1]/@avg)) - $analyzed-stats[1]/@avg"/>
-            <xsl:attribute name="max"
-               select="(avg($analyzed-stats[position() gt 1]/@max)) - $analyzed-stats[1]/@max"/>
-            <xsl:attribute name="min"
-               select="(avg($analyzed-stats[position() gt 1]/@min)) - $analyzed-stats[1]/@min"/>
-            <xsl:attribute name="var"
-               select="(avg($analyzed-stats[position() gt 1]/@var)) - $analyzed-stats[1]/@var"/>
-            <xsl:attribute name="std"
-               select="(avg($analyzed-stats[position() gt 1]/@std)) - $analyzed-stats[1]/@std"/>
+            <count diff="{$this-count-diff div $analyzed-stats[1]/tan:count}">
+               <xsl:copy-of select="$this-count-diff"/>
+            </count>
+            <sum diff="{$this-sum-diff div $analyzed-stats[1]/tan:sum}">
+               <xsl:copy-of select="$this-sum-diff"/>
+            </sum>
+            <avg diff="{$this-avg-diff div $analyzed-stats[1]/tan:avg}">
+               <xsl:copy-of select="$this-avg-diff"/>
+            </avg>
+            <max diff="{$this-max-diff div $analyzed-stats[1]/tan:max}">
+               <xsl:copy-of select="$this-max-diff"/>
+            </max>
+            <min diff="{$this-min-diff div $analyzed-stats[1]/tan:min}">
+               <xsl:copy-of select="$this-min-diff"/>
+            </min>
+            <var diff="{$this-var-diff div $analyzed-stats[1]/tan:var}">
+               <xsl:copy-of select="$this-var-diff"/>
+            </var>
+            <std diff="{$this-std-diff div $analyzed-stats[1]/tan:std}">
+               <xsl:copy-of select="$this-std-diff"/>
+            </std>
             <xsl:for-each select="$analyzed-stats[1]/tan:d">
                <xsl:variable name="pos" select="position()"/>
                <d>
@@ -344,24 +421,19 @@
             </xsl:for-each>
          </stats>
       </xsl:variable>
-      <stats>
-         <xsl:choose>
-            <xsl:when test="$analyzed-stats/tan:d and count(distinct-values($datum-counts)) gt 1">
-               <xsl:copy-of select="tan:error('adv03', $datum-counts)"/>
-            </xsl:when>
-            <xsl:otherwise>
-               <xsl:choose>
-                  <xsl:when test="$add-stats = true() and $analyzed-stats/tan:d">
-                     <xsl:copy-of select="tan:analyze-stats($data-summed)/(@*, node())"/>
-                  </xsl:when>
-                  <xsl:when test="$add-stats = false() and $analyzed-stats/tan:d">
-                     <xsl:copy-of select="$data-diff/(@*, node())"/>
-                     <!--<xsl:copy-of select="tan:analyze-stats($data-diff)/(@*, node())"/>-->
-                  </xsl:when>
-               </xsl:choose>
-            </xsl:otherwise>
-         </xsl:choose>
-      </stats>
+      <xsl:if test="$diagnostics and count(distinct-values($datum-counts)) gt 1">
+         <xsl:message
+            select="concat('Comparing mismatched sets of sizes ', string-join($analyzed-stats/tan:count,', '))"
+         />
+      </xsl:if>
+      <xsl:choose>
+         <xsl:when test="$add-stats = true()">
+            <xsl:copy-of select="tan:analyze-stats($analyzed-stats/tan:d)"/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:copy-of select="$data-diff"/>
+         </xsl:otherwise>
+      </xsl:choose>
    </xsl:function>
 
 
@@ -388,18 +460,18 @@
       </xsl:for-each>
    </xsl:function>
    
-   <xsl:function name="tan:unique-char" as="xs:string?">
-      <!-- Input: any sequence of strings -->
-      <!-- Output: a single character that is not to be found in those strings -->
-      <!-- This function was written to help join and make strings that are contextually unique -->
-      <xsl:param name="context-strings" as="xs:string*"/>
-      <xsl:variable name="codepoints-used" as="xs:integer*"
+   <xsl:function name="tan:acronym" as="xs:string?">
+      <!-- Input: any strings -->
+      <!-- Output: the acronym of those strings, space-tokenized -->
+      <xsl:param name="string-input" as="xs:string*"/>
+      <xsl:variable name="initials"
          select="
-            for $i in ($context-strings)
+            for $i in $string-input,
+               $j in tokenize($i, '\s+')
             return
-               string-to-codepoints($i)"
+               substring($j, 1, 1)"
       />
-      <xsl:copy-of select="codepoints-to-string(max($codepoints-used) + 1)"/>      
+      <xsl:value-of select="string-join($initials, '')"/>
    </xsl:function>
 
 
@@ -420,8 +492,8 @@
          </xsl:choose>
       </xsl:for-each>
    </xsl:function>
-
-
+   
+   
    <!-- Functions: nodes -->
 
    <xsl:function name="tan:node-type" as="xs:string*">
@@ -557,9 +629,15 @@
    </xsl:template>
    
    <xsl:function name="tan:sequence-to-tree" as="item()*">
-      <!-- Input: a result of tan:tree-to-sequence() -->
-      <!-- Output: the original tree -->
+      <!-- One-parameter version of the more complete one below -->
       <xsl:param name="sequence-to-reconstruct" as="item()*"/>
+      <xsl:sequence select="tan:sequence-to-tree($sequence-to-reconstruct, true())"/>
+   </xsl:function>
+   <xsl:function name="tan:sequence-to-tree" as="item()*">
+      <!-- Input: a result of tan:tree-to-sequence(); a boolean -->
+      <!-- Output: the original tree; if the boolean is true, then any first children that are text nodes will be wrapped in a shallow copy of the first child element -->
+      <xsl:param name="sequence-to-reconstruct" as="item()*"/>
+      <xsl:param name="fix-orphan-text" as="xs:boolean"/>
       <xsl:variable name="sequence-prepped" as="element()">
          <tree>
             <xsl:copy-of select="$sequence-to-reconstruct"/>
@@ -568,13 +646,16 @@
       <xsl:variable name="results" as="element()">
          <xsl:apply-templates select="$sequence-prepped" mode="sequence-to-tree">
             <xsl:with-param name="level-so-far" select="0"/>
+            <xsl:with-param name="fix-orphan-text" select="$fix-orphan-text" tunnel="yes"/>
          </xsl:apply-templates>
       </xsl:variable>
       <xsl:copy-of select="$results/node()"/>
    </xsl:function>
    <xsl:template match="*" mode="sequence-to-tree">
       <xsl:param name="level-so-far" as="xs:integer"/>
+      <xsl:param name="fix-orphan-text" as="xs:boolean" tunnel="yes"/>
       <xsl:variable name="this-element" select="."/>
+      <xsl:variable name="first-child-element" select="*[1]"/>
       <xsl:variable name="level-to-process" select="$level-so-far + 1"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
@@ -623,6 +704,15 @@
                </xsl:if>
             </xsl:variable>
             <xsl:choose>
+               <xsl:when
+                  test="$this-head instance of text() and $fix-orphan-text 
+                  and exists($first-child-element) and matches($this-head,'\S')">
+                  <xsl:element name="{name($first-child-element)}"
+                     namespace="{namespace-uri($first-child-element)}">
+                     <xsl:copy-of select="$first-child-element/(@* except @level)"/>
+                     <xsl:value-of select="current-group()"/>
+                  </xsl:element>
+               </xsl:when>
                <xsl:when test="not(exists($new-group))">
                   <xsl:copy-of select="current-group()"/>
                </xsl:when>
@@ -651,38 +741,6 @@
          </xsl:if>
       </xsl:for-each-group>
    </xsl:function>
-   
-   
-   <xsl:function name="tan:collate-sequences"> <!--  as="xs:string*" -->
-      <!-- Input: two sequences of strings -->
-      <!-- Output: a collation of the two strings, preserving their order -->
-      <xsl:param name="string-sequence-1" as="xs:string*"/>
-      <xsl:param name="string-sequence-2" as="xs:string*"/>
-      <xsl:variable name="this-delimiter" select="tan:unique-char(($string-sequence-1, $string-sequence-2))"/>
-      <xsl:variable name="string-1" select="string-join($string-sequence-1, $this-delimiter)"/>
-      <xsl:variable name="string-2" select="string-join($string-sequence-2, $this-delimiter)"/>
-      <xsl:variable name="string-diff" select="tan:diff($string-1, $string-2, false())"/>
-      <xsl:variable name="results-without-delimiter" as="element()*">
-         <xsl:apply-templates select="$string-diff/*" mode="collate-sequence">
-            <xsl:with-param name="delimiter" select="$this-delimiter"/>
-         </xsl:apply-templates>
-      </xsl:variable>
-      <xsl:copy-of select="$results-without-delimiter"/>
-      <!--<xsl:for-each-group select="$results-without-delimiter" group-adjacent="text()">
-         <xsl:value-of select="current-grouping-key()"/>
-      </xsl:for-each-group>--> 
-   </xsl:function>
-   <xsl:template match="*[text()]" mode="collate-sequence">
-      <xsl:param name="delimiter" as="xs:string"/>
-      <xsl:variable name="this-name" select="name()"/>
-      <xsl:analyze-string select="." regex="{tan:escape($delimiter)}">
-         <xsl:non-matching-substring>
-            <xsl:element name="{$this-name}">
-               <xsl:value-of select="."/>
-            </xsl:element>
-         </xsl:non-matching-substring>
-      </xsl:analyze-string>
-   </xsl:template>
 
 
    <!-- Functions: accessors and manipulation of uris -->
@@ -701,8 +759,7 @@
          />
       </xsl:for-each>
    </xsl:function>
-
-
+   
    <!-- Functions: XPath Functions and Operators -->
 
    <xsl:function name="tan:evaluate" as="item()*">
@@ -723,7 +780,7 @@
                <xsl:matching-substring>
                   <xsl:variable name="this-xpath" select="replace(., '[\{\}]', '')"/>
                   <xsl:choose>
-                     <xsl:when test="function-available('saxon:evaluate')">
+                     <xsl:when test="function-available('saxon:evaluate', 3)">
                         <!-- If saxon:evaluate is available, use it -->
                         <xsl:copy-of select="saxon:evaluate($this-xpath, $context-1, $context-2)"
                            copy-namespaces="no"/>
