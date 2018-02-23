@@ -38,8 +38,7 @@
       <xsl:copy-of select="."/>
    </xsl:template>
    <xsl:template match="tan:error | tan:help | tan:warning | tan:fix | tan:fatal | tan:info"
-      priority="-4"
-      mode="#all">
+      priority="-4" mode="#all">
       <xsl:copy-of select="."/>
    </xsl:template>
    <xsl:template match="tan:tail" mode="#all" priority="-4">
@@ -131,7 +130,7 @@
       select="
          ('Roman numerals', 'Arabic numerals', 'Arabic numerals + alphabet numeral', 'alphabet numeral', 'alphabet numeral + Arabic numeral',
          'non-Latin-alphabet numeral', 'string', 'Roman or alphabet numeral')"/>
-   
+
    <!-- The following list of URN namespace com from the Official IANA Registry of URN Namespaces, https://www.iana.org/assignments/urn-namespaces/urn-namespaces.xhtml, accessed 5 January 2018 -->
    <xsl:variable name="official-urn-namespaces"
       select="
@@ -204,9 +203,8 @@
          'urn-4',
          'urn-5',
          'urn-6',
-         'urn-7')"
-   />
-   
+         'urn-7')"/>
+
 
    <!-- self -->
    <xsl:variable name="orig-self" select="/" as="document-node()"/>
@@ -241,9 +239,11 @@
       select="($head/tan:definitions/(tan:person, tan:organization, tan:algorithm)[tan:IRI[matches(., concat('^tag:', $doc-namespace))]])[1]"/>
 
    <!-- catalogs -->
-   <xsl:variable name="doc-catalogs" select="tan:catalogs(/)"/>
+   <xsl:variable name="doc-catalog-uris" select="tan:catalog-uris(/)"/>
+   <xsl:variable name="doc-catalogs" select="tan:catalogs(/, $validation-phase = 'verbose')"
+      as="document-node()*"/>
    <xsl:variable name="local-catalog" select="$doc-catalogs[1]"/>
-   
+
    <!-- inclusions -->
    <xsl:variable name="inclusions-1st-da" select="tan:get-1st-doc(/*/tan:head/tan:inclusion)"/>
    <xsl:variable name="inclusions-resolved"
@@ -284,13 +284,15 @@
    <xsl:variable name="relationship-model" select="$relationships-reserved[tan:name = 'model']"/>
    <xsl:variable name="relationship-resegmented-copy"
       select="$relationships-reserved[tan:name = 'resegmented copy']"/>
-   
+
    <!-- token definitions -->
-   <xsl:variable name="token-definitions-reserved"
-      select="$TAN-keywords//tan:token-definition"/>
-   <xsl:variable name="token-definition-letters-only" select="$token-definitions-reserved[../tan:name = 'letters only']"/>
-   <xsl:variable name="token-definition-letters-and-punctuation" select="$token-definitions-reserved[../tan:name = 'letters and punctuation']"/>
-   <xsl:variable name="token-definition-nonspace" select="$token-definitions-reserved[../tan:name = 'nonspace']"/>
+   <xsl:variable name="token-definitions-reserved" select="$TAN-keywords//tan:token-definition"/>
+   <xsl:variable name="token-definition-letters-only"
+      select="$token-definitions-reserved[../tan:name = 'letters only']"/>
+   <xsl:variable name="token-definition-letters-and-punctuation"
+      select="$token-definitions-reserved[../tan:name = 'letters and punctuation']"/>
+   <xsl:variable name="token-definition-nonspace"
+      select="$token-definitions-reserved[../tan:name = 'nonspace']"/>
    <xsl:variable name="token-definition-default" select="$token-definitions-reserved[1]"/>
 
    <!-- morphologies -->
@@ -492,7 +494,8 @@
             <xsl:with-param name="ambig-is-roman" select="($ambig-is-roman, true())[1]"/>
          </xsl:apply-templates>
       </xsl:variable>-->
-      <xsl:variable name="string-analyzed" select="tan:analyze-numbers-in-string($string-to-analyze, $ambig-is-roman)"/>
+      <xsl:variable name="string-analyzed"
+         select="tan:analyze-numbers-in-string($string-to-analyze, $ambig-is-roman)"/>
       <xsl:choose>
          <xsl:when test="$return-only-numerals">
             <xsl:copy-of select="$string-analyzed/self::tan:tok[@number]"/>
@@ -528,7 +531,7 @@
       <xsl:param name="ambig-is-roman" as="xs:boolean" select="true()"/>
       <xsl:copy>
          <xsl:choose>
-            <xsl:when test="matches(., $n-type-pattern[2])">
+            <xsl:when test=". castable as xs:integer">
                <xsl:attribute name="number" select="$n-type[2]"/>
                <xsl:attribute name="orig" select="."/>
                <xsl:value-of select="xs:integer(.)"/>
@@ -664,6 +667,183 @@
       </xsl:for-each>
    </xsl:function>
 
+   <xsl:function name="tan:collate-sequences" as="xs:string*">
+      <!-- This version of the function takes a sequence of elements, each of which contains a sequences of shallow elements with text content -->
+      <xsl:param name="elements-with-elements" as="element()*"/>
+      <xsl:variable name="diagnostics" select="false()" as="xs:boolean"/>
+      <xsl:variable name="input-sorted" as="element()*">
+         <xsl:for-each select="$elements-with-elements">
+            <xsl:sort select="count(*)" order="descending"/>
+            <xsl:choose>
+               <xsl:when test="count(*) lt 1">
+                  <xsl:message>Input elements without elements will be ignored</xsl:message>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:copy-of select="."/>
+               </xsl:otherwise>
+            </xsl:choose>
+         </xsl:for-each>
+      </xsl:variable>
+      <xsl:variable name="first-sequence" as="xs:string*">
+         <xsl:for-each select="$input-sorted[1]/*">
+            <xsl:value-of select="."/>
+         </xsl:for-each>
+      </xsl:variable>
+      <xsl:if test="$diagnostics">
+         <xsl:message select="tan:xml-to-string($input-sorted)"/>
+         <xsl:message select="string-join($first-sequence, '; ')"/>
+      </xsl:if>
+      <xsl:choose>
+         <xsl:when test="count($input-sorted) lt 2">
+            <xsl:if test="$diagnostics">
+               <xsl:message>Function called with fewer than two sequences</xsl:message>
+            </xsl:if>
+            <xsl:copy-of select="$first-sequence"/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:copy-of select="tan:collate-sequence-loop($input-sorted[position() gt 1], $first-sequence)"/>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:function>
+   <xsl:function name="tan:collate-sequence-loop" as="xs:string*">
+      <xsl:param name="elements-with-elements" as="element()*"/>
+      <xsl:param name="results-so-far" as="xs:string*"/>
+      <xsl:choose>
+         <xsl:when test="count($elements-with-elements) lt 1">
+            <xsl:copy-of select="$results-so-far"/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:variable name="next-sequence" as="xs:string*">
+               <xsl:for-each select="$elements-with-elements[1]/*">
+                  <xsl:value-of select="."/>
+               </xsl:for-each>
+            </xsl:variable>
+            <xsl:variable name="this-collation" select="tan:collate-pair-of-sequences($results-so-far, $next-sequence)"/>
+            <xsl:copy-of select="tan:collate-sequence-loop($elements-with-elements[position() gt 1], $this-collation)"/>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:function>
+
+   <xsl:function name="tan:collate-pair-of-sequences" as="xs:string*">
+      <!-- Two-parameter version of the fuller one below, intended for collating pairs of sequences -->
+      <xsl:param name="string-sequence-1" as="xs:string*"/>
+      <xsl:param name="string-sequence-2" as="xs:string*"/>
+      <xsl:copy-of
+         select="tan:collate-pair-of-sequences($string-sequence-1, $string-sequence-2, false())"/>
+   </xsl:function>
+
+   <xsl:function name="tan:collate-pair-of-sequences" as="xs:string*">
+      <!--  -->
+      <!-- Input: two sequences of strings -->
+      <!-- Output: a collation of the two strings, preserving their order -->
+      <xsl:param name="string-sequence-1" as="xs:string*"/>
+      <xsl:param name="string-sequence-2" as="xs:string*"/>
+      <xsl:param name="exclude-unique" as="xs:boolean"/>
+      <xsl:variable name="this-delimiter"
+         select="tan:unique-char(($string-sequence-1, $string-sequence-2))"/>
+      <xsl:variable name="string-1" select="string-join($string-sequence-1, $this-delimiter)"/>
+      <xsl:variable name="string-2" select="string-join($string-sequence-2, $this-delimiter)"/>
+      <xsl:variable name="string-diff" select="tan:diff($string-1, $string-2, false(), false(), 0)"/>
+      <xsl:variable name="diagnostics" select="false()" as="xs:boolean?"/>
+      <xsl:if test="$diagnostics">
+         <xsl:message select="$string-1, $string-2, $this-delimiter"/>
+         <xsl:message select="$string-diff"/>
+      </xsl:if>
+      <xsl:variable name="results-1" as="element()">
+         <xsl:apply-templates select="$string-diff" mode="collate-sequence-1">
+            <xsl:with-param name="delimiter-regex" select="tan:escape($this-delimiter)" tunnel="yes"
+            />
+         </xsl:apply-templates>
+      </xsl:variable>
+      <xsl:if test="$diagnostics"><xsl:message select="$results-1"/></xsl:if>
+      <xsl:variable name="results-2" as="element()">
+         <xsl:apply-templates select="$results-1" mode="collate-sequence-2">
+            <xsl:with-param name="delimiter-regex" select="tan:escape($this-delimiter)" tunnel="yes"
+            />
+         </xsl:apply-templates>
+      </xsl:variable>
+      <xsl:if test="$diagnostics"><xsl:message select="$results-2"/></xsl:if>
+      <xsl:choose>
+         <xsl:when test="$exclude-unique">
+            <xsl:copy-of select="$results-1/tan:common/text()"/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:copy-of select="$results-2/*/text()"/>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:function>
+
+   <xsl:template match="tan:common" mode="collate-sequence-1">
+      <!-- Restrict <common> to only true matches -->
+      <xsl:param name="delimiter-regex" as="xs:string" tunnel="yes"/>
+      <xsl:variable name="preceding-diffs"
+         select="preceding-sibling::*[position() lt 3][self::tan:a or self::tan:b]"/>
+      <xsl:variable name="following-diffs"
+         select="following-sibling::*[position() lt 3][self::tan:a or self::tan:b]"/>
+      <!-- If the preceding differences terminate in the delimiter, or the next differences start with it, then the opening or closing fragment in the <common> should be kept -->
+      <xsl:variable name="opening-item-should-be-included"
+         select="
+            every $i in $preceding-diffs
+               satisfies matches($i, concat($delimiter-regex, '$'))"/>
+      <xsl:variable name="closing-item-should-be-included"
+         select="
+            every $i in $following-diffs
+               satisfies matches($i, concat('^', $delimiter-regex))"/>
+      <xsl:variable name="this-tokenized" select="tokenize(., $delimiter-regex)"/>
+      <xsl:for-each select="$this-tokenized">
+         <xsl:choose>
+            <xsl:when test="string-length(.) lt 1"/>
+            <xsl:when
+               test="
+                  (position() = 1 and not($opening-item-should-be-included)) or
+                  (position() = count($this-tokenized) and (count($this-tokenized) gt 1) and not($closing-item-should-be-included))">
+               <a>
+                  <xsl:value-of select="."/>
+                  <!-- We include the delimiter after initial fragments that get moved up, so they don't get conflated with fragments that follow -->
+                  <xsl:if test="position() = 1 and count($this-tokenized) gt 1">
+                     <xsl:value-of select="$delimiter-regex"/>
+                  </xsl:if>
+               </a>
+               <b>
+                  <xsl:value-of select="."/>
+                  <xsl:if test="position() = 1 and count($this-tokenized) gt 1">
+                     <xsl:value-of select="$delimiter-regex"/>
+                  </xsl:if>
+               </b>
+            </xsl:when>
+            <xsl:otherwise>
+               <common>
+                  <xsl:value-of select="."/>
+               </common>
+            </xsl:otherwise>
+         </xsl:choose>
+      </xsl:for-each>
+   </xsl:template>
+   <xsl:template match="tan:diff" mode="collate-sequence-2">
+      <xsl:param name="delimiter-regex" as="xs:string" tunnel="yes"/>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:for-each-group select="*" group-adjacent="local-name() = 'common'">
+            <xsl:choose>
+               <xsl:when test="current-grouping-key()">
+                  <xsl:copy-of select="current-group()"/>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:for-each-group select="current-group()" group-by="local-name(.)">
+                     <xsl:variable name="this-element-name" select="current-grouping-key()"/>
+                     <xsl:variable name="this-val" select="string-join(current-group(), '')"/>
+                     <xsl:for-each select="tokenize($this-val, $delimiter-regex)">
+                        <xsl:element name="{$this-element-name}">
+                           <xsl:value-of select="."/>
+                        </xsl:element>
+                     </xsl:for-each>
+                  </xsl:for-each-group>
+               </xsl:otherwise>
+            </xsl:choose>
+         </xsl:for-each-group>
+      </xsl:copy>
+   </xsl:template>
+
 
    <!-- FUNCTIONS: NODES -->
 
@@ -725,13 +905,18 @@
          <xsl:value-of select="."/>
       </xsl:if>
    </xsl:template>
-   
+
    <xsl:function name="tan:trim-long-text" as="item()*">
       <!-- Input: an XML fragment; an integer -->
       <!-- Output: the fragment with text nodes longer than the integer value abbreviated with an ellipsis -->
       <xsl:param name="xml-fragment" as="item()*"/>
       <xsl:param name="too-long" as="xs:integer"/>
-      <xsl:apply-templates select="$xml-fragment" mode="trim-long-text">
+      <xsl:variable name="input-as-node" as="element()">
+         <node>
+            <xsl:copy-of select="$xml-fragment"/>
+         </node>
+      </xsl:variable>
+      <xsl:apply-templates select="$input-as-node/node()" mode="trim-long-text">
          <xsl:with-param name="too-long" select="$too-long" tunnel="yes"/>
       </xsl:apply-templates>
    </xsl:function>
@@ -750,7 +935,7 @@
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
-   
+
    <xsl:template match="*" mode="strip-all-attributes-except">
       <xsl:param name="attributes-to-keep" as="xs:string*" tunnel="yes"/>
       <xsl:copy>
@@ -1036,7 +1221,9 @@
             <!-- atomic items here are separated by spaces, hyphens, and perhaps by a comma -->
             <xsl:variable name="space-and-comma-to-comma"
                select="replace($sequence-string, '\s+|\s*,\s*', ' , ')"/>
-            <xsl:value-of select="normalize-space(replace($space-and-comma-to-comma, '(\d+)\s*-\s*(\d+)', '$1 - $2'))"/>
+            <xsl:value-of
+               select="normalize-space(replace($space-and-comma-to-comma, '(\d+)\s*-\s*(\d+)', '$1 - $2'))"
+            />
          </xsl:when>
          <xsl:when test="$attribute-name = ('object')">
             <!-- atomic items here are separated purely by spaces, nothing else -->
@@ -1545,6 +1732,127 @@
       </xsl:choose>
    </xsl:function>
 
+   <xsl:function name="tan:catalog-uris" as="xs:string*">
+      <!-- Input: a node from an XML file -->
+      <!-- Output: URLs for locally available TAN catalog files, beginning with the immediate subdirectory and proceeding rootward -->
+      <xsl:param name="input-node" as="node()?"/>
+      <xsl:variable name="this-uri" select="tan:base-uri($input-node)"/>
+      <xsl:variable name="doc-uri-steps" select="tokenize(string($this-uri), '/')"/>
+      <xsl:for-each select="2 to count($doc-uri-steps)">
+         <xsl:sort order="descending"/>
+         <xsl:variable name="this-pos" select="."/>
+         <xsl:variable name="this-dir-to-check"
+            select="string-join($doc-uri-steps[position() le $this-pos], '/')"/>
+         <xsl:variable name="this-uri-to-check"
+            select="concat($this-dir-to-check, '/catalog.tan.xml')"/>
+         <xsl:if test="doc-available($this-uri-to-check)">
+            <xsl:value-of select="$this-uri-to-check"/>
+         </xsl:if>
+      </xsl:for-each>
+
+   </xsl:function>
+   <xsl:function name="tan:catalogs" as="document-node()*">
+      <!-- Input: a node from an XML file -->
+      <!-- Output: the TAN catalog documents available, beginning with the most local path and proceeding rootward -->
+      <xsl:param name="input-node" as="node()?"/>
+      <xsl:param name="strip-bad-hrefs" as="xs:boolean"/>
+      <xsl:variable name="these-uris" select="tan:catalog-uris($input-node)"/>
+      <xsl:for-each select="$these-uris">
+         <xsl:choose>
+            <xsl:when test="$strip-bad-hrefs">
+               <xsl:variable name="this-uri" select="."/>
+               <xsl:variable name="this-doc" select="doc(.)"/>
+               <xsl:variable name="these-hrefs" select="$this-doc//@href"/>
+               <xsl:variable name="doc-check"
+                  select="
+                     for $i in $these-hrefs
+                     return
+                        doc-available(resolve-uri($i, $this-uri))"/>
+               <xsl:choose>
+                  <xsl:when test="$doc-check = false()">
+                     <xsl:variable name="bad-href-pos" select="index-of($doc-check, false())"/>
+                     <xsl:variable name="bad-hrefs"
+                        select="$these-hrefs[position() = $bad-href-pos]"/>
+                     <xsl:message
+                        select="concat('catalog at ', $this-uri, ' has faulty @hrefs: ', string-join($bad-hrefs, ', '))"/>
+                     <xsl:apply-templates select="$this-doc" mode="cut-faulty-hrefs">
+                        <xsl:with-param name="base-uri" select="$this-uri" tunnel="yes"/>
+                        <xsl:with-param name="bad-hrefs" select="$bad-hrefs" tunnel="yes"/>
+                     </xsl:apply-templates>
+                  </xsl:when>
+                  <xsl:otherwise>
+                     <xsl:sequence select="$this-doc"/>
+                  </xsl:otherwise>
+               </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:sequence select="doc(.)"/>
+            </xsl:otherwise>
+         </xsl:choose>
+      </xsl:for-each>
+   </xsl:function>
+   <xsl:template match="/collection" mode="cut-faulty-hrefs">
+      <xsl:param name="bad-hrefs" as="xs:string*" tunnel="yes"/>
+      <xsl:param name="base-uri" tunnel="yes"/>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:attribute name="base-uri" select="$base-uri"/>
+         <xsl:copy-of
+            select="tan:error('cat01', concat('In catalog file ', $base-uri, ' no document available at ', string-join($bad-hrefs, ', ')))"/>
+         <xsl:apply-templates select="*[not(@href = $bad-hrefs)]" mode="#current"/>
+      </xsl:copy>
+   </xsl:template>
+   <xsl:template match="doc" mode="cut-faulty-hrefs">
+      <xsl:param name="base-uri" tunnel="yes"/>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:attribute name="href" select="resolve-uri(@href, $base-uri)"/>
+      </xsl:copy>
+   </xsl:template>
+
+
+   <xsl:function name="tan:collection" as="document-node()*">
+      <!-- Input: one or more catalog.tan.xml files; filtering parameters -->
+      <!-- Output: documents that are available -->
+      <xsl:param name="catalog-docs" as="document-node()*"/>
+      <xsl:param name="root-names" as="xs:string*"/>
+      <xsl:param name="id-matches" as="xs:string?"/>
+      <xsl:param name="href-matches" as="xs:string?"/>
+      <xsl:for-each select="$catalog-docs">
+         <xsl:variable name="this-base-uri" select="tan:base-uri(.)"/>
+         <xsl:for-each select="collection/doc">
+            <xsl:variable name="root-test" select="count($root-names) lt 1 or @root = $root-names"/>
+            <xsl:variable name="id-test"
+               select="
+                  if (string-length($id-matches) gt 0) then
+                     matches(@id, $id-matches)
+                  else
+                     true()"/>
+            <xsl:variable name="href-test"
+               select="
+                  if (string-length($href-matches) gt 0) then
+                     matches(@href, $href-matches)
+                  else
+                     true()"/>
+            <xsl:if test="$root-test and $id-test and $href-test">
+               <xsl:variable name="this-uri" select="resolve-uri(@href, string($this-base-uri))"/>
+               <xsl:choose>
+                  <xsl:when test="doc-available($this-uri)">
+                     <xsl:sequence select="doc($this-uri)"/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                     <xsl:document>
+                        <xsl:copy-of
+                           select="tan:error('cat01', concat('In catalog file ', $this-base-uri, ' no document available at ', @href))"
+                        />
+                     </xsl:document>
+                  </xsl:otherwise>
+               </xsl:choose>
+            </xsl:if>
+         </xsl:for-each>
+      </xsl:for-each>
+   </xsl:function>
+
 
    <!-- FUNCTIONS: TAN-SPECIFIC -->
 
@@ -1644,7 +1952,7 @@
          </history>
       </xsl:for-each>
    </xsl:function>
-   
+
    <xsl:function name="tan:last-change-agent" as="element()*">
       <!-- Input: any TAN document -->
       <!-- Output: the <person>, <organization>, or <algorithm> who made the last change -->
@@ -1661,25 +1969,6 @@
          <xsl:copy-of
             select="root()/*/tan:head/tan:definitions/*[@xml:id = $last-change-agent-idref]"/>
       </xsl:for-each>
-   </xsl:function>
-   
-   <xsl:function name="tan:catalogs" as="document-node()*">
-      <!-- Input: a node from an XML file -->
-      <!-- Output: the TAN catalog documents available, beginning with the most local path and proceeding rootward -->
-      <xsl:param name="input-node" as="node()?"/>
-      <xsl:variable name="this-uri" select="tan:base-uri($input-node)"/>
-      <xsl:variable name="doc-uri-steps" select="tokenize(string($this-uri), '/')"/>
-      <xsl:for-each select="2 to count($doc-uri-steps)">
-         <xsl:sort order="descending"/>
-         <xsl:variable name="this-pos" select="."/>
-         <xsl:variable name="this-dir-to-check"
-            select="string-join($doc-uri-steps[position() le $this-pos],'/')"/>
-         <xsl:variable name="this-uri-to-check" select="concat($this-dir-to-check, '/catalog.tan.xml')"/>
-         <xsl:if test="doc-available($this-uri-to-check)">
-            <xsl:sequence select="doc($this-uri-to-check)"/>
-         </xsl:if>
-      </xsl:for-each>
-
    </xsl:function>
 
    <xsl:function name="tan:conditions-hold" as="xs:boolean?">
@@ -1721,7 +2010,8 @@
                select="$elements-with-condition-attributes-to-be-evaluated[1]"/>
             <xsl:variable name="this-analysis" as="element()">
                <xsl:apply-templates select="$next-element-to-evaluate" mode="evaluate-conditions">
-                  <xsl:with-param name="context" select="$context-to-evaluate-against" tunnel="yes"/>
+                  <xsl:with-param name="context" select="$context-to-evaluate-against" tunnel="yes"
+                  />
                </xsl:apply-templates>
             </xsl:variable>
             <xsl:choose>
@@ -1729,13 +2019,15 @@
                   <xsl:copy-of select="true()"/>
                </xsl:when>
                <xsl:otherwise>
-                  <xsl:copy-of select="tan:condition-evaluation-loop($elements-with-condition-attributes-to-be-evaluated[position() gt 1], $context-to-evaluate-against)"/>
+                  <xsl:copy-of
+                     select="tan:condition-evaluation-loop($elements-with-condition-attributes-to-be-evaluated[position() gt 1], $context-to-evaluate-against)"
+                  />
                </xsl:otherwise>
             </xsl:choose>
          </xsl:otherwise>
       </xsl:choose>
    </xsl:function>
-   
+
    <xsl:template match="*" mode="evaluate-conditions">
       <xsl:copy>
          <xsl:apply-templates select="@*" mode="#current"/>
@@ -1805,7 +2097,7 @@
 
    <xsl:function name="tan:definition" as="element()*">
       <!-- Input: an attribute or element that contains a text value -->
-      <!-- Output: the corresponding definitions. If a value does not exist, an <error> is returned. -->
+      <!-- Output: the corresponding entity in <definitions>. If a value does not exist, an <error> is returned. -->
       <!-- Assumes space normalization, and ignores help requests -->
       <xsl:param name="ref-nodes" as="node()*"/>
       <xsl:variable name="ref-node-head" select="root($ref-nodes[1])/*/tan:head"/>
@@ -1854,7 +2146,7 @@
    <xsl:function name="tan:glossary" as="element()*">
       <!-- one-parameter version of the master one, below -->
       <xsl:param name="element-that-takes-attribute-which" as="item()"/>
-      <xsl:copy-of select="tan:glossary($element-that-takes-attribute-which, $keys-1st-da, ())"/>
+      <xsl:sequence select="tan:glossary($element-that-takes-attribute-which, $keys-1st-da, ())"/>
    </xsl:function>
    <xsl:function name="tan:glossary" as="element()*">
       <!-- Input: any element that has @which (or a string value of the name of an element that takes @which); any TAN-key documents (expanded) other than the standard TAN ones; and an optional name that restricts the search to a particular group -->
@@ -1894,10 +2186,12 @@
 
    <!-- Step 1: is it available? -->
    <xsl:function name="tan:first-loc-available" as="xs:string?">
-      <!-- Input: An element that contains one or more tan:location elements -->
+      <!-- Input: An element that is or contains one or more tan:location elements -->
       <!-- Output: the value of the first tan:location/@href to point to a document available, resolved If no location is available nothing is returned. -->
-      <xsl:param name="elements-that-are-locations-or-parents-of-locations" as="element()*"/>
-      <xsl:value-of select="(tan:resolve-href($elements-that-are-locations-or-parents-of-locations)[doc-available(.)])[1]"/>
+      <xsl:param name="element-that-is-location-or-parent-of-locations" as="element()?"/>
+      <xsl:variable name="pass-1"
+         select="tan:resolve-href($element-that-is-location-or-parent-of-locations)"/>
+      <xsl:value-of select="($pass-1//@href[doc-available(.)])[1]"/>
    </xsl:function>
 
    <!-- Step 2: if so, get it -->
@@ -1918,7 +2212,7 @@
                <xsl:variable name="these-hrefs" select="tan:resolve-href(.)"/>
                <xsl:variable name="these-tan-catalog-uris"
                   select="
-                     for $i in $these-hrefs
+                     for $i in $these-hrefs//@href
                      return
                         replace($i, '[^/]+$', 'catalog.tan.xml')"/>
                <xsl:variable name="these-tan-catalogs"
@@ -1928,15 +2222,14 @@
                      if (self::tan:master-location) then
                         root()/*/@id
                      else
-                        tan:IRI"
-               />
+                        tan:IRI"/>
                <xsl:variable name="possible-docs" as="element()*">
                   <xsl:apply-templates select="$these-tan-catalogs//doc[@id = $these-IRIs]"
                      mode="resolve-href"/>
                </xsl:variable>
                <xsl:variable name="possible-hrefs" as="element()*">
                   <xsl:for-each select="$possible-docs/@href">
-                     <fix href="{tan:uri-relative-to(., string($this-base-uri))}"></fix>
+                     <fix href="{tan:uri-relative-to(., string($this-base-uri))}"/>
                   </xsl:for-each>
                </xsl:variable>
                <xsl:variable name="this-message" as="xs:string*">
@@ -1962,7 +2255,9 @@
                      <xsl:when
                         test="self::tan:source and not(exists(tan:location)) and tan:tan-type(.) = 'TAN-mor'"/>
                      <xsl:otherwise>
-                        <xsl:copy-of select="tan:error('loc01', string-join($this-message, ''), $possible-hrefs, 'replace-attributes')"/>
+                        <xsl:copy-of
+                           select="tan:error('loc01', string-join($this-message, ''), $possible-hrefs, 'replace-attributes')"
+                        />
                      </xsl:otherwise>
                   </xsl:choose>
                </xsl:document>
@@ -1970,7 +2265,8 @@
             <xsl:otherwise>
                <xsl:variable name="this-doc" select="doc($first-la)"/>
                <xsl:choose>
-                  <xsl:when test="($this-doc/*/@id = $this-id) and not($is-master-location or $is-see-also)">
+                  <xsl:when
+                     test="($this-doc/*/@id = $this-id) and not($is-master-location or $is-see-also)">
                      <xsl:document>
                         <xsl:copy-of select="tan:error('tan16')"/>
                      </xsl:document>

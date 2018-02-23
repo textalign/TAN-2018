@@ -17,6 +17,10 @@
       <!-- Because class 2 files are expanded hand-in-glove with the class 1 files they depend upon, expansion is necessarily synchronized. The original class-2 document is the first document of the result, and the expanded class-1 files follow. -->
       <xsl:param name="tan-doc-and-dependencies" as="document-node()*"/>
       <xsl:param name="target-phase" as="xs:string"/>
+      <xsl:variable name="diagnostics" as="xs:boolean" select="false()"/>
+      <xsl:if test="$diagnostics">
+         <xsl:message>Diagnostics turned on for tan:expand-doc()</xsl:message>
+      </xsl:if>
       <xsl:variable name="tan-doc" select="$tan-doc-and-dependencies[1]"/>
       <xsl:variable name="dependencies" select="$tan-doc-and-dependencies[position() gt 1]"/>
       <xsl:variable name="this-id" select="$tan-doc/*/@id"/>
@@ -121,11 +125,21 @@
                            tunnel="yes"/>
                      </xsl:apply-templates>
                   </xsl:variable>
-                  <!-- diagnostics, results -->
-                  <!--<xsl:copy-of select="$core-expansion-pass-3, $these-dependencies-resolved"/>-->
-                  <!--<xsl:copy-of select="$core-expansion-pass-3, $dependencies-pass-1"/>-->
-                  <!--<xsl:copy-of select="$core-expansion-pass-3, $dependencies-pass-2"/>-->
-                  <xsl:copy-of select="$class-2-expansion, $dependencies-pass-3"/>
+                  <xsl:choose>
+                     <xsl:when test="$diagnostics">
+                        <xsl:document>
+                           <xsl:copy-of select="$alter-part-1"/>
+                        </xsl:document>
+                        <!--<xsl:copy-of select="$core-expansion-pass-3, $these-dependencies-resolved"/>-->
+                        <!--<xsl:copy-of select="$core-expansion-pass-3, $dependencies-pass-1"/>-->
+                        <!--<xsl:copy-of select="$core-expansion-pass-3, $dependencies-pass-2"/>-->
+                     </xsl:when>
+                     <xsl:otherwise>
+                        <xsl:copy-of select="$class-2-expansion, $dependencies-pass-3"/>
+                     </xsl:otherwise>
+                  </xsl:choose>
+                  <xsl:if test="$diagnostics">
+                  </xsl:if>
                </xsl:when>
                <xsl:otherwise>
                   <!-- diagnostics, results -->
@@ -469,7 +483,7 @@
                   if ($this-doc-id = $doc-id) then
                      $doc-catalogs
                   else
-                     tan:catalogs(.)"
+                     tan:catalogs(., false())"
             />
             <xsl:variable name="these-iris" select="tan:IRI"/>
             <xsl:variable name="catalog-matches" select="$these-catalogs/collection/doc[@id = $these-iris]"/>
@@ -627,6 +641,9 @@
             />
          </xsl:apply-templates>
       </xsl:copy>
+   </xsl:template>
+   <xsl:template match="tei:teiHeader" mode="core-expansion-terse-attributes">
+      <xsl:copy-of select="."/>
    </xsl:template>
    <xsl:template match="*" mode="core-expansion-terse-attributes">
       <xsl:param name="aliases" tunnel="yes"/>
@@ -1091,7 +1108,7 @@
    <!-- CORE EXPANSION VERBOSE -->
 
    <xsl:template match="/*" mode="core-expansion-verbose">
-      <xsl:variable name="this-local-catalog" as="document-node()?" select="tan:catalogs(.)[1]"/>
+      <xsl:variable name="this-local-catalog" as="document-node()?" select="tan:catalogs(., true())[1]"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <expansion>verbose</expansion>
