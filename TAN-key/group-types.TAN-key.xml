@@ -132,16 +132,22 @@
                     page</desc>
             </item>
             <item>
-                <IRI>tag:textalign.net,2015:group-type:div:semantic</IRI>
-                <name>semantic</name>
-                <desc>Text division is based on semantics, e.g., sentence, paragraph. Contrasts with
-                    physical divisions.</desc>
+                <IRI>tag:textalign.net,2015:group-type:div:logical</IRI>
+                <name>logical</name>
+                <name>conceptual</name>
+                <desc>Text division is based on logical units that do not depend upon scripta for
+                    their meaning, e.g., sentence, paragraph. Contrasts with physical, scriptum-based
+                    divisions.</desc>
             </item>
             <item>
-                <IRI>tag:textalign.net,2015:group-type:div:physical</IRI>
+                <IRI>tag:textalign.net,2015:group-type:div:scriptum</IRI>
+                <name>scriptum</name>
+                <name>scriptum-based</name>
+                <name>object</name>
                 <name>physical</name>
+                <name>material</name>
                 <desc>Text division is based on a physical feature in the scriptum, e.g., page,
-                    column, line. Contrasts with semantic divisions.</desc>
+                    column, line. Contrasts with logical divisions.</desc>
             </item>
         </group>
         <group type="n">
