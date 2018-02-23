@@ -206,17 +206,25 @@
       </xsl:copy>
    </xsl:template>
    
-   <xsl:function name="tan:resolve-href" as="xs:string*">
-      <!-- Input: any elements that have @href -->
-      <!-- Output: @href values resolved, as strings -->
-      <xsl:param name="items-with-href-attribute" as="item()*"/>
-      <xsl:variable name="results" as="item()*">
-         <xsl:apply-templates select="$items-with-href-attribute" mode="resolve-href"/>
-      </xsl:variable>
-      <xsl:copy-of select="$results//@href"/>
+   <xsl:function name="tan:resolve-href" as="node()?">
+      <!-- One-parameter version of the full one, below -->
+      <xsl:param name="xml-node" as="node()?"/>
+      <xsl:copy-of select="tan:resolve-href($xml-node, true())"/>
+   </xsl:function>
+   <xsl:function name="tan:resolve-href" as="node()?">
+      <!-- Input: any XML node; a boolean -->
+      <!-- Output: the same node, but with @href resolved to absolute form, with @orig-href if the 2nd parameter is true -->
+      <xsl:param name="xml-node" as="node()?"/>
+      <xsl:param name="leave-breadcrumbs" as="xs:boolean"/>
+      <xsl:variable name="this-base-uri" select="tan:base-uri($xml-node)"/>
+      <xsl:apply-templates select="$xml-node" mode="resolve-href">
+         <xsl:with-param name="base-uri" select="$this-base-uri" tunnel="yes"/>
+         <xsl:with-param name="leave-breadcrumbs" select="$leave-breadcrumbs" tunnel="yes"/>
+      </xsl:apply-templates>
    </xsl:function>
    <xsl:template match="*[@href]" mode="resolve-href expand-tan-key-dependencies">
       <xsl:param name="base-uri" as="xs:anyURI?" tunnel="yes"/>
+      <xsl:param name="leave-breadcrumbs" as="xs:boolean" tunnel="yes" select="true()"/>
       <xsl:variable name="this-base-uri"
          select="
             if (exists($base-uri)) then
@@ -227,7 +235,7 @@
       <xsl:copy>
          <xsl:copy-of select="@* except @href"/>
          <xsl:attribute name="href" select="$new-href"/>
-         <xsl:if test="not($new-href = @href)">
+         <xsl:if test="not($new-href = @href) and $leave-breadcrumbs">
             <xsl:attribute name="orig-href" select="@href"/>
          </xsl:if>
       </xsl:copy>
