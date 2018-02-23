@@ -24,8 +24,8 @@
             <group-type xml:id="column-end" which="new column end"/>
             <group-type xml:id="page-start" which="new page start"/>
             <group-type xml:id="page-end" which="new page end"/>
-            <group-type xml:id="semantic" which="semantic"/>
-            <group-type xml:id="physical" which="physical"/>
+            <group-type xml:id="logical" which="logical"/>
+            <group-type xml:id="scriptum" which="scriptum"/>
             <person xml:id="kalvesmaki">
                 <IRI>http://viaf.org/viaf/299582703</IRI>
                 <IRI>tag:textalign.net,2015:agent:kalvesmaki:joel</IRI>
@@ -46,13 +46,14 @@
         <change who="xslt1" when="2017-11-02T23:06:07.636-04:00">TAN file updated to 2018 schemas.</change>
     </head>
     <body in-progress="false" affects-element="div-type">
-        <group type="semantic">
+        <group type="logical">
             <item group="line-start line-end leading-start leading-end">
                 <IRI>tag:textalign.net,2015:div-type:abstract</IRI>
-                <IRI>http://www.tei-c.org/ns/1.0/abstract</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:tei:abstract</IRI>
                 <IRI>http://dbpedia.org/resource/Abstract_(summary)</IRI>
                 <name>abstract</name>
                 <name>summary</name>
+                <name>tei abstract</name>
             </item>
             <item>
                 <IRI>http://dbpedia.org/resource/Act_(drama)</IRI>
@@ -73,9 +74,10 @@
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:address_(postal)</IRI>
-                <IRI>http://www.w3.org/1999/xhtml/address</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:xhtml:address</IRI>
                 <IRI>http://dbpedia.org/resource/Address_(geography)</IRI>
                 <name>address (postal)</name>
+                <name>xhtml address</name>
             </item>
             <item group="page-start page-end">
                 <IRI>tag:textalign.net,2015:div-type:afterword</IRI>
@@ -102,10 +104,12 @@
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:bibliographic_citation</IRI>
-                <IRI>http://www.w3.org/1999/xhtml/cite</IRI>
-                <IRI>http://www.tei-c.org/ns/1.0/bibl</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:xhtml:cite</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:tei:bibl</IRI>
                 <IRI>http://dbpedia.org/resource/Citation</IRI>
                 <name>bibliographic citation</name>
+                <name>tei bibl</name>
+                <name>xhtml cite</name>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:bibliography</IRI>
@@ -114,9 +118,11 @@
             </item>
             <item group="line-start line-end leading-start leading-end">
                 <IRI>tag:textalign.net,2015:div-type:block_quote</IRI>
-                <IRI>http://www.w3.org/1999/xhtml/blockquote</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:xhtml:blockquote</IRI>
                 <IRI>http://dbpedia.org/resource/Block_quotation</IRI>
                 <name>block quote</name>
+                <name>xhtml blockquote</name>
+                <desc>Equivalent to TEI &lt;quote> that is not in mixed content.</desc>
             </item>
             <item group="page-start page-end">
                 <IRI>tag:textalign.net,2015:div-type:book</IRI>
@@ -134,10 +140,12 @@
             </item>
             <item group="line-start line-end leading-start leading-end">
                 <IRI>tag:textalign.net,2015:div-type:caption</IRI>
-                <IRI>http://www.tei-c.org/ns/1.0/figDesc</IRI>
-                <IRI>http://www.w3.org/1999/xhtml/caption</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:tei:figDesc</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:xhtml:caption</IRI>
                 <IRI>http://dbpedia.org/resource/Photo_caption</IRI>
                 <name>caption</name>
+                <name>tei figDesc</name>
+                <name>xhtml caption</name>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:castlist</IRI>
@@ -187,15 +195,17 @@
             </item>
             <item group="inline-start inline-end">
                 <IRI>tag:textalign.net,2015:div-type:character</IRI>
-                <IRI>http://www.tei-c.org/ns/1.0/c</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:tei:c</IRI>
                 <IRI>http://dbpedia.org/resource/Character_(computing)</IRI>
                 <name>character</name>
+                <name>tei c</name>
             </item>
             <item group="inline-start inline-end">
                 <IRI>tag:textalign.net,2015:div-type:clause_(grammatical)</IRI>
-                <IRI>http://www.tei-c.org/ns/1.0/cl</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:tei:cl</IRI>
                 <IRI>http://dbpedia.org/resource/Clause</IRI>
                 <name>clause (grammatical)</name>
+                <name>tei cl</name>
                 <desc>See also independent clause</desc>
             </item>
             <item>
@@ -224,13 +234,15 @@
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:definition_list</IRI>
-                <IRI>http://www.w3.org/1999/xhtml/dl</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:xhtml:dl</IRI>
                 <name>definition list</name>
+                <name>xhtml dl</name>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:dictionary_entry</IRI>
-                <IRI>http://www.tei-c.org/ns/1.0/entry</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:tei:entry</IRI>
                 <name>dictionary entry</name>
+                <name>tei entry</name>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:dictum_ante_canonem</IRI>
@@ -255,8 +267,9 @@
             </item>
             <item group="line-start line-end leading-start leading-end">
                 <IRI>tag:textalign.net,2015:div-type:epigraph</IRI>
-                <IRI>http://www.tei-c.org/ns/1.0/epigraph</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:tei:epigraph</IRI>
                 <IRI>http://dbpedia.org/resource/Epigraph_(literature)</IRI>
+                <name>tei epigraph</name>
                 <name>epigraph</name>
             </item>
             <item>
@@ -300,37 +313,45 @@
             </item>
             <item group="line-start line-end leading-start leading-end">
                 <IRI>tag:textalign.net,2015:div-type:heading</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:tei:head</IRI>
                 <name>heading</name>
+                <name>tei head</name>
             </item>
             <item group="line-start line-end leading-start leading-end">
                 <IRI>tag:textalign.net,2015:div-type:heading_level_1</IRI>
-                <IRI>http://www.w3.org/1999/xhtml/h1</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:xhtml:h1</IRI>
                 <name>heading level 1</name>
+                <name>xhtml h1</name>
             </item>
             <item group="line-start line-end leading-start leading-end">
                 <IRI>tag:textalign.net,2015:div-type:heading_level_2</IRI>
-                <IRI>http://www.w3.org/1999/xhtml/h2</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:xhtml:h2</IRI>
                 <name>heading level 2</name>
+                <name>xhtml h2</name>
             </item>
             <item group="line-start line-end leading-start leading-end">
                 <IRI>tag:textalign.net,2015:div-type:heading_level_3</IRI>
-                <IRI>http://www.w3.org/1999/xhtml/h3</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:xhtml:h3</IRI>
                 <name>heading level 3</name>
+                <name>xhtml h3</name>
             </item>
             <item group="line-start line-end leading-start leading-end">
                 <IRI>tag:textalign.net,2015:div-type:heading_level_4</IRI>
-                <IRI>http://www.w3.org/1999/xhtml/h4</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:xhtml:h4</IRI>
                 <name>heading level 4</name>
+                <name>xhtml h4</name>
             </item>
             <item group="line-start line-end leading-start leading-end">
                 <IRI>tag:textalign.net,2015:div-type:heading_level_5</IRI>
-                <IRI>http://www.w3.org/1999/xhtml/h5</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:xhtml:h5</IRI>
                 <name>heading level 5</name>
+                <name>xhtml h5</name>
             </item>
             <item group="line-start line-end leading-start leading-end">
                 <IRI>tag:textalign.net,2015:div-type:heading_level_6</IRI>
-                <IRI>http://www.w3.org/1999/xhtml/h6</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:xhtml:h6</IRI>
                 <name>heading level 6</name>
+                <name>xhtml h6</name>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:homily</IRI>
@@ -365,21 +386,24 @@
             </item>
             <item group="line-start line-end">
                 <IRI>tag:textalign.net,2015:div-type:line:verse</IRI>
-                <IRI>http://www.tei-c.org/ns/1.0/l</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:tei:l</IRI>
                 <IRI>http://dbpedia.org/resource/Line_(poetry)</IRI>
                 <name>line (verse)</name>
                 <name>line (poetry)</name>
+                <name>tei l</name>
             </item>
             <item group="line-start line-end">
                 <IRI>tag:textalign.net,2015:div-type:list</IRI>
-                <IRI>http://www.tei-c.org/ns/1.0/list</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:tei:list</IRI>
                 <IRI>http://dbpedia.org/resource/Enumeration</IRI>
                 <name>list</name>
+                <name>tei list</name>
             </item>
             <item group="line-start line-end">
                 <IRI>tag:textalign.net,2015:div-type:list_item</IRI>
-                <IRI>http://www.w3.org/1999/xhtml/li</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:xhtml:li</IRI>
                 <name>list item</name>
+                <name>xhtml li</name>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:litany</IRI>
@@ -388,15 +412,17 @@
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:morpheme</IRI>
-                <IRI>http://www.tei-c.org/ns/1.0/m</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:tei:m</IRI>
                 <IRI>http://dbpedia.org/resource/Morpheme</IRI>
                 <name>morpheme</name>
+                <name>tei m</name>
             </item>
             <item group="line-start line-end">
                 <IRI>tag:textalign.net,2015:div-type:note</IRI>
-                <IRI>http://www.tei-c.org/ns/1.0/note</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:tei:note</IRI>
                 <IRI>http://dbpedia.org/resource/Note_(typography)</IRI>
                 <name>note</name>
+                <name>tei note</name>
                 <desc>Notes placed anywhere, including footnotes and endnotes.</desc>
             </item>
             <item>
@@ -414,15 +440,18 @@
             </item>
             <item group="line-start line-end">
                 <IRI>tag:textalign.net,2015:div-type:ordered_list</IRI>
-                <IRI>http://www.w3.org/1999/xhtml/ol</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:xhtml:ol</IRI>
                 <name>ordered list</name>
+                <name>xhtml ol</name>
             </item>
             <item group="line-start line-end">
                 <IRI>tag:textalign.net,2015:div-type:paragraph</IRI>
-                <IRI>http://www.tei-c.org/ns/1.0/p</IRI>
-                <IRI>http://www.w3.org/1999/xhtml/p</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:tei:p</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:xhtml:p</IRI>
                 <IRI>http://dbpedia.org/resource/Paragraph</IRI>
                 <name>paragraph</name>
+                <name>tei p</name>
+                <name>xhtml p</name>
             </item>
             <item group="inline-start inline-end">
                 <IRI>tag:textalign.net,2015:div-type:gloss:parenthetical</IRI>
@@ -433,9 +462,10 @@
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:phrase</IRI>
-                <IRI>http://www.tei-c.org/ns/1.0/phr</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:tei:phr</IRI>
                 <IRI>http://dbpedia.org/resource/Phrase</IRI>
                 <name>phrase</name>
+                <name>tei phr</name>
             </item>
             <item group="line-start line-end">
                 <IRI>tag:textalign.net,2015:div-type:poem</IRI>
@@ -469,8 +499,9 @@
             </item>
             <item group="inline-start inline-end">
                 <IRI>tag:textalign.net,2015:div-type:punctuation_character</IRI>
-                <IRI>http://www.tei-c.org/ns/1.0/pc</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:tei:pc</IRI>
                 <name>punctuation character</name>
+                <name>tei pc</name>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:quatrain</IRI>
@@ -516,9 +547,10 @@
             </item>
             <item group="inline-start inline-end">
                 <IRI>tag:textalign.net,2015:div-type:sentence</IRI>
-                <IRI>http://www.tei-c.org/ns/1.0/s</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:tei:s</IRI>
                 <IRI>http://dbpedia.org/resource/Sentence_(linguistics)</IRI>
                 <name>sentence</name>
+                <name>tei s</name>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:sestet</IRI>
@@ -537,13 +569,15 @@
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:stage_direction</IRI>
-                <IRI>http://www.tei-c.org/ns/1.0/stage</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:tei:stage</IRI>
                 <name>stage direction</name>
+                <name>tei stage</name>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:stanza</IRI>
                 <IRI>http://dbpedia.org/resource/Stanza</IRI>
                 <name>stanza</name>
+                <desc>Similar to TEI &lt;lg type="stanza"></desc>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:subchapter</IRI>
@@ -570,32 +604,53 @@
             </item>
             <item group="line-start line-end leading-start leading-end">
                 <IRI>tag:textalign.net,2015:div-type:table</IRI>
-                <IRI>http://www.tei-c.org/ns/1.0/table</IRI>
-                <IRI>http://www.w3.org/1999/xhtml/table</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:tei:table</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:xhtml:table</IRI>
                 <IRI>http://dbpedia.org/resource/Table_(information)</IRI>
                 <name>table</name>
+                <name>tei table</name>
+                <name>xhtml table</name>
+            </item>
+            <item group="line-start line-end">
+                <IRI>tag:textalign.net,2015:div-type:table_body</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:xhtml:tbody</IRI>
+                <name>table body</name>
+                <name>xhtml tbody</name>
             </item>
             <item group="inline-start inline-end">
                 <IRI>tag:textalign.net,2015:div-type:table_cell</IRI>
-                <IRI>http://www.tei-c.org/ns/1.0/cell</IRI>
-                <IRI>http://www.w3.org/1999/xhtml/td</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:tei:cell</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:xhtml:td</IRI>
                 <name>table cell</name>
+                <name>table data cell</name>
+                <name>tei cell</name>
+                <name>xhtml td</name>
             </item>
             <item group="line-start line-end">
                 <IRI>tag:textalign.net,2015:div-type:table_footer</IRI>
-                <IRI>http://www.w3.org/1999/xhtml/tfoot</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:xhtml:tfoot</IRI>
                 <name>table footer</name>
+                <name>xhtml tfoot</name>
             </item>
             <item group="line-start line-end">
                 <IRI>tag:textalign.net,2015:div-type:table_header</IRI>
-                <IRI>http://www.w3.org/1999/xhtml/thead</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:xhtml:thead</IRI>
                 <name>table header</name>
+                <name>xhtml thead</name>
+            </item>
+            <item group="line-start line-end">
+                <IRI>tag:textalign.net,2015:div-type:table_header_cell</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:xhtml:th</IRI>
+                <name>table header cell</name>
+                <name>xhtml th</name>
             </item>
             <item group="line-start line-end">
                 <IRI>tag:textalign.net,2015:div-type:table_row</IRI>
-                <IRI>http://www.tei-c.org/ns/1.0/row</IRI>
-                <IRI>http://www.w3.org/1999/xhtml/tr</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:tei:row</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:xhtml:tr</IRI>
                 <name>table row</name>
+                <name>tei row</name>
+                <name>xhtml tr</name>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:tercet</IRI>
@@ -604,19 +659,22 @@
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:term_definition</IRI>
-                <IRI>http://www.w3.org/1999/xhtml/dd</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:xhtml:dd</IRI>
                 <name>term definition</name>
+                <name>xhtml dd</name>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:term_to_be_defined</IRI>
-                <IRI>http://www.w3.org/1999/xhtml/dt</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:xhtml:dt</IRI>
                 <name>term to be defined</name>
+                <name>xhtml dt</name>
             </item>
             <item group="line-start line-end leading-start leading-end">
                 <IRI>tag:textalign.net,2015:div-type:title</IRI>
-                <IRI>http://www.tei-c.org/ns/1.0/title</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:tei:title</IRI>
                 <IRI>http://dbpedia.org/resource/Title_(publishing)</IRI>
                 <name>title</name>
+                <name>tei title</name>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:tristich</IRI>
@@ -625,8 +683,9 @@
             </item>
             <item group="line-start line-end">
                 <IRI>tag:textalign.net,2015:div-type:unordered_list</IRI>
-                <IRI>http://www.w3.org/1999/xhtml/ul</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:xhtml:ul</IRI>
                 <name>unordered list</name>
+                <name>xhtml ul</name>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:variant</IRI>
@@ -645,32 +704,48 @@
             </item>
             <item group="inline-start inline-end">
                 <IRI>tag:textalign.net,2015:div-type:word</IRI>
-                <IRI>http://www.tei-c.org/ns/1.0/w</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:tei:w</IRI>
                 <IRI>http://dbpedia.org/resource/Word</IRI>
                 <name>word</name>
+                <name>tei w</name>
             </item>
         </group>
-        <group type="physical">
+        <group type="scriptum">
             <item group="column-start column-end">
                 <IRI>tag:textalign.net,2015:div-type:column_(page)</IRI>
                 <IRI>http://dbpedia.org/resource/Column_(typography)</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:tei:cb</IRI>
                 <name>column (page)</name>
+                <name>tei cb</name>
             </item>
             <item group="page-start page-end">
                 <IRI>tag:textalign.net,2015:div-type:folio</IRI>
                 <IRI>http://dbpedia.org/resource/Recto_and_verso</IRI>
                 <name>folio</name>
             </item>
+            <item group="page-start page-end">
+                <IRI>tag:textalign.net,2015:div-type:gathering</IRI>
+                <IRI>http://dbpedia.org/resource/Section_(bookbinding)</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:tei:gb</IRI>
+                <name>gathering</name>
+                <name>quire</name>
+                <name>book signature</name>
+                <name>tei gb</name>
+            </item>
             <item group="line-start line-end">
                 <IRI>tag:textalign.net,2015:div-type:line:physical</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:tei:lb</IRI>
                 <name>line (physical)</name>
+                <name>tei lb</name>
                 <desc>A physical line of text on the page, not to be confused with a line of poetry,
                     which may take multiple physical lines.</desc>
             </item>
             <item group="page-start page-end">
                 <IRI>tag:textalign.net,2015:div-type:page</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:tei:pb</IRI>
                 <IRI>http://dbpedia.org/resource/Page_(paper)</IRI>
                 <name>page</name>
+                <name>tei pb</name>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:subcolumn</IRI>
