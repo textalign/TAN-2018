@@ -74,13 +74,17 @@
         <moduleRef key="transcr"/>
         <moduleRef key="verse"/>
         <moduleRef key="tagdocs"/>
-        <!-- This is set up to import the TAN-T header -->
+
+        <!-- CUSTOMIZATION BELOW -->
         <moduleRef url="incl/TAN-class-1.rng"/>
         <elementSpec mode="change" ident="TEI" module="textstructure">
+          <desc>Two headers are required, teiHeader and TAN's head, because the two heads are very different animals.</desc>
           <content>
             <rng:group>
-              <rng:ref name="teiHeader"/>
-              <rng:ref name="TAN-head"/>
+              <rng:interleave>
+                <rng:ref name="teiHeader"/>
+                <rng:ref name="TAN-head"/>
+              </rng:interleave>
               <rng:choice>
                 <rng:group>
                   <rng:oneOrMore>
@@ -118,10 +122,16 @@
           </attList>
         </elementSpec>
         <elementSpec mode="change" ident="body" module="textstructure">
+          <desc>The body contains either &lt;div>s or empty elements (like &lt;milestone>)</desc>
           <content>
-            <rng:oneOrMore>
-              <rng:ref name="model.divLike"/>
-            </rng:oneOrMore>
+            <rng:interleave>
+              <rng:oneOrMore>
+                <rng:ref name="model.divLike"/>
+              </rng:oneOrMore>
+              <rng:zeroOrMore>
+                <rng:ref name="model.milestoneLike"/>
+              </rng:zeroOrMore>
+            </rng:interleave>
           </content>
           <attList>
             <attDef mode="change" ident="xml:lang" usage="req"/>
@@ -137,17 +147,82 @@
           </attList>
         </elementSpec>
         <elementSpec mode="change" ident="div" module="textstructure">
-          <!-- N.B., there should be an alteration of content here, to enforce the rule that
-          a <div> should parent either other <div>s or none at all. But that would require disentangling
-          the well-composed models. That rule, then, is enforced in the Schematron validation. -->
+          <desc>Every &lt;div> either contains purely &lt;div>s / empty elements (like
+            &lt;milestone>) or it does not (leaf &lt;div>s).</desc>
+          <content>
+            <rng:choice>
+              <rng:interleave>
+                <rng:oneOrMore>
+                  <rng:ref name="model.divLike"/>
+                </rng:oneOrMore>
+                <rng:zeroOrMore>
+                  <rng:ref name="model.milestoneLike"/>
+                </rng:zeroOrMore>
+              </rng:interleave>
+              <!--<rng:oneOrMore>
+                <rng:group>
+                  <rng:ref name="model.common"/>
+                  <rng:zeroOrMore>
+                    <rng:ref name="model.global"/>
+                  </rng:zeroOrMore>
+                </rng:group>
+              </rng:oneOrMore>-->
+              <rng:group>
+                <rng:zeroOrMore>
+                  <rng:choice>
+                    <rng:ref name="model.divTop"/>
+                    <rng:ref name="model.global"/>
+                  </rng:choice>
+                </rng:zeroOrMore>
+                <rng:optional>
+                  <rng:group>
+                    <rng:choice>
+                      <rng:oneOrMore>
+                        <rng:group>
+                          <!--<rng:ref name="model.divLike"/>-->
+                          <rng:zeroOrMore>
+                            <rng:ref name="model.global"/>
+                          </rng:zeroOrMore>
+                        </rng:group>
+                      </rng:oneOrMore>
+                      <rng:group>
+                        <rng:oneOrMore>
+                          <rng:group>
+                            <rng:ref name="model.common"/>
+                            <rng:zeroOrMore>
+                              <rng:ref name="model.global"/>
+                            </rng:zeroOrMore>
+                          </rng:group>
+                        </rng:oneOrMore>
+                        <rng:zeroOrMore>
+                          <rng:group>
+                            <rng:ref name="model.divGenLike"/>
+                            <rng:zeroOrMore>
+                              <rng:ref name="model.global"/>
+                            </rng:zeroOrMore>
+                          </rng:group>
+                        </rng:zeroOrMore>
+                      </rng:group>
+                    </rng:choice>
+                    <rng:zeroOrMore>
+                      <rng:group>
+                        <rng:ref name="model.divBottom"/>
+                        <rng:zeroOrMore>
+                          <rng:ref name="model.global"/>
+                        </rng:zeroOrMore>
+                      </rng:group>
+                    </rng:zeroOrMore>
+                  </rng:group>
+                </rng:optional>
+              </rng:group>
+            </rng:choice>
+          </content>
           <attList>
-            <!-- This following is a temporary measure. In the TAN model, a <div> should have either @include or
-              the other attributes, but not both. For now, these rules are enforced at the schematron level. -->
-            <attDef mode="change" ident="type" usage="opt"/>
-            <attDef mode="change" ident="n" usage="opt"/>
+            <!-- In the TAN model, a <div> should have either @include or the other attributes, 
+              but not both. That rule is enforced at the schematron level. -->
             <attDef ident="include" usage="opt" mode="add">
-              <desc>This attribute signals that the parent element is to be replaced by all elements of the same
-                name found in the referred inclusion</desc>
+              <desc>This attribute signals that the parent element is to be replaced by all elements
+                of the same name found in the referred inclusion</desc>
               <datatype>
                 <rng:data type="string"/>
               </datatype>
@@ -168,7 +243,8 @@
             <attDef mode="add" ident="ed-when" usage="opt">
               <desc>Reference to a date or time when an element or its content was edited (added or
                 modified)</desc>
-              <datatype><rng:choice>
+              <datatype>
+                <rng:choice>
                   <rng:data type="date"/>
                   <rng:data type="dateTime"/>
                 </rng:choice>

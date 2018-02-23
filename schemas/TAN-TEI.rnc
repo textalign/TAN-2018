@@ -8,7 +8,7 @@ namespace teix = "http://www.tei-c.org/ns/Examples"
 namespace xi = "http://www.w3.org/2001/XInclude"
 namespace xlink = "http://www.w3.org/1999/xlink"
 
-# Schema generated from ODD source 2018-01-17T15:30:31Z. .
+# Schema generated from ODD source 2018-02-07T01:48:50Z. .
 # TEI Edition: Version 3.2.0. Last updated on
 #	10th July 2017, revision 0fcf651
 # TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 3.2.0/
@@ -147,6 +147,21 @@ div {
       
       ## names one or more <relationship>s
       attribute relationship { text }
+    object-datatype =
+      
+      ## specifies the type of data that the object must take. This attribute is intended to specify that a particular verb governs raw units, not entities definable by the IRI + name pattern. Use this attribute if and only if the verb may not govern objects defined in <definitions>.
+      attribute object-datatype {
+        xsd:string {
+          pattern =
+            "string|boolean|decimal|float|double|duration|dateTime|time|date|gYearMonth|gYear|gMonthDay|gDay|gMonth|hexBinary|base64Binary|anyURI|QName|normalizedString|token|language|NMTOKEN|NMTOKENS|Name|NCName|ID|IDREF|IDREFS|ENTITY|ENTITIES|integer|nonPositiveInteger|negativeInteger|long|int|short|byte|nonNegativeInteger|unsignedLong|unsignedInt|unsignedShort|unsignedByte|positiveInteger"
+        }
+      }
+    object-lexical-constraint =
+      
+      ## specifies a regular expression that constrains the value of any <object>. 
+      
+      ## Note that the regular expression will be strictly followed, e.g., "\d+" will be satisfied by "a1" (because there is at least on digit). If you wish to constrain the entire value, be sure to use ^ and $, e.g., "^\d+$". 
+      attribute object-lexical-constraint { text }
     role-ref =
       
       ## refers to the ID of one or more <role>s
@@ -178,6 +193,8 @@ div {
       
       ## discusses issues relevant to nearby data. Must credit an <agent>, specified by @who, and a time the comment was made, specified by @when.
       element comment { when-claim, agent-ref, text }
+    constraints-on-entity = constraints-on-verb
+    constraints-on-verb = object-datatype, object-lexical-constraint?
     
     ## Editorial stamp: who created or edited the enclosed data and when. 
     ed-stamp = ed-agent, ed-time
@@ -432,6 +449,14 @@ div {
       
       ## Algorithm covers any set of computational instructions. It does not include the hardware or software used to run the algorithm. For example, a set of XSLT styleshteets is an algorithm, but the engine (e.g., Saxon) or software (e.g., oXygen) is not.  
       element algorithm { defn-pattern-id }
+    defn-div-type =
+      
+      ## declares a type of textual division (e.g., title, paragraph, stanza). You may have as many <div-types> as you wish, and they need not all be used.
+      
+      ## For more information, see main.xml#reference_system
+      
+      ## This element takes a reserved keyword or IRI + name pattern. See main.xml#keywords-div-type for suggested values. 
+      element div-type { defn-pattern-id }
     
     ## Option to allow an @xml:id in children of <definitions>
     defn-id-ref-opt = empty
@@ -485,14 +510,6 @@ div {
          | (sources-ref,
             (keyword-ref | (func-param-pattern, func-param-flags?))))
       }
-    defn-work =
-      
-      ## identifies a creative textual work, understood conceptually, not physically (e.g., Homer's Iliad, not a particular version or copy of it).
-      
-      ## The term "work" is only loosely defined in TAN. Any text that has enough unity to be referred to in ordinary conversation as a single entity may be identified as a work. A work may be composed of other works, be a part of other works, or even overlap with other works. E.g., the Lord's Prayer, the Gospel of Luke, the Tetravengelion, the New Testament, and the Bible are all valid works, despite the complex relationship between each of them.
-      
-      ## This element takes the IRI + name pattern. For more, see main.xml#conceptual_works
-      element work { defn-pattern-default }
     defn-vers =
       
       ## identifies the version of a work. Applicable to sources that contain multiple versions, e.g., original text and facing translations. Like <work>, <version> points to a conceptual entity, not a physical one.
@@ -503,6 +520,14 @@ div {
       
       ## For more, see main.xml#conceptual_works
       element version { defn-pattern-default }
+    defn-work =
+      
+      ## identifies a creative textual work, understood conceptually, not physically (e.g., Homer's Iliad, not a particular version or copy of it).
+      
+      ## The term "work" is only loosely defined in TAN. Any text that has enough unity to be referred to in ordinary conversation as a single entity may be identified as a work. A work may be composed of other works, be a part of other works, or even overlap with other works. E.g., the Lord's Prayer, the Gospel of Luke, the Tetravengelion, the New Testament, and the Bible are all valid works, despite the complex relationship between each of them.
+      
+      ## This element takes the IRI + name pattern. For more, see main.xml#conceptual_works
+      element work { defn-pattern-default }
   }
   definition-non-core = defn-class-1 & defn-non-class-1
   body-group = empty
@@ -515,14 +540,6 @@ div {
   
   ## Reserved for definitions specific to individual types of class 1 files
   defn-non-class-1 = empty
-  defn-div-type =
-    
-    ## declares a type of textual division (e.g., title, paragraph, stanza). You may have as many <div-types> as you wish, and they need not all be used.
-    
-    ## For more information, see main.xml#reference_system
-    
-    ## This element takes a reserved keyword or IRI + name pattern. See main.xml#keywords-div-type for suggested values. 
-    element div-type { defn-pattern-id }
   alt-norm =
     
     ## specifies an alteration made to a source file to bring the transcription into conformity with standards or common expectations. This element is used typically for minor corrections, e.g., suppression of discretionary hyphenation. You should declare every change you have made to the source.
@@ -591,7 +608,7 @@ anyElement-content =
     (text | anyElement-content)*
   }
   >> sch:pattern [
-       id = "d9e118508-constraint"
+       id = "d9e118377-constraint"
        "\x{a}" ~
        "         "
        sch:rule [
@@ -617,7 +634,7 @@ anyElement-constraint =
     (text | anyElement-constraint)*
   }
   >> sch:pattern [
-       id = "d9e118835-constraint"
+       id = "d9e118704-constraint"
        "\x{a}" ~
        "         "
        sch:rule [
@@ -643,7 +660,7 @@ anyElement-datatype =
     (text | anyElement-datatype)*
   }
   >> sch:pattern [
-       id = "d9e119724-constraint"
+       id = "d9e119593-constraint"
        "\x{a}" ~
        "         "
        sch:rule [
@@ -10075,10 +10092,9 @@ variantEncoding =
   }
 TEI =
   
-  ## (TEI document) contains a single TEI-conformant document, combining a single TEI header with one or more members of the model.resourceLike class. Multiple TEI elements may be combined to form a teiCorpus element. [4. Default Text Structure 15.1. Varieties of Composite Text]
+  ## (TEI document) Two headers are required, teiHeader and TAN's head, because the two heads are very different animals. [4. Default Text Structure 15.1. Varieties of Composite Text]
   element tei:TEI {
-    (teiHeader,
-     TAN-head,
+    ((teiHeader & TAN-head),
      ((model.resourceLike+, \text?) | \text)),
     (TAN-tail?)
     >> sch:ns [ prefix = "tei" uri = "http://www.tei-c.org/ns/1.0" ]
@@ -10126,9 +10142,9 @@ TEI =
   }
 body =
   
-  ## (text body) contains the whole body of a single unitary text, excluding any front or back matter. [4. Default Text Structure]
+  ## (text body) The body contains either <div>s or empty elements (like <milestone>) [4. Default Text Structure]
   element tei:body {
-    model.divLike+,
+    (model.divLike+ & model.milestoneLike*),
     att.global.attribute.ed-who,
     att.global.attribute.ed-when,
     att.global.attribute.xmlid,
@@ -10194,13 +10210,14 @@ floatingText =
   }
 \div =
   
-  ## (text division) contains a subdivision of the front, body, or back of a text. [4.1. Divisions of the Body]
+  ## (text division) Every <div> either contains purely <div>s / empty elements (like <milestone>) or it does not (leaf <div>s). [4.1. Divisions of the Body]
   element tei:div {
-    ((model.divTop | model.global)*,
-     ((((model.divLike | model.divGenLike), model.global*)+
-       | ((model.common, model.global*)+,
-          ((model.divLike | model.divGenLike), model.global*)*)),
-      (model.divBottom, model.global*)*)?)
+    ((model.divLike+ & model.milestoneLike*)
+     | ((model.divTop | model.global)*,
+        ((model.global*
+          | ((model.common, model.global*)+,
+             (model.divGenLike, model.global*)*)),
+         (model.divBottom, model.global*)*)?))
     >> sch:pattern [
          id =
            "tei_all-div-abstractModel-structure-l-constraint-report-25"
@@ -10244,41 +10261,11 @@ floatingText =
          "\x{a}" ~
          "         "
        ],
-    att.global.attribute.ed-who,
-    att.global.attribute.ed-when,
-    att.global.attribute.xmlid,
-    att.global.attribute.xmllang,
-    att.global.attribute.xmlbase,
-    att.global.attribute.xmlspace,
-    att.global.rendition.attribute.rend,
-    att.global.rendition.attribute.style,
-    att.global.rendition.attribute.rendition,
-    att.global.linking.attribute.corresp,
-    att.global.linking.attribute.synch,
-    att.global.linking.attribute.sameAs,
-    att.global.linking.attribute.copyOf,
-    att.global.linking.attribute.next,
-    att.global.linking.attribute.prev,
-    att.global.linking.attribute.exclude,
-    att.global.linking.attribute.select,
-    att.global.analytic.attribute.ana,
-    att.global.facs.attribute.facs,
-    att.global.change.attribute.change,
-    att.global.responsibility.attribute.cert,
-    att.global.responsibility.attribute.resp,
-    att.global.source.attribute.source,
+    att.global.attributes,
     att.divLike.attributes,
-    att.typed.attribute.subtype,
+    att.typed.attributes,
     att.declaring.attributes,
     att.written.attributes,
-    
-    ## (number) gives a number (or other label) for an element, which is not necessarily unique within the document.
-    attribute n { xsd:string }?,
-    
-    ## characterizes the element in some sense, using any convenient classification scheme or typology.
-    attribute type {
-      xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
-    }?,
     
     ## This attribute signals that the parent element is to be replaced by all elements of the same name found in the referred inclusion
     attribute include { xsd:string }?,
