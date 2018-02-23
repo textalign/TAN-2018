@@ -130,7 +130,6 @@
         <error xml:id="cl111"><rule>No text may begin with a modifying character.</rule></error>
         <error xml:id="cl112"><rule>No text may have a spacing character followed by a modifying character.</rule></error>
         <error xml:id="cl113"><rule>No text may have Unicode characters that are disallowed, e.g., U+A0, NO BREAK SPACE.</rule></error>
-        <error xml:id="tei01"><rule>&lt;div>s may not be mixed with other elements: a &lt;div> must parent either only &lt;div>s or none at all, and may have as siblings only other &lt;div>s.</rule></error>
         <error xml:id="tei02"><rule>A &lt;div> must not mix @include with any other attributes.</rule></error>
         <error xml:id="tei03"><rule>A &lt;div> must have either @type + @n or @include but not both.</rule></error>
     </group>
