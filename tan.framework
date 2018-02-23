@@ -3148,19 +3148,23 @@ go-to-prev-leaf-div</String>
 											<String></String>
 										</field>
 										<field name="accelerator">
-											<null/>
+											<String>M3 SEMICOLON</String>
 										</field>
 										<field name="actionModes">
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]/following::tan:div</String>
+														<String>self::tan:div[not(tan:div)]/preceding::tan:div</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
 															<entry>
 																<String>fragment</String>
-																<String>&lt;up/>${caret}</String>
+																<String>${caret}&lt;up/></String>
+															</entry>
+															<entry>
+																<String>goToNextEditablePosition</String>
+																<String>true</String>
 															</entry>
 															<entry>
 																<String>insertLocation</String>
@@ -3260,7 +3264,7 @@ go-to-prev-leaf-div</String>
 											<String></String>
 										</field>
 										<field name="accelerator">
-											<null/>
+											<String>M3 Q</String>
 										</field>
 										<field name="actionModes">
 											<actionMode-array>
@@ -3462,21 +3466,639 @@ remove-marked-text</String>
 											<Boolean>false</Boolean>
 										</field>
 									</action>
+									<action>
+										<field name="id">
+											<String>search-for-iri+name-patterns</String>
+										</field>
+										<field name="name">
+											<String>Get IRI + name patterns</String>
+										</field>
+										<field name="description">
+											<String>Search for IRI + name patterns</String>
+										</field>
+										<field name="largeIconPath">
+											<String></String>
+										</field>
+										<field name="smallIconPath">
+											<String></String>
+										</field>
+										<field name="accessKey">
+											<String></String>
+										</field>
+										<field name="accelerator">
+											<null/>
+										</field>
+										<field name="actionModes">
+											<actionMode-array>
+												<actionMode>
+													<field name="xpathCondition">
+														<String>ancestor-or-self::tan:person or ancestor-or-self::tan:organization or ancestor-or-self::tan:item</String>
+													</field>
+													<field name="argValues">
+														<serializableOrderedMap>
+															<entry>
+																<String>action</String>
+																<String>Inside as last child</String>
+															</entry>
+															<entry>
+																<String>script</String>
+																<String>${framework}/do%20things/configure%20oXygen%20author/search-for-IRI+name.xsl</String>
+															</entry>
+															<entry>
+																<String>sourceLocation</String>
+																<String>ancestor-or-self::tan:*[name() = ('person','organization','item')]</String>
+															</entry>
+															<entry>
+																<String>targetLocation</String>
+																<String>ancestor-or-self::tan:*[name() = ('person','organization','item')]</String>
+															</entry>
+														</serializableOrderedMap>
+													</field>
+													<field name="operationID">
+														<String>ro.sync.ecss.extensions.commons.operations.XSLTOperation</String>
+													</field>
+												</actionMode>
+											</actionMode-array>
+										</field>
+										<field name="enabledInReadOnlyContext">
+											<Boolean>false</Boolean>
+										</field>
+									</action>
+									<action>
+										<field name="id">
+											<String>normalize-unicode</String>
+										</field>
+										<field name="name">
+											<String>Normalize Unicode</String>
+										</field>
+										<field name="description">
+											<String>Normalize Unicode (NFC)</String>
+										</field>
+										<field name="largeIconPath">
+											<String></String>
+										</field>
+										<field name="smallIconPath">
+											<String></String>
+										</field>
+										<field name="accessKey">
+											<String></String>
+										</field>
+										<field name="accelerator">
+											<String>M1 M3 U</String>
+										</field>
+										<field name="actionModes">
+											<actionMode-array>
+												<actionMode>
+													<field name="xpathCondition">
+														<String></String>
+													</field>
+													<field name="argValues">
+														<serializableOrderedMap>
+															<entry>
+																<String>caretPosition</String>
+																<String>Preserve</String>
+															</entry>
+															<entry>
+																<String>script</String>
+																<String>${framework}/do%20things/configure%20oXygen%20author/normalize-unicode.xsl</String>
+															</entry>
+														</serializableOrderedMap>
+													</field>
+													<field name="operationID">
+														<String>ro.sync.ecss.extensions.commons.operations.XSLTOperation</String>
+													</field>
+												</actionMode>
+											</actionMode-array>
+										</field>
+										<field name="enabledInReadOnlyContext">
+											<Boolean>false</Boolean>
+										</field>
+									</action>
+									<action>
+										<field name="id">
+											<String>mark-text-to-be-replaced</String>
+										</field>
+										<field name="name">
+											<String>Mark text to be replaced</String>
+										</field>
+										<field name="description">
+											<String>Wrap the selected text with &lt;replace/>, marking text that should be replaced.</String>
+										</field>
+										<field name="largeIconPath">
+											<String></String>
+										</field>
+										<field name="smallIconPath">
+											<String></String>
+										</field>
+										<field name="accessKey">
+											<String></String>
+										</field>
+										<field name="accelerator">
+											<null/>
+										</field>
+										<field name="actionModes">
+											<actionMode-array>
+												<actionMode>
+													<field name="xpathCondition">
+														<String></String>
+													</field>
+													<field name="argValues">
+														<serializableOrderedMap>
+															<entry>
+																<String>fragment</String>
+																<String>&lt;replace>&lt;/replace></String>
+															</entry>
+														</serializableOrderedMap>
+													</field>
+													<field name="operationID">
+														<String>ro.sync.ecss.extensions.commons.operations.SurroundWithFragmentOperation</String>
+													</field>
+												</actionMode>
+											</actionMode-array>
+										</field>
+										<field name="enabledInReadOnlyContext">
+											<Boolean>false</Boolean>
+										</field>
+									</action>
+									<action>
+										<field name="id">
+											<String>replace-marked-text-with-string-base</String>
+										</field>
+										<field name="name">
+											<String>Replace marked text with string base</String>
+										</field>
+										<field name="description">
+											<String>Replace &lt;replace/> with the string base of its text content</String>
+										</field>
+										<field name="largeIconPath">
+											<String></String>
+										</field>
+										<field name="smallIconPath">
+											<String></String>
+										</field>
+										<field name="accessKey">
+											<String></String>
+										</field>
+										<field name="accelerator">
+											<null/>
+										</field>
+										<field name="actionModes">
+											<actionMode-array>
+												<actionMode>
+													<field name="xpathCondition">
+														<String></String>
+													</field>
+													<field name="argValues">
+														<serializableOrderedMap>
+															<entry>
+																<String>action</String>
+																<String>Replace</String>
+															</entry>
+															<entry>
+																<String>caretPosition</String>
+																<String>Preserve</String>
+															</entry>
+															<entry>
+																<String>script</String>
+																<String>${framework}/do%20things/configure%20oXygen%20author/replace-text-with-string-base.xsl</String>
+															</entry>
+															<entry>
+																<String>sourceLocation</String>
+																<String></String>
+															</entry>
+															<entry>
+																<String>targetLocation</String>
+																<String></String>
+															</entry>
+														</serializableOrderedMap>
+													</field>
+													<field name="operationID">
+														<String>ro.sync.ecss.extensions.commons.operations.XSLTOperation</String>
+													</field>
+												</actionMode>
+											</actionMode-array>
+										</field>
+										<field name="enabledInReadOnlyContext">
+											<Boolean>false</Boolean>
+										</field>
+									</action>
+									<action>
+										<field name="id">
+											<String>string-base</String>
+										</field>
+										<field name="name">
+											<String>String base</String>
+										</field>
+										<field name="description">
+											<String>Replace each character in the selected text with its base character</String>
+										</field>
+										<field name="largeIconPath">
+											<String></String>
+										</field>
+										<field name="smallIconPath">
+											<String></String>
+										</field>
+										<field name="accessKey">
+											<String></String>
+										</field>
+										<field name="accelerator">
+											<null/>
+										</field>
+										<field name="actionModes">
+											<actionMode-array>
+												<actionMode>
+													<field name="xpathCondition">
+														<String></String>
+													</field>
+													<field name="argValues">
+														<serializableOrderedMap>
+															<entry>
+																<String>actionIDs</String>
+																<String>mark-text-to-be-replaced
+replace-marked-text-with-string-base
+</String>
+															</entry>
+														</serializableOrderedMap>
+													</field>
+													<field name="operationID">
+														<String>ro.sync.ecss.extensions.commons.operations.ExecuteMultipleActionsOperation</String>
+													</field>
+												</actionMode>
+											</actionMode-array>
+										</field>
+										<field name="enabledInReadOnlyContext">
+											<Boolean>false</Boolean>
+										</field>
+									</action>
+									<action>
+										<field name="id">
+											<String>replace-marked-text-with-string-composite</String>
+										</field>
+										<field name="name">
+											<String>Replace marked text with string composite</String>
+										</field>
+										<field name="description">
+											<String>Replace &lt;replace/> with the string composite of its text content</String>
+										</field>
+										<field name="largeIconPath">
+											<String></String>
+										</field>
+										<field name="smallIconPath">
+											<String></String>
+										</field>
+										<field name="accessKey">
+											<String></String>
+										</field>
+										<field name="accelerator">
+											<null/>
+										</field>
+										<field name="actionModes">
+											<actionMode-array>
+												<actionMode>
+													<field name="xpathCondition">
+														<String></String>
+													</field>
+													<field name="argValues">
+														<serializableOrderedMap>
+															<entry>
+																<String>action</String>
+																<String>Replace</String>
+															</entry>
+															<entry>
+																<String>caretPosition</String>
+																<String>Preserve</String>
+															</entry>
+															<entry>
+																<String>script</String>
+																<String>${framework}/do%20things/configure%20oXygen%20author/replace-text-with-string-composite.xsl</String>
+															</entry>
+															<entry>
+																<String>sourceLocation</String>
+																<String></String>
+															</entry>
+															<entry>
+																<String>targetLocation</String>
+																<String></String>
+															</entry>
+														</serializableOrderedMap>
+													</field>
+													<field name="operationID">
+														<String>ro.sync.ecss.extensions.commons.operations.XSLTOperation</String>
+													</field>
+												</actionMode>
+											</actionMode-array>
+										</field>
+										<field name="enabledInReadOnlyContext">
+											<Boolean>false</Boolean>
+										</field>
+									</action>
+									<action>
+										<field name="id">
+											<String>string-composite</String>
+										</field>
+										<field name="name">
+											<String>String composite</String>
+										</field>
+										<field name="description">
+											<String>Replace each character in the selected text with its characters that use it as a base</String>
+										</field>
+										<field name="largeIconPath">
+											<String></String>
+										</field>
+										<field name="smallIconPath">
+											<String></String>
+										</field>
+										<field name="accessKey">
+											<String></String>
+										</field>
+										<field name="accelerator">
+											<null/>
+										</field>
+										<field name="actionModes">
+											<actionMode-array>
+												<actionMode>
+													<field name="xpathCondition">
+														<String></String>
+													</field>
+													<field name="argValues">
+														<serializableOrderedMap>
+															<entry>
+																<String>actionIDs</String>
+																<String>mark-text-to-be-replaced
+replace-marked-text-with-string-composite
+</String>
+															</entry>
+														</serializableOrderedMap>
+													</field>
+													<field name="operationID">
+														<String>ro.sync.ecss.extensions.commons.operations.ExecuteMultipleActionsOperation</String>
+													</field>
+												</actionMode>
+											</actionMode-array>
+										</field>
+										<field name="enabledInReadOnlyContext">
+											<Boolean>false</Boolean>
+										</field>
+									</action>
+									<action>
+										<field name="id">
+											<String>resolve-escape-u</String>
+										</field>
+										<field name="name">
+											<String>Resolve \u{}</String>
+										</field>
+										<field name="description">
+											<String>Resolve the text inside the braces of a \u{} regular expression</String>
+										</field>
+										<field name="largeIconPath">
+											<String></String>
+										</field>
+										<field name="smallIconPath">
+											<String></String>
+										</field>
+										<field name="accessKey">
+											<String></String>
+										</field>
+										<field name="accelerator">
+											<null/>
+										</field>
+										<field name="actionModes">
+											<actionMode-array>
+												<actionMode>
+													<field name="xpathCondition">
+														<String></String>
+													</field>
+													<field name="argValues">
+														<serializableOrderedMap>
+															<entry>
+																<String>action</String>
+																<String>Replace</String>
+															</entry>
+															<entry>
+																<String>caretPosition</String>
+																<String>Preserve</String>
+															</entry>
+															<entry>
+																<String>script</String>
+																<String>${framework}/do%20things/configure%20oXygen%20author/resolve-escape-u.xsl</String>
+															</entry>
+															<entry>
+																<String>sourceLocation</String>
+																<String></String>
+															</entry>
+															<entry>
+																<String>targetLocation</String>
+																<String></String>
+															</entry>
+														</serializableOrderedMap>
+													</field>
+													<field name="operationID">
+														<String>ro.sync.ecss.extensions.commons.operations.XSLTOperation</String>
+													</field>
+												</actionMode>
+											</actionMode-array>
+										</field>
+										<field name="enabledInReadOnlyContext">
+											<Boolean>false</Boolean>
+										</field>
+									</action>
+									<action>
+										<field name="id">
+											<String>find-iri-name-via-viaf</String>
+										</field>
+										<field name="name">
+											<String>Search VIAF</String>
+										</field>
+										<field name="description">
+											<String>Use the current text to search VIAF for IRI + name patterns that might be appropriate</String>
+										</field>
+										<field name="largeIconPath">
+											<String></String>
+										</field>
+										<field name="smallIconPath">
+											<String></String>
+										</field>
+										<field name="accessKey">
+											<String></String>
+										</field>
+										<field name="accelerator">
+											<null/>
+										</field>
+										<field name="actionModes">
+											<actionMode-array>
+												<actionMode>
+													<field name="xpathCondition">
+														<String>self::*:name</String>
+													</field>
+													<field name="argValues">
+														<serializableOrderedMap>
+															<entry>
+																<String>action</String>
+																<String>Replace</String>
+															</entry>
+															<entry>
+																<String>caretPosition</String>
+																<String>Preserve</String>
+															</entry>
+															<entry>
+																<String>script</String>
+																<String>${framework}/do%20things/configure%20oXygen%20author/get-iri-name-via-viaf.xsl</String>
+															</entry>
+															<entry>
+																<String>sourceLocation</String>
+																<String></String>
+															</entry>
+															<entry>
+																<String>targetLocation</String>
+																<String></String>
+															</entry>
+														</serializableOrderedMap>
+													</field>
+													<field name="operationID">
+														<String>ro.sync.ecss.extensions.commons.operations.XSLTOperation</String>
+													</field>
+												</actionMode>
+											</actionMode-array>
+										</field>
+										<field name="enabledInReadOnlyContext">
+											<Boolean>false</Boolean>
+										</field>
+									</action>
+									<action>
+										<field name="id">
+											<String>find-iri-name-via-loc</String>
+										</field>
+										<field name="name">
+											<String>Search LOC</String>
+										</field>
+										<field name="description">
+											<String>Use the current text to search the Library of Congress catalog for IRI + name patterns that might be appropriate</String>
+										</field>
+										<field name="largeIconPath">
+											<String></String>
+										</field>
+										<field name="smallIconPath">
+											<String></String>
+										</field>
+										<field name="accessKey">
+											<String></String>
+										</field>
+										<field name="accelerator">
+											<null/>
+										</field>
+										<field name="actionModes">
+											<actionMode-array>
+												<actionMode>
+													<field name="xpathCondition">
+														<String>self::*:name</String>
+													</field>
+													<field name="argValues">
+														<serializableOrderedMap>
+															<entry>
+																<String>action</String>
+																<String>Replace</String>
+															</entry>
+															<entry>
+																<String>caretPosition</String>
+																<String>Preserve</String>
+															</entry>
+															<entry>
+																<String>script</String>
+																<String>${framework}/do%20things/configure%20oXygen%20author/get-iri-name-via-loc.xsl</String>
+															</entry>
+															<entry>
+																<String>sourceLocation</String>
+																<String></String>
+															</entry>
+															<entry>
+																<String>targetLocation</String>
+																<String></String>
+															</entry>
+														</serializableOrderedMap>
+													</field>
+													<field name="operationID">
+														<String>ro.sync.ecss.extensions.commons.operations.XSLTOperation</String>
+													</field>
+												</actionMode>
+											</actionMode-array>
+										</field>
+										<field name="enabledInReadOnlyContext">
+											<Boolean>false</Boolean>
+										</field>
+									</action>
 								</action-array>
 							</field>
 							<field name="menubarDescriptor">
 								<menu>
 									<field name="label">
-										<String>Menu</String>
+										<String>TAN</String>
 									</field>
 									<field name="accessKey">
-										<null/>
+										<String></String>
 									</field>
 									<field name="iconPath">
-										<null/>
+										<String></String>
 									</field>
 									<field name="menuEntriesDescriptorList">
 										<menuEntry-array>
+											<menuItem>
+												<field name="actionID">
+													<String>string-base</String>
+												</field>
+											</menuItem>
+											<menuItem>
+												<field name="actionID">
+													<String>string-composite</String>
+												</field>
+											</menuItem>
+											<menuItem>
+												<field name="actionID">
+													<String>normalize-unicode</String>
+												</field>
+											</menuItem>
+											<menuItem>
+												<field name="actionID">
+													<String>resolve-escape-u</String>
+												</field>
+											</menuItem>
+											<menu>
+												<field name="label">
+													<String>Go to</String>
+												</field>
+												<field name="accessKey">
+													<String></String>
+												</field>
+												<field name="iconPath">
+													<String></String>
+												</field>
+												<field name="menuEntriesDescriptorList">
+													<menuEntry-array>
+														<menuItem>
+															<field name="actionID">
+																<String>go-to-prev-leaf-div-start</String>
+															</field>
+														</menuItem>
+														<menuItem>
+															<field name="actionID">
+																<String>go-to-next-leaf-div</String>
+															</field>
+														</menuItem>
+														<menuItem>
+															<field name="actionID">
+																<String>go-to-prev-top-level-div</String>
+															</field>
+														</menuItem>
+														<menuItem>
+															<field name="actionID">
+																<String>go-to-next-top-level-div</String>
+															</field>
+														</menuItem>
+													</menuEntry-array>
+												</field>
+												<field name="context">
+													<null/>
+												</field>
+											</menu>
 											<menu>
 												<field name="label">
 													<String>Pull prev</String>
@@ -3631,6 +4253,34 @@ remove-marked-text</String>
 														<menuItem>
 															<field name="actionID">
 																<String>pull-next-sent</String>
+															</field>
+														</menuItem>
+													</menuEntry-array>
+												</field>
+												<field name="context">
+													<null/>
+												</field>
+											</menu>
+											<menu>
+												<field name="label">
+													<String>Search</String>
+												</field>
+												<field name="accessKey">
+													<String></String>
+												</field>
+												<field name="iconPath">
+													<String></String>
+												</field>
+												<field name="menuEntriesDescriptorList">
+													<menuEntry-array>
+														<menuItem>
+															<field name="actionID">
+																<String>find-iri-name-via-loc</String>
+															</field>
+														</menuItem>
+														<menuItem>
+															<field name="actionID">
+																<String>find-iri-name-via-viaf</String>
 															</field>
 														</menuItem>
 													</menuEntry-array>
@@ -3659,6 +4309,64 @@ remove-marked-text</String>
 									</field>
 									<field name="menuEntriesDescriptorList">
 										<menuEntry-array>
+											<menuItem>
+												<field name="actionID">
+													<String>string-base</String>
+												</field>
+											</menuItem>
+											<menuItem>
+												<field name="actionID">
+													<String>string-composite</String>
+												</field>
+											</menuItem>
+											<menuItem>
+												<field name="actionID">
+													<String>normalize-unicode</String>
+												</field>
+											</menuItem>
+											<menuItem>
+												<field name="actionID">
+													<String>resolve-escape-u</String>
+												</field>
+											</menuItem>
+											<menu>
+												<field name="label">
+													<String>Go to</String>
+												</field>
+												<field name="accessKey">
+													<String></String>
+												</field>
+												<field name="iconPath">
+													<String></String>
+												</field>
+												<field name="menuEntriesDescriptorList">
+													<menuEntry-array>
+														<menuItem>
+															<field name="actionID">
+																<String>go-to-prev-leaf-div-start</String>
+															</field>
+														</menuItem>
+														<menuItem>
+															<field name="actionID">
+																<String>go-to-next-leaf-div</String>
+															</field>
+														</menuItem>
+														<menuItem>
+															<field name="actionID">
+																<String>go-to-prev-top-level-div</String>
+															</field>
+														</menuItem>
+														<menuItem>
+															<field name="actionID">
+																<String>go-to-next-top-level-div</String>
+															</field>
+														</menuItem>
+													</menuEntry-array>
+												</field>
+												<field name="context">
+													<null/>
+												</field>
+											</menu>
 											<menu>
 												<field name="label">
 													<String>Pull prev</String>
@@ -3813,6 +4521,34 @@ remove-marked-text</String>
 														<menuItem>
 															<field name="actionID">
 																<String>pull-next-sent</String>
+															</field>
+														</menuItem>
+													</menuEntry-array>
+												</field>
+												<field name="context">
+													<null/>
+												</field>
+											</menu>
+											<menu>
+												<field name="label">
+													<String>Search</String>
+												</field>
+												<field name="accessKey">
+													<String></String>
+												</field>
+												<field name="iconPath">
+													<String></String>
+												</field>
+												<field name="menuEntriesDescriptorList">
+													<menuEntry-array>
+														<menuItem>
+															<field name="actionID">
+																<String>find-iri-name-via-loc</String>
+															</field>
+														</menuItem>
+														<menuItem>
+															<field name="actionID">
+																<String>find-iri-name-via-viaf</String>
 															</field>
 														</menuItem>
 													</menuEntry-array>
@@ -3844,6 +4580,26 @@ remove-marked-text</String>
 									</field>
 									<field name="toolbarEntriesDescriptorList">
 										<toolbarEntry-array>
+											<toolbarItem>
+												<field name="actionID">
+													<String>string-base</String>
+												</field>
+											</toolbarItem>
+											<toolbarItem>
+												<field name="actionID">
+													<String>string-composite</String>
+												</field>
+											</toolbarItem>
+											<toolbarItem>
+												<field name="actionID">
+													<String>normalize-unicode</String>
+												</field>
+											</toolbarItem>
+											<toolbarItem>
+												<field name="actionID">
+													<String>resolve-escape-u</String>
+												</field>
+											</toolbarItem>
 											<toolbar>
 												<field name="id">
 													<String>Pull prev</String>
@@ -4011,7 +4767,74 @@ remove-marked-text</String>
 								</toolbar>
 							</field>
 							<field name="additionalToolbarsDescriptors">
-								<null/>
+								<toolbar-array>
+									<toolbar>
+										<field name="id">
+											<String>Go</String>
+										</field>
+										<field name="type">
+											<Integer>2</Integer>
+										</field>
+										<field name="largeIconPath">
+											<null/>
+										</field>
+										<field name="smallIconPath">
+											<null/>
+										</field>
+										<field name="toolbarEntriesDescriptorList">
+											<toolbarEntry-array>
+												<toolbarItem>
+													<field name="actionID">
+														<String>go-to-prev-leaf-div-start</String>
+													</field>
+												</toolbarItem>
+												<toolbarItem>
+													<field name="actionID">
+														<String>go-to-next-leaf-div</String>
+													</field>
+												</toolbarItem>
+												<toolbarItem>
+													<field name="actionID">
+														<String>go-to-prev-top-level-div</String>
+													</field>
+												</toolbarItem>
+												<toolbarItem>
+													<field name="actionID">
+														<String>go-to-next-top-level-div</String>
+													</field>
+												</toolbarItem>
+											</toolbarEntry-array>
+										</field>
+									</toolbar>
+									<toolbar>
+										<field name="id">
+											<String>Search</String>
+										</field>
+										<field name="type">
+											<Integer>2</Integer>
+										</field>
+										<field name="largeIconPath">
+											<null/>
+										</field>
+										<field name="smallIconPath">
+											<null/>
+										</field>
+										<field name="toolbarEntriesDescriptorList">
+											<toolbarEntry-array>
+												<toolbarItem>
+													<field name="actionID">
+														<String>find-iri-name-via-loc</String>
+													</field>
+												</toolbarItem>
+												<toolbarItem>
+													<field name="actionID">
+														<String>find-iri-name-via-viaf</String>
+													</field>
+												</toolbarItem>
+											</toolbarEntry-array>
+										</field>
+									</toolbar>
+								</toolbar-array>
 							</field>
 							<field name="contextualItems">
 								<contextProvider>
@@ -4054,7 +4877,7 @@ remove-marked-text</String>
 					</field>
 					<field name="templatesLocations">
 						<String-array>
-							<String>${framework}/do%20things</String>
+							<String>${frameworkDir}/do things/convert</String>
 						</String-array>
 					</field>
 					<field name="xmlCatalogs">
@@ -4089,6 +4912,58 @@ remove-marked-text</String>
 								</field>
 								<field name="attributeValue">
 									<String>*</String>
+								</field>
+							</documentTypeRule>
+							<documentTypeRule>
+								<field name="namespace">
+									<String>*</String>
+								</field>
+								<field name="rootElem">
+									<String>*</String>
+								</field>
+								<field name="fileName">
+									<String>catalog.tan.xml</String>
+								</field>
+								<field name="publicID">
+									<String>*</String>
+								</field>
+								<field name="javaRuleClass">
+									<String></String>
+								</field>
+								<field name="attributeLocalName">
+									<String>*</String>
+								</field>
+								<field name="attributeNamespace">
+									<String>*</String>
+								</field>
+								<field name="attributeValue">
+									<String>*</String>
+								</field>
+							</documentTypeRule>
+							<documentTypeRule>
+								<field name="namespace">
+									<String>*</String>
+								</field>
+								<field name="rootElem">
+									<String>*</String>
+								</field>
+								<field name="fileName">
+									<String>*</String>
+								</field>
+								<field name="publicID">
+									<String>*</String>
+								</field>
+								<field name="javaRuleClass">
+									<String></String>
+								</field>
+								<field name="attributeLocalName">
+									<String>TAN-version</String>
+								</field>
+								<field name="attributeNamespace">
+									<String>*</String>
+								</field>
+								<field name="attributeValue">
+									<String>2018</String>
 								</field>
 							</documentTypeRule>
 						</documentTypeRule-array>
@@ -4270,10 +5145,126 @@ remove-marked-text</String>
 						</scenario-array>
 					</field>
 					<field name="validationScenarios">
-						<validationScenario-array/>
+						<validationScenario-array>
+							<validationScenario>
+								<field name="pairs">
+									<list>
+										<validationUnit>
+											<field name="validationType">
+												<validationUnitType>
+													<field name="validationInputType">
+														<String>text/xml</String>
+													</field>
+												</validationUnitType>
+											</field>
+											<field name="url">
+												<String>${currentFileURL}</String>
+											</field>
+											<field name="validationEngine">
+												<validationEngine>
+													<field name="engineType">
+														<String>&lt;Default engine></String>
+													</field>
+													<field name="allowsAutomaticValidation">
+														<Boolean>true</Boolean>
+													</field>
+												</validationEngine>
+											</field>
+											<field name="allowAutomaticValidation">
+												<Boolean>true</Boolean>
+											</field>
+											<field name="extensions">
+												<null/>
+											</field>
+											<field name="validationSchema">
+												<validationUnitSchema>
+													<field name="dtdSchemaPublicID">
+														<null/>
+													</field>
+													<field name="schematronPhase">
+														<null/>
+													</field>
+													<field name="type">
+														<Integer>3</Integer>
+													</field>
+													<field name="uri">
+														<String>${framework}/schemas/${xpath_eval(local-name(/*))}.rnc</String>
+													</field>
+												</validationUnitSchema>
+											</field>
+										</validationUnit>
+									</list>
+								</field>
+								<field name="type">
+									<String>Validation_scenario</String>
+								</field>
+								<field name="name">
+									<String>TAN rnc</String>
+								</field>
+							</validationScenario>
+							<validationScenario>
+								<field name="pairs">
+									<list>
+										<validationUnit>
+											<field name="validationType">
+												<validationUnitType>
+													<field name="validationInputType">
+														<String>text/xml</String>
+													</field>
+												</validationUnitType>
+											</field>
+											<field name="url">
+												<String>${currentFileURL}</String>
+											</field>
+											<field name="validationEngine">
+												<validationEngine>
+													<field name="engineType">
+														<String>&lt;Default engine></String>
+													</field>
+													<field name="allowsAutomaticValidation">
+														<Boolean>true</Boolean>
+													</field>
+												</validationEngine>
+											</field>
+											<field name="allowAutomaticValidation">
+												<Boolean>true</Boolean>
+											</field>
+											<field name="extensions">
+												<null/>
+											</field>
+											<field name="validationSchema">
+												<validationUnitSchema>
+													<field name="dtdSchemaPublicID">
+														<null/>
+													</field>
+													<field name="schematronPhase">
+														<null/>
+													</field>
+													<field name="type">
+														<Integer>7</Integer>
+													</field>
+													<field name="uri">
+														<String>${framework}/schemas/${xpath_eval(local-name(/*))}.sch</String>
+													</field>
+												</validationUnitSchema>
+											</field>
+										</validationUnit>
+									</list>
+								</field>
+								<field name="type">
+									<String>Validation_scenario</String>
+								</field>
+								<field name="name">
+									<String>TAN schematron</String>
+								</field>
+							</validationScenario>
+						</validationScenario-array>
 					</field>
 					<field name="defaultValidationScenarios">
-						<null/>
+						<list>
+							<String>TAN rnc</String>
+							<String>TAN schematron</String>
+						</list>
 					</field>
 					<field name="defaultTransformationScenarios">
 						<null/>
