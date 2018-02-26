@@ -76,18 +76,45 @@
       </xsl:for-each>
    </xsl:function>
 
-   <xsl:function name="tan:tokenize-div" as="element()*">
-      <!-- Input: any <div>s, a <token-definition> -->
-      <!-- Output: the <divs>s in tokenized form -->
-      <xsl:param name="divs" as="element()*"/>
+   <xsl:function name="tan:tokenize-div" as="item()*">
+      <!-- Input: any items, a <token-definition> -->
+      <!-- Output: the items with <div>s in tokenized form -->
+      <xsl:param name="input" as="item()*"/>
       <xsl:param name="token-definitions" as="element(tan:token-definition)"/>
-      <xsl:apply-templates select="$divs" mode="tokenize-div">
+      <xsl:apply-templates select="$input" mode="tokenize-div">
          <xsl:with-param name="token-definitions" select="$token-definitions" tunnel="yes"/>
       </xsl:apply-templates>
    </xsl:function>
    <xsl:template match="tan:div[not((tan:div, tan:tok))]/text()" mode="tokenize-div">
       <xsl:param name="token-definition" as="element()?" tunnel="yes"/>
-      <xsl:copy-of select="tan:tokenize-text(., $token-definition, true())/*"/>
+      <xsl:variable name="this-text" select="tan:normalize-text(.)"/>
+      <xsl:variable name="prev-leaf" select="preceding::tan:div[not((tan:div, tan:tok))][1]"/>
+      <xsl:variable name="first-tok-is-fragment"
+         select="matches($prev-leaf, concat($special-end-div-chars-regex, '\s*$'))"/>
+      <xsl:variable name="this-tokenized" as="element()*">
+         <xsl:copy-of select="tan:tokenize-text($this-text, $token-definition, true())"/>
+      </xsl:variable>
+      <xsl:variable name="last-tok" select="$this-tokenized/tan:tok[last()]"/>
+      <xsl:if test="not($first-tok-is-fragment)">
+         <xsl:copy-of select="$this-tokenized/*[xs:integer(@n) = 1]"/>
+      </xsl:if>
+      <xsl:choose>
+         <xsl:when test="matches(., concat($special-end-div-chars-regex, '\s*$'))">
+            <!-- get next token -->
+            <xsl:variable name="next-leaf" select="following::tan:div[not((tan:div, tan:tok))][1]"/>
+            <xsl:variable name="next-leaf-tokenized" select="tan:tokenize-text($next-leaf/text(), $token-definition, true())"/>
+            <xsl:copy-of select="$this-tokenized/*[xs:integer(@n) gt 1][not(@n = $last-tok/@n)]"/>
+            <tok>
+               <xsl:value-of
+                  select="replace($last-tok, concat($special-end-div-chars-regex, '\s*'), '')"/>
+               <xsl:value-of select="$next-leaf-tokenized/tan:tok[xs:integer(@n) = 1]"/>
+            </tok>
+            <xsl:copy-of select="$next-leaf-tokenized/tan:non-tok[xs:integer(@n) = 1]"/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:copy-of select="$this-tokenized/*[xs:integer(@n) gt 1]"/>
+         </xsl:otherwise>
+      </xsl:choose>
    </xsl:template>
 
 
