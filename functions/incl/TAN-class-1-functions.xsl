@@ -20,7 +20,7 @@
 
    <xsl:variable name="special-end-div-chars" select="($zwj, $dhy)" as="xs:string+"/>
    <xsl:variable name="special-end-div-chars-regex"
-      select="concat('[', string-join($special-end-div-chars, ''), ']$')" as="xs:string"/>
+      select="concat('[', string-join($special-end-div-chars, ''), ']\s*$')" as="xs:string"/>
    <!-- regular expression to detect parts of a transcription that specify a line, column, or page break; these should be excluded from transcriptions and be rendered with markup -->
    <xsl:param name="break-marker-regex">[\|‖  ⁣￺]</xsl:param>
    
@@ -87,8 +87,9 @@
    </xsl:function>
    <xsl:template match="tan:div[not((tan:div, tan:tok))]/text()" mode="tokenize-div">
       <xsl:param name="token-definition" as="element()?" tunnel="yes"/>
-      <xsl:variable name="this-text" select="tan:normalize-text(.)"/>
-      <xsl:variable name="prev-leaf" select="preceding::tan:div[not((tan:div, tan:tok))][1]"/>
+      <xsl:variable name="this-text"
+         select="replace(tan:normalize-text(.), $special-end-div-chars-regex, '')"/>
+      <xsl:variable name="prev-leaf" select="preceding::tan:div[not(tan:div)][1]"/>
       <xsl:variable name="first-tok-is-fragment"
          select="matches($prev-leaf, concat($special-end-div-chars-regex, '\s*$'))"/>
       <xsl:variable name="this-tokenized" as="element()*">
@@ -101,15 +102,22 @@
       <xsl:choose>
          <xsl:when test="matches(., concat($special-end-div-chars-regex, '\s*$'))">
             <!-- get next token -->
-            <xsl:variable name="next-leaf" select="following::tan:div[not((tan:div, tan:tok))][1]"/>
+            <xsl:variable name="next-leaf" select="following::tan:div[not(tan:div)][1]"/>
             <xsl:variable name="next-leaf-tokenized" select="tan:tokenize-text($next-leaf/text(), $token-definition, true())"/>
+            <xsl:variable name="next-leaf-fragment" select="$next-leaf-tokenized/*[xs:integer(@n) = 1]"/>
             <xsl:copy-of select="$this-tokenized/*[xs:integer(@n) gt 1][not(@n = $last-tok/@n)]"/>
-            <tok>
+            <xsl:for-each-group select="($this-tokenized/*[@n = $last-tok/@n], $next-leaf-fragment)" group-adjacent="name(.)">
+               <xsl:element name="{current-grouping-key()}">
+                  <xsl:copy-of select="current-group()[1]/@*"/>
+                  <xsl:value-of select="string-join(current-group(), '')"/>
+               </xsl:element>
+            </xsl:for-each-group> 
+            <!--<tok>
                <xsl:value-of
                   select="replace($last-tok, concat($special-end-div-chars-regex, '\s*'), '')"/>
                <xsl:value-of select="$next-leaf-tokenized/tan:tok[xs:integer(@n) = 1]"/>
-            </tok>
-            <xsl:copy-of select="$next-leaf-tokenized/tan:non-tok[xs:integer(@n) = 1]"/>
+            </tok>-->
+            <!--<xsl:copy-of select="$next-leaf-tokenized/tan:non-tok[xs:integer(@n) = 1]"/>-->
          </xsl:when>
          <xsl:otherwise>
             <xsl:copy-of select="$this-tokenized/*[xs:integer(@n) gt 1]"/>
