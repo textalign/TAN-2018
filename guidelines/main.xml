@@ -72,7 +72,9 @@
                      <para>New functions: tan:last-change-agent(), tan:trim-long-text(),
                            tan:catalogs(), tan:chop-string() (2 parameters),
                            tan:collate-sequences(), tan:collate-pair-of-sequences(),
-                           tan:catalog-uris(), tan:collection(), tan:unique-char()</para>
+                           tan:catalog-uris(), tan:collection(), tan:unique-char(),
+                           tan:most-common-item-count(), tan:vertical-stops() (to support
+                           tan:diff())</para>
                   </listitem>
                      <listitem>
                         <para>New global variables: $shy (same as $dhy), $doc-catalog-uris,
@@ -119,18 +121,24 @@
                            strictly accurate.</para>
                      </listitem>
                      <listitem>
-                        <para>The importance of models and resegmented copies has been recognized.
-                           There will probably be changes so that current &lt;see-also>s that fall
-                           in this categories can simply be &lt;model> and &lt;redivision>. Possibly
-                           other important relationships will join?: &lt;predecessor>,
-                           &lt;successor>, &lt;annotation>.</para>
-                     </listitem>
-                     <listitem>
                         <para>In the service of merging different sources, the new tan:group-divs()
                            groups together &lt;div>s that might have multiple &lt;ref>s and be in
                            their own peculiar sequence. It was written to preserve as best as
                            possible the original sequence of each reference within a given
                            source.</para>
+                     </listitem>
+                     <listitem>
+                        <para>If a leaf div ends in a special line-end character, the first &lt;tok>
+                           or &lt;non-tok>s with @n=1 will</para>
+                        <para>be taken from the next leaf div and fused at the end. If the first
+                           element so moved matches</para>
+                        <para>in name the last element of the original leaf div, they will be fused
+                           together. That is,</para>
+                        <para>if the leaf div ends with &lt;tok> and the next one starts with a
+                           &lt;tok> (or, vice versa, both </para>
+                        <para>&lt;non-tok>) they will become one element. If they are different
+                           elements, then the transfer</para>
+                        <para>still happens, but no fusion takes place.</para>
                      </listitem>
                   </itemizedlist></para>
                <para>TAN-A-lm:<itemizedlist>
@@ -154,13 +162,7 @@
                      <para>tan:add-attribute()</para>
                   </listitem>
                      <listitem>
-                        <para>tan:unique-char()</para>
-                     </listitem>
-                     <listitem>
                         <para>tan:tree-to-sequence() and tan:sequence-to-tree()</para>
-                     </listitem>
-                     <listitem>
-                        <para>tan:collate-sequences()</para>
                      </listitem>
                      <listitem>
                         <para>global variables to define the ends of words, clauses,
@@ -186,6 +188,49 @@
                            the reference system follows the Greek archetype.</para>
                      </listitem>
                   </itemizedlist></para>
+            </section>
+            <section>
+               <title>Changes desired for the future</title>
+               <para>Catalog files:</para>
+               <para>
+                  <itemizedlist>
+                     <listitem>
+                        <para>Think more about OSIS's standard and how the most essential TAN data
+                           can be put at users' fingertips</para>
+                     </listitem>
+                  </itemizedlist>
+               </para>
+               <para>Class 1:<itemizedlist>
+                     <listitem>
+                        <para>The importance of models and resegmented copies has been recognized.
+                           &lt;see-also>s that fall in this categories should simply be &lt;model>
+                           and &lt;redivision>. Possibly other important relationships will join?:
+                           &lt;predecessor>, &lt;successor>, &lt;annotation>.</para>
+                     </listitem>
+                  </itemizedlist></para>
+               <para>Frameworks:</para>
+               <para>
+                  <itemizedlist>
+                     <listitem>
+                        <para>Support editing TAN-A-tok</para>
+                     </listitem>
+                     <listitem>
+                        <para>Support editing TAN-A-lm</para>
+                     </listitem>
+                  </itemizedlist>
+               </para>
+               <para>Do things (stylesheets):</para>
+               <para>
+                  <itemizedlist>
+                     <listitem>
+                        <para>Create TAN-A-tok, perhaps with options for IBM Model, but more
+                           importantly with contextual data (esp. lexicomorphology).</para>
+                     </listitem>
+                     <listitem>
+                        <para>Create TAN-A-lm</para>
+                     </listitem>
+                  </itemizedlist>
+               </para>
             </section>
          </section>
          <section xml:id="tan_definition">
