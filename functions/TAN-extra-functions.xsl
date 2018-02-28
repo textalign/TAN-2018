@@ -741,8 +741,8 @@
          </xsl:if>
       </xsl:for-each-group>
    </xsl:function>
-
-
+   
+   
    <!-- Functions: accessors and manipulation of uris -->
 
    <xsl:function name="tan:zip-uris" as="xs:anyURI*">

@@ -845,6 +845,22 @@
    </xsl:template>
 
 
+   <xsl:function name="tan:most-common-item-count" as="xs:integer?">
+      <!-- Input: any sequence of items -->
+      <!-- Output: the count of the first item that appears most frequently -->
+      <!-- If two or more items appear equally frequently, only the first is returned -->
+      <!-- Written to help group <u> elements in tan:collate() -->
+      <xsl:param name="sequence" as="item()*"/>
+      <xsl:for-each-group select="$sequence" group-by=".">
+         <xsl:sort select="count(current-group())" order="descending"/>
+         <xsl:if test="position() = 1">
+            <xsl:copy-of select="count(current-group())"/>
+         </xsl:if>
+      </xsl:for-each-group>
+   </xsl:function>
+   
+   
+
    <!-- FUNCTIONS: NODES -->
 
    <xsl:function name="tan:xml-to-string" as="xs:string?">
