@@ -50,7 +50,12 @@ grammar-attr =
     
     ## This attribute is inheritable. See main.xml#inheritable_attributes
     attribute morphology { text }
-lang-preface = lang-outside*
+lang-preface = lang-outside*, tok-start-indicator*
+tok-start-indicator =
+
+    ## specifies an opening string that characterizes the @val of <tok>s in the file.
+element tok-starts-with { text }
+
 TAN-A-lm-item =
     
     ## contains a one or more assertions about the lexical or morphological properties of one or more tokens.
