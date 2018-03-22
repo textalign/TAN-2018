@@ -87,6 +87,7 @@
             <group type="copies">
                 <item>
                     <IRI>tag:textalign.net,2015:relationship:alternatively-divided-edition</IRI>
+                    <name>redivision</name>
                     <name>alternatively divided edition</name>
                     <name>alternatively divided copy</name>
                     <name>alternatively segmented edition</name>

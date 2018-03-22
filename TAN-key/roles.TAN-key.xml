@@ -119,6 +119,7 @@
             <IRI>tag:textalign.net,2015:role:keyboarder</IRI>
             <name>keyboarder</name>
             <name>typist</name>
+            <name>transcriber</name>
         </item>
         <item>
             <IRI>tag:textalign.net,2015:role:digitizer</IRI>
