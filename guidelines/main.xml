@@ -74,7 +74,7 @@
                            tan:collate-sequences(), tan:collate-pair-of-sequences(),
                            tan:catalog-uris(), tan:collection(), tan:unique-char(),
                            tan:most-common-item-count(), tan:vertical-stops() (to support
-                           tan:diff())</para>
+                           tan:diff()), tan:nested-phrase-loop() (supports tan:chop-string())</para>
                   </listitem>
                      <listitem>
                         <para>New global variables: $shy (same as $dhy), $doc-catalog-uris,
@@ -92,6 +92,13 @@
                         <para>Some functions provided $diagnostics</para>
                      </listitem>
                      <listitem>
+                        <para>Tokens that straddle two leaf divs (marked by discretionary hyphen or
+                           the zero-width joiner) are now rejoined at the end of the first leaf div,
+                           leaving the second leaf div without the word fragment. As a new
+                           principle, counting within a leaf div should begin with the first
+                           complete word.</para>
+                     </listitem>
+                     <listitem>
                         <para>some enhancement of functions: </para>
                         <itemizedlist>
                            <listitem>
@@ -105,6 +112,20 @@
                                  if the string is not too long, it follows the normal routine, now
                                  converted to a two-loop process easier to diagnose. Snap-to-word
                                  has been made more reliable.</para>
+                           </listitem>
+                           <listitem>
+                              <para>tan:tokenize-div() (and related templates) adjusted to do a
+                                 better job taking into account special div-end characters and token
+                                 counting.</para>
+                           </listitem>
+                           <listitem>
+                              <para>tan:infuse-divs() adjusted to take into account special endings
+                                 of leaf divs</para>
+                           </listitem>
+                           <listitem>
+                              <para>tan:chop-string() now allows a parameter that preserves
+                                 parenthetical phrases (most suited to chopping into sentences or
+                                 clauses).</para>
                            </listitem>
                         </itemizedlist>
                      </listitem>
@@ -145,6 +166,10 @@
                   <listitem>
                      <para>New errors introduced: tlm05</para>
                   </listitem>
+                     <listitem>
+                        <para>New element: &lt;tok-starts-with> (meant to enhance the process of
+                           working with thousands of TAN-A-lm files)</para>
+                     </listitem>
                </itemizedlist></para>
                <para>TAN-A-key:<itemizedlist>
                   <listitem>
@@ -207,6 +232,12 @@
                            and &lt;redivision>. Possibly other important relationships will join?:
                            &lt;predecessor>, &lt;successor>, &lt;annotation>.</para>
                      </listitem>
+                     <listitem>
+                        <para>Unfortunately, we might need to abandon the Leaf Div Uniqueness Rule,
+                           or move it to the verbose part of validation. The problem is that some
+                           non-leaf divs can through a transformation easily become leaf divs. And
+                           some translations must be encoded so that leaf divs interleave. </para>
+                     </listitem>
                   </itemizedlist></para>
                <para>Frameworks:</para>
                <para>
@@ -235,19 +266,20 @@
          </section>
          <section xml:id="tan_definition">
             <title>Definition and purpose </title>
-            <para>The Text Alignment Network (TAN) is a suite of highly regulated XML formats
-               intended to allow scholars to align and share texts and textual analysis at a maximal
-               level of syntactic and semantic interoperability. TAN is particularly suited to
-               textual works with multiple versions (translations, paraphrases), and to expressing
-               quotations, word-for-word alignments, and grammatical features.</para>
-            <para>TAN files are simple, modular, and networked, allowing users, working
-               independently and collaboratively, to edit, study, and annotate shared files. The
-               extensive validation rules depend upon a library of functions that definitively
-               interpret the format, thereby helping anyone studying or editing the files, and
-               providing a foundation for customized tools and applications.</para>
+            <para>The Text Alignment Network (TAN) is a suite of highly regulated XML formats for
+               the interoperable alignment and exchange of texts, annotations, and language
+               resources across projects. Collectively, TAN files form a kind of Internet of primary
+               sources.</para>
+            <para>TAN is particularly suited to aligning texts with multiple versions (copies,
+               translations, paraphrases), and to annotating quotations, translation clusters
+               (word-to-word), and lexicomorphological features. Simple, modular, and networked, TAN
+               files allow users, working independently and collaboratively, to find, create, edit,
+               study, align, and share their texts and annotations. TAN's extensive validation rules
+               rely upon a library of functions that definitively interpret the format and provide
+               the foundation for a variety of tools.</para>
             <para>Although expressive of scholarly nuance and complexity, the TAN format has been
                designed to benefit everyone, scholars and non-scholars alike, and can be used
-               broadly for multilingual publishing, language learning, and machine translation. </para>
+               broadly for reading, teaching, publishing, research, analysis, and language learning. </para>
          </section>
          <section>
             <title>Rationale and Purpose</title>
