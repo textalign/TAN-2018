@@ -649,7 +649,7 @@
       <xsl:param name="aliases" tunnel="yes"/>
       <xsl:variable name="this-from" select="tan:dateTime-to-decimal(@from)"/>
       <xsl:variable name="this-to" select="tan:dateTime-to-decimal(@to)"/>
-
+      <xsl:variable name="this-head" select="root()/*/tan:head"/>
       <!-- This next variable treats attributes that refer via idrefs to one or more entities defined by @xml:id -->
       <xsl:variable name="these-refs" as="element()*">
          <xsl:for-each
@@ -658,7 +658,7 @@
             <xsl:variable name="should-refer-to-which-element"
                select="$id-idrefs/tan:id-idrefs/tan:id[tan:idrefs/@attribute = $this-attribute-name]/tan:element"/>
             <xsl:variable name="all-possible-valid-entities"
-               select="$head//*[name(.) = $should-refer-to-which-element]"/>
+               select="$this-head//*[name(.) = $should-refer-to-which-element]"/>
             <xsl:variable name="this-attribute-value"
                select="
                   if (string-length(.) lt 1) then
@@ -677,9 +677,10 @@
                         else
                            tan:resolve-idref($this-val, $aliases)"/>
                   <xsl:for-each select="$this-val-resolved">
-                     <xsl:variable name="this-val2" select="tan:escape(.)"/>
+                     <xsl:variable name="this-val" select="."/>
+                     <xsl:variable name="this-val-esc" select="tan:escape(.)"/>
                      <xsl:variable name="entities-pointed-to"
-                        select="$all-possible-valid-entities[(@xml:id, @id) = $this-val2]"/>
+                        select="$all-possible-valid-entities[(@xml:id, @id) = $this-val]"/>
                      <xsl:element name="{$this-attribute-name}">
                         <xsl:attribute name="attr"/>
                         <xsl:copy-of select="$this-val-checked/@help"/>
@@ -699,7 +700,7 @@
                            <xsl:variable name="new-element-fixes" as="element()*">
                               <xsl:for-each select="$should-refer-to-which-element">
                                  <xsl:element name="{.}">
-                                    <xsl:attribute name="xml:id" select="$this-val2"/>
+                                    <xsl:attribute name="xml:id" select="$this-val"/>
                                  </xsl:element>
                               </xsl:for-each>
                            </xsl:variable>
@@ -711,14 +712,14 @@
                            test="exists($this-val-checked/@help) or not(exists($entities-pointed-to))">
                            <xsl:variable name="this-fix" as="element()*">
                               <xsl:for-each select="$all-possible-valid-entities">
-                                 <xsl:sort select="matches(@xml:id, $this-val2)" order="descending"/>
+                                 <xsl:sort select="matches(@xml:id, $this-val-esc)" order="descending"/>
                                  <element>
                                     <xsl:attribute name="{$this-attribute-name}" select="@xml:id"/>
                                  </element>
                               </xsl:for-each>
                            </xsl:variable>
                            <xsl:variable name="this-message"
-                              select="concat($this-val2, ' unknown; try: ', string-join($this-fix/@*, '; '))"/>
+                              select="concat($this-val, ' unknown; try: ', string-join($this-fix/@*, '; '))"/>
                            <xsl:copy-of
                               select="tan:help($this-message, $this-fix, 'copy-attributes')"/>
                         </xsl:if>

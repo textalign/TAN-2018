@@ -82,6 +82,7 @@
     </xsl:function>
 
     <xsl:variable name="char-reg-exp" select="'\P{M}\p{M}*'"/>
+    <xsl:param name="do-not-chop-parenthetical-clauses" as="xs:boolean" select="false()"/>
     <xsl:function name="tan:chop-string" as="xs:string*">
         <!-- Input: any string -->
         <!-- Output: that string chopped into a sequence of individual characters, following TAN rules (modifying characters always join their preceding base character) -->
@@ -98,11 +99,19 @@
         </xsl:if>
     </xsl:function>
     <xsl:function name="tan:chop-string" as="xs:string*">
-        <!-- Input: any string, a regular expression -->
+        <!-- 2-param version of the fuller one below -->
+        <xsl:param name="input" as="xs:string?"/>
+        <xsl:param name="chop-after-regex" as="xs:string"/>
+        <xsl:copy-of select="tan:chop-string($input, $chop-after-regex, $do-not-chop-parenthetical-clauses)"/>
+    </xsl:function>
+    <xsl:function name="tan:chop-string" as="xs:string*">
+        <!-- Input: any string, a regular expression, a boolean -->
         <!-- Output: the input string broken into strings using the regular expression as a signal that a new item should be started -->
+        <!-- If the last boolean is true, then nested clauses (parentheses, direct quotations, etc.) will be preserved. -->
         <!-- This function is useful for conserving a string but dividing it into words, clauses, sentences, etc. -->
         <xsl:param name="input" as="xs:string?"/>
         <xsl:param name="chop-after-regex" as="xs:string"/>
+        <xsl:param name="preserve-nested-clauses" as="xs:boolean"/>
         <xsl:if test="string-length($input) gt 0">
             <xsl:variable name="input-analyzed" as="element()*">
                 <xsl:analyze-string select="$input" regex="{$chop-after-regex}">
@@ -118,11 +127,171 @@
                     </xsl:non-matching-substring>
                 </xsl:analyze-string>
             </xsl:variable>
-            <xsl:for-each-group select="$input-analyzed" group-ending-with="tan:br">
-                <xsl:value-of select="string-join(current-group(), '')"/>
-            </xsl:for-each-group>
+            <xsl:choose>
+                <xsl:when test="$preserve-nested-clauses">
+                    <xsl:variable name="input-checked" select="tan:nested-phrase-loop($input-analyzed, ())"
+                        as="element()*"/>
+                    <xsl:for-each-group select="$input-checked"
+                        group-ending-with="tan:br[not(tan:group-data/tan:type)]">
+                        <xsl:value-of
+                            select="
+                                string-join(for $i in current-group()
+                                return
+                                    $i/tan:val, '')"/>
+                    </xsl:for-each-group>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:for-each-group select="$input-analyzed" group-ending-with="tan:br">
+                        <xsl:value-of select="string-join(current-group(), '')"/>
+                    </xsl:for-each-group>
+                </xsl:otherwise>
+            </xsl:choose>
         </xsl:if>
     </xsl:function>
+
+    <xsl:variable name="nested-phrase-markers" as="element()">
+        <grouping-data>
+            <pair>
+                <open>[</open>
+                <close>]</close>
+            </pair>
+            <pair>
+                <open>(</open>
+                <close>)</close>
+            </pair>
+            <pair>
+                <open>&lt;</open>
+                <close>></close>
+            </pair>
+            <pair>
+                <open>"</open>
+                <close>"</close>
+            </pair>
+            <pair>
+                <open>»</open>
+                <close>«</close>
+            </pair>
+            <pair>
+                <open>{</open>
+                <close>}</close>
+            </pair>
+            <pair>
+                <open>‘</open>
+                <open>‚</open>
+                <close>’</close>
+            </pair>
+            <pair>
+                <open>“</open>
+                <open>„</open>
+                <close>”</close>
+            </pair>
+            <pair>
+                <open>‹</open>
+                <close>›</close>
+            </pair>
+            <pair>
+                <open>《</open>
+                <close>》</close>
+            </pair>
+            <pair>
+                <open>『</open>
+                <close>』</close>
+            </pair>
+            <pair>
+                <open>﹃</open>
+                <close>﹄</close>
+            </pair>
+            <pair>
+                <open>〈</open>
+                <close>〉</close>
+            </pair>
+            <pair>
+                <open>「</open>
+                <close>」</close>
+            </pair>
+            <pair>
+                <open>﹁</open>
+                <close>﹂</close>
+            </pair>
+        </grouping-data>
+    </xsl:variable>
+    <xsl:variable name="nested-phrase-marker-regex"
+        select="concat('[', tan:escape(string-join($nested-phrase-markers/tan:pair/*/text(), '')), ']')"/>
+    <xsl:variable name="nested-phrase-close-marker-regex"
+        select="concat('[', tan:escape(string-join($nested-phrase-markers/tan:pair/tan:close/text(), '')), ']')"/>
+
+    <xsl:function name="tan:nested-phrase-loop" as="element()*">
+        <!-- Input: a series of elements with text content; an element indicating what nesting exists so far -->
+        <!-- Output: each input element with the text value put into <val> and a  -->
+        <xsl:param name="elements-to-process" as="element()*"/>
+        <xsl:param name="current-nesting-data" as="element()?"/>
+        <xsl:choose>
+            <xsl:when test="count($elements-to-process) lt 1"/>
+            <xsl:otherwise>
+                <xsl:variable name="this-element" select="$elements-to-process[1]"/>
+                <xsl:variable name="this-element-analyzed" as="element()*">
+                    <xsl:analyze-string select="$this-element" regex="{$nested-phrase-marker-regex}">
+                        <xsl:matching-substring>
+                            <xsl:variable name="this-match" select="."/>
+                            <xsl:variable name="closing-group-opener"
+                                select="$nested-phrase-markers/tan:pair[tan:close = $this-match]/tan:open[1]"/>
+                            <type>
+                                <xsl:attribute name="level"
+                                    select="
+                                        if (exists($closing-group-opener)) then
+                                            -1
+                                        else
+                                            1"/>
+                                <xsl:if test="$this-match = $closing-group-opener">
+                                    <xsl:attribute name="toggle"/>
+                                </xsl:if>
+                                <xsl:value-of select="($closing-group-opener, $this-match)[1]"/>
+                            </type>
+                        </xsl:matching-substring>
+                    </xsl:analyze-string>
+                </xsl:variable>
+                <xsl:variable name="new-group-data" as="element()">
+                    <group-data>
+                        <xsl:for-each-group select="$this-element-analyzed, $current-nesting-data/*"
+                            group-by=".">
+                            <xsl:variable name="this-level" as="xs:integer">
+                                <xsl:choose>
+                                    <xsl:when test="exists(current-group()/@toggle)">
+                                        <xsl:copy-of select="count(current-group()) mod 2"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:copy-of
+                                            select="
+                                                sum(for $i in current-group()
+                                                return
+                                                    xs:integer($i/@level))"
+                                        />
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:variable>
+                            <xsl:if test="$this-level gt 0">
+                                <type level="{$this-level}">
+                                    <xsl:value-of select="current-grouping-key()"/>
+                                </type>
+                            </xsl:if>
+                        </xsl:for-each-group>
+                    </group-data>
+                </xsl:variable>
+                <xsl:for-each select="$this-element">
+                    <xsl:copy>
+                        <xsl:copy-of select="@*"/>
+                        <xsl:copy-of select="$new-group-data"/>
+                        <val>
+                            <xsl:value-of select="text()"/>
+                        </val>
+                    </xsl:copy>
+                </xsl:for-each>
+                <xsl:copy-of
+                    select="tan:nested-phrase-loop($elements-to-process[position() gt 1], $new-group-data)"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+
 
     <xsl:function name="tan:tokenize-text" as="element()*">
         <!-- one-parameter version of the function below -->
@@ -183,7 +352,7 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
-    
+
     <xsl:function name="tan:unique-char" as="xs:string?">
         <!-- Input: any sequence of strings -->
         <!-- Output: a single character that is not to be found in those strings -->
@@ -196,8 +365,8 @@
                     string-to-codepoints($i)"/>
         <xsl:copy-of select="codepoints-to-string(max($codepoints-used) + 1)"/>
     </xsl:function>
-    
-    
+
+
 
 
     <!-- How many loops should be tolerated in a recursive function before exiting? -->
@@ -231,10 +400,10 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
-    
+
     <!-- At what point is the shortest string so long that it would be better to do some pre-processing? -->
-    <xsl:param name="long-string-length-min" as="xs:double" select="10 div $vertical-stops[last()]"/>    
-    
+    <xsl:param name="long-string-length-min" as="xs:double" select="10 div $vertical-stops[last()]"/>
+
 
     <xsl:function name="tan:diff" as="element()">
         <!-- 2-param version of fuller one below -->
@@ -261,10 +430,13 @@
         <xsl:variable name="diagnostics" as="xs:boolean" select="false()"/>
         <xsl:if test="$diagnostics">
             <xsl:message>Diagnostics for tan:diff() turned on</xsl:message>
-            <xsl:message select="'a (', string-length($string-a), '): ', tan:trim-long-text($string-a, 40)"/>
-            <xsl:message select="'b (', string-length($string-b), '): ', tan:trim-long-text($string-b, 40)"/>
+            <xsl:message
+                select="'a (', string-length($string-a), '): ', tan:trim-long-text($string-a, 40)"/>
+            <xsl:message
+                select="'b (', string-length($string-b), '): ', tan:trim-long-text($string-b, 40)"/>
             <xsl:message select="concat('snap: ', string($snap-to-word))"/>
-            <xsl:message select="concat('preprocess long strings: ', string($preprocess-long-strings))"/>
+            <xsl:message
+                select="concat('preprocess long strings: ', string($preprocess-long-strings))"/>
             <xsl:message select="concat('loop: ', string($loop-counter))"/>
         </xsl:if>
         <xsl:variable name="a-prepped" as="element()">
@@ -294,7 +466,8 @@
                     <xsl:copy-of select="$b-prepped"/>
                 </xsl:when>
                 <xsl:when
-                    test="not($preprocess-long-strings) or
+                    test="
+                        not($preprocess-long-strings) or
                         (some $i in ($string-a, $string-b)
                             satisfies string-length($i) lt $long-string-length-min)">
                     <xsl:if test="$diagnostics">
@@ -314,9 +487,9 @@
                                 <xsl:for-each-group select="current-group()" group-by="name()">
                                     <xsl:sort select="current-grouping-key()"/>
                                     <xsl:element name="{current-grouping-key()}">
-                                        <xsl:value-of select="string-join(current-group(),'')"/>
+                                        <xsl:value-of select="string-join(current-group(), '')"/>
                                     </xsl:element>
-                                </xsl:for-each-group> 
+                                </xsl:for-each-group>
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:for-each-group>
@@ -360,7 +533,8 @@
                             </xsl:copy>
                         </xsl:for-each>
                     </xsl:variable>
-                    <xsl:variable name="this-common-count" select="count($input-analyzed-2[1]/tan:common)"/>
+                    <xsl:variable name="this-common-count"
+                        select="count($input-analyzed-2[1]/tan:common)"/>
                     <!--<xsl:copy-of select="$input-analyzed"/>-->
                     <!--<xsl:copy-of select="$input-unique-words"/>-->
                     <!--<test08e><xsl:copy-of select="$input-core-sequence"/></test08e>-->
@@ -369,10 +543,10 @@
                     <!--<test08f><xsl:copy-of select="$input-analyzed-2[1]/tan:common[1]/preceding-sibling::*[1]"/></test08f>-->
                     <!--<test08g><xsl:copy-of select="$input-analyzed-2[2]/tan:common[1]/preceding-sibling::*[1]"/></test08g>-->
                     <xsl:copy-of
-                        select="tan:diff($input-analyzed-2[1]/tan:common[1]/preceding-sibling::*[1]/text(), 
-                        $input-analyzed-2[2]/tan:common[1]/preceding-sibling::*[1]/text(), 
-                        $snap-to-word, $preprocess-long-strings, $loop-counter + 1)/*"
-                    />
+                        select="
+                            tan:diff($input-analyzed-2[1]/tan:common[1]/preceding-sibling::*[1]/text(),
+                            $input-analyzed-2[2]/tan:common[1]/preceding-sibling::*[1]/text(),
+                            $snap-to-word, $preprocess-long-strings, $loop-counter + 1)/*"/>
                     <xsl:for-each select="1 to $this-common-count">
                         <xsl:variable name="this-pos" select="."/>
                         <xsl:variable name="this-common-a"
@@ -383,22 +557,23 @@
                         <!--<test08h pos="{position()}"><xsl:copy-of select="$this-common-a/following-sibling::tan:distinct[1]"/></test08h>-->
                         <!--<test08i pos="{position()}"><xsl:copy-of select="$this-common-b/following-sibling::tan:distinct[1]"/></test08i>-->
                         <xsl:copy-of
-                            select="tan:diff($this-common-a/following-sibling::tan:distinct[1]/text(), 
-                            $this-common-b/following-sibling::tan:distinct[1]/text(), 
-                            $snap-to-word, $preprocess-long-strings, $loop-counter + 1)/*"
+                            select="
+                                tan:diff($this-common-a/following-sibling::tan:distinct[1]/text(),
+                                $this-common-b/following-sibling::tan:distinct[1]/text(),
+                                $snap-to-word, $preprocess-long-strings, $loop-counter + 1)/*"
                         />
                     </xsl:for-each>
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
-        
+
         <xsl:variable name="results-cleaned" as="element()">
             <diff>
                 <xsl:for-each-group select="$strings-diffed" group-adjacent="name()">
                     <xsl:element name="{current-grouping-key()}">
                         <xsl:value-of select="string-join(current-group(), '')"/>
                     </xsl:element>
-                </xsl:for-each-group> 
+                </xsl:for-each-group>
             </diff>
         </xsl:variable>
         <xsl:choose>
@@ -515,12 +690,12 @@
                         </xsl:for-each-group>
                     </snap2>
                 </xsl:variable>
-                    <!-- diagnostics, results -->
-                    <!--<xsl:copy-of select="$snap1"/>-->
-                    <!--<xsl:copy-of select="$strings-prepped"/>-->
-                    <!--<xsl:copy-of select="$strings-diffed"/>-->
-                    <!--<xsl:copy-of select="$snap2"/>-->
-                    <!--<xsl:copy-of select="tan:merge-adjacent-elements($snap2/*)"/>-->
+                <!-- diagnostics, results -->
+                <!--<xsl:copy-of select="$snap1"/>-->
+                <!--<xsl:copy-of select="$strings-prepped"/>-->
+                <!--<xsl:copy-of select="$strings-diffed"/>-->
+                <!--<xsl:copy-of select="$snap2"/>-->
+                <!--<xsl:copy-of select="tan:merge-adjacent-elements($snap2/*)"/>-->
                 <diff>
                     <xsl:for-each-group select="$snap2/*" group-adjacent="name()">
                         <xsl:element name="{current-grouping-key()}">
@@ -560,10 +735,12 @@
             <!-\-<xsl:copy-of select="current-group()"/>-\->
         </xsl:for-each-group>
     </xsl:function>-->
-    
+
     <xsl:template match="tan:common" mode="snap-to-word-pass-1">
-        <xsl:variable name="preceding-diff" select="preceding-sibling::*[1][self::tan:a or self::tan:b]"/>
-        <xsl:variable name="following-diff" select="following-sibling::*[1][self::tan:a or self::tan:b]"/>
+        <xsl:variable name="preceding-diff"
+            select="preceding-sibling::*[1][self::tan:a or self::tan:b]"/>
+        <xsl:variable name="following-diff"
+            select="following-sibling::*[1][self::tan:a or self::tan:b]"/>
         <xsl:choose>
             <xsl:when test="exists($preceding-diff) or exists($following-diff)">
                 <xsl:variable name="regex-1"
@@ -832,23 +1009,24 @@
                 <xsl:variable name="this-analysis" as="element()">
                     <analysis>
                         <xsl:analyze-string select="$long-string/text()"
-                        regex="{tan:escape($short-string/text())}">
-                        <xsl:matching-substring>
-                            <common outer-loop="{$loop-counter}">
-                                <xsl:value-of select="."/>
-                            </common>
-                        </xsl:matching-substring>
-                        <xsl:non-matching-substring>
-                            <xsl:element name="{name($long-string)}">
-                                <xsl:value-of select="."/>
-                            </xsl:element>
-                        </xsl:non-matching-substring>
-                    </xsl:analyze-string>
+                            regex="{tan:escape($short-string/text())}">
+                            <xsl:matching-substring>
+                                <common outer-loop="{$loop-counter}">
+                                    <xsl:value-of select="."/>
+                                </common>
+                            </xsl:matching-substring>
+                            <xsl:non-matching-substring>
+                                <xsl:element name="{name($long-string)}">
+                                    <xsl:value-of select="."/>
+                                </xsl:element>
+                            </xsl:non-matching-substring>
+                        </xsl:analyze-string>
                     </analysis>
                 </xsl:variable>
                 <xsl:copy-of select="$this-analysis/tan:common[1]/preceding-sibling::*"/>
                 <xsl:copy-of select="$this-analysis/tan:common[1]"/>
-                <xsl:variable name="this-analysis-tail" select="$this-analysis/tan:common[1]/following-sibling::*"/>
+                <xsl:variable name="this-analysis-tail"
+                    select="$this-analysis/tan:common[1]/following-sibling::*"/>
                 <xsl:if test="exists($this-analysis-tail)">
                     <xsl:element name="{name($long-string)}">
                         <xsl:value-of select="string-join($this-analysis-tail, '')"/>
@@ -897,8 +1075,8 @@
                         else
                             for $i in $starting-pos-of-short-substring
                             return
-                                $short-size - $length-of-short-substring - $i + 1"
-                /> <!-- reverse($starting-pos-of-short-substring) -->
+                                $short-size - $length-of-short-substring - $i + 1"/>
+                <!-- reverse($starting-pos-of-short-substring) -->
                 <xsl:variable name="search-prefix"
                     select="
                         if ($check-vertically-before-horizontally and $start-at-beginning) then
@@ -998,7 +1176,7 @@
                         <!-- need to loop again on head fragments -->
                         <xsl:copy-of
                             select="
-                                tan:diff-outer-loop($head-input[1], $head-input[2], false(), true(), 
+                                tan:diff-outer-loop($head-input[1], $head-input[2], false(), true(),
                                 tan:vertical-stops($head-input[1]), $loop-counter + 1)"/>
 
                         <xsl:for-each select="$first-result/tan:common[1]">
@@ -1013,8 +1191,7 @@
                         <xsl:copy-of
                             select="
                                 tan:diff-outer-loop($tail-input[1], $tail-input[2], true(), true(),
-                                tan:vertical-stops($tail-input[1]), $loop-counter + 1)"
-                        />
+                                tan:vertical-stops($tail-input[1]), $loop-counter + 1)"/>
 
                     </xsl:when>
                     <!-- If there are no results on this vertical level... -->
@@ -1051,7 +1228,7 @@
                         <xsl:copy-of select="$long-string, $short-string"/>
                     </xsl:otherwise>
                 </xsl:choose>
-                
+
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
@@ -1099,8 +1276,7 @@
                     <xsl:message select="'$short-string:', tan:trim-long-text($short-string, 11)"/>
                     <xsl:message select="'$long-string:', tan:trim-long-text($long-string, 11)"/>
                     <xsl:message select="'starting locs to check:', $starting-locs-to-check"/>
-                    <xsl:message select="'$length-of-short-substring:', $length-of-short-substring"
-                    />
+                    <xsl:message select="'$length-of-short-substring:', $length-of-short-substring"/>
                     <xsl:message select="'search string:', $this-search-string"/>
                     <xsl:message select="'search regex:', $this-search-regex"/>
                     <xsl:message select="'search result: ', $this-search"/>
@@ -1272,7 +1448,7 @@
                                                 <xsl:value-of select="current-grouping-key()"/>
                                             </u>
                                         </xsl:for-each-group>
-                                    </xsl:for-each-group> 
+                                    </xsl:for-each-group>
                                 </xsl:when>
                                 <xsl:otherwise>
                                     <xsl:copy-of select="current-group()"/>

@@ -27,7 +27,8 @@
 
    <xsl:function name="tan:text-join" as="xs:string?">
       <!-- Input: any document fragment of a TAN class 1 body, whether raw, resolved, or expanded  -->
-      <!-- Output: a single string that joins and normalizes the leaf div text according to TAN rules: -->
+      <!-- Output: a single string that joins and normalizes the leaf div text according to TAN rules -->
+      <!-- All special leaf-div-end characters will be stripped, except the last -->
       <xsl:param name="items" as="item()*"/>
       <xsl:variable name="results" as="element()">
          <results>
@@ -41,35 +42,56 @@
    </xsl:template>
    <xsl:template match="*:div[not(*:div)]" mode="text-join">
       <xsl:variable name="text-nodes" select="text()[matches(., '\S')]"/>
-      <xsl:variable name="string-val" as="xs:string?">
+      <xsl:variable name="is-not-last-leaf-div" select="exists(following::*:div[not(*:div)][text()[matches(.,'\S')] or tan:tok or tei:*])"/>
+      <xsl:variable name="text-nodes-to-process" as="xs:string*">
          <xsl:choose>
             <xsl:when test="exists(tan:tok)">
-               <xsl:value-of select="(tan:tok, tan:non-tok)"/>
+               <xsl:sequence select="(tan:tok, tan:non-tok)/text()"/>
             </xsl:when>
             <xsl:when test="exists($text-nodes)">
-               <xsl:value-of select="$text-nodes"/>
+               <xsl:sequence select="text()"/>
             </xsl:when>
             <xsl:when test="exists(tei:*)">
-               <xsl:value-of select="normalize-space(string-join(descendant-or-self::tei:*/text(), ''))"/>
+               <xsl:value-of select="normalize-space(string-join(descendant::tei:*/text(), ''))"/>
             </xsl:when>
          </xsl:choose>
       </xsl:variable>
-      <xsl:value-of select="tan:normalize-div-text($string-val)"/>
+      <!--<xsl:if test="exists($text-nodes-to-process) and (@type = ('s','par','ic'))">
+         <xsl:message select="., $is-not-last-leaf-div"/></xsl:if>-->
+      <xsl:value-of select="tan:normalize-div-text($text-nodes-to-process, $is-not-last-leaf-div)"/>
    </xsl:template>
 
    <xsl:function name="tan:normalize-div-text" as="xs:string*">
-      <!-- Input: any sequence of strings -->
+      <!-- One-parameter version of the fuller one, below. -->
+      <xsl:param name="div-text-nodes" as="xs:string*"/>
+      <xsl:copy-of select="tan:normalize-div-text($div-text-nodes, false())"/>
+   </xsl:function>
+   <xsl:function name="tan:normalize-div-text" as="xs:string*">
+      <!-- Input: any sequence of strings, presumed to be text nodes of a single leaf div; a boolean indicating whether special div-end characters should be retained or not -->
       <!-- Output: the same sequence, normalized according to TAN rules. Each item in the sequence is space normalized and then if its end matches one of the special div-end characters, ZWJ U+200D or SOFT HYPHEN U+AD, the character is removed; otherwise a space is added at the end. Zero-length strings are skipped. -->
       <!-- This function is designed specifically for TAN's commitment to nonmixed content. That is, every TAN element contains either elements or non-whitespace text but not both, which also means that whitespace text nodes are effectively ignored. It is assumed that every TAN element is followed by a notional whitespace. -->
-      <xsl:param name="div-strings" as="xs:string*"/>
-      <xsl:for-each select="$div-strings">
+      <!-- The second parameter is important, because output will be used to normalize and repopulate leaf <div>s (where special div-end characters should be retained) or to concatenate leaf <div> text (where those characters should be deleted) -->
+      <xsl:param name="div-text-nodes" as="xs:string*"/>
+      <xsl:param name="remove-special-div-end-chars" as="xs:boolean"/>
+      <xsl:variable name="string-count" select="count($div-text-nodes)"/>
+      <xsl:for-each select="$div-text-nodes">
          <xsl:variable name="this-norm" select="normalize-space(.)"/>
+         <xsl:variable name="ends-in-special-char" select="matches($this-norm, $special-end-div-chars-regex)"/>
          <xsl:choose>
-            <xsl:when test="matches($this-norm, $special-end-div-chars-regex)">
+            <xsl:when test="string-length(.) lt 1"/>
+            <xsl:when test="position() lt $string-count">
+               <!-- We copy preliminary segments as-is, because no special treatment of the last character is needed -->
+               <xsl:value-of select="$this-norm"/>
+            </xsl:when>
+            <!-- The following cases deal with how a <div>'s text should end -->
+            <xsl:when test="$ends-in-special-char and ($remove-special-div-end-chars = false())">
+               <xsl:value-of select="$this-norm"/>
+            </xsl:when>
+            <xsl:when test="$ends-in-special-char">
                <xsl:value-of select="replace($this-norm, $special-end-div-chars-regex, '')"/>
             </xsl:when>
-            <xsl:when test="string-length(.) lt 1"/>
             <xsl:otherwise>
+               <!-- Any div ending in something other than a special character is assumed to have a space character, which we add here explicitly -->
                <xsl:value-of select="concat($this-norm, ' ')"/>
             </xsl:otherwise>
          </xsl:choose>
@@ -87,11 +109,10 @@
    </xsl:function>
    <xsl:template match="tan:div[not((tan:div, tan:tok))]/text()" mode="tokenize-div">
       <xsl:param name="token-definition" as="element()?" tunnel="yes"/>
-      <xsl:variable name="this-text"
-         select="replace(tan:normalize-text(.), $special-end-div-chars-regex, '')"/>
+      <xsl:variable name="this-text" select="tan:normalize-div-text(., true())"/>
       <xsl:variable name="prev-leaf" select="preceding::tan:div[not(tan:div)][1]"/>
       <xsl:variable name="first-tok-is-fragment"
-         select="matches($prev-leaf, concat($special-end-div-chars-regex, '\s*$'))"/>
+         select="matches($prev-leaf, $special-end-div-chars-regex)"/>
       <xsl:variable name="this-tokenized" as="element()*">
          <xsl:copy-of select="tan:tokenize-text($this-text, $token-definition, true())"/>
       </xsl:variable>
@@ -100,7 +121,7 @@
          <xsl:copy-of select="$this-tokenized/*[xs:integer(@n) = 1]"/>
       </xsl:if>
       <xsl:choose>
-         <xsl:when test="matches(., concat($special-end-div-chars-regex, '\s*$'))">
+         <xsl:when test="matches(., $special-end-div-chars-regex)">
             <!-- get next token -->
             <xsl:variable name="next-leaf" select="following::tan:div[not(tan:div)][1]"/>
             <xsl:variable name="next-leaf-tokenized" select="tan:tokenize-text($next-leaf/text(), $token-definition, true())"/>
@@ -1719,6 +1740,7 @@
          </xsl:apply-templates>
       </xsl:variable>
       <xsl:variable name="ks-to-ditch" as="element()*">
+         <!-- We have inevitably assigned a string to more than one leaf div. We now look for duplicates, and keep only the one with the greatest amount of hypothesized overlap. -->
          <xsl:for-each-group select="$mold-infused//tan:k" group-by="@pos">
             <xsl:for-each select="current-group()">
                <xsl:sort select="xs:integer(@qty)" order="descending"/>
@@ -1728,10 +1750,17 @@
             </xsl:for-each>
          </xsl:for-each-group>
       </xsl:variable>
+      <xsl:variable name="mold-with-unique-ks" as="element()">
+         <xsl:apply-templates select="$mold-infused" mode="infuse-tokenized-text-cleanup">
+            <xsl:with-param name="bad-ks" select="$ks-to-ditch" tunnel="yes"/>
+         </xsl:apply-templates>
+      </xsl:variable>
       <!-- diagnostics, results -->
-      <!--<xsl:copy-of select="$ks-to-ditch"/>-->
+      <!--<xsl:message>Diagnostics on</xsl:message>-->
       <!--<xsl:copy-of select="$mold-infused"/>-->
-      <xsl:apply-templates select="$mold-infused/*" mode="infuse-tokenized-text-cleanup">
+      <!--<xsl:copy-of select="$ks-to-ditch"/>-->
+      <!--<xsl:copy-of select="$mold-with-unique-ks/*"/>-->
+      <xsl:apply-templates select="$mold-with-unique-ks" mode="infuse-tokenized-div-end-check">
          <xsl:with-param name="bad-ks" select="$ks-to-ditch" tunnel="yes"/>
       </xsl:apply-templates>
    </xsl:function>
@@ -1773,6 +1802,22 @@
                satisfies $i/@id = @id and $i/@pos = @pos)">
          <xsl:value-of select="."/>
       </xsl:if>
+   </xsl:template>
+   
+   <xsl:template match="tan:mold" mode="infuse-tokenized-div-end-check">
+      <xsl:apply-templates mode="#current"/>
+   </xsl:template>
+   <xsl:template match="*:div[not(*:div)]" mode="infuse-tokenized-div-end-check">
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:value-of select="."/>
+         <xsl:if test="matches(text(), '\S$')">
+            <xsl:variable name="next-leaf" select="following::*:div[not(*:div)][text()][1]"/>
+            <xsl:if test="matches($next-leaf/text(), '^\S')">
+               <xsl:value-of select="$zwj"/>
+            </xsl:if>
+         </xsl:if>
+      </xsl:copy>
    </xsl:template>
 
 

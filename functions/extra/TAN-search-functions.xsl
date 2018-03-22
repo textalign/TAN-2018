@@ -147,11 +147,11 @@
       <xsl:choose>
          <xsl:when test="$format-results">
             <xsl:text>&#xa;</xsl:text>
-            <xsl:comment>Viaf checks</xsl:comment>
+            <xsl:comment>Search results</xsl:comment>
             <xsl:text>&#xa;</xsl:text>
             <xsl:for-each select="$iri-name-results">
                <xsl:text>&#xa;</xsl:text>
-               <xsl:comment><xsl:text>Viaf result #</xsl:text><xsl:value-of select="position()"/></xsl:comment>
+               <xsl:comment><xsl:text>Result #</xsl:text><xsl:value-of select="position()"/></xsl:comment>
                <xsl:copy-of select="*"/>
                <xsl:text>&#xa;</xsl:text>
             </xsl:for-each>

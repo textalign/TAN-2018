@@ -8,6 +8,7 @@
    <xsl:include href="extra/TAN-function-functions.xsl"/>
    <xsl:include href="extra/TAN-schema-functions.xsl"/>
    <xsl:include href="extra/TAN-search-functions.xsl"/>
+   <xsl:include href="extra/TAN-language-functions.xsl"/>
 
    <!-- Functions that are not central to validating TAN files, but could be helpful in creating, editing, or reusing them -->
 
