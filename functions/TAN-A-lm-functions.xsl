@@ -77,7 +77,7 @@
          <xsl:value-of
             select="
                some $i in $context/ancestor::tan:ana//tan:tok/tan:result
-                  satisfies matches($i, tan:escape($this-val))"
+                  satisfies tan:matches($i, tan:escape($this-val))"
          />
       </xsl:attribute>
    </xsl:template>

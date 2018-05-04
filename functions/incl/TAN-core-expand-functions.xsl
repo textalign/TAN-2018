@@ -284,7 +284,7 @@
 
    <!-- EXPANSION, GENERALLY -->
 
-   <xsl:template match="tan:inclusion | tan:key | tan:source | tan:see-also | tan:morphology"
+   <xsl:template match="tan:inclusion | tan:key | tan:source | tan:see-also | tan:morphology | tan:redivision | tan:model | tan:successor | tan:predecessor"
       mode="check-referred-doc">
       <!-- Look for errors in a document referred to -->
       <xsl:variable name="this-name" select="name(.)"/>
@@ -761,7 +761,7 @@
             <xsl:copy-of select="tan:error('whe03')"/>
          </xsl:if>
          <xsl:if
-            test="(@pattern, @matches-m, @matches-tok, @val)[matches(., '\\[^nrtpPsSiIcCdDuwW\\|.?*+(){}#x2D#x5B#x5D#x5E\]\[\^\-]')]">
+            test="(@pattern, @matches-m, @matches-tok, @rgx)[matches(., '\\[^nrtpPsSiIcCdDuwW\\|.?*+(){}#x2D#x5B#x5D#x5E\]\[\^\-]')]">
             <xsl:copy-of select="tan:error('tan07')"/>
          </xsl:if>
          <xsl:if test="exists(self::tan:master-location) and matches(@href, '!/')">
@@ -831,13 +831,12 @@
                <xsl:copy-of select="tan:error('tan02', '', $this-fix, 'add-master-location')"/>
             </xsl:if>
          </xsl:if>
-         <xsl:if test="exists(@val)">
-            <xsl:variable name="this-val" select="tan:help-extracted(@val)"/>
-            <val>
-               <xsl:copy-of select="$this-val/@help"/>
-               <xsl:value-of select="concat('^', $this-val/text(), '$')"/>
-            </val>
-         </xsl:if>
+         <xsl:for-each select="@val, @rgx">
+            <xsl:variable name="this-name" select="name(.)"/>
+            <xsl:element name="{$this-name}" namespace="tag:textalign.net,2015:ns">
+               <xsl:value-of select="tan:help-extracted(.)"/>
+            </xsl:element>
+         </xsl:for-each>
          <xsl:apply-templates mode="#current"/>
       </xsl:copy>
    </xsl:template>
@@ -951,7 +950,8 @@
          </xsl:choose>
       </xsl:copy>
    </xsl:template>
-   <xsl:template match="tan:see-also" mode="core-expansion-normal">
+   <xsl:template match="tan:see-also | tan:model | tan:redivision | tan:successor | tan:predecessor"
+      mode="core-expansion-normal">
       <xsl:apply-templates select="." mode="check-referred-doc"/>
    </xsl:template>
 

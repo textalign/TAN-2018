@@ -233,10 +233,8 @@
    <xsl:variable name="duplicate-ids" select="$all-ids[index-of($all-ids, .)[2]]"/>
    <xsl:variable name="duplicate-head-iris" select="$all-head-iris[index-of($all-head-iris, .)[2]]"/>
 
-   <xsl:variable name="doc-namespace"
-      select="substring-before(substring-after($doc-id, 'tag:'), ':')"/>
-   <xsl:variable name="primary-agent"
-      select="($head/tan:definitions/(tan:person, tan:organization, tan:algorithm)[tan:IRI[matches(., concat('^tag:', $doc-namespace))]])[1]"/>
+   <xsl:variable name="doc-namespace" select="tan:doc-namespace($self-resolved)"/>
+   <xsl:variable name="primary-agent" select="tan:primary-agent($self-resolved)"/>
 
    <!-- catalogs -->
    <xsl:variable name="doc-catalog-uris" select="tan:catalog-uris(/)"/>
@@ -262,7 +260,7 @@
       </xsl:apply-templates>
    </xsl:variable>
    <xsl:variable name="relationship-keywords-for-tan-files"
-      select="tan:glossary('relationship', (), 'TAN files')"/>
+      select="tan:glossary('relationship', (), (), 'TAN files')"/>
    <xsl:variable name="keys-1st-da" select="tan:get-1st-doc($head/tan:key)"/>
    <xsl:variable name="keys-resolved" select="tan:resolve-doc($keys-1st-da)"/>
    <xsl:variable name="keys-expanded" select="tan:expand-doc($keys-resolved)"/>
@@ -280,7 +278,7 @@
    <xsl:variable name="see-alsos-resolved" select="tan:resolve-doc($see-alsos-1st-da)"/>
 
    <!-- relationships -->
-   <xsl:variable name="relationships-reserved" select="tan:glossary('relationship')"/>
+   <xsl:variable name="relationships-reserved" select="tan:glossary('relationship', ())"/>
    <xsl:variable name="relationship-model" select="$relationships-reserved[tan:name = 'model']"/>
    <xsl:variable name="relationship-resegmented-copy"
       select="$relationships-reserved[tan:name = 'resegmented copy']"/>
@@ -782,13 +780,13 @@
          select="following-sibling::*[position() lt 3][self::tan:a or self::tan:b]"/>
       <!-- If the preceding differences terminate in the delimiter, or the next differences start with it, then the opening or closing fragment in the <common> should be kept -->
       <xsl:variable name="opening-item-should-be-included"
-         select="
-            every $i in $preceding-diffs
-               satisfies matches($i, concat($delimiter-regex, '$'))"/>
+         select="count($preceding-diffs) = 2 and
+            (every $i in $preceding-diffs
+               satisfies matches($i, concat($delimiter-regex, '$')))"/>
       <xsl:variable name="closing-item-should-be-included"
-         select="
-            every $i in $following-diffs
-               satisfies matches($i, concat('^', $delimiter-regex))"/>
+         select="count($following-diffs) = 2 and
+            (every $i in $following-diffs
+               satisfies matches($i, concat('^', $delimiter-regex)))"/>
       <xsl:variable name="this-tokenized" select="tokenize(., $delimiter-regex)"/>
       <xsl:for-each select="$this-tokenized">
          <xsl:choose>
@@ -1190,24 +1188,31 @@
    </xsl:template>
    <xsl:template match="comment() | processing-instruction()" mode="pluck"/>
 
-   <xsl:function name="tan:shallow-copy" as="element()*">
+   <xsl:function name="tan:shallow-copy" as="item()*">
       <!-- one-parameter version of the fuller one, below -->
-      <xsl:param name="elements" as="element()*"/>
-      <xsl:copy-of select="tan:shallow-copy($elements, true())"/>
+      <xsl:param name="items" as="item()*"/>
+      <xsl:copy-of select="tan:shallow-copy($items, 1)"/>
    </xsl:function>
-   <xsl:function name="tan:shallow-copy" as="element()*">
+   <xsl:function name="tan:shallow-copy" as="item()*">
       <!-- Input: any document fragment; boolean indicating whether attributes should be kept -->
       <!-- Output: a shallow copy of the fragment, perhaps with attributes -->
-      <xsl:param name="elements" as="element()*"/>
-      <xsl:param name="keep-attributes" as="xs:boolean"/>
-      <xsl:for-each select="$elements">
-         <xsl:copy>
-            <xsl:if test="$keep-attributes = true()">
-               <xsl:copy-of select="@*"/>
-            </xsl:if>
-         </xsl:copy>
-      </xsl:for-each>
+      <xsl:param name="items" as="item()*"/>
+      <xsl:param name="depth" as="xs:integer"/>
+      <xsl:apply-templates select="$items" mode="shallow-copy">
+         <xsl:with-param name="levels-to-go" select="$depth"/>
+      </xsl:apply-templates>
    </xsl:function>
+   <xsl:template match="node() | document-node()" mode="shallow-copy">
+      <xsl:param name="levels-to-go" as="xs:integer?"/>
+      <xsl:if test="$levels-to-go gt 0">
+         <xsl:copy>
+            <xsl:copy-of select="@*"/>
+            <xsl:apply-templates mode="#current">
+               <xsl:with-param name="levels-to-go" select="$levels-to-go - 1"/>
+            </xsl:apply-templates>
+         </xsl:copy>
+      </xsl:if>
+   </xsl:template>
 
    <xsl:function name="tan:value-of" as="xs:string?">
       <!-- Input: any sequence of items -->
@@ -1251,8 +1256,9 @@
          </xsl:when>
          <xsl:otherwise>
             <!-- atomic items here are numbers separated by commas and hyphens and perhaps with the keywords "last" etc. -->
+            <xsl:variable name="norm-first" select="replace($sequence-string,'^\*$','1 - last')"/>
             <xsl:variable name="norm-last"
-               select="replace($sequence-string, '(last|max|all)[ ,]+', 'last , ')"/>
+               select="replace($norm-first, '(last|max|all)[ ,]+', 'last , ')"/>
             <xsl:variable name="norm-punct" select="replace($norm-last, '(\d)\s*([,-])', '$1 $2 ')"/>
             <xsl:variable name="space-to-comma"
                select="replace($norm-punct, '(\d)\s+(\d)', '$1 , $2')"/>
@@ -1593,7 +1599,7 @@
             <xsl:when test="$range[1] gt $max or $range[2] gt $max">
                <xsl:copy-of select="-1"/>
             </xsl:when>
-            <xsl:when test="$range[1] ge $range[2]">
+            <xsl:when test="$range[1] gt $range[2]">
                <xsl:copy-of select="-2"/>
             </xsl:when>
             <xsl:otherwise>
@@ -1676,7 +1682,12 @@
       <!-- NB, this function does not assume any URIs have been resolved -->
       <xsl:param name="uris" as="xs:string*"/>
       <xsl:for-each select="$uris">
-         <xsl:value-of select="replace(., '[^/]+$', '')"/>
+         <xsl:choose>
+            <xsl:when test="matches(., '/')">
+               <xsl:value-of select="replace(., '(.*/)[^/]+$', '$1')"/>
+            </xsl:when>
+            <xsl:otherwise>.</xsl:otherwise>
+         </xsl:choose>
       </xsl:for-each>
    </xsl:function>
    <xsl:function name="tan:base-uri" as="xs:anyURI?">
@@ -1942,14 +1953,14 @@
 
    <xsl:function name="tan:get-doc-hist" as="element()*">
       <!-- Input: any TAN document -->
-      <!-- Output: a sequence of elements with @when, @ed-when, and @when-accessed, sorted from most recent to least; each element includes @when-sort, a decimal that represents the value of the most recent time-date stamp in that element -->
+      <!-- Output: a sequence of elements with @when, @ed-when, @when-accessed, @claim-when, sorted from most recent to least; each element includes @when-sort, a decimal that represents the value of the most recent time-date stamp in that element -->
       <xsl:param name="TAN-doc" as="document-node()*"/>
       <xsl:for-each select="$TAN-doc">
          <xsl:variable name="doc-hist-raw" as="element()*">
             <xsl:for-each select=".//*[@when | @ed-when | @when-accessed]">
                <xsl:variable name="these-dates" as="xs:decimal*"
                   select="
-                     for $i in (@when | @ed-when | @when-accessed)
+                     for $i in (@when | @ed-when | @when-accessed | @claim-when)
                      return
                         tan:dateTime-to-decimal($i)"/>
                <xsl:copy>
@@ -1967,6 +1978,24 @@
             </xsl:for-each>
          </history>
       </xsl:for-each>
+   </xsl:function>
+   
+   <xsl:function name="tan:doc-namespace" as="xs:string?">
+      <!-- Input: a TAN-doc -->
+      <!-- Output: the namespace of the doc's @id -->
+      <xsl:param name="TAN-doc" as="document-node()?"/>
+      <xsl:value-of
+         select="substring-before(substring-after($TAN-doc/*/@id, 'tag:'), ':')"/>
+   </xsl:function>
+
+   <xsl:function name="tan:primary-agent" as="element()?">
+      <!-- Input: any TAN document -->
+      <!-- Output: the primary agent, defined by the first person or organization with an IRI that matches the namespace of the document's id -->
+      <xsl:param name="TAN-doc" as="document-node()?"/>
+      <xsl:variable name="this-id" select="$TAN-doc"/>
+      <xsl:variable name="this-namespace" select="tan:doc-namespace($TAN-doc)"/>
+      <xsl:copy-of 
+         select="($TAN-doc/*/tan:head/tan:definitions/(tan:person, tan:organization, tan:algorithm)[tan:IRI[matches(., concat('^tag:', $this-namespace))]])[1]"/>
    </xsl:function>
 
    <xsl:function name="tan:last-change-agent" as="element()*">
@@ -2060,7 +2089,7 @@
       Constructed pointing systems
          Q refs (breadcrumbs). A @q may be added to each element in a TAN file when it is first resolved. This unique id value helps tie the parts of an expansions to its original (critically important for basic validation). Because the value is unpredictable, no ref can be constructed until the ids are generated.
          div refs. Each <div> in a class 1 file is given one or more <ref>s that are constructed of the concatenations of its @n values (converted when possible to Arabic numerals) and those of its ancestors. These ids are pointed to via @ref's in class 2 documents. Because these pertain necessarily to class 2 documents, related functions will be found in stylesheets that include this one, e.g., TAN-class-2-functions.xsl
-         token refs. Class 2 files may refer to a specific token by number (@pos) or value (@val), in conjunction with the tokenization definition being used.
+         token refs. Class 2 files may refer to a specific token by number (@pos) or value/regular expression (@val/@rgx), in conjunction with the tokenization definition being used.
          character refs. Class 2 files may refer to specific characters by number. 
 
       Native pointing systems
@@ -2112,9 +2141,7 @@
    </xsl:function>
 
    <xsl:function name="tan:definition" as="element()*">
-      <!-- Input: an attribute or element that contains a text value -->
-      <!-- Output: the corresponding entity in <definitions>. If a value does not exist, an <error> is returned. -->
-      <!-- Assumes space normalization, and ignores help requests -->
+      <!-- One-parameter version of the fuller one, below -->
       <xsl:param name="ref-nodes" as="node()*"/>
       <xsl:variable name="ref-node-head" select="root($ref-nodes[1])/*/tan:head"/>
       <xsl:variable name="this-head"
@@ -2123,6 +2150,15 @@
                $head
             else
                $ref-node-head"/>
+      <xsl:sequence select="tan:definition($ref-nodes, $this-head)"/>
+   </xsl:function>
+
+   <xsl:function name="tan:definition" as="element()*">
+      <!-- Input: an attribute or element that contains a text value; a resolved <head> -->
+      <!-- Output: the corresponding entity in <definitions>. If a value does not exist, an <error> is returned. -->
+      <!-- Assumes space normalization, and ignores help requests -->
+      <xsl:param name="ref-nodes" as="node()*"/>
+      <xsl:param name="resolved-head" as="element()?"/>
       <xsl:for-each select="$ref-nodes">
          <xsl:variable name="this-ref-node" select="."/>
          <xsl:variable name="ref-node-name" select="name($this-ref-node)"/>
@@ -2139,7 +2175,7 @@
          <xsl:variable name="should-refer-to-which-element"
             select="$id-idrefs/tan:id-idrefs/tan:id[tan:idrefs/@attribute = $ref-node-name]/tan:element"/>
          <xsl:variable name="all-possible-valid-entities"
-            select="$this-head//*[name(.) = $should-refer-to-which-element]"/>
+            select="$resolved-head//*[name(.) = $should-refer-to-which-element]"/>
          <xsl:for-each select="tokenize($ref-val, ' +')">
             <xsl:variable name="this-val" select="."/>
             <xsl:variable name="entities-pointed-to"
@@ -2152,7 +2188,7 @@
                   <xsl:copy-of select="tan:error('tan05')"/>
                </xsl:when>
                <xsl:otherwise>
-                  <xsl:copy-of select="$entities-pointed-to"/>
+                  <xsl:sequence select="$entities-pointed-to"/>
                </xsl:otherwise>
             </xsl:choose>
          </xsl:for-each>
@@ -2161,27 +2197,34 @@
 
    <xsl:function name="tan:glossary" as="element()*">
       <!-- one-parameter version of the master one, below -->
-      <xsl:param name="element-that-takes-attribute-which" as="item()"/>
-      <xsl:sequence select="tan:glossary($element-that-takes-attribute-which, $keys-1st-da, ())"/>
+      <xsl:param name="element-with-attr-which" as="element()"/>
+      <xsl:sequence select="tan:glossary(name($element-with-attr-which), $element-with-attr-which/@which, $keys-1st-da, ())"/>
+   </xsl:function>
+   <xsl:function name="tan:glossary" as="element()*">
+      <!-- two-parameter version of the master one, below -->
+      <xsl:param name="element-name" as="xs:string"/>
+      <xsl:param name="item-name" as="xs:string?"/>
+      <xsl:sequence select="tan:glossary($element-name, $item-name, $keys-1st-da, ())"/>
    </xsl:function>
    <xsl:function name="tan:glossary" as="element()*">
       <!-- Input: any element that has @which (or a string value of the name of an element that takes @which); any TAN-key documents (expanded) other than the standard TAN ones; and an optional name that restricts the search to a particular group -->
       <!-- Output: the keyword <items> (most of which contain <IRI>, <name>, and <desc>) that are valid definitions for the element in question, filtered by matches on @which, if present in the first parameter -->
-      <xsl:param name="element-that-takes-attribute-which" as="item()"/>
+      <xsl:param name="element-name" as="xs:string"/>
+      <xsl:param name="item-name" as="xs:string?"/>
       <xsl:param name="extra-TAN-keys-expanded" as="document-node()*"/>
       <xsl:param name="group-name-alter" as="xs:string?"/>
-      <xsl:variable name="element-name" as="xs:string?"
+      <!--<xsl:variable name="element-name" as="xs:string?"
          select="
-            if ($element-that-takes-attribute-which instance of xs:string) then
-               $element-that-takes-attribute-which
+            if ($element-name instance of xs:string) then
+               $element-name
             else
-               name($element-that-takes-attribute-which)"/>
-      <xsl:variable name="results-alter"
+               name($element-name)"/>-->
+      <!--<xsl:variable name="results-alter"
          select="
-            if ($element-that-takes-attribute-which instance of element()) then
-               $element-that-takes-attribute-which/@which
+            if ($element-name instance of element()) then
+               $element-name/@which
             else
-               ()"/>
+               ()"/>-->
       <xsl:variable name="all-TAN-key-docs" select="$extra-TAN-keys-expanded, $TAN-keywords"/>
       <xsl:sequence
          select="
@@ -2190,8 +2233,8 @@
                key('item-via-node-name', $element-name, $i)[if (string-length($group-name-alter) gt 0) then
                   (ancestor::tan:group/tan:name = $group-name-alter)
                else
-                  true()][if (string-length($results-alter) gt 0) then
-                  (tan:name = $results-alter)
+                  true()][if (string-length($item-name) gt 0) then
+                  (tan:name = $item-name)
                else
                   true()]"
       />

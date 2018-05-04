@@ -687,7 +687,7 @@
                select="tan:tokenize-text(text(), $token-definition, true())"/>
             <xsl:variable name="previous-renames" select="$this-div/tan:ref/tan:rename"/>
             <xsl:variable name="reassigns-identified" as="element()*">
-               <!-- This variable rebuilds each reassign by looking for errors and translating each <pos> and <val> of a <tok>, <from>, or <to> into a series of <n>s with the positions inferred from this context; those <n>s will be used later to pick out the tokenized <n>s -->
+               <!-- This variable rebuilds each reassign by looking for errors and translating each <pos> and <val>/<rgx> of a <tok>, <from>, or <to> into a series of <n>s with the positions inferred from this context; those <n>s will be used later to pick out the tokenized <n>s -->
                <xsl:for-each select="$reassign-instructions">
                   <xsl:variable name="this-reassign" select="."/>
                   <xsl:copy>
@@ -706,13 +706,23 @@
                               <xsl:when test="exists(tan:from)">
                                  <!-- it's a range of toks -->
                                  <xsl:variable name="this-from-val" select="tan:from/tan:val"/>
+                                 <xsl:variable name="this-from-rgx" select="tan:from/tan:rgx"/>
                                  <xsl:variable name="possible-from-tokens"
-                                    select="$text-tokenized/tan:tok[matches(., $this-from-val)]"/>
+                                    select="
+                                       $text-tokenized/tan:tok[if (exists($this-from-val)) then
+                                          . = $this-from-val
+                                       else
+                                          tan:matches(., $this-from-rgx)]"/>
                                  <xsl:variable name="this-from-pos"
                                     select="tan:expand-pos-or-chars(tan:from/tan:pos, count($possible-from-tokens))"/>
                                  <xsl:variable name="this-to-val" select="tan:to/tan:val"/>
+                                 <xsl:variable name="this-to-rgx" select="tan:to/tan:rgx"/>
                                  <xsl:variable name="possible-to-tokens"
-                                    select="$text-tokenized/tan:tok[matches(., $this-to-val)]"/>
+                                    select="
+                                       $text-tokenized/tan:tok[if (exists($this-to-val)) then
+                                          . = $this-to-val
+                                       else
+                                          tan:matches(., $this-to-rgx)]"/>
                                  <xsl:variable name="this-to-pos"
                                     select="tan:expand-pos-or-chars(tan:to/tan:pos, count($possible-to-tokens))"/>
                                  <xsl:variable name="from-token-picked"
@@ -760,8 +770,14 @@
                               <xsl:otherwise>
                                  <!-- it's not a range of toks defined by <from> and <to>, but individual ones -->
                                  <xsl:variable name="this-val" select="tan:val"/>
+                                 <xsl:variable name="this-rgx" select="tan:rgx"/>
                                  <xsl:variable name="tokens-picked"
-                                    select="$text-tokenized/tan:tok[matches(., $this-val)]"/>
+                                    select="
+                                       $text-tokenized/tan:tok[if (exists($this-val)) then
+                                          . = $this-val
+                                       else
+                                          tan:matches(., $this-rgx)]"
+                                 />
                                  <xsl:for-each select=".//tan:pos">
                                     <xsl:variable name="this-pos"
                                        select="tan:expand-pos-or-chars(., count($tokens-picked))"/>
@@ -770,7 +786,7 @@
                                     <xsl:choose>
                                        <xsl:when test="not(exists($this-token))">
                                           <xsl:copy-of
-                                             select="tan:error('tok01', concat('only ', string(count($tokens-picked)), ' instance(s) of ', $this-val))"
+                                             select="tan:error('tok01', concat('only ', string(count($tokens-picked)), ' instance(s) of ', $this-val, $this-rgx))"
                                           />
                                        </xsl:when>
                                        <xsl:otherwise>
@@ -886,25 +902,25 @@
    <!-- NORMAL EXPANSION -->
 
    <xsl:template match="tan:TAN-T/tan:body" mode="core-expansion-normal">
-      <xsl:variable name="all-leaf-refs" select=".//tan:div[not(tan:div)]/tan:ref/text()"/>
-      <xsl:variable name="duplicate-leaf-refs" select="tan:duplicate-items($all-leaf-refs)"/>
+      <xsl:variable name="all-refs" select=".//tan:div/tan:ref/text()"/>
+      <xsl:variable name="duplicate-refs" select="tan:duplicate-items($all-refs)"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:apply-templates mode="#current">
-            <xsl:with-param name="duplicate-leaf-refs" select="$duplicate-leaf-refs" tunnel="yes"/>
+            <xsl:with-param name="duplicate-refs" select="$duplicate-refs" tunnel="yes"/>
          </xsl:apply-templates>
       </xsl:copy>
    </xsl:template>
-   <xsl:template match="tan:div[not(tan:div)]" mode="core-expansion-normal">
-      <xsl:param name="duplicate-leaf-refs" tunnel="yes"/>
-      <xsl:variable name="these-duplicates" select="tan:ref[text() = $duplicate-leaf-refs]"/>
+   <xsl:template match="tan:div" mode="core-expansion-normal">
+      <xsl:param name="duplicate-refs" tunnel="yes"/>
+      <xsl:variable name="this-ref" select="tan:ref/text()"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
-         <xsl:if test="exists($these-duplicates)">
-            <xsl:copy-of select="tan:error('cl109', $these-duplicates)"/>
+         <xsl:if test="$this-ref = $duplicate-refs">
+            <xsl:copy-of select="tan:error('cl109', $this-ref)"/>
          </xsl:if>
          <xsl:if
-            test="
+            test="not(tan:div) and
                not(some $i in text()
                   satisfies matches($i, '\S'))">
             <xsl:copy-of select="tan:error('cl110')"/>
@@ -956,10 +972,10 @@
          <xsl:message>Diagnostics turned on for template class-1-expansion-verbose</xsl:message>
       </xsl:if>
       <!-- Evaluate each alternatively divided edition (ade) -->
-      <xsl:variable name="see-also-ades"
-         select="tan:head/tan:see-also[tan:definition(tan:relationship)/tan:name = 'alternatively divided edition']"/>
-      <xsl:variable name="these-ades" as="document-node()*">
-         <xsl:for-each select="$see-also-ades">
+      <xsl:variable name="redivisions"
+         select="tan:head/tan:redivision, tan:head/tan:see-also[tan:definition(tan:relationship)/tan:name = 'alternatively divided edition']"/>
+      <xsl:variable name="these-redivisions" as="document-node()*">
+         <xsl:for-each select="$redivisions">
             <xsl:variable name="these-iris" select="tan:IRI"/>
             <xsl:variable name="this-see-also-doc" select="$see-alsos-resolved[*/@id = $these-iris]"/>
             <xsl:sequence
@@ -972,8 +988,8 @@
          </xsl:for-each>
       </xsl:variable>
       <xsl:variable name="this-doc-text" select="tan:text-join(tan:body)"/>
-      <xsl:variable name="these-ade-diffs" as="element()*">
-         <xsl:for-each select="$these-ades">
+      <xsl:variable name="these-redivision-diffs" as="element()*">
+         <xsl:for-each select="$these-redivisions">
             <xsl:variable name="that-doc-text"
                select="tan:text-join(*/(tan:body, tei:text/tei:body))"/>
             <xsl:copy-of select="tan:diff($this-doc-text, $that-doc-text, true())"/>
@@ -981,16 +997,16 @@
       </xsl:variable>
       <xsl:variable name="relevant-ade-nos" as="xs:integer*"
          select="
-            for $i in (1 to count($see-also-ades))
+            for $i in (1 to count($redivisions))
             return
-               if (exists($these-ade-diffs[$i]/(tan:a, tan:b))) then
+               if (exists($these-redivision-diffs[$i]/(tan:a, tan:b))) then
                   $i
                else
                   ()"/>
       <xsl:variable name="relevant-see-also-ades"
-         select="$see-also-ades[position() = $relevant-ade-nos]"/>
+         select="$redivisions[position() = $relevant-ade-nos]"/>
       <xsl:variable name="relevant-ade-diffs"
-         select="tan:analyze-leaf-div-string-length($these-ade-diffs[position() = $relevant-ade-nos])"
+         select="tan:analyze-leaf-div-string-length($these-redivision-diffs[position() = $relevant-ade-nos])"
          as="element()*"/>
       <xsl:variable name="ade-diffs-prepped" as="element()*">
          <xsl:for-each select="$relevant-ade-diffs">
@@ -1423,9 +1439,13 @@
                (tan:tok-ref/tan:tok/@n = $this-n)
             else
                if (exists(tan:val)) then
-                  tan:matches($this-val, tan:val)
+                  tan:val = $this-val
                else
-                  false()]"/>
+                  if (exists(tan:rgx)) then
+                     (tan:matches($this-val, tan:rgx))
+                  else
+                     false()]"
+      />
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:for-each select="$relevant-claims">

@@ -11,6 +11,12 @@
       <xsl:copy-of select="tan:resolve-doc($TAN-documents, true(), (), (), (), ())"/>
    </xsl:function>
    <xsl:function name="tan:resolve-doc" as="document-node()*">
+      <!-- two-parameter version of the fuller one, below -->
+      <xsl:param name="TAN-documents" as="document-node()*"/>
+      <xsl:param name="leave-breadcrumbs" as="xs:boolean"/>
+      <xsl:copy-of select="tan:resolve-doc($TAN-documents, $leave-breadcrumbs, (), (), (), ())"/>
+   </xsl:function>
+   <xsl:function name="tan:resolve-doc" as="document-node()*">
       <!-- Input: any number of TAN documents; boolean indicating whether documents should be breadcrumbed or not; optional name of an attribute and a sequence of strings to stamp in each document's root element as a way of providing another identifier for the document; a list of element names to which any inclusion should be restricted; a list of ids for documents that should not be used to generate inclusions.
       Output: those same documents, resolved, along the following steps:
            a. Stamp each document with @base-uri and the optional root attribute; resolve @href, putting the original (if different) in @orig-href
@@ -392,7 +398,7 @@
       <!--<xsl:variable name="help-requested" select="matches(@which, $help-trigger-regex)"/>-->
       <xsl:variable name="help-requested" select="exists($this-which-checked/@help)"/>
       <xsl:variable name="attr-in-key-element-to-suppress" select="('group')" as="xs:string*"/>
-      <xsl:variable name="valid-definitions" select="tan:glossary($element-name, $extra-keys, ())"/>
+      <xsl:variable name="valid-definitions" select="tan:glossary($element-name, $this-which-checked, $extra-keys, ())"/>
       <xsl:variable name="definition-matches" as="element()*"
          select="$valid-definitions[tan:name[normalize-space(.) = $this-which-normalized]]"/>
       <xsl:variable name="close-matches"

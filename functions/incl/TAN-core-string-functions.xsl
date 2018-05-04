@@ -102,7 +102,9 @@
         <!-- 2-param version of the fuller one below -->
         <xsl:param name="input" as="xs:string?"/>
         <xsl:param name="chop-after-regex" as="xs:string"/>
-        <xsl:copy-of select="tan:chop-string($input, $chop-after-regex, $do-not-chop-parenthetical-clauses)"/>
+        <xsl:copy-of
+            select="tan:chop-string($input, $chop-after-regex, $do-not-chop-parenthetical-clauses)"
+        />
     </xsl:function>
     <xsl:function name="tan:chop-string" as="xs:string*">
         <!-- Input: any string, a regular expression, a boolean -->
@@ -129,15 +131,16 @@
             </xsl:variable>
             <xsl:choose>
                 <xsl:when test="$preserve-nested-clauses">
-                    <xsl:variable name="input-checked" select="tan:nested-phrase-loop($input-analyzed, ())"
-                        as="element()*"/>
+                    <xsl:variable name="input-checked"
+                        select="tan:nested-phrase-loop($input-analyzed, ())" as="element()*"/>
                     <xsl:for-each-group select="$input-checked"
                         group-ending-with="tan:br[not(tan:group-data/tan:type)]">
                         <xsl:value-of
                             select="
                                 string-join(for $i in current-group()
                                 return
-                                    $i/tan:val, '')"/>
+                                    $i/tan:val, '')"
+                        />
                     </xsl:for-each-group>
                 </xsl:when>
                 <xsl:otherwise>
@@ -287,7 +290,8 @@
                     </xsl:copy>
                 </xsl:for-each>
                 <xsl:copy-of
-                    select="tan:nested-phrase-loop($elements-to-process[position() gt 1], $new-group-data)"/>
+                    select="tan:nested-phrase-loop($elements-to-process[position() gt 1], $new-group-data)"
+                />
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
@@ -304,6 +308,7 @@
         <xsl:param name="text" as="xs:string*"/>
         <xsl:param name="token-definition" as="element(tan:token-definition)?"/>
         <xsl:param name="count-toks" as="xs:boolean?"/>
+        <xsl:variable name="diagnostics" select="false()"/>
         <xsl:variable name="this-tok-def"
             select="
                 if (exists($token-definition)) then
@@ -311,11 +316,18 @@
                 else
                     $token-definition-default"/>
         <xsl:variable name="pattern" select="$this-tok-def/@pattern"/>
+        <xsl:variable name="pattern-adjusted"
+            select="
+                if (string-length($pattern) gt 0) then
+                    $pattern
+                else
+                    '.+'"
+        />
         <xsl:variable name="flags" select="$this-tok-def/@flags"/>
         <xsl:variable name="pass1" as="element()*">
             <xsl:for-each select="$text">
                 <results regex="{$pattern}" flags="{$flags}">
-                    <xsl:analyze-string select="." regex="{$pattern}">
+                    <xsl:analyze-string select="." regex="{$pattern-adjusted}">
                         <xsl:matching-substring>
                             <tok>
                                 <xsl:value-of select="."/>
@@ -330,7 +342,15 @@
                 </results>
             </xsl:for-each>
         </xsl:variable>
+        <xsl:if test="$diagnostics">
+            <xsl:message select="$this-tok-def"/>
+            <xsl:message select="$pass1"/>
+        </xsl:if>
         <xsl:choose>
+            <xsl:when test="not(exists($pattern)) or string-length($pattern) lt 1">
+                <xsl:message select="'Tokenization definition has no pattern.'"/>
+                <xsl:copy-of select="$pass1"/>
+            </xsl:when>
             <xsl:when test="$count-toks = true()">
                 <xsl:for-each select="$pass1">
                     <results tok-count="{count(tan:tok)}" non-tok-count="{count(tan:non-tok)}">
@@ -465,6 +485,10 @@
                     <xsl:copy-of select="$a-prepped"/>
                     <xsl:copy-of select="$b-prepped"/>
                 </xsl:when>
+                <xsl:when test="(string-length($string-a) lt 1) or (string-length($string-b) lt 1)">
+                    <xsl:copy-of select="$a-prepped[string-length(.) gt 0]"/>
+                    <xsl:copy-of select="$b-prepped[string-length(.) gt 0]"/>
+                </xsl:when>
                 <xsl:when
                     test="
                         not($preprocess-long-strings) or
@@ -535,13 +559,34 @@
                     </xsl:variable>
                     <xsl:variable name="this-common-count"
                         select="count($input-analyzed-2[1]/tan:common)"/>
+                    <xsl:if test="not($this-common-count = count($input-analyzed-2[2]/tan:common))">
+                        <xsl:message select="$this-common-count, count($input-analyzed-2[2]/tan:common)"></xsl:message>
+                        <!--<test29b><xsl:copy-of select="$string-a"/></test29b>-->
+                        <!--<test29c><xsl:copy-of select="$string-b"/></test29c>-->
+                        <!--<xsl:copy-of select="tan:tokenize-text(('this is a test','and here is another test'))"/>-->
+                        <!--<xsl:copy-of select="$input-unique-words"/>-->
+                        <!--<test08e><xsl:copy-of select="$input-core-sequence"/></test08e>-->
+                        <!--<test08d><xsl:value-of select="$this-common-count"/></test08d>-->
+                        <!--<xsl:copy-of select="$input-analyzed-2"/>-->
+                        <!--<test08f><xsl:copy-of select="$input-analyzed-2[1]/tan:common[1]/preceding-sibling::*[1]"/></test08f>-->
+                        <!--<test08g><xsl:copy-of select="$input-analyzed-2[2]/tan:common[1]/preceding-sibling::*[1]"/></test08g>-->
+                    </xsl:if>
                     <!--<xsl:copy-of select="$input-analyzed"/>-->
-                    <!--<xsl:copy-of select="$input-unique-words"/>-->
-                    <!--<test08e><xsl:copy-of select="$input-core-sequence"/></test08e>-->
-                    <!--<test08d><xsl:value-of select="$this-common-count"/></test08d>-->
+                    <!--<test29c>
+                        <xsl:copy-of select="$input-unique-words"/>
+                    </test29c>-->
+                    <!--<test29d>
+                        <xsl:copy-of select="string-join($input-core-sequence,'|')"/>
+                    </test29d>-->
+                    <!--<test29e>
+                        <xsl:value-of select="$input-analyzed-2[1]/tan:common"/>
+                    </test29e>-->
+                    <!--<test29f>
+                        <xsl:value-of select="$input-analyzed-2[2]/tan:common"/>
+
+                    </test29f>-->
+
                     <!--<xsl:copy-of select="$input-analyzed-2"/>-->
-                    <!--<test08f><xsl:copy-of select="$input-analyzed-2[1]/tan:common[1]/preceding-sibling::*[1]"/></test08f>-->
-                    <!--<test08g><xsl:copy-of select="$input-analyzed-2[2]/tan:common[1]/preceding-sibling::*[1]"/></test08g>-->
                     <xsl:copy-of
                         select="
                             tan:diff($input-analyzed-2[1]/tan:common[1]/preceding-sibling::*[1]/text(),
@@ -576,6 +621,10 @@
                 </xsl:for-each-group>
             </diff>
         </xsl:variable>
+        <xsl:if test="$diagnostics">
+            <xsl:message select="$strings-diffed"/>
+            <xsl:message select="$results-cleaned"/>
+        </xsl:if>
         <xsl:choose>
             <xsl:when test="$snap-to-word">
                 <xsl:variable name="snap1" as="element()">
@@ -706,7 +755,7 @@
             </xsl:when>
             <xsl:otherwise>
                 <!-- results, diagnostics -->
-                <!--<test13a><xsl:copy-of select="$strings-diffed"/></test13a>-->
+                <!--<test29a><xsl:copy-of select="$strings-diffed"/></test29a>-->
                 <xsl:copy-of select="$results-cleaned"/>
             </xsl:otherwise>
         </xsl:choose>
@@ -1314,7 +1363,7 @@
         <!-- This function was written to deal with multiple OCR results of the same page of text, to find agreement wherever possible. -->
         <xsl:param name="strings" as="xs:string*"/>
         <xsl:param name="labels" as="xs:string*"/>
-        <xsl:variable name="diagnostics" select="true()"/>
+        <xsl:variable name="diagnostics" select="false()"/>
         <xsl:variable name="valid-strings" as="xs:string*">
             <xsl:for-each select="$strings">
                 <xsl:choose>
@@ -1491,8 +1540,14 @@
                     </collation>
                 </xsl:variable>
                 <!-- diagnostics, results -->
-                <!--<xsl:copy-of select="$this-collation"/>-->
-                <!--<xsl:copy-of select="$consolidated-collation"/>-->
+                <xsl:if test="$diagnostics">
+                    <xsl:message select="$all-diffs"/>
+                    <xsl:message select="$diffs-sorted"/>
+                    <xsl:message select="$collate-order"/>
+                    <xsl:message select="$first-collation"/>
+                    <xsl:message select="$this-collation"/>
+                    <xsl:message select="$consolidated-collation"/>
+                </xsl:if>
                 <xsl:copy-of select="$collation-with-base-marked"/>
             </xsl:otherwise>
         </xsl:choose>
@@ -1567,17 +1622,16 @@
         <xsl:param name="collation-so-far" as="element()"/>
         <xsl:param name="string-to-process" as="xs:string?"/>
         <xsl:param name="string-label" as="xs:string?"/>
+        <xsl:variable name="diagnostics" as="xs:boolean" select="false()"/>
         <xsl:choose>
-            <!-- If there's no string to process, end -->
-            <xsl:when test="string-length($string-to-process) lt 1">
-                <xsl:copy-of select="$collation-so-far/(tan:c, tan:u)[string-length(.) gt 0]"/>
-            </xsl:when>
             <!-- If the collation so far has no common elements, then end the loop -->
             <xsl:when test="not(exists($collation-so-far/tan:c))">
-                <xsl:copy-of select="$collation-so-far/tan:u"/>
-                <u w="{$string-label}">
-                    <xsl:value-of select="$string-to-process"/>
-                </u>
+                <xsl:copy-of select="$collation-so-far/tan:u[string-length(.) gt 0]"/>
+                <xsl:if test="string-length($string-to-process) gt 0">
+                    <u w="{$string-label}">
+                        <xsl:value-of select="$string-to-process"/>
+                    </u>
+                </xsl:if>
             </xsl:when>
             <xsl:otherwise>
                 <!-- Step 2a: split $collation-so-far into three: the longest <c> and what precedes and what follows -->
@@ -1591,10 +1645,16 @@
                 <!-- Step 2b: get the diff between the longest collation segment and the next string to be processed -->
                 <xsl:variable name="this-diff"
                     select="tan:diff($collation-longest-common, $string-to-process, false())"/>
+                <xsl:if test="$diagnostics">
+                    <xsl:message
+                        select="$collation-longest-common-length, $collation-longest-common"/>
+                    <xsl:message select="$this-diff"/>
+                </xsl:if>
                 <!-- Step 3: are the results complete, or does the loop need to be run again? -->
                 <xsl:choose>
-                    <!-- If there's no match, then every stretch of text is unique, including the longest collation segment. Mark them as such and end. -->
-                    <xsl:when test="not(exists($this-diff/tan:common))">
+                    <!-- If there's no string to process, or if there's no match, then every stretch of text is unique, including the longest collation segment. Mark them as such and end. -->
+                    <xsl:when
+                        test="(string-length($string-to-process) lt 1) or not(exists($this-diff/tan:common))">
                         <xsl:for-each
                             select="$collation-so-far/(tan:c, tan:u)[string-length(.) gt 0]">
                             <u
@@ -1646,6 +1706,16 @@
                                 />
                             </collation>
                         </xsl:variable>
+                        <xsl:if test="$diagnostics">
+                            <xsl:message
+                                select="$this-diff-common-length-max, $this-diff-longest-match"/>
+                            <xsl:message select="$string-head"/>
+                            <xsl:message select="$string-tail"/>
+                            <xsl:message select="$clc-head"/>
+                            <xsl:message select="$clc-tail"/>
+                            <xsl:message select="$collation-head"/>
+                            <xsl:message select="$collation-tail"/>
+                        </xsl:if>
                         <xsl:copy-of
                             select="tan:collate-loop-inner($collation-head, $string-head, $string-label)"/>
                         <c length="{$this-diff-common-length-max}">

@@ -62,8 +62,8 @@
          <xsl:if test="not(exists(@pos))">
             <pos attr="">1</pos>
          </xsl:if>
-         <xsl:if test="not(exists(@val))">
-            <val attr="">^.+$</val>
+         <xsl:if test="not(exists(@val)) and not(exists(@rgx))">
+            <rgx attr="">.+</rgx>
          </xsl:if>
          <xsl:apply-templates mode="#current"/>
       </xsl:copy>
@@ -218,7 +218,8 @@
             else
                ()"/>
       <xsl:variable name="this-element" select="."/>
-      <xsl:variable name="this-val" select="(tan:val, '^.+$')[1]"/>
+      <xsl:variable name="this-val" select="tan:val"/>
+      <xsl:variable name="this-rgx" select="(tan:rgx, '.+')[1]"/>
       <xsl:variable name="unprocessed-skips-renames-and-reassigns" as="element()*">
          <xsl:for-each
             select="self::tan:skip/tan:src, self::tan:rename/tan:src, self::tan:reassign/tan:src">
@@ -291,7 +292,7 @@
          <xsl:for-each select="$these-div-refs[tan:div[tan:tok]]">
             <xsl:variable name="this-src" select="tan:src"/>
             <xsl:variable name="this-ref" select="tan:ref"/>
-            <xsl:variable name="tokens-picked" select="tan:div/tan:tok[tan:matches(., $this-val)]"/>
+            <xsl:variable name="tokens-picked" select="tan:div/tan:tok[(. = $this-val) or tan:matches(., $this-rgx)]"/>
             <xsl:variable name="count-of-tokens-picked" select="count($tokens-picked)"/>
             <xsl:variable name="these-pos-ints"
                select="tan:expand-pos-or-chars($this-element/(tan:pos, tan:range[tan:pos]), $count-of-tokens-picked)"/>
@@ -382,7 +383,7 @@
                   select="tan:fix(($fix-for-to-via-val, $fix-for-to-via-pos), 'replace-children')"/>
             </xsl:if>
          </xsl:if>
-         <xsl:if test="tan:val and not(exists($these-div-refs/tan:div/tan:tok))">
+         <xsl:if test="(tan:val or tan:rgx) and not(exists($these-div-refs/tan:div/tan:tok))">
             <!-- Report attempts to tokenize a non-leaf div -->
             <xsl:copy-of
                select="tan:error('tok02', concat('try: ', string-join($these-div-refs//tan:div[not(tan:div)]/tan:ref/text(), ', ')))"
@@ -420,7 +421,7 @@
             </xsl:if>
             <xsl:variable name="this-message" as="xs:string*">
                <xsl:variable name="message-preamble"
-                  select="concat($this-val, ' not found at position(s) ', string-join(distinct-values($missing-tok-refs/tan:pos), ', '), ': ')"/>
+                  select="concat($this-val, $this-rgx, ' not found at position(s) ', string-join(distinct-values($missing-tok-refs/tan:pos), ', '), ': ')"/>
                <xsl:variable name="message-body" as="xs:string*">
                   <xsl:for-each-group select="$missing-tok-refs" group-by="tan:src">
 
@@ -441,7 +442,7 @@
             <xsl:copy-of select="tan:error('tok01', $this-message)"/>
          </xsl:if>
          <xsl:if
-            test="(exists($missing-tok-refs) and not(exists($dependency-actions))) or exists(tan:pos/@help) or exists(tan:val/@help)">
+            test="(exists($missing-tok-refs) and not(exists($dependency-actions))) or exists((tan:pos, tan:val, tan:rgx)/@help)">
             <xsl:variable name="tok-opts" as="element()*">
                <try>try tokens (positions): </try>
                <xsl:for-each-group select="$these-div-refs" group-by="tan:src">
@@ -451,7 +452,8 @@
                         <group>
                            <ref><xsl:value-of select="tan:ref"/>: </ref>
                            <xsl:for-each-group select="tan:div/tan:tok" group-by=".">
-                              <xsl:sort select="tan:matches(., replace($this-val, '^^(.+)\$$', '$1'))"
+                              <xsl:sort
+                                 select="tan:matches(., concat(tan:escape($this-val), '|', replace($this-rgx, '^^(.+)\$$', '$1')))"
                                  order="descending"/>
                               <group>
                                  <xsl:copy-of select="current-grouping-key()"/>
@@ -485,7 +487,7 @@
             </xsl:if>
             <xsl:variable name="this-message" as="xs:string*">
                <xsl:variable name="message-preamble"
-                  select="concat('characters for ', $this-val, ' not found at position(s) ', string-join(distinct-values($missing-char-refs/tan:pos[xs:integer(.) gt 0]), ', '), ': ')"/>
+                  select="concat('characters for ', $this-val, $this-rgx, ' not found at position(s) ', string-join(distinct-values($missing-char-refs/tan:pos[xs:integer(.) gt 0]), ', '), ': ')"/>
                <xsl:variable name="message-body" as="xs:string*">
                   <xsl:for-each-group select="$missing-char-refs" group-by="tan:src">
                      <xsl:variable name="ref-report" as="xs:string*">
@@ -576,8 +578,8 @@
             <xsl:copy-of select="tan:error('cl211', 'Duplicates sibling tok')"/>
          </xsl:if>
          <xsl:if
-            test="exists(tan:error[@xml:id = 'tok01']) or exists(tan:pos/@help) or exists(tan:val/@help)">
-            <!-- placeholder for providing help on the r ight tok -->
+            test="exists(tan:error[@xml:id = 'tok01']) or exists((tan:pos, tan:val, tan:rgx)/@help)">
+            <!-- placeholder for providing help on the right tok -->
          </xsl:if>
          <xsl:apply-templates mode="#current"/>
       </xsl:copy>
@@ -585,11 +587,12 @@
 
    
    
-   <xsl:template match="tan:tok[not(tan:tok-ref)][tan:val]" mode="class-2-expansion-normal">
+   <xsl:template match="tan:tok[not(tan:tok-ref)][tan:val or tan:rgx]" mode="class-2-expansion-normal">
       <!-- If there's no specific reference, it's pointing to tokens anywhere in the source -->
       <!--<xsl:param name="dependencies" tunnel="yes"/>-->
       <xsl:param name="all-tokens" tunnel="yes"/>
       <xsl:variable name="this-val" select="tan:val"/>
+      <xsl:variable name="this-rgx" select="tan:rgx"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:if test="exists($all-tokens)">
@@ -597,15 +600,23 @@
                <xsl:variable name="this-src" select="."/>
                <xsl:variable name="source-tokens"
                   select="$all-tokens[root()/tan:TAN-T/@src = $this-src]"/>
-               <xsl:variable name="first-source-match" select="$all-tokens[tan:matches(., $this-val)][1]"/>
+               <xsl:variable name="first-source-match"
+                  select="
+                     $all-tokens[if (exists($this-val))
+                     then
+                        (. = $this-val)
+                     else
+                        tan:matches(., $this-rgx)][1]"
+               />
                <xsl:if test="not(exists($first-source-match))">
                   <xsl:variable name="examples-maximum" select="50"/>
-                  <xsl:variable name="val-adjusted" select="replace($this-val, '^\^(.+)\$$', '$1')"/>
-                  <!--<xsl:variable name="near-matches" select="$dependencies/tan:TAN-T/tan:body//tan:tok[tan:matches(., $val-adjusted)]"/>-->
+                  <xsl:variable name="rgx-adjusted" select="replace($this-rgx, '^\^(.+)\$$', '$1')"/>
                   <xsl:variable name="this-message" as="xs:string*">
                      <xsl:text>try: </xsl:text>
                      <xsl:for-each-group select="$all-tokens" group-by=".">
-                        <xsl:sort select="tan:matches(., $val-adjusted)" order="descending"/>
+                        <xsl:sort
+                           select="tan:matches(., string-join(($this-val, $rgx-adjusted), '|'))"
+                           order="descending"/>
                         <xsl:sort select="count(current-group())" order="descending"/>
                         <xsl:if test="not(position() = 1) and not(position() gt $examples-maximum)">
                            <xsl:text>, </xsl:text>

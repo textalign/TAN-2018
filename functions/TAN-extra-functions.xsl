@@ -9,18 +9,22 @@
    <xsl:include href="extra/TAN-schema-functions.xsl"/>
    <xsl:include href="extra/TAN-search-functions.xsl"/>
    <xsl:include href="extra/TAN-language-functions.xsl"/>
+   <xsl:include href="extra/TAN-A-lm-extra-functions.xsl"/>
 
    <!-- Functions that are not central to validating TAN files, but could be helpful in creating, editing, or reusing them -->
 
    <!-- GLOBAL VARIABLES AND PARAMETERS -->
-   
+
+   <xsl:variable name="doc-filename" select="replace($doc-uri, '.*/([^/]+)$', '$1')"/>
+
    <!-- An xpath pattern built into a text node or an attribute value looks like this: {PATTERN} -->
    <xsl:variable name="xpath-pattern" select="'\{[^\}]+?\}'"/>
-   
+
    <xsl:variable name="namespaces-and-prefixes" as="element()">
       <namespaces>
          <ns prefix="" uri=""/>
-         <ns prefix="cp" uri="http://schemas.openxmlformats.org/package/2006/metadata/core-properties"/>
+         <ns prefix="cp"
+            uri="http://schemas.openxmlformats.org/package/2006/metadata/core-properties"/>
          <ns prefix="dc" uri="http://purl.org/dc/elements/1.1/"/>
          <ns prefix="dcmitype" uri="http://purl.org/dc/dcmitype/"/>
          <ns prefix="dcterms" uri="http://purl.org/dc/terms/"/>
@@ -41,7 +45,8 @@
          <ns prefix="w14" uri="http://schemas.microsoft.com/office/word/2010/wordml"/>
          <ns prefix="w15" uri="http://schemas.microsoft.com/office/word/2012/wordml"/>
          <ns prefix="wne" uri="http://schemas.microsoft.com/office/word/2006/wordml"/>
-         <ns prefix="wp" uri="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"/>
+         <ns prefix="wp"
+            uri="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"/>
          <ns prefix="wp14" uri="http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing"/>
          <ns prefix="wpc" uri="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas"/>
          <ns prefix="wpg" uri="http://schemas.microsoft.com/office/word/2010/wordprocessingGroup"/>
@@ -53,8 +58,8 @@
          <ns prefix="zs" uri="http://www.loc.gov/zing/srw/"/>
       </namespaces>
    </xsl:variable>
-   
-   
+
+
    <!-- Parameters can be easily changed upstream by users who wish to depart from the defaults -->
    <xsl:param name="searches-ignore-accents" select="true()" as="xs:boolean"/>
    <xsl:param name="searches-are-case-sensitive" select="false()" as="xs:boolean"/>
@@ -71,11 +76,11 @@
    <xsl:param name="sentence-end-regex" select="'[\.\?!]+\p{P}*\s*'"/>
    <xsl:param name="clause-end-regex" select="'\w\p{P}+\s*'"/>
    <xsl:param name="word-end-regex" select="'\s+'"/>
-   
+
    <!--<xsl:variable name="local-TAN-collection" as="document-node()*"
       select="tan:collection($local-catalog, (), (), ())"/>-->
    <xsl:variable name="local-TAN-collection" as="document-node()*"
-      select="collection(concat(resolve-uri('catalog.tan.xml', $doc-uri),'?on-error=warning'))"/>
+      select="collection(concat(resolve-uri('catalog.tan.xml', $doc-uri), '?on-error=warning'))"/>
    <xsl:variable name="local-TAN-key-collection" select="$local-TAN-collection[name(*) = 'TAN-key']"/>
 
    <xsl:variable name="today-iso" select="format-date(current-date(), '[Y0001]-[M01]-[D01]')"/>
@@ -117,7 +122,7 @@
          <xsl:value-of select="tan:letter-to-number(string-join($duplicates-stripped, ''))"/>
       </xsl:for-each>
    </xsl:function>
-   
+
    <xsl:function name="tan:int-to-aaa" as="xs:string*">
       <!-- Input: any integers -->
       <!-- Output: the alphabetic representation of those numerals -->
@@ -130,9 +135,50 @@
             select="
                for $i in (1 to $this-number-of-letters)
                return
-                  $this-letter-codepoint"
-         />
+                  $this-letter-codepoint"/>
          <xsl:value-of select="codepoints-to-string($these-codepoints)"/>
+      </xsl:for-each>
+   </xsl:function>
+
+   <xsl:function name="tan:int-to-grc" as="xs:string*">
+      <!-- Input: any integers -->
+      <!-- Output: the integers expressed as lowercase Greek alphabetic numerals, with numeral marker(s) -->
+      <xsl:param name="integers" as="xs:integer*"/>
+      <xsl:variable name="arabic-numerals" select="'123456789'"/>
+      <xsl:variable name="greek-units" select="'αβγδεϛζηθ'"/>
+      <xsl:variable name="greek-tens" select="'ικλμνξοπϙ'"/>
+      <xsl:variable name="greek-hundreds" select="'ρστυφχψωϡ'"/>
+      <xsl:for-each select="$integers">
+         <xsl:variable name="this-numeral" select="format-number(., '0')"/>
+         <xsl:variable name="these-digits" select="tan:chop-string($this-numeral)"/>
+         <xsl:variable name="new-digits-reversed" as="xs:string*">
+            <xsl:for-each select="reverse($these-digits)">
+               <xsl:variable name="pos" select="position()"/>
+               <xsl:choose>
+                  <xsl:when test=". = '0'"/>
+                  <xsl:when test="$pos mod 3 = 1">
+                     <xsl:value-of select="translate(., $arabic-numerals, $greek-units)"/>
+                  </xsl:when>
+                  <xsl:when test="$pos mod 3 = 2">
+                     <xsl:value-of select="translate(., $arabic-numerals, $greek-tens)"/>
+                  </xsl:when>
+                  <xsl:when test="$pos mod 3 = 0">
+                     <xsl:value-of select="translate(., $arabic-numerals, $greek-hundreds)"/>
+                  </xsl:when>
+               </xsl:choose>
+            </xsl:for-each>
+         </xsl:variable>
+         <xsl:variable name="prepended-numeral-sign"
+            select="
+               if (count($these-digits) gt 3) then
+                  '͵'
+               else
+                  ()"/>
+         <xsl:if test="count($new-digits-reversed) gt 0">
+            <xsl:value-of
+               select="concat($prepended-numeral-sign, string-join(reverse($new-digits-reversed), ''), 'ʹ')"
+            />
+         </xsl:if>
       </xsl:for-each>
    </xsl:function>
 
@@ -290,7 +336,7 @@
       <xsl:variable name="bottom-fence" select="$q3 + $outer-fences"/>
       <xsl:variable name="top-outliers" select="$top-half[. lt $top-fence]"/>
       <xsl:variable name="bottom-outliers" select="$bottom-half[. gt $bottom-fence]"/>
-      
+
       <xsl:for-each select="$numbers">
          <xsl:variable name="this-number"
             select="
@@ -424,7 +470,7 @@
       </xsl:variable>
       <xsl:if test="$diagnostics and count(distinct-values($datum-counts)) gt 1">
          <xsl:message
-            select="concat('Comparing mismatched sets of sizes ', string-join($analyzed-stats/tan:count,', '))"
+            select="concat('Comparing mismatched sets of sizes ', string-join($analyzed-stats/tan:count, ', '))"
          />
       </xsl:if>
       <xsl:choose>
@@ -446,7 +492,8 @@
       <xsl:param name="prefix-or-uri" as="xs:string*"/>
       <xsl:for-each select="$prefix-or-uri">
          <xsl:variable name="this-string" select="."/>
-         <xsl:value-of select="$namespaces-and-prefixes/*[@* = $this-string]/(@*[not(. = $this-string)])[1]"/>
+         <xsl:value-of
+            select="$namespaces-and-prefixes/*[@* = $this-string]/(@*[not(. = $this-string)])[1]"/>
       </xsl:for-each>
    </xsl:function>
 
@@ -460,7 +507,7 @@
          <xsl:value-of select="concat('^', $pass2, '$')"/>
       </xsl:for-each>
    </xsl:function>
-   
+
    <xsl:function name="tan:acronym" as="xs:string?">
       <!-- Input: any strings -->
       <!-- Output: the acronym of those strings, space-tokenized -->
@@ -470,8 +517,7 @@
             for $i in $string-input,
                $j in tokenize($i, '\s+')
             return
-               substring($j, 1, 1)"
-      />
+               substring($j, 1, 1)"/>
       <xsl:value-of select="string-join($initials, '')"/>
    </xsl:function>
 
@@ -493,8 +539,8 @@
          </xsl:choose>
       </xsl:for-each>
    </xsl:function>
-   
-   
+
+
    <!-- Functions: nodes -->
 
    <xsl:function name="tan:node-type" as="xs:string*">
@@ -505,7 +551,8 @@
          <xsl:choose>
             <xsl:when test=". instance of document-node()">document-node</xsl:when>
             <xsl:when test=". instance of comment()">comment</xsl:when>
-            <xsl:when test=". instance of processing-instruction()">processing-instruction</xsl:when>
+            <xsl:when test=". instance of processing-instruction()"
+               >processing-instruction</xsl:when>
             <xsl:when test=". instance of element()">element</xsl:when>
             <xsl:when test=". instance of attribute()">attribute</xsl:when>
             <xsl:when test=". instance of text()">text</xsl:when>
@@ -528,7 +575,9 @@
             <xsl:element name="group" namespace="{$group-namespace}">
                <xsl:if test="string-length($label-to-prepend) gt 0">
                   <xsl:element name="label" namespace="{$group-namespace}">
-                     <xsl:value-of select="tan:evaluate($label-to-prepend, $elements-to-group[1], $elements-to-group)"/>
+                     <xsl:value-of
+                        select="tan:evaluate($label-to-prepend, $elements-to-group[1], $elements-to-group)"
+                     />
                   </xsl:element>
                </xsl:if>
                <xsl:copy-of select="$elements-to-group"/>
@@ -539,13 +588,13 @@
          </xsl:otherwise>
       </xsl:choose>
    </xsl:function>
-   
+
    <xsl:template match="text()" mode="strip-text"/>
-   
+
    <xsl:template match="* | comment() | processing-instruction()" mode="text-only">
       <xsl:apply-templates mode="#current"/>
    </xsl:template>
-   
+
    <xsl:template match="* | processing-instruction() | comment()" mode="prepend-line-break">
       <!-- Useful for breaking up XML content that is not indented -->
       <xsl:text>&#xa;</xsl:text>
@@ -554,16 +603,18 @@
          <xsl:apply-templates mode="#current"/>
       </xsl:copy>
    </xsl:template>
-   
-   <xsl:function name="tan:element-fingerprint" as="xs:string?">
-      <!-- Input: any element -->
-      <!-- Output: a string representing a value of the element based on the element's name, its namespace, its attributes, and all descendant nodes -->
+
+   <xsl:function name="tan:element-fingerprint" as="xs:string*">
+      <!-- Input: any elements -->
+      <!-- Output: for each element the string value its name, its namespace, its attributes, and all descendant nodes -->
       <!-- This function is useful for determining whether two elements are deeply equal, particularly to be used as a key for grouping -->
-      <xsl:param name="element" as="element()?"/>
-      <xsl:variable name="results" as="xs:string*">
-         <xsl:apply-templates select="$element" mode="element-fingerprint"/>
-      </xsl:variable>
-      <xsl:value-of select="string-join($results,'')"/>
+      <xsl:param name="element" as="element()*"/>
+      <xsl:for-each select="$element">
+         <xsl:variable name="results" as="xs:string*">
+            <xsl:apply-templates select="$element" mode="element-fingerprint"/>
+         </xsl:variable>
+         <xsl:value-of select="string-join($results, '')"/>
+      </xsl:for-each>
    </xsl:function>
    <xsl:template match="*" mode="element-fingerprint">
       <xsl:text>e#</xsl:text>
@@ -584,13 +635,13 @@
    <!-- We presume (perhaps wrongly) that comments and pi's in an element don't matter -->
    <xsl:template match="comment() | processing-instruction()" mode="element-fingerprint"/>
    <xsl:template match="text()" mode="element-fingerprint">
-         <xsl:if test="matches(., '\S')">
-            <xsl:text>t#</xsl:text>
-            <xsl:value-of select="normalize-space(.)"/>
-            <xsl:text>#</xsl:text>
-         </xsl:if>
+      <xsl:if test="matches(., '\S')">
+         <xsl:text>t#</xsl:text>
+         <xsl:value-of select="normalize-space(.)"/>
+         <xsl:text>#</xsl:text>
+      </xsl:if>
    </xsl:template>
-   
+
    <xsl:function name="tan:add-attribute" as="element()*">
       <!-- Input: elements; a string and a value -->
       <!-- Output: Each element with an attribute given the name of the string and a value of the value -->
@@ -607,7 +658,7 @@
          </xsl:copy>
       </xsl:for-each>
    </xsl:function>
-   
+
    <xsl:function name="tan:tree-to-sequence" as="item()*">
       <!-- Input: any XML fragment -->
       <!-- Output: a sequence of XML nodes representing the original fragment. Each element is given a new @level specifying the level of hierarchy the element had in the original. -->
@@ -628,7 +679,7 @@
          <xsl:with-param name="current-level" select="$current-level + 1"/>
       </xsl:apply-templates>
    </xsl:template>
-   
+
    <xsl:function name="tan:sequence-to-tree" as="item()*">
       <!-- One-parameter version of the more complete one below -->
       <xsl:param name="sequence-to-reconstruct" as="item()*"/>
@@ -667,9 +718,9 @@
                   if (count(current-group()) gt 1) then
                      current-group()[last()]/self::text()
                   else
-                     ()"
-            />
-            <xsl:variable name="this-next-sibling-text-memo" select="$this-head/@next-sibling-text-length"/>
+                     ()"/>
+            <xsl:variable name="this-next-sibling-text-memo"
+               select="$this-head/@next-sibling-text-length"/>
             <xsl:variable name="this-sibling-length"
                select="(xs:integer($this-head/@next-sibling-text-length), 0)[1]"/>
             <xsl:variable name="this-tail-length"
@@ -677,27 +728,26 @@
                   if ($this-tail-text instance of text()) then
                      string-length($this-tail-text)
                   else
-                     ()"
-            />
+                     ()"/>
             <xsl:variable name="this-tail-section-to-be-child"
                select="
                   if ($this-tail-text instance of text()) then
                      substring($this-tail-text, 1, ($this-tail-length - $this-sibling-length))
                   else
-                     ()"
-            />
+                     ()"/>
             <xsl:variable name="this-tail-section-to-be-sibling"
                select="
                   if ($this-tail-text instance of text()) then
                      substring($this-tail-text, ($this-tail-length - $this-sibling-length) + 1)
                   else
-                     ()"
-            />
-            <xsl:variable name="the-rest" select="current-group() except ($this-head, $this-tail-text)"/>
+                     ()"/>
+            <xsl:variable name="the-rest"
+               select="current-group() except ($this-head, $this-tail-text)"/>
             <xsl:variable name="new-group" as="item()*">
                <xsl:if test="$this-head/@level = $level-to-process">
                   <xsl:element name="{name($this-head)}" namespace="{namespace-uri($this-head)}">
-                     <xsl:copy-of select="$this-head/(@* except (@level, @next-sibling-text-length))"/>
+                     <xsl:copy-of
+                        select="$this-head/(@* except (@level, @next-sibling-text-length))"/>
                      <xsl:copy-of select="$the-rest"/>
                      <xsl:copy-of select="$this-tail-section-to-be-child"/>
                   </xsl:element>
@@ -706,8 +756,9 @@
             </xsl:variable>
             <xsl:choose>
                <xsl:when
-                  test="$this-head instance of text() and $fix-orphan-text 
-                  and exists($first-child-element) and matches($this-head,'\S')">
+                  test="
+                     $this-head instance of text() and $fix-orphan-text
+                     and exists($first-child-element) and matches($this-head, '\S')">
                   <xsl:element name="{name($first-child-element)}"
                      namespace="{namespace-uri($first-child-element)}">
                      <xsl:copy-of select="$first-child-element/(@* except @level)"/>
@@ -726,7 +777,7 @@
          </xsl:for-each-group>
       </xsl:copy>
    </xsl:template>
-   
+
 
    <!-- Functions: sequences-->
 
@@ -742,8 +793,8 @@
          </xsl:if>
       </xsl:for-each-group>
    </xsl:function>
-   
-   
+
+
    <!-- Functions: accessors and manipulation of uris -->
 
    <xsl:function name="tan:zip-uris" as="xs:anyURI*">
@@ -760,7 +811,7 @@
          />
       </xsl:for-each>
    </xsl:function>
-   
+
    <!-- Functions: XPath Functions and Operators -->
 
    <xsl:function name="tan:evaluate" as="item()*">
@@ -793,8 +844,8 @@
                               <xsl:value-of select="name($context-1)"/>
                            </xsl:when>
                            <xsl:when test="matches($this-xpath, '^$p1/@')">
-                              <xsl:value-of
-                                 select="$context-1/@*[name() = replace(., '^\$@', '')]"/>
+                              <xsl:value-of select="$context-1/@*[name() = replace(., '^\$@', '')]"
+                              />
                            </xsl:when>
                            <xsl:when test="matches($this-xpath, '^$p1/\w+$')">
                               <xsl:value-of select="$context-1/*[name() = $this-xpath]"/>
@@ -834,13 +885,13 @@
          <xsl:for-each-group select="$results" group-adjacent=". instance of xs:string">
             <xsl:choose>
                <xsl:when test="current-grouping-key() = true()">
-                  <xsl:value-of select="string-join(current-group(),'')"/>
+                  <xsl:value-of select="string-join(current-group(), '')"/>
                </xsl:when>
                <xsl:otherwise>
                   <xsl:copy-of select="current-group()"/>
                </xsl:otherwise>
             </xsl:choose>
-         </xsl:for-each-group> 
+         </xsl:for-each-group>
       </xsl:if>
    </xsl:function>
 
@@ -867,23 +918,22 @@
          <xsl:with-param name="extra-keys" select="$extra-keys" tunnel="yes"/>
       </xsl:apply-templates>
    </xsl:function>
-   
+
    <xsl:function name="tan:normalize-xml-element-space" as="element()?">
       <!-- Input: an element -->
       <!-- Output: the same element, but with text node descendants with space normalized -->
       <!-- If a text node begins with a space, and its first preceding sibling text node ends with a space, then the preceding space is dropped, otherwise it is normalized to a single space -->
       <xsl:param name="element-to-normalize" as="element()?"/>
       <xsl:apply-templates select="$element-to-normalize" mode="normalize-xml-fragment-space"/>
-   </xsl:function>   
+   </xsl:function>
    <xsl:template match="text()" mode="normalize-xml-fragment-space">
       <xsl:variable name="prev-sibling-text" select="preceding-sibling::text()[1]"/>
       <xsl:variable name="last-text-node"
          select="
-         if (exists($prev-sibling-text)) then
-         $prev-sibling-text
-         else
-         (preceding::text())[last()]"
-      />
+            if (exists($prev-sibling-text)) then
+               $prev-sibling-text
+            else
+               (preceding::text())[last()]"/>
       <xsl:analyze-string select="." regex="^(\s+)">
          <xsl:matching-substring>
             <xsl:choose>

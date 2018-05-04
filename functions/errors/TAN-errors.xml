@@ -56,7 +56,7 @@
         <error xml:id="tan05"><rule>Every idref in an attribute must point to the @xml:id value of the appropriate corresponding element.</rule></error>
         <error xml:id="tan06"><rule>All idrefs in an attribute must be unique.</rule></error>
     </group>
-    <group affects-attribute="regex matches-m matches-tok val">
+    <group affects-attribute="regex matches-m matches-tok rgx">
         <error xml:id="tan07"><rule>Attributes that take a regular expression must use escape sequences recognized by XML schema or TAN escape extensions (\u{}). See http://www.w3.org/TR/xmlschema-2/#regexs</rule></error>
     </group>
     <group affects-attribute="idrefs" affects-element="alias">
@@ -79,7 +79,7 @@
         <error xml:id="inc03"><rule>Inclusions may not be circular.</rule></error>
         <fatal xml:id="inc04"><rule>Inclusions are integral parts of any TAN file. Access to at least one copy is absolutely mandatory.</rule></fatal>
     </group>
-    <group affects-element="location inclusion see-also source key">
+    <group affects-element="location inclusion see-also source key redivision model predecessor successor">
         <error xml:id="loc01"><rule>Every element with a &lt;location> should have at least one document available.</rule></error>
         <error xml:id="loc02"><rule>Every TAN file referred to by way of an element containing &lt;location> should have an @id that matches the &lt;IRI> of the parent of the &lt;location></rule></error>
         <error xml:id="loc03"><rule>No element may point to a TAN file that has an identical @id value; the only exception is a &lt;see-also> pointing to an older or new version.</rule></error>
@@ -122,7 +122,7 @@
         <error xml:id="cl108"><rule>A work element may invoke no more than one inclusion.</rule></error>
     </group>
     <group affects-attribute="n" affects-element="div">
-        <error xml:id="cl109"><rule>Leaf div references must be unique.</rule></error>
+        <warning xml:id="cl109"><rule>Most div references are unique.</rule></warning>
         <error xml:id="cl117"><rule>An @n taking digit values should not begin with 0.</rule></error>
     </group>
     <group affects-element="div">
@@ -154,7 +154,7 @@
     <group affects-attribute="ref work">
         <warning xml:id="ref02"><rule>If a reference to a work is not found in some sources, a warning will be returned.</rule></warning>
     </group>
-    <group affects-element="tok" affects-attribute="pos val">
+    <group affects-element="tok" affects-attribute="pos val rgx">
         <error xml:id="tok01"><rule>Every token must be locatable in every cited ref in every source.</rule></error>
         <error xml:id="tok02"><rule>&lt;tok> must reference a leaf &lt;div>.</rule></error>
     </group>
