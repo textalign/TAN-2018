@@ -5,7 +5,7 @@
    xmlns:math="http://www.w3.org/2005/xpath-functions/math" xmlns:functx="http://www.functx.com"
    xmlns:sch="http://purl.oclc.org/dsdl/schematron" exclude-result-prefixes="#all" version="2.0">
 
-   <xsl:import href="TAN-parameters.xsl"/>
+   <xsl:import href="../../parameters/TAN-parameters.xsl"/>
 
    <!-- Core functions for all TAN files. Written principally for Schematron validation, but suitable for general use in other contexts -->
 
