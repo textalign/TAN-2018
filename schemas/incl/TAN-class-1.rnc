@@ -1,14 +1,40 @@
 default namespace local = "tag:textalign.net,2015:ns"
 
 include "TAN-core.rnc" {
+    other-files-non-core = redivision-item* & model-item? & annotation-item*
     definition-non-core = defn-class-1 & defn-non-class-1
-    body-group = empty
     alter-non-core = alt-norm* & alt-repl*
+    body-group = empty
     body-content-non-core = body-content-class-1 & body-content-non-class-1
 }
-
 body-content-class-1 = empty
 body-content-non-class-1 = empty
+redivision-item =
+    
+    ## identifies a class 1 file that has the same work, scriptum, and version, but segmented according to a different reference system.
+    ## The normalized transcriptions of redivided texts must be identical
+    element redivision {
+        ed-stamp?,
+        (inclusion | (comment* & entity-digital-tan-other-ref))
+    }
+model-item =
+    
+    ## identifies a class 1 file has been used as a model for how the current file has been segmented and labeled.
+    
+    ## To declare a model is to indicate that the reference system that has been adopted is likely not native to the scriptum, and users should take that into account. For example, if a file modeled on another has <div type="sentence">, it should not be assumed that the text that is surrounded is really a sentence.
+    
+    ## A file need not follow its model exactly.
+    element model {
+        ed-stamp?,
+        (inclusion | (comment* & entity-digital-tan-other-ref))
+    }
+annotation-item =
+    
+    ## identifies a class 2 file that is an annotation on (and therefore a dependent of) the current file.
+    element annotation {
+        ed-stamp?,
+        (inclusion | (comment* & entity-digital-tan-other-ref))
+    }
 defn-class-1 = defn-work & defn-vers? & defn-div-type+ & defn-tok-def*
 
 ## Reserved for definitions specific to individual types of class 1 files

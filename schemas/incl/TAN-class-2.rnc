@@ -18,7 +18,7 @@ definition-class-2 = defn-tok-def* & defn-group-type*
 definition-non-class-2 = empty
 alter-class-2 = alt-skip*, alt-rename*, alt-equate*, alt-reassign*
 alter-non-class-2 = empty
-body-content-class-2 = empty
+body-content-class-2 = claimant-data?
 body-content-non-class-2 = empty
 source-ref =
     
@@ -68,10 +68,7 @@ alt-equate =
     ## Equating is transitive and greedy. If work A is defined with <IRI> X, work B with <IRI>s X and Y, and work C with only <IRI> Y, then works A and C will be automatically equated.
     
     ## This element does not imply that the works are necessarily one and the same, or than the @n values are the same. It merely states that, for the purposes of this alignment, they should be treated as equivalent.
-    element equate {
-        ed-stamp?,
-        (inclusion | n)
-    }
+    element equate { ed-stamp?, (inclusion | n) }
 alt-reassign =
     
     ## identifies word fragments that should be moved from one ref to another
@@ -90,6 +87,23 @@ shallow-option =
     
     ## indicates whether skipping should be done shallowly (default) or deeply
     attribute shallow { xsd:boolean }
+claimant-data = claimant-ref, claimant-when?
+claimant-ref =
+    
+    ## points to a <person>, <organization>, or <algorithm> who makes a claim. @claimant within <body> indicates the default persons to be credited or blamed for an assertion.
+    
+    ## This attribute is taken into account before all other attributes. That is, @claimant is to be interpreted to mean: "@claimant states the following:...." Multiple values of @claimant are interpreted to mean "and", resulting in distribution of the claim (e.g., claimant="x y" becomes "x claims that..." and "y claims that...").
+    
+    ## In a TAN-A-div file, nested @claimants mean that claimant X claims that claimant Y claims that... and so forth.
+    
+    ## In other class-2 files, a nested @claimant cancels out any inherited @claimants. 
+    
+    ## This attribute is inheritable. See main.xml#inheritable_attributes
+    attribute claimant { text }
+claimant-when =
+    
+    ## identifies a time when a claim was made.
+    attribute claim-when { xsd:dateTime | xsd:date }
 # div references
 div-type-ref =
     
@@ -100,11 +114,10 @@ div-ref-range =
     ## refers to one or more <div>s.
     
     ## <div-ref>s are expanded against @src/@work and @ref. That is, a <div-ref> points to every div of every source cited.
-    
     element div-ref { ed-stamp?, pointer-to-div-range }
 # token references
 tok-single-selector-attributes = token-value-ref | item-pos-ref | (token-value-ref, item-pos-ref)
-tok-mult-selector-attributes = token-value-ref | seq-pos-ref | (token-value-ref, seq-pos-ref)
+tok-mult-selector-attributes = token-content-ref | seq-pos-ref | (token-content-ref, seq-pos-ref)
 tok-ref = tok-ref-item | tok-ref-group | tok-ref-range
 tok-ref-item =
     
@@ -130,8 +143,7 @@ tok-ref-group =
     ## groups references that should be treated as a single passage.
     element group {
         ed-stamp?,
-        (inclusion
-         | (group-attributes, tok-ref-item+))
+        (inclusion | (group-attributes, tok-ref-item+))
     }
 tok-ref-range =
     element tok {
@@ -157,12 +169,21 @@ pointer-to-div-range =
     ## For more, see main.xml#class_2_body 
     attribute ref { div-range-ref }
 pointer-to-div-item = attribute ref { div-item-ref }
+token-content-ref = token-value-ref | token-regex-ref
 token-value-ref =
     
-    ## specifies a particular word token by means of its string value. Treated as a constrained regular expression (the expression must match the entire token, case-sensitive).
+    ## contains a string that points to word token by its value. Matches are case and accent sensitive.
     
     ## For more see main.xml#attr_pos_and_val
     attribute val {
+        xsd:string { pattern = ".+" }
+    }
+token-regex-ref =
+    
+    ## contains a regular expression that points to a particular word token by means of its string value.
+    
+    ## For more see main.xml#attr_pos_and_val
+    attribute rgx {
         xsd:string { pattern = ".+" }
     }
 item-pos-ref =

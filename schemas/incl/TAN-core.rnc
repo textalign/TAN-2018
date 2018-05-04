@@ -338,12 +338,13 @@ TAN-head =
         ed-stamp?,
         (comment*
          & (head-prelude,
-            (inclusion-list & key-list & source-list & see-also-list),
+            other-files,
             definition-list,
             alter-statement,
             resp-list,
             change-log))
     }
+# HEAD: prelude
 head-prelude = head-prelude-core, head-prelude-non-core
 head-prelude-core = entity-digital-tan-self-ref, nonsource-license
 head-prelude-non-core = empty
@@ -359,6 +360,10 @@ nonsource-license =
         (inclusion | (comment* & entity-nondigital-ref))
     },
     element licensor { ed-stamp?, (inclusion | agent-ref) }
+#HEAD: other files
+other-files = other-files-core & other-files-non-core
+other-files-core = (inclusion-list & key-list & source-list & see-also-list & predecessor-item* & successor-item*)
+other-files-non-core = empty
 inclusion-list = inclusion-item*
 inclusion-item =
     
@@ -380,6 +385,7 @@ key-item =
         ed-stamp?,
         (inclusion | (comment* & entity-digital-tan-other-ref))
     }
+# The number of source items differs from one TAN format to the next
 source-list = source-item
 source-item =
     
@@ -408,12 +414,27 @@ see-also-item =
          | (relationship,
             (comment* & (entity-digital-generic-ref | entity-digital-tan-other-ref))))
     }
-# definitions are treated below
+predecessor-item = 
+
+## identifies a file that the current file succeeds. Predecessors may or may not have the same @id value.
+element predecessor {
+        ed-stamp?,
+        (inclusion | (comment* & entity-digital-tan-other-ref))
+} 
+successor-item = 
+
+## identifies a file that succeeds the current file. Successors may or may not have the same @id value.
+element successor {
+        ed-stamp?,
+        (inclusion | (comment* & entity-digital-tan-other-ref))
+} 
+# HEAD: definitions
 definition-list =
     
     ## lists terminology and definitions assumed in encoding the data.
     element definitions { ed-stamp?, (comment* & definition-core & definition-non-core) }
 
+# HEAD: alter
 ## normalizations are defined at more specific levels
 alter-statement = alter-element?
 alter-element =

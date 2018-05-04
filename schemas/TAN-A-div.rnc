@@ -20,7 +20,7 @@ start =
     tok-cert-opt = empty
     
     ## Redefining TAN-body-core not only defines what is in the body of a TAN-A-div but also excludes groups from it.
-    body-content-non-class-2 = claimant-ref?, subject-ref?, object-ref?, verb-ref?, claim*
+    body-content-non-class-2 = subject-ref?, object-ref?, verb-ref?, claim*
 }
 work-ref =
     
@@ -74,25 +74,13 @@ claim =
         inclusion
         | (ed-stamp?,
            cert-claim?,
-           claimant-ref?,
+           claimant-data?,
            period-ref?,
            modal-ref?,
            verb-ref?,
            place-ref?,
            (subject? & object? & locus?))
     }
-claimant-ref =
-    
-    ## points to an <agent> or <person> who makes a claim. @claimant within <body> indicates the default persons to be credited or blamed for an assertion.
-    
-    ## Claimants are not to be confused with the editor of a TAN file. If an editor X writes a TAN-c file that says that person Y makes such-and-such a claim, then the implication is that X claims that Y claims that....  
-    
-    ## This attribute is taken into account before all other attributes. That is, @claimant is to be interpreted to mean: "@claimant states the following:...." Multiple values of @claimant are interpreted to mean "and", resulting in distribution of the claim (e.g., claimant="x y" becomes "x claims that..." and "y claims that...").
-    
-    ## If you wish to claim that claimant X claimed that claimant Y claimed that claimant Z...., only the original claimant is given to @claimant, and each of the other claimants are placed in a @subject in an embedded <claim> that serves as the object of the master <claim>. 
-    
-    ## This attribute is inheritable. See main.xml#inheritable_attributes
-    attribute claimant { text }
 subject = subject-ref | complex-subject+
 subject-ref =
     
