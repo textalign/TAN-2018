@@ -29,7 +29,7 @@
                 <IRI>tag:parkj@textalign.net,2015:lexicon:eng:test</IRI>
                 <name>An English dictionary</name>
             </lexicon>
-            <token-definition which="letters and punctuation"/>
+            <token-definition which="letters and hyphens"/>
             <person xml:id="park">
                 <IRI>tag:parkj@textalign.net,2015:self</IRI>
                 <name>Jenny Park</name>
@@ -45,6 +45,7 @@
         <resp who="xslt1" roles="stylesheet1"/>
         <change when="2015-03-10" who="park">Started file</change>
         <change who="xslt1" when="2017-11-02T16:49:00.397-04:00">TAN file updated to 2018 schemas.</change>
+        <change when="2018-05-03" who="park">Changed tokenization definition to letters and hyphens.</change>
     </head>
     <body lexicon="english" morphology="penn" in-progress="false">
         
