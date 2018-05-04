@@ -68,13 +68,21 @@
                   <listitem>
                      <para>New errors introduced: wrn07, wrn08</para>
                   </listitem>
+                     <listitem>
+                        <para>New elements: &lt;predecessor> and &lt;successor>, to indicate how
+                           files have been revised.</para>
+                     </listitem>
+                     <listitem>
+                        <para>New attributes: @claim-when</para>
+                     </listitem>
                   <listitem>
                      <para>New functions: tan:last-change-agent(), tan:trim-long-text(),
                            tan:catalogs(), tan:chop-string() (2 parameters),
                            tan:collate-sequences(), tan:collate-pair-of-sequences(),
                            tan:catalog-uris(), tan:collection(), tan:unique-char(),
                            tan:most-common-item-count(), tan:vertical-stops() (to support
-                           tan:diff()), tan:nested-phrase-loop() (supports tan:chop-string())</para>
+                           tan:diff()), tan:nested-phrase-loop() (supports tan:chop-string()),
+                           tan:primary-agent()</para>
                   </listitem>
                      <listitem>
                         <para>New global variables: $shy (same as $dhy), $doc-catalog-uris,
@@ -127,19 +135,30 @@
                                  parenthetical phrases (most suited to chopping into sentences or
                                  clauses).</para>
                            </listitem>
+                           <listitem>
+                              <para>tan:shallow-copy() now has a two-parameter version, to allow
+                                 copying to a specified depth.</para>
+                           </listitem>
+                           <listitem>
+                              <para>tan:definition() now has a two-parameter version, to allow
+                                 queries on values that have been separated from their contextual
+                                 document.</para>
+                           </listitem>
+                           <listitem>
+                              <para>tan:resolve-doc() now has a 2-parameter version.</para>
+                           </listitem>
                         </itemizedlist>
                      </listitem>
                </itemizedlist></para>
                <para>TAN-T(EI):<itemizedlist>
                      <listitem>
-                        <para>It should be emphasized that if there is a &lt;see-also> that points
-                           to a model, it means that the reference system may not (indeed, probably
-                           will not) exactly match the transcription. For example, if you have an
-                           English translation of Aristotle's Categories, in Greek, and you're
-                           following the very precise Bekker numbers, it is impossible to divide the
-                           text exactly by those Bekker numbers. You do an approximation, and the
-                           &lt;model> tells other users not to expect the division system to be
-                           strictly accurate.</para>
+                        <para>To facilitate the expedient processing of &lt;see-also>, new elements
+                           have been introduced: &lt;model>, &lt;redivision>, and &lt;annotation>. A
+                           model (only one allowed) specifies another class 1 file that has been
+                           used as a model for division types and @n values. A redivision is the
+                           exact same work, version, and scriptum, but segmented and labeled with a
+                           different type of reference system. An &lt;annotation> is a class 2 file
+                           that makes the class 1 file a &lt;source>.</para>
                      </listitem>
                      <listitem>
                         <para>In the service of merging different sources, the new tan:group-divs()
@@ -150,27 +169,52 @@
                      </listitem>
                      <listitem>
                         <para>If a leaf div ends in a special line-end character, the first &lt;tok>
-                           or &lt;non-tok>s with @n=1 will</para>
-                        <para>be taken from the next leaf div and fused at the end. If the first
-                           element so moved matches</para>
-                        <para>in name the last element of the original leaf div, they will be fused
-                           together. That is,</para>
-                        <para>if the leaf div ends with &lt;tok> and the next one starts with a
-                           &lt;tok> (or, vice versa, both </para>
-                        <para>&lt;non-tok>) they will become one element. If they are different
-                           elements, then the transfer</para>
-                        <para>still happens, but no fusion takes place.</para>
+                           or &lt;non-tok>s with @n=1 will be taken from the next leaf div and fused
+                           at the end. If the first element so moved matches in name the last
+                           element of the original leaf div, they will be fused together. That is,
+                           if the leaf div ends with &lt;tok> and the next one starts with a
+                           &lt;tok> (or, vice versa, both &lt;non-tok>) they will become one
+                           element. If they are different elements, then the transfer still happens,
+                           but no fusion takes place.</para>
+                     </listitem>
+                     <listitem>
+                        <para>Leaf Div Uniqueness Rule has been downgraded to a warning. The problem
+                           is that some non-leaf divs can through a transformation easily become
+                           leaf divs. Some scripta are encoded such that leaf divs are broken up
+                           (see Bodëús's edition of Aristotle's Categories, at 2a35, 2b5, and 2b6b).
+                           And some translations must be encoded so that leaf divs interleave. The
+                           final example that convinced me that the LDUR rule had to be downgraded
+                           was Migne's Patrology. One homily would have a final section that
+                           straddled the top of, say, columns 83 and 84, and the very next homily
+                           would begin with column 83, then go to 84. In this case, there were no
+                           subcolumn letters. If the two homilies were treated as component partst
+                           of a single work, then LDUR had to be violated, or on must be forced to
+                           include line numeration (very time consuming). The process also made me
+                           realize that the notion of leaf div is relative and arbitrary. A leaf
+                           might easily in another version contain leaves, or be dropped, to make
+                           its non-leaf parent a leaf div.</para>
+                     </listitem>
+                     <listitem>
+                        <para>New element: &lt;redivision> (replaces &lt;see-also
+                           relationship="redivision"/></para>
                      </listitem>
                   </itemizedlist></para>
-               <para>TAN-A-lm:<itemizedlist>
-                  <listitem>
-                     <para>New errors introduced: tlm05</para>
-                  </listitem>
+               <para>TAN-A-lm:</para>
+               <para>
+                  <itemizedlist>
                      <listitem>
-                        <para>New element: &lt;tok-starts-with> (meant to enhance the process of
-                           working with thousands of TAN-A-lm files)</para>
+                        <para>New @tok-pop. (Need to write error rules.)</para>
                      </listitem>
-               </itemizedlist></para>
+                     <listitem>
+                        <para>New errors introduced: tlm05</para>
+                     </listitem>
+                     <listitem>
+                        <para>New element: &lt;tok-starts-with>, &lt;tok-is> (meant to optimize a
+                           process that might require working with thousands of TAN-A-lm
+                           files)</para>
+                     </listitem>
+                  </itemizedlist>
+               </para>
                <para>TAN-A-key:<itemizedlist>
                   <listitem>
                      <para>New errors introduced: tky05</para>
@@ -194,10 +238,13 @@
                            sentences</para>
                      </listitem>
                      <listitem>
-                        <para>tan:int-to-aaa()</para>
+                        <para>tan:int-to-aaa(), tan:int-to-grc()</para>
                      </listitem>
                      <listitem>
                         <para>tan:acronym()</para>
+                     </listitem>
+                     <listitem>
+                        <para>tan:search-morpheus()</para>
                      </listitem>
                </itemizedlist></para>
                <para>Advanced / recommended best practices<itemizedlist>
@@ -215,6 +262,16 @@
                   </itemizedlist></para>
             </section>
             <section>
+               <title>Things to do</title>
+               <para>Develop error messages for &lt;predecessor>, &lt;successor>, &lt;redivision>,
+                  &lt;model>, and &lt;annotation>.</para>
+               <para>We assume now that any div, whether a leaf or not, that shares the same
+                  reference as a preceding div is a continuation of that div. The real problems
+                  occur when duplicates are not the same div type – that's the flag for an error.
+                  For example, &lt;div type="title" n="1"> and &lt;div type="chapter" n="1"> should
+                  raise a flag.</para>
+            </section>
+            <section>
                <title>Changes desired for the future</title>
                <para>Catalog files:</para>
                <para>
@@ -225,20 +282,6 @@
                      </listitem>
                   </itemizedlist>
                </para>
-               <para>Class 1:<itemizedlist>
-                     <listitem>
-                        <para>The importance of models and resegmented copies has been recognized.
-                           &lt;see-also>s that fall in this categories should simply be &lt;model>
-                           and &lt;redivision>. Possibly other important relationships will join?:
-                           &lt;predecessor>, &lt;successor>, &lt;annotation>.</para>
-                     </listitem>
-                     <listitem>
-                        <para>Unfortunately, we might need to abandon the Leaf Div Uniqueness Rule,
-                           or move it to the verbose part of validation. The problem is that some
-                           non-leaf divs can through a transformation easily become leaf divs. And
-                           some translations must be encoded so that leaf divs interleave. </para>
-                     </listitem>
-                  </itemizedlist></para>
                <para>Frameworks:</para>
                <para>
                   <itemizedlist>
