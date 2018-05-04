@@ -8,7 +8,28 @@
 
    <!-- If the output is a TAN file, the stylesheet should be credited/blamed. That is done primarily through an IRI assigned to the stylesheet -->
    <xsl:param name="stylesheet-iri" as="xs:string" required="yes"/>
+   
+   <!-- This parameter needs to be redefined at the master stylesheet level, otherwise this parameters file uri will be returned -->
    <xsl:param name="stylesheet-url" as="xs:string" select="static-base-uri()"/>
+   
    <xsl:param name="change-message" as="xs:string*" required="yes"/>
+   
+   <!-- Saving and retrieving intermediate steps -->
+   
+   <xsl:param name="save-intermediate-steps" select="false()" as="xs:boolean"/>
+   <xsl:param name="save-intermediate-steps-location-relative-to-initial-input" select="'tmp'"/>
+   <xsl:param name="use-saved-intermediate-steps" select="false()" as="xs:boolean"/>
+   
+   <!-- Language catalogs -->
+   
+   <!--<xsl:param name="lang-catalog-uri"
+      select="'../../../library-lm/grc/lm-perseus/catalog.tan.xml'"/>-->
+   <xsl:param name="lang-catalog-uri"
+      select="'../../../library-lm/grc/lm-perseus-2018-04-20/catalog.tan.xml'"/>
+   <!--<xsl:param name="lang-catalog-uri"
+      select="'../../../library-arithmeticus/LM/TAN-A-lm/grc.2.lowerbase/catalog.tan.xml'"/>-->
+   <!--<xsl:param name="lang-catalog-uri"
+      select="'../../../library-arithmeticus/LM/TAN-A-lm/grc.2/catalog.tan.xml'"/>-->
+   
 
 </xsl:stylesheet>
