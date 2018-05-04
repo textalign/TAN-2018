@@ -10,10 +10,10 @@
    <xsl:param name="change-message" as="xs:string*" required="yes"/>-->
    <xsl:import href="../configure%20parameters/parameters-for-TAN-output.xsl"/>
 
-   <xsl:template match="tan:head" mode="credit-stylesheet">
+   <xsl:template match="/tan:*" mode="credit-stylesheet">
       <xsl:variable name="this-base-uri" select="tan:base-uri(.)"/>
       <xsl:variable name="definition-for-this-stylesheet"
-         select="tan:definitions/tan:algorithm[tan:IRI = $stylesheet-iri]"/>
+         select="tan:head/tan:definitions/tan:algorithm[tan:IRI = $stylesheet-iri]"/>
       <xsl:variable name="stylesheet-id" as="xs:string">
          <xsl:choose>
             <xsl:when test="exists($definition-for-this-stylesheet)">
@@ -22,10 +22,11 @@
             <xsl:otherwise>
                <xsl:variable name="new-id-number-start"
                   select="
-                  max((0,
-                  for $i in .//@xml:id[matches(., '^xslt\d+$')]
-                  return
-                  number(replace($i, '\D+', ''))))"/>
+                     max((0,
+                     for $i in .//@xml:id[matches(., '^xslt\d+$')]
+                     return
+                        number(replace($i, '\D+', ''))))"
+               />
                <xsl:value-of select="concat('xslt', string($new-id-number-start + 1))"/>
             </xsl:otherwise>
          </xsl:choose>
@@ -80,15 +81,23 @@
       <xsl:variable name="new-resp-element" as="element()?">
          <resp who="{$stylesheet-id}" roles="{$stylesheet-role-id}"/>
       </xsl:variable>
-      
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:apply-templates mode="#current">
-            <xsl:with-param name="new-definition-children"
+            <xsl:with-param name="new-definition-children" tunnel="yes"
                select="($new-algorithm-element, $new-role-element)"/>
-            <xsl:with-param name="new-resp-elements" select="$new-resp-element"/>
+            <xsl:with-param name="new-resp-elements" select="$new-resp-element" tunnel="yes"/>
          </xsl:apply-templates>
-         <change who="{$stylesheet-id}" when="{current-dateTime()}">
+      </xsl:copy>
+   </xsl:template>
+
+   <xsl:template match="tan:head" mode="credit-stylesheet">
+      <xsl:param name="new-definition-children" tunnel="yes"/>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:apply-templates mode="#current"/>
+         <change who="{$new-definition-children/self::tan:algorithm/@xml:id}"
+            when="{current-dateTime()}">
             <xsl:value-of select="$change-message"/>
          </change>
          <xsl:copy-of select="node()[1][self::text()]"/>
@@ -96,7 +105,7 @@
    </xsl:template>
    
    <xsl:template match="tan:definitions" mode="credit-stylesheet">
-      <xsl:param name="new-definition-children"/>
+      <xsl:param name="new-definition-children" tunnel="yes"/>
       <xsl:variable name="first-indent" select="node()[1][self::text()]"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
@@ -110,14 +119,22 @@
    </xsl:template>
    
    <xsl:template match="tan:resp[1]" mode="credit-stylesheet">
-      <xsl:param name="new-resp-elements"/>
+      <xsl:param name="new-resp-elements" tunnel="yes"/>
       <xsl:copy-of select="$new-resp-elements"/>
       <xsl:copy-of select="preceding-sibling::node()[1]/self::text()"/>
       <xsl:copy-of select="."/>
    </xsl:template>
 
    <xsl:template match="tan:body" mode="credit-stylesheet">
-      <xsl:copy-of select="."/>
+      <xsl:param name="new-definition-children" tunnel="yes"/>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:if test="tan:class-number(.) = 2">
+            <!-- We presume that this process of creating class 2 data requires blaming/crediting the stylesheet with the data -->
+            <xsl:attribute name="claimant" select="$new-definition-children/self::tan:algorithm/@xml:id"/>
+         </xsl:if>
+      <xsl:copy-of select="node()"/>
+      </xsl:copy>
    </xsl:template>
 
 </xsl:stylesheet>
