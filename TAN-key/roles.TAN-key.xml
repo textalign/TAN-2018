@@ -34,6 +34,7 @@
         <resp who="xslt1" roles="stylesheet1"/>
         <change when="2017-02-22" who="kalvesmaki">Started file</change>
         <change who="xslt1" when="2017-11-02T23:06:27.852-04:00">TAN file updated to 2018 schemas.</change>
+        <change when="2018-05-03" who="kalvesmaki">Added a role called source.</change>
     </head>
     <body in-progress="false" affects-element="role">
         <item>
@@ -131,6 +132,12 @@
             <name>TAN converter</name>
             <name>converter</name>
             <desc>Responsible for converting a file into the TAN format.</desc>
+        </item>
+        <item>
+            <IRI>tag:textalign.net,2015:role:reference</IRI>
+            <name>source</name>
+            <desc>Person, organization, or algorithm provided data that was adopted, consulted, or
+                used.</desc>
         </item>
     </body>
 </TAN-key>

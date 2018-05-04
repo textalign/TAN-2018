@@ -36,7 +36,7 @@
     </head>
     <body in-progress="false" affects-element="token-definition">
         <item>
-            <token-definition pattern="[\w­​‍]+"/>
+            <token-definition pattern="[\w&#xad;​&#x200d;]+"/>
             <name>letters</name>
             <name>letters only</name>
             <name>general word-characters only</name>
@@ -46,7 +46,34 @@
                 punctuation are ignored.</desc>
         </item>
         <item>
-            <token-definition pattern="\w+|[^\w\s]"/>
+            <token-definition pattern="[\w&#xad;​&#x200d;-]+"/>
+            <name>letters and hyphens</name>
+            <desc>General tokenization pattern for any language, only word characters (as defined in
+                Unicode) and the hyphen. All other characters are ignored.</desc>
+        </item>
+        <item>
+            <token-definition pattern="[\w&#xad;​&#x200d;'’]+"/>
+            <name>letters and apostrophes</name>
+            <desc>General tokenization pattern for any language, only word characters (as defined in
+                Unicode) and the apostrophe variants ' and ’. All other characters are ignored.
+                Note, this pattern will produce misleading results for texts that use single
+                quotation marks.</desc>
+        </item>
+        <item>
+            <token-definition pattern="[\w&#xad;​&#x200d;'’-]+"/>
+            <name>letters hyphens and apostrophes</name>
+            <name>letters apostrophes and hyphens</name>
+            <name>letters, hyphens and apostrophes</name>
+            <name>letters, apostrophes and hyphens</name>
+            <name>letters, hyphens, and apostrophes</name>
+            <name>letters, apostrophes, and hyphens</name>
+            <desc>General tokenization pattern for any language, only word characters (as defined in
+                Unicode), the hyphen, and the apostrophe variants ' and ’. All other characters are
+                ignored. Note, this pattern will produce misleading results for texts that use
+                single quotation marks.</desc>
+        </item>
+        <item>
+            <token-definition pattern="[\w&#xad;​&#x200d;]+|[^\w&#xad;​&#x200d;\s]"/>
             <name>letters and punctuation</name>
             <name>general non-space characters</name>
             <name>general include punctuation</name>
