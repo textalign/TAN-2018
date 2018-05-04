@@ -25,7 +25,14 @@
                 <IRI>http://schema.org/creator</IRI>
                 <name xml:lang="eng">creator</name>
             </role>
-            <role xml:id="stylesheet1" which="stylesheet"/></definitions>
+            <role xml:id="stylesheet1" which="stylesheet"/>
+            <group-type xml:id="perseus">
+                <IRI>tag:textalign.net,2015:features:group-type:perseus</IRI>
+                <name>Perseus features</name>
+                <desc>Grammatical features that appear in Perseus's morphological analysis of Greek
+                    and Latin words that do not appear to be featured in OLiA's vocabulary.</desc>
+            </group-type>
+        </definitions>
         <alter>
         </alter>
         <resp roles="creator" who="kalvesmaki"/>
@@ -8483,5 +8490,23 @@
             <desc>English verb forms ending in '-ing' that represent either Gerunds or
                 Participles.</desc>
         </item>
+        <group type="perseus">
+            <item>
+                <IRI>tag:textalign.net,2015:feature:grc:perseus:interrogative</IRI>
+                <name>interrogative</name>
+                <desc>Perseus addition, from classical Greek. To be applied only to determiners and
+                    pronouns, quantifiers http://purl.org/olia/olia.owl#InterrogativeDeterminer
+                    http://purl.org/olia/olia.owl#InterrogativePronoun </desc>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:feature:voice-middlepassive</IRI>
+                <name>middle-passive</name>
+                <name>mediopassive</name>
+                <name>medio-passive</name>
+                <desc>Classical Greek verbal form that ambiguously weds middle and passive, the
+                    union of http://purl.org/olia/olia.owl#MiddleVoice and
+                    http://purl.org/olia/olia.owl#PassiveVoice </desc>
+            </item>
+        </group>
     </body>
 </TAN-key>
