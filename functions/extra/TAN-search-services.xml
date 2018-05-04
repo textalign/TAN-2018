@@ -67,8 +67,28 @@
             <val type="regex">.+</val>
         </param>
     </service>
+    <service>
+        <name>Morpheus</name>
+        <name>morpheus</name>
+        <for-element>ana</for-element>
+        <protocol>morpheus</protocol>
+        <!-- Example: http://services.perseids.org/bsp/morphologyservice/analysis/word?lang=lat&engine=morpheuslat&word=novum -->
+        <url-base>http://services.perseids.org/bsp/morphologyservice/analysis/word?</url-base>
+        <param>
+            <name>lang</name>
+            <val type="regex">grc|lat</val>
+        </param>
+        <param>
+            <name>engine</name>
+            <val type="regex">morpheus(grc|lat)</val>
+        </param>
+        <param>
+            <name>word</name>
+            <val type="regex">.+</val>
+        </param>
+    </service>
     
-    <!-- true for all services using the protocol -->
+    <!-- true for all services using a specific protocol -->
     <protocol xml:id="sru">
         <name>Search/Retrieval via URL</name>
         <param>
