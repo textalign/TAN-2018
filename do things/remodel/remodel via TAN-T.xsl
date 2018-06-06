@@ -17,7 +17,8 @@
     <!-- PARAMETERS YOU WILL WANT TO CHANGE MOST OFTEN -->
     <!-- provide the idrefs of div-types you want to delete or preserve, space delimiter -->
     <xsl:param name="delete-what-input-div-types" select="''" as="xs:string?"/>
-    <xsl:param name="preserve-what-input-div-types" select="'ti head'" as="xs:string?"/>
+    <!-- If you are going from a logical reference system to a scritum-based one, it's a good idea to leave the following blank -->
+    <xsl:param name="preserve-what-input-div-types" select="'ti title head'" as="xs:string?"/>
 
     <!-- At what level should the modelling start? To be used if the input already resembles the model on the top level of the hierarchy. Use 1 or less if you are starting afresh. -->
     <xsl:param name="start-modelling-at-what-level" as="xs:integer?" select="1"/>
@@ -29,20 +30,28 @@
     <xsl:param name="last-level-as-wrapper-only" as="xs:boolean" select="false()"/>
 
     <!-- If you want to customize the way sentences, clauses, and words are defined, use the following variables -->
-    <xsl:param name="sentence-end-regex" select="'[\.;\?!ا*]+\p{P}*\s*'"/>
+    <xsl:param name="sentence-end-regex" select="'[\.;\?!ا·*]+[\p{P}\s]*'"/>
     <xsl:param name="clause-end-regex" select="'\w\p{P}+\s*'"/>
     <!--<xsl:param name="word-end-regex" select="'\s+'"/>-->
-    <xsl:param name="if-model-uses-scriptum-refs-allow-breaks-only-where-regex" as="xs:string"
+    <xsl:param name="if-target-uses-scriptum-refs-allow-breaks-only-where-regex" as="xs:string"
         select="$word-end-regex"/>
     <!-- In the following, you might want to use $clause-end-regex; if the transcription has little punctuation, $word-end-regex -->
-    <xsl:param name="if-model-uses-logical-refs-allow-breaks-only-where-regex" as="xs:string"
-        select="$word-end-regex"/>
+    <xsl:param name="if-target-uses-logical-refs-allow-breaks-only-where-regex" as="xs:string"
+        select="$clause-end-regex"/>
+    <!-- If chopping up segments of text, should parenthetical clauses be preserved intact? -->
+    <xsl:param name="do-not-chop-parenthetical-clauses" as="xs:boolean" select="false()"/>
 
     <!-- In this conversion, the model and the template are identical -->
-    <xsl:param name="template-url-relative-to-input" as="xs:string?"
-        select="'../../../library-arithmeticus/aristotle/ar.cat.grc.1949.minio-paluello.ref-scriptum-native.xml'"/>
+    <!--<xsl:param name="template-url-relative-to-input" as="xs:string?"
+        select="'../../library-clio/cpg4425/cpg%204425%20lat%201173%20Burgundio.xml'"/>-->
+    <!--<xsl:param name="template-url-relative-to-input" as="xs:string?"
+        select="'../../../library-arithmeticus/aristotle/ar.cat.grc.1949.minio-paluello.ref-scriptum-native.xml'"/>-->
+    <!--<xsl:param name="template-url-relative-to-input" as="xs:string?"
+        select="'../../../library-arithmeticus/aristotle/ar.cat.grc.1949.minio-paluello.ref-logical-native.xml'"/>-->
     <!--<xsl:param name="template-url-relative-to-input" as="xs:string?"
         select="'ar.cat.grc.1949.minio-paluello.ref-logical-native.xml'"/>-->
+    <xsl:param name="template-url-relative-to-input" as="xs:string?"
+            select="'ar.cat.grc.1949.minio-paluello.ref-scriptum-native.xml'"/>
     
     <!-- Do you want to save the output at the directory of the input (true) or at that of the template (false)? -->
     <xsl:param name="save-output-at-input-directory" as="xs:boolean" select="true()"/>
@@ -53,6 +62,7 @@
     <!-- THIS STYLESHEET -->
 
     <xsl:param name="stylesheet-iri" select="'tag:textalign.net,2015:stylesheet:remodel-via-tan-t'"/>
+    <xsl:variable name="stylesheet-url" select="static-base-uri()"/>
     <xsl:param name="change-message">
         <xsl:text>Input from </xsl:text>
         <xsl:value-of select="base-uri(/)"/>
@@ -228,7 +238,7 @@
                 <xsl:variable name="this-pos" select="xs:integer($this-element/@string-pos)"/>
                 <xsl:for-each select="$this-element[@type = $div-types-to-ignore]">
                     <xsl:copy>
-                        <xsl:copy-of select="(@type, @n)"/>
+                        <xsl:copy-of select="@*"/>
                         <xsl:attribute name="string-pos"
                             select="$this-pos - $string-length-to-subtract"/>
                         <xsl:value-of select="."/>
@@ -253,10 +263,22 @@
         </xsl:if>
         <xsl:message select="concat('Modeling to level ', string($stop-modelling-at-what-level))"/>
         <xsl:message
+            select="
+                'Target template leaf divs are predominantly', string($majority-leaf-div-type),
+                if ($template-reference-system-is-based-on-physical-features) then
+                    '(scriptum)'
+                else
+                    '(logical)'"
+        />
+        <xsl:message
             select="concat('Allowing breaks only here (regular expression): ', $break-at-regex)"/>
+        <xsl:if test="$do-not-chop-parenthetical-clauses">
+            <xsl:message>Preserving parenthetical clauses. Check results for anomalous distribution.</xsl:message>
+        </xsl:if>
         <xsl:choose>
             <xsl:when test="exists($median-template-doc-resolved)">
-                <xsl:message>Processing median template.</xsl:message>
+                <xsl:message select="'Median template found at', $median-template-doc-resolved/*/@base-uri"
+                />
                 <xsl:copy>
                     <xsl:copy-of select="@*"/>
                     <xsl:copy-of
@@ -265,7 +287,9 @@
                 </xsl:copy>
             </xsl:when>
             <xsl:when test="$start-modelling-at-what-level gt 1">
-                <xsl:message>Attempting to preserve matching structures</xsl:message>
+                <xsl:message
+                    select="'Model starting at level', $start-modelling-at-what-level, 'Attempting to preserve matching structures until then.'"
+                />
                 <xsl:apply-templates select="." mode="input-pass-2b">
                     <xsl:with-param name="model-children-divs"
                         select="$template-doc/tan:TAN-T/tan:body/tan:div"/>
@@ -287,40 +311,49 @@
         <xsl:param name="model-children-divs" as="element()*"/>
         <xsl:variable name="these-input-children" select="*:div"/>
         <xsl:variable name="children-that-dont-match-the-model"
-            select="*:div[not(@n = $model-children-divs/@n)][not(@type = $div-types-to-ignore)]"/>
+            select="$these-input-children[not(@n = $model-children-divs/@n)][not(@type = $div-types-to-ignore)]"/>
+        <xsl:variable name="this-level" select="count(ancestor-or-self::*:div) + 1"/>
+        <xsl:message select="$this-level, tan:shallow-copy(.)"/>
         <xsl:copy>
             <xsl:copy-of select="@*"/>
+            
             <xsl:choose>
                 <!--<xsl:when test="@type = $div-types-to-ignore">
                     <xsl:copy-of select="node()"/>
                 </xsl:when>-->
+                <!--<xsl:when test="not(exists($model-children-divs)) and ($this-level lt $start-modelling-at-what-level)">
+                    <xsl:message>No model and this level less than starting level</xsl:message>
+                    <xsl:message select="tan:shallow-copy(.)"/>
+                    <xsl:copy-of select="node()"/>
+                </xsl:when>-->
                 <xsl:when test="not(exists($model-children-divs))">
+                    <xsl:message>No model children divs</xsl:message>
                     <xsl:value-of select="tan:text-join(.)"/>
                 </xsl:when>
-                <xsl:when test="count(ancestor-or-self::*:div) + 1 = $start-modelling-at-what-level">
+                <xsl:when test="$this-level ge $start-modelling-at-what-level">
                     <xsl:copy-of
                         select="tan:div-to-div-transfer($these-input-children, $model-children-divs, $break-at-regex)"
                     />
                 </xsl:when>
-                <xsl:when
-                    test="not(exists($these-input-children)) or exists($children-that-dont-match-the-model)">
+                <xsl:when test="not(exists($these-input-children))">
+                    <!-- or exists($children-that-dont-match-the-model) -->
+                    <xsl:message>No input children</xsl:message>
+                    <xsl:message select="tan:shallow-copy(.)"/>
                     <xsl:copy-of
                         select="tan:div-to-div-transfer(., $model-children-divs, $break-at-regex)"/>
                 </xsl:when>
-                <xsl:when
-                    test="
-                        every $i in $these-input-children[not(@type = $div-types-to-ignore)]/@n
-                            satisfies $model-children-divs/@n">
+                <xsl:when test="exists($these-input-children)">
                     <xsl:for-each select="$these-input-children">
                         <xsl:variable name="this-n" select="@n"/>
+                        <xsl:variable name="model-counterpart" select="$model-children-divs[@n = $this-n]"/>
                         <xsl:choose>
-                            <xsl:when test="@type = $div-types-to-ignore">
+                            <xsl:when test="(@type = $div-types-to-ignore) or not(exists($model-counterpart))">
                                 <xsl:copy-of select="."/>
                             </xsl:when>
                             <xsl:otherwise>
                                 <xsl:apply-templates select="." mode="#current">
                                     <xsl:with-param name="model-children-divs"
-                                        select="$model-children-divs[@n = $this-n]/tan:div"/>
+                                        select="$model-counterpart/tan:div"/>
                                 </xsl:apply-templates>
                             </xsl:otherwise>
                         </xsl:choose>
@@ -340,6 +373,10 @@
     <!-- Roll back to a certain depth, if so requested -->
     <xsl:template match="*:div" mode="input-pass-3">
         <xsl:variable name="this-level" select="count(ancestor-or-self::tan:div)"/>
+        <!-- We need to apply tan:text-join() to a copy of the element and not the element itself because we need to retain special div-end characters -->
+        <xsl:variable name="self-copy" as="element()">
+            <xsl:copy-of select="."/>
+        </xsl:variable>
         <xsl:copy>
             <xsl:copy-of select="@*"/>
             <xsl:choose>
@@ -353,14 +390,14 @@
                         and exists(tan:div)">
                     <div>
                         <xsl:copy-of select="tan:div[1]/@*"/>
-                        <xsl:value-of select="tan:text-join(.)"/>
+                        <xsl:value-of select="tan:text-join($self-copy)"/>
                     </div>
                 </xsl:when>
                 <xsl:when test="$this-level lt $stop-modelling-at-what-level">
                     <xsl:apply-templates mode="#current"/>
                 </xsl:when>
                 <xsl:when test="$this-level = $stop-modelling-at-what-level">
-                    <xsl:value-of select="tan:text-join(.)"/>
+                    <xsl:value-of select="tan:text-join($self-copy)"/>
                 </xsl:when>
                 <xsl:otherwise/>
             </xsl:choose>
@@ -372,6 +409,9 @@
     <!-- Analyze leaf divs, and re-insert preserved divs -->
     <xsl:template match="tan:body" mode="input-pass-4">
         <xsl:variable name="this-body-analyzed" select="tan:analyze-string-length(.)"/>
+        <!--<xsl:if test="exists($excepted-elements-prepped) and exists($median-template-doc-resolved)">
+            <xsl:message></xsl:message>
+        </xsl:if>-->
         <xsl:copy>
             <xsl:copy-of select="@*"/>
             <xsl:apply-templates select="$this-body-analyzed/*" mode="#current"/>
@@ -398,7 +438,7 @@
                 <xsl:variable name="middle-elements-to-insert"
                     select="$excepted-elements-prepped[(xs:integer(@string-pos) gt $this-string-pos) and (xs:integer(@string-pos) lt $next-string-pos)]"/>
                 <xsl:choose>
-                    <xsl:when test="count($middle-elements-to-insert) gt 0">
+                    <xsl:when test="(count($middle-elements-to-insert) gt 0)"><!--  and not(exists($median-template-doc-resolved)) -->
                         <xsl:message
                             select="concat('Compelled to split leaf div at ', string-join(ancestor-or-self::tan:div/@n, $separator-hierarchy))"
                         />
@@ -480,6 +520,98 @@
     <xsl:variable name="template-div-spikes"
         select="tan:tree-to-sequence($template-body-analyzed/*)/self::*"/>
 
+    <xsl:variable name="input-body-with-grouped-ns" as="element()?">
+        <xsl:variable name="pass-1" as="element()?">
+            <xsl:apply-templates select="$input-pass-1/tan:TAN-T/tan:body" mode="grouped-ns-1"/>
+        </xsl:variable>
+        <xsl:apply-templates select="$pass-1" mode="grouped-ns-2"/>
+    </xsl:variable>
+    <xsl:variable name="median-body-with-grouped-ns" as="element()?">
+        <xsl:variable name="pass-1" as="element()?">
+            <xsl:apply-templates select="$median-template-doc-analyzed/tan:TAN-T/tan:body"
+                mode="grouped-ns-1"/>
+        </xsl:variable>
+        <xsl:apply-templates select="$pass-1" mode="grouped-ns-2"/>
+    </xsl:variable>
+    <xsl:template match="*:div" mode="grouped-ns-1">
+        <!-- The goal here is to make sure that if a particular <div n="X"> is split by another <div> that the <div>s are treated as a group. Such a process is particularly important for versions of works that have cut-in titles and headers, e.g.:
+        <div type="section" n="1">...</div>
+        <div type="title" n="title">...</div>
+        <div type="section" n="1">...</div>
+        <div type="section" n="2">...</div>
+        -->
+        <xsl:variable name="following-ns" select="following-sibling::*/@n"/>
+        <xsl:variable name="preceding-duplicates" select="preceding-sibling::*[@n = $following-ns]"/>
+        <xsl:copy>
+            <xsl:copy-of select="@*"/>
+            <xsl:if test="exists($preceding-duplicates)">
+                <xsl:copy-of select="$preceding-duplicates[1]/@n"/>
+                <xsl:attribute name="orig-n" select="@n"/>
+            </xsl:if>
+            <xsl:apply-templates mode="#current"/>
+        </xsl:copy>
+    </xsl:template>
+    <xsl:template match="*[*:div]" mode="grouped-ns-2">
+        <xsl:copy>
+            <xsl:copy-of select="@*"/>
+            <xsl:copy-of select="* except *:div"/>
+            <xsl:variable name="children-divs" select="*:div"/>
+            <xsl:variable name="divs-grouped" as="element()+">
+                <xsl:for-each-group select="*:div"
+                    group-adjacent="
+                        if (exists(@n)) then
+                            @n
+                        else
+                            '0'">
+                    <xsl:if test="current-grouping-key() = '0'">
+                        <xsl:message select="'oops.', $children-divs"></xsl:message>
+                    </xsl:if>
+                    <div>
+                        <xsl:copy-of select="current-group()[1]/@*"/>
+                        <xsl:choose>
+                            <xsl:when test="exists(current-group()/*:div) and count(current-group()) gt 1">
+                                <xsl:variable name="this-group" as="element()">
+                                    <group>
+                                        <xsl:copy-of select="current-group()/node()"/>
+                                    </group>
+                                </xsl:variable>
+                                <xsl:apply-templates select="$this-group" mode="wrap-text-with-div"
+                                />
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:copy-of select="current-group()/node()"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </div>
+                </xsl:for-each-group> 
+            </xsl:variable>
+            <xsl:apply-templates select="$divs-grouped" mode="#current"/>
+        </xsl:copy>
+    </xsl:template>
+    <xsl:template match="tan:group" mode="wrap-text-with-div">
+        <xsl:apply-templates mode="#current"/>
+    </xsl:template>
+    <xsl:template match="text()[matches(., '\S')]" mode="wrap-text-with-div">
+        <xsl:choose>
+            <xsl:when test="exists(../tan:div)">
+                <xsl:variable name="first-preceding-div" select="preceding-sibling::*:div[1]"/>
+                <div>
+                    <xsl:copy-of
+                        select="
+                            if (exists($first-preceding-div)) then
+                                $first-preceding-div/@*
+                            else
+                                following-sibling::*:div[1]/@*"
+                    />
+                    <xsl:value-of select="tan:normalize-div-text(.)"/>
+                </div>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="tan:normalize-div-text(.)"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
     <xsl:variable name="input-body-with-unique-ns" as="element()?">
         <xsl:apply-templates select="$input-expanded/tan:TAN-T/tan:body" mode="unique-ns"/>
     </xsl:variable>
@@ -487,7 +619,6 @@
         <xsl:apply-templates select="$median-template-doc-analyzed/tan:TAN-T/tan:body"
             mode="unique-ns"/>
     </xsl:variable>
-
     <xsl:template match="*" mode="unique-ns">
         <xsl:param name="new-n" as="xs:string?"/>
         <xsl:variable name="this-n" select="@n"/>
@@ -519,8 +650,11 @@
     </xsl:template>
 
     <xsl:variable name="input-and-median-merge" as="item()*">
-        <xsl:apply-templates select="$median-body-with-unique-ns" mode="median-template-merge">
+        <!--<xsl:apply-templates select="$median-body-with-unique-ns" mode="median-template-merge">
             <xsl:with-param name="input-div-children" select="$input-body-with-unique-ns/tan:div"/>
+        </xsl:apply-templates>-->
+        <xsl:apply-templates select="$median-body-with-grouped-ns" mode="median-template-merge">
+            <xsl:with-param name="input-div-children" select="$input-body-with-grouped-ns/tan:div"/>
         </xsl:apply-templates>
     </xsl:variable>
     <xsl:variable name="input-and-median-merge-reconstructed"
@@ -539,7 +673,7 @@
             </xsl:when>
             <xsl:otherwise>
                 <xsl:variable name="this-n-sequence"
-                    select="tan:collate-sequences($median-div-children/@n, $input-div-children/@n)"/>
+                    select="tan:collate-pair-of-sequences($median-div-children/@n, $input-div-children/@n)"/>
                 <xsl:for-each select="$this-n-sequence">
                     <xsl:variable name="this-n" select="."/>
                     <xsl:variable name="this-median-div" select="$median-div-children[@n = $this-n]"/>
@@ -568,8 +702,6 @@
                             <!-- cases where the input div is a leaf div; it needs to be allocated to the leaf divs of the median template fragment -->
                             <xsl:variable name="rest-of-median-infused" as="element()*"
                                 select="tan:div-to-div-transfer($this-input-div, $this-median-div, $word-end-regex)"/>
-                            <!--<test13c><xsl:copy-of select="$this-median-div"/></test13c>-->
-                            <!--<test13d><xsl:copy-of select="$rest-of-median-infused"/></test13d>-->
                             <xsl:apply-templates select="$this-median-div" mode="#current">
                                 <xsl:with-param name="input-infused-median"
                                     select="$rest-of-median-infused" tunnel="yes"/>
@@ -587,12 +719,13 @@
         <xsl:param name="input-div-children" as="element()*"/>
         <xsl:param name="input-tokens" as="xs:string*"/>
         <xsl:param name="input-infused-median" as="element()*" tunnel="yes"/>
+        <xsl:variable name="diagnostics" select="false()"/>
         <xsl:variable name="this-q" select="@q"/>
         <xsl:variable name="this-infusion"
             select="$input-infused-median/descendant-or-self::tan:div[@q = $this-q]"/>
         <xsl:variable name="input-div-text" select="tan:text-join($input-div-children)"/>
         <xsl:variable name="replacement-text-tokenized"
-            select="tan:chop-string(($this-infusion, $input-div-text)[1], $word-end-regex)"/>
+            select="tan:chop-string(($this-infusion, $input-div-text)[1], $word-end-regex, false())"/>
         <xsl:variable name="number-of-replacement-tokens"
             select="count($replacement-text-tokenized)"/>
 
@@ -612,10 +745,17 @@
                     xs:integer($i/@string-pos)"/>
         <xsl:variable name="every-pos"
             select="distinct-values(($this-string-start-pos, $every-spike-pos))"/>
-        <!--<test13a>
-            <xsl:copy-of select="tan:shallow-copy(.)"/>
-        </test13a>-->
         <xsl:choose>
+            <xsl:when test="$diagnostics">
+                <xsl:copy>
+                    <xsl:copy-of select="@*"/>
+                    <xsl:copy-of select="$relevant-spikes"/>
+                    <every-pos><xsl:value-of select="$every-pos"/></every-pos>
+                    <repl><xsl:value-of select="string-join($replacement-text-tokenized, ' | ')"/></repl>
+                    <orig><xsl:value-of select="."/></orig>
+                    <infusion><xsl:copy-of select="$this-infusion"/></infusion>
+                </xsl:copy>
+            </xsl:when>
             <xsl:when test="exists($every-spike-pos)">
                 <xsl:for-each select="$every-pos">
                     <xsl:variable name="this-pos-position" select="position()"/>
@@ -635,6 +775,7 @@
                 </xsl:for-each>
             </xsl:when>
             <xsl:otherwise>
+                
                 <xsl:value-of select="string-join($replacement-text-tokenized, '')"/>
             </xsl:otherwise>
         </xsl:choose>
@@ -674,14 +815,14 @@
     <xsl:variable name="majority-leaf-div-type-definition"
         select="$template-resolved/tan:TAN-T/tan:head/tan:definitions/tan:div-type[@xml:id = $majority-leaf-div-type]"/>
     <xsl:param name="template-reference-system-is-based-on-physical-features" as="xs:boolean"
-        select="tokenize($majority-leaf-div-type-definition/@orig-group, ' ') = ('physical', 'material')"/>
+        select="tokenize($majority-leaf-div-type-definition/@orig-group, ' ') = ('physical', 'material', 'scriptum')"/>
 
     <xsl:variable name="break-at-regex"
         select="
             if ($template-reference-system-is-based-on-physical-features) then
-                $if-model-uses-scriptum-refs-allow-breaks-only-where-regex
+                $if-target-uses-scriptum-refs-allow-breaks-only-where-regex
             else
-                $if-model-uses-logical-refs-allow-breaks-only-where-regex"/>
+                $if-target-uses-logical-refs-allow-breaks-only-where-regex"/>
 
 
     <xsl:param name="template-infused-with-revised-input" select="$input-pass-4"/>
@@ -716,7 +857,7 @@
             
             <!-\-<xsl:copy-of select="$median-template-search-1"/>-\->
             <!-\-<xsl:copy-of select="$median-template-search-2"/>-\->
-            <!-\-<xsl:copy-of select="$median-body-with-unique-ns"/>-\->
+            <!-\-<xsl:copy-of select="$median-body-with-grouped-ns"/>-\->
             <!-\-<xsl:copy-of select="$median-template-doc-resolved"/>-\->
             <!-\-<xsl:copy-of select="$median-template-doc-expanded"/>-\->
             <!-\-<xsl:copy-of select="$median-template-doc-analyzed"/>-\->
@@ -724,9 +865,12 @@
             <!-\-<xsl:copy-of select="$input-and-median-merge-reconstructed"/>-\->
 
             <!-\-<xsl:copy-of select="$input-pass-1"/>-\->
-            <!-\-<xsl:copy-of select="$input-pass-2"/>-\->
+            <xsl:copy-of select="$input-pass-2"/>
             <!-\-<xsl:copy-of select="$input-pass-3"/>-\->
+            <!-\-<xsl:copy-of select="tan:analyze-string-length($input-pass-3)"/>-\->
             <!-\-<xsl:copy-of select="$input-pass-4"/>-\->
+            <!-\-<xsl:copy-of select="tan:diff(string-join($input-body-analyzed//tan:div[@n = '1']/tan:div[@type='p'],''),
+                string-join($input-pass-4//tan:div[@n = '1']/tan:div/tan:div,''), false())"/>-\->
 
             <!-\-<xsl:copy-of select="$template-doc"/>-\->
             <!-\-<xsl:copy-of select="$template-resolved"/>-\->
@@ -735,7 +879,7 @@
 
             <!-\-<xsl:copy-of select="$output-url-resolved"/>-\->
             <!-\-<xsl:copy-of select="$template-infused-with-revised-input"/>-\->
-            <xsl:copy-of select="$infused-template-revised"/>
+            <!-\-<xsl:copy-of select="$infused-template-revised"/>-\->
 
         </diagnostics>
     </xsl:template>-->

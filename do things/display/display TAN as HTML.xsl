@@ -7,9 +7,16 @@
     <xsl:import href="../get%20inclusions/convert-TAN-to-HTML.xsl"/>
     <xsl:output method="html" indent="yes"/>
     
+    <!-- THIS STYLESHEET -->
+    
+    <xsl:variable name="stylesheet-iri"
+        select="'tag:textalign.net,2015:stylesheet:display-tan-as-html'"/>
+    <xsl:variable name="stylesheet-url" select="static-base-uri()"/>
+    <xsl:variable name="change-message" select="'Converted tan file to html'"/>
+    
     <xsl:param name="validation-phase" select="'verbose'"/>
     <xsl:param name="input-items" select="$self-expanded"/>
-    <xsl:param name="template-url-relative-to-this-stylesheet" as="xs:string?" select="'../configure%20templates/template.html'"/>
+    <xsl:param name="template-url-resolved" as="xs:string?" select="resolve-uri('../../templates/template.html', static-base-uri())"/>
     <xsl:param name="output-url-relative-to-template" as="xs:string?" select="concat('../../../output/html/', tan:cfn(/), '-', $today-iso, '.html')"/>
     
     <xsl:param name="input-pass-4" select="tan:tan-to-html($input-pass-3)" as="item()*"/>

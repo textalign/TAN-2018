@@ -16,7 +16,7 @@
     <xsl:param name="group-sources-by-work" as="xs:boolean" select="false()"/>
     
     <xsl:param name="stop-after-level" as="xs:integer?" select="4"/>
-    <xsl:param name="only-first-work" as="xs:boolean" select="true()"/>
+    <xsl:param name="only-first-work" as="xs:boolean" select="false()"/>
 
     <!-- INPUT -->
     <xsl:param name="input-items"
@@ -403,7 +403,7 @@
     <!-- TEMPLATE -->
 
     <xsl:param name="template-url-relative-to-this-stylesheet" as="xs:string?"
-        select="'../configure%20templates/template.html'"/>
+        select="'../../templates/template.html'"/>
 
     <xsl:template match="html:body" mode="revise-infused-template">
         <xsl:copy>

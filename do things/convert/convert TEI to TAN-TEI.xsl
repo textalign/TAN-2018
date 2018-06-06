@@ -32,7 +32,7 @@
     <!-- The following points to an empty sample TAN-TEI file that serves as the mold into which the input TEI document will be poured -->
 
     <xsl:param name="TAN-TEI-template-url-relative-to-this-stylesheet" as="xs:string?"
-        select="'../configure%20templates/template-TAN-TEI.xml'"/>
+        select="'../../templates/template-TAN-TEI.xml'"/>
     <xsl:param name="TAN-TEI-template-url-relative-to-input" as="xs:string?"/>
     <xsl:variable name="TAN-TEI-template-url-resolved"
         select="
@@ -59,7 +59,7 @@
             </xsl:document>
         </xsl:for-each>
     </xsl:variable>
-    <xsl:variable name="agent-glossary" select="tan:glossary('person', $extra-keys-cleaned, ()), tan:glossary('organization', $extra-keys-cleaned, ())"/>
+    <xsl:variable name="agent-glossary" select="tan:glossary('person', (), $extra-keys-cleaned, ()), tan:glossary('organization', (), $extra-keys-cleaned, ())"/>
 
     <!-- These parameters modify the core TAN output stylesheet -->
     <xsl:variable name="stylesheet-iri"
@@ -355,7 +355,7 @@
         </xsl:copy>
     </xsl:template>
     <xsl:variable name="div-type-glossary"
-        select="tan:glossary('div-type', $extra-keys-cleaned, ())"/>
+        select="tan:glossary('div-type', (), $extra-keys-cleaned, ())"/>
     <xsl:template match="tan:div-type[not(exists(following-sibling::tan:div-type))]"
         mode="build-div-types-and-clean-ns">
         <xsl:copy-of select="."/>

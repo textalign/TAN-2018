@@ -22,14 +22,17 @@
     <xsl:param name="compare-on-matching-ref-basis" as="xs:boolean" select="false()"/>
 
     <!-- Do you want to isolate the differences to individual characters, or look at the differences word for word? -->
-    <xsl:param name="snap-results-to-word" as="xs:boolean" select="false()"/>
+    <xsl:param name="snap-results-to-word" as="xs:boolean" select="true()"/>
 
     <xsl:param name="comparison-doc-uris-relative-to-input" as="xs:string+">
         <!--<xsl:value-of
             select="'../../pre-TAN/graeco%20arabic%20studies/tan/Arist-Gr_007.tan-t.ref-scriptum-native-by-page.xml'"
         />-->
-        <xsl:value-of
+        <!--<xsl:value-of
             select="'Arist-Ar_007.tan-t.ref-logical-native.xml'"
+        />-->
+        <xsl:value-of
+            select="'psalms.lat.jerome-from-vetus-latina.xml'"
         />
     </xsl:param>
     <xsl:variable name="comp-doc-uris-resolved"
@@ -175,7 +178,7 @@
     <!-- TEMPLATE -->
     
     <xsl:param name="template-url-relative-to-this-stylesheet" as="xs:string?"
-        select="'../configure%20templates/template.html'"/>
+        select="'../../templates/template.html'"/>
 
     <!-- OUTPUT -->
     <xsl:variable name="output-dir-uri" select="resolve-uri('../../../output/', static-base-uri())"/>

@@ -13,10 +13,12 @@
     <xsl:template match="tan:TAN-T-merge" mode="input-pass-1">
         <xsl:copy>
             <xsl:copy-of select="@*"/>
-            <xsl:for-each select="tan:head">
-                <xsl:sort select="index-of($src-ids, tan:src)"/>
-                <xsl:copy-of select="."/>
-            </xsl:for-each>
+            <group xmlns="tag:textalign.net,2015:ns">
+                <xsl:for-each select="tan:head">
+                    <xsl:sort select="index-of($src-ids, tan:src)"/>
+                    <xsl:copy-of select="."/>
+                </xsl:for-each>
+            </group>
             <xsl:apply-templates select="tan:body" mode="#current"/>
         </xsl:copy>
     </xsl:template>
@@ -39,6 +41,7 @@
                     <xsl:otherwise>
                         <div xmlns="tag:textalign.net,2015:ns">
                             <xsl:copy-of select="current-group()[1]/@*"/>
+                            <src><xsl:value-of select="current-grouping-key()"/></src>
                             <xsl:for-each select="current-group()">
                                 <xsl:copy>
                                     <xsl:copy-of select="@* except @class"/>
@@ -72,5 +75,46 @@
         </xsl:variable>
         <xsl:value-of select="string-join($new-ns,' ')"/>
     </xsl:template>
+    
+    
+    <xsl:template match="tan:TAN-T-merge" mode="tan-to-html-pass-2">
+        <xsl:copy>
+            <xsl:copy-of select="@*"/>
+            <xsl:apply-templates select="$self-resolved/*/tan:head/tan:name" mode="#current"/>
+            <xsl:apply-templates select="$self-resolved/*/tan:head/tan:desc" mode="#current"/>
+            <hr></hr>
+            <xsl:apply-templates mode="#current"/>
+        </xsl:copy>
+    </xsl:template>
+    <!--<xsl:template match="tan:name[1]" mode="tan-to-html-pass-2">
+        <h1><xsl:value-of select="."/></h1>
+    </xsl:template>-->
+    <!--<xsl:template match="tan:name[position() gt 1]" mode="tan-to-html-pass-2">
+        <h2><xsl:value-of select="."/></h2>
+    </xsl:template>-->
+    <xsl:template match="tan:desc" mode="tan-to-html-pass-2">
+        <div><xsl:value-of select="."/></div>
+    </xsl:template>
+    <xsl:template match="tan:TAN-T-merge/tan:group" mode="tan-to-html-pass-2">
+        <xsl:copy>
+            <xsl:copy-of select="@*"/>
+            <xsl:attribute name="class" select="string-join((@class, 'sortable'), ' ')"/>
+            <xsl:apply-templates mode="#current"/>
+        </xsl:copy>
+    </xsl:template>
+    <xsl:template match="tan:head" mode="tan-to-html-pass-2">
+        <xsl:copy>
+            <xsl:copy-of select="@*"/>
+            <xsl:attribute name="draggable"/>
+            <xsl:apply-templates mode="#current"/>
+        </xsl:copy>
+    </xsl:template>
+    
+    <!--<xsl:template match="/" priority="1">
+        <diagnostics>
+            <xsl:copy-of select="$input-items"/>
+            <!-\-<xsl:copy-of select="$input-pass-1"/>-\->
+        </diagnostics>
+    </xsl:template>-->
     
 </xsl:stylesheet>

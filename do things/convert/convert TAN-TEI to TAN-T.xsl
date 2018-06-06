@@ -20,7 +20,7 @@
     <xsl:variable name="this-stylesheet-uri" select="static-base-uri()"/>
     <xsl:variable name="change-message" select="'Converted from TAN-TEI to TAN-T.'"/>
 
-    <xsl:variable name="div-type-glossary" select="tan:glossary('div-type')"/>
+    <xsl:variable name="div-type-glossary" select="tan:glossary('div-type', '')"/>
     <xsl:variable name="div-type-glossary-for-tei-element"
         select="$div-type-glossary[tan:name[matches(., '^tei ')]]"/>
 

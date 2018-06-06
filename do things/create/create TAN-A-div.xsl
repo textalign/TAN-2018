@@ -9,25 +9,40 @@
     <xsl:output indent="yes"/>
 
     <xsl:param name="validation-phase" select="'terse'"/>
-    <xsl:variable name="input-root" select="/"/>
+    <xsl:param name="group-by-model-only" as="xs:boolean" select="false()"/>
     
+    <!-- THIS STYLESHEET -->
     <xsl:variable name="stylesheet-iri"
         select="'tag:textalign.net,2015:stylesheet:create-tan-a-div'"/>
+    <xsl:variable name="stylesheet-url" select="static-base-uri()"/>
     <xsl:variable name="change-message" select="concat('Created TAN-A-div from ', $doc-id, ' and nearby class 1 files that share the same model')"/>
+    
     
     <xsl:variable name="this-model"
         select="($head/tan:see-also[tan:definition(tan:relationship)/tan:name = 'model'])[1]"/>
+    <xsl:variable name="this-work" select="$head/tan:definitions/tan:work"/>
     <xsl:variable name="other-versions-of-this-work" as="document-node()*">
         <xsl:for-each select="$local-TAN-collection">
-            <xsl:variable name="this-doc-resolved" select="tan:resolve-doc(.)"/>
-            <xsl:variable name="model-id-ref"
-                select="$this-doc-resolved/*/tan:head/tan:definitions/tan:relationship[tan:name = 'model']/@xml:id"/>
-            <xsl:variable name="this-doc-model"
-                select="$this-doc-resolved/*/tan:head/(tan:see-also[@relationship = $model-id-ref])[1]"/>
-            <xsl:if
-                test="($this-doc-resolved/*/@id, $this-doc-model/tan:IRI) = ($this-model/tan:IRI, $doc-id)">
-                <xsl:sequence select="$this-doc-resolved"/>
-            </xsl:if>
+            <xsl:variable name="that-doc-resolved" select="tan:resolve-doc(.)"/>
+            <xsl:choose>
+                <xsl:when test="$group-by-model-only">
+                    <xsl:variable name="model-id-ref"
+                        select="$that-doc-resolved/*/tan:head/tan:definitions/tan:relationship[tan:name = 'model']/@xml:id"/>
+                    <xsl:variable name="that-doc-model"
+                        select="$that-doc-resolved/*/tan:head/(tan:see-also[@relationship = $model-id-ref])[1]"/>
+                    <xsl:if
+                        test="($that-doc-resolved/*/@id, $that-doc-model/tan:IRI) = ($this-model/tan:IRI, $doc-id)">
+                        <xsl:sequence select="$that-doc-resolved"/>
+                    </xsl:if>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:variable name="that-work"
+                        select="$that-doc-resolved/*/tan:head/tan:definitions/tan:work"/>
+                    <xsl:if test="$this-work/tan:IRI = $that-work/tan:IRI">
+                        <xsl:sequence select="$that-doc-resolved"/>
+                    </xsl:if>
+                </xsl:otherwise>
+            </xsl:choose>
         </xsl:for-each>
     </xsl:variable>
     <xsl:param name="input-pass-1" as="element()*">
@@ -39,7 +54,7 @@
                 <name>
                     <xsl:value-of select="*/tan:head/tan:name[1]"/>
                 </name>
-                <location href="{*/@base-uri}" when-accessed="{current-date()}"/>
+                <location href="{*/@xml:base}" when-accessed="{current-date()}"/>
             </source>
         </xsl:for-each>
     </xsl:param>
@@ -47,44 +62,7 @@
     
     <!-- TEMPLATE -->
     <xsl:param name="template-url-relative-to-this-stylesheet" as="xs:string?"
-        select="'../configure%20templates/template-TAN-A-div.xml'"/>
-    
-    <xsl:template match="tan:TAN-A-div" mode="infuse-template">
-        <xsl:copy>
-            <xsl:copy-of select="@* except @id"/>
-            <!-- @id is intentionally invalid, because it needs to be created by hand -->
-            <xsl:attribute name="id" select="concat('tag;',$doc-namespace, ':tan-a-div ', $today-iso)"/>
-            <xsl:apply-templates mode="#current"/>
-        </xsl:copy>
-    </xsl:template>
-    <xsl:template match="tan:license" mode="infuse-template">
-        <xsl:copy-of select="$input-root/*/tan:head/tan:license"/>
-    </xsl:template>
-    <xsl:template match="tan:licensor" mode="infuse-template">
-        <xsl:copy-of select="$input-root/*/tan:head/tan:licensor"/>
-    </xsl:template>
-    <xsl:template match="tan:source" mode="infuse-template">
-        <!--<xsl:copy-of select=""/>-->
-        <xsl:apply-templates select="$input-root/*/tan:head/tan:key" mode="resolve-href"/>
-        <xsl:copy-of select="$input-pass-1"/>
-    </xsl:template>
-    <xsl:template match="tan:person" mode="infuse-template">
-        <xsl:copy-of select="$input-root/*/tan:head/tan:definitions/tan:person"/>
-    </xsl:template>
-    <xsl:template match="tan:change" mode="infuse-template">
-        <xsl:copy>
-            <xsl:attribute name="when" select="current-date()"/>
-            <xsl:copy-of select="$input-root/*/tan:head/tan:licensor/@who"/>
-            <xsl:text>Created file</xsl:text>
-        </xsl:copy>
-    </xsl:template>
-    <xsl:template match="tan:resp" mode="infuse-template">
-        <xsl:copy>
-            <xsl:copy-of select="@roles"/>
-            <xsl:copy-of select="$input-root/*/tan:head/tan:licensor/@who"/>
-        </xsl:copy>
-    </xsl:template>
-    
+        select="'../../templates/template-TAN-A-div.xml'"/>
 
 
     <!--<xsl:template match="/" priority="5">
