@@ -5,8 +5,8 @@ by a stylesheet that evaluates strings within the curly braces as XPath expressi
 as the context -->
 <!-- Items that you will need to fill out by hand, or think about are marked in comments below with "Manually edit:" -->
 <!-- It is common practice to include processing instructions for both local and web-based versions of the schemas, with one pair commented out -->
-<?xml-model href="../../schemas/TAN-T.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="../../schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../schemas/TAN-T.rnc" type="application/relax-ng-compact-syntax"?>
+<?xml-model href="../schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <!--<?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-T.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
 <!-- Manually edit: @id -->

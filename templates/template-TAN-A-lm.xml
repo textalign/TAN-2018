@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../../schemas/TAN-A-lm.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="../../schemas/TAN-A-lm.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../schemas/TAN-A-lm.rnc" type="application/relax-ng-compact-syntax"?>
+<?xml-model href="../schemas/TAN-A-lm.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <TAN-A-lm xmlns="tag:textalign.net,2015:ns" TAN-version="2018"
     id="tag:FIXME.com,2015:tan-a-lm:FIXME">
     <head xmlns="tag:textalign.net,2015:ns">

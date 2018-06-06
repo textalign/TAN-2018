@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../../schemas/TAN-key.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="../../schemas/TAN-key.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../schemas/TAN-key.rnc" type="application/relax-ng-compact-syntax"?>
+<?xml-model href="../schemas/TAN-key.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <!-- Manually edit: @id -->
 
 <TAN-key xmlns="tag:textalign.net,2015:ns" TAN-version="2018" id="tag:example@gmail.com,2010:transcription-begun-{substring(replace(string(current-dateTime()),'\D',''),1, 14)}">
