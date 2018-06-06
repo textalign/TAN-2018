@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <grammar ns="tag:textalign.net,2015:ns" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:local="tag:textalign.net,2015:ns" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
-  <include href="incl/TAN-class-3.rng">
+  <include href="TAN-class-3.rng">
     <start>
       <element name="TAN-mor">
         <a:documentation>specifies that the TAN file contains definitions for the parts of speech for a language, the codes for those parts, and the rules for combining them. Root element.</a:documentation>

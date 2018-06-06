@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <grammar ns="tag:textalign.net,2015:ns" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:teix="http://www.tei-c.org/ns/Examples" xmlns:sch="http://purl.oclc.org/dsdl/schematron" xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0" xmlns:ns1="http://www.isocat.org/ns/dcr" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
   <!--
-    Schema generated from ODD source 2018-01-17T15:30:31Z. .
-    TEI Edition: Version 3.2.0. Last updated on
-    	10th July 2017, revision 0fcf651
-    TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 3.2.0/
+    Schema generated from ODD source 2018-06-02T23:51:21Z. .
+    TEI Edition: Version 3.3.0. Last updated on
+    	31st January 2018, revision f4d8439
+    TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 3.3.0/
     
   -->
   <!-- Insofar as this ODD file constitutes an original work (see below) all material is released under a Creative Commons Attribution 4.0 International License: http://creativecommons.org/licenses/by/4.0/  The notice in the next paragraph is preserved whole from the template upon which this ODD file is based.  TEI material can be licensed differently depending on the use you intend to make of it. Hence it is made available under both the CC+BY and BSD-2 licences. The CC+BY licence is generally appropriate for usages which treat TEI content as data or documentation. The BSD-2 licence is generally appropriate for usage of TEI content in a software environment. For further information or clarification, please contact the TEI Consortium (info@tei-c.org). -->
@@ -163,6 +163,20 @@
           <a:documentation>names one or more &lt;relationship&gt;s</a:documentation>
         </attribute>
       </define>
+      <define name="object-datatype">
+        <attribute name="object-datatype">
+          <a:documentation>specifies the type of data that the object must take. This attribute is intended to specify that a particular verb governs raw units, not entities definable by the IRI + name pattern. Use this attribute if and only if the verb may not govern objects defined in &lt;definitions&gt;.</a:documentation>
+          <data type="string">
+            <param name="pattern">string|boolean|decimal|float|double|duration|dateTime|time|date|gYearMonth|gYear|gMonthDay|gDay|gMonth|hexBinary|base64Binary|anyURI|QName|normalizedString|token|language|NMTOKEN|NMTOKENS|Name|NCName|ID|IDREF|IDREFS|ENTITY|ENTITIES|integer|nonPositiveInteger|negativeInteger|long|int|short|byte|nonNegativeInteger|unsignedLong|unsignedInt|unsignedShort|unsignedByte|positiveInteger</param>
+          </data>
+        </attribute>
+      </define>
+      <define name="object-lexical-constraint">
+        <attribute name="object-lexical-constraint">
+          <a:documentation>specifies a regular expression that constrains the value of any &lt;object&gt;. </a:documentation>
+          <a:documentation>Note that the regular expression will be strictly followed, e.g., "\d+" will be satisfied by "a1" (because there is at least on digit). If you wish to constrain the entire value, be sure to use ^ and $, e.g., "^\d+$". </a:documentation>
+        </attribute>
+      </define>
       <define name="role-ref">
         <attribute name="roles">
           <a:documentation>refers to the ID of one or more &lt;role&gt;s</a:documentation>
@@ -207,6 +221,15 @@
           <ref name="agent-ref"/>
           <text/>
         </element>
+      </define>
+      <define name="constraints-on-entity">
+        <ref name="constraints-on-verb"/>
+      </define>
+      <define name="constraints-on-verb">
+        <ref name="object-datatype"/>
+        <optional>
+          <ref name="object-lexical-constraint"/>
+        </optional>
       </define>
       <define name="ed-stamp">
         <a:documentation>Editorial stamp: who created or edited the enclosed data and when. </a:documentation>
@@ -777,6 +800,14 @@
           <ref name="defn-pattern-id"/>
         </element>
       </define>
+      <define name="defn-div-type">
+        <element name="div-type">
+          <a:documentation>declares a type of textual division (e.g., title, paragraph, stanza). You may have as many &lt;div-types&gt; as you wish, and they need not all be used.</a:documentation>
+          <a:documentation>For more information, see main.xml#reference_system</a:documentation>
+          <a:documentation>This element takes a reserved keyword or IRI + name pattern. See main.xml#keywords-div-type for suggested values. </a:documentation>
+          <ref name="defn-pattern-id"/>
+        </element>
+      </define>
       <define name="defn-id-ref-opt">
         <a:documentation>Option to allow an @xml:id in children of &lt;definitions&gt;</a:documentation>
         <empty/>
@@ -869,20 +900,20 @@
           </choice>
         </element>
       </define>
-      <define name="defn-work">
-        <element name="work">
-          <a:documentation>identifies a creative textual work, understood conceptually, not physically (e.g., Homer's Iliad, not a particular version or copy of it).</a:documentation>
-          <a:documentation>The term "work" is only loosely defined in TAN. Any text that has enough unity to be referred to in ordinary conversation as a single entity may be identified as a work. A work may be composed of other works, be a part of other works, or even overlap with other works. E.g., the Lord's Prayer, the Gospel of Luke, the Tetravengelion, the New Testament, and the Bible are all valid works, despite the complex relationship between each of them.</a:documentation>
-          <a:documentation>This element takes the IRI + name pattern. For more, see main.xml#conceptual_works</a:documentation>
-          <ref name="defn-pattern-default"/>
-        </element>
-      </define>
       <define name="defn-vers">
         <element name="version">
           <a:documentation>identifies the version of a work. Applicable to sources that contain multiple versions, e.g., original text and facing translations. Like &lt;work&gt;, &lt;version&gt; points to a conceptual entity, not a physical one.</a:documentation>
           <a:documentation>In the context of a class 1 file, the entity identified by &lt;version&gt; is assumed to be a version of the entity defined in &lt;work&gt;. In TAN-c files, however, no relationship is assumed between &lt;version&gt; and any putative work, unless explicitly stated in that file. </a:documentation>
           <a:documentation>Very few work-versions have their own URN names. It is advisable to assign a tag URN or a UUID. If you have used an IRI for &lt;work&gt; that you are entitled to modify, you may wish to add a suffix that will name the version. If you need to specify exactly where on a text-bearing object a version appears, &lt;desc&gt; or &lt;comment&gt; should be used.</a:documentation>
           <a:documentation>For more, see main.xml#conceptual_works</a:documentation>
+          <ref name="defn-pattern-default"/>
+        </element>
+      </define>
+      <define name="defn-work">
+        <element name="work">
+          <a:documentation>identifies a creative textual work, understood conceptually, not physically (e.g., Homer's Iliad, not a particular version or copy of it).</a:documentation>
+          <a:documentation>The term "work" is only loosely defined in TAN. Any text that has enough unity to be referred to in ordinary conversation as a single entity may be identified as a work. A work may be composed of other works, be a part of other works, or even overlap with other works. E.g., the Lord's Prayer, the Gospel of Luke, the Tetravengelion, the New Testament, and the Bible are all valid works, despite the complex relationship between each of them.</a:documentation>
+          <a:documentation>This element takes the IRI + name pattern. For more, see main.xml#conceptual_works</a:documentation>
           <ref name="defn-pattern-default"/>
         </element>
       </define>
@@ -935,14 +966,6 @@
     <define name="defn-non-class-1">
       <a:documentation>Reserved for definitions specific to individual types of class 1 files</a:documentation>
       <empty/>
-    </define>
-    <define name="defn-div-type">
-      <element name="div-type">
-        <a:documentation>declares a type of textual division (e.g., title, paragraph, stanza). You may have as many &lt;div-types&gt; as you wish, and they need not all be used.</a:documentation>
-        <a:documentation>For more information, see main.xml#reference_system</a:documentation>
-        <a:documentation>This element takes a reserved keyword or IRI + name pattern. See main.xml#keywords-div-type for suggested values. </a:documentation>
-        <ref name="defn-pattern-id"/>
-      </element>
     </define>
     <define name="alt-norm">
       <element name="normalization">
@@ -1121,7 +1144,7 @@
         </choice>
       </zeroOrMore>
     </element>
-    <sch:pattern id="d9e118508-constraint">
+    <sch:pattern id="d9e118461-constraint">
          <sch:rule context="tei:content">
             <sch:report test="descendant::*[not(namespace-uri(.) =               ('http://relaxng.org/ns/structure/1.0', 'http://www.tei-c.org/ns/1.0'))]">content descendants must be in the
               namespaces
@@ -1151,7 +1174,7 @@
         </choice>
       </zeroOrMore>
     </element>
-    <sch:pattern id="d9e118835-constraint">
+    <sch:pattern id="d9e118786-constraint">
          <sch:rule context="tei:constraint">
             <sch:report test="descendant::*[not(namespace-uri(.) =               ('http://purl.oclc.org/dsdl/schematron', 'http://www.tei-c.org/ns/1.0'))]">constraint descendants must be in the
               namespaces
@@ -1181,7 +1204,7 @@
         </choice>
       </zeroOrMore>
     </element>
-    <sch:pattern id="d9e119724-constraint">
+    <sch:pattern id="d9e119695-constraint">
          <sch:rule context="tei:datatype">
             <sch:report test="descendant::*[not(namespace-uri(.) =               ('http://relaxng.org/ns/structure/1.0', 'http://www.tei-c.org/ns/1.0'))]">datatype descendants must be in the
               namespaces
@@ -1313,7 +1336,7 @@
     <optional>
       <attribute name="unit">
         <a:documentation>names the unit used for the measurement
-Suggested values include: 1] cm(centimetres) ; 2] mm(millimetres) ; 3] in(inches) ; 4] lines; 5] chars(characters) </a:documentation>
+Suggested values include: 1] cm (centimetres) ; 2] mm (millimetres) ; 3] in (inches) ; 4] lines; 5] chars (characters) </a:documentation>
         <choice>
           <value>cm</value>
           <a:documentation>(centimetres) </a:documentation>
@@ -1803,7 +1826,6 @@ Sample values include: 1] approved; 2] candidate; 3] cleared; 4] deprecated; 5] 
     </optional>
   </define>
   <define name="att.editLike.attributes">
-    <ref name="att.dimensions.attributes"/>
     <ref name="att.editLike.attribute.evidence"/>
     <ref name="att.editLike.attribute.instant"/>
   </define>
@@ -2169,7 +2191,7 @@ Sample values include: 1] image; 2] character; 3] theme; 4] allusion</a:document
     <optional>
       <attribute name="unit">
         <a:documentation>indicates the units used for the measurement, usually using the standard symbol for the desired units.
-Suggested values include: 1] m(metre) ; 2] kg(kilogram) ; 3] s(second) ; 4] Hz(hertz) ; 5] Pa(pascal) ; 6] Ω(ohm) ; 7] L(litre) ; 8] t(tonne) ; 9] ha(hectare) ; 10] Å(ångström) ; 11] mL(millilitre) ; 12] cm(centimetre) ; 13] dB(decibel) ; 14] kbit(kilobit) ; 15] Kibit(kibibit) ; 16] kB(kilobyte) ; 17] KiB(kibibyte) ; 18] MB(megabyte) ; 19] MiB(mebibyte) </a:documentation>
+Suggested values include: 1] m (metre) ; 2] kg (kilogram) ; 3] s (second) ; 4] Hz (hertz) ; 5] Pa (pascal) ; 6] Ω (ohm) ; 7] L (litre) ; 8] t (tonne) ; 9] ha (hectare) ; 10] Å (ångström) ; 11] mL (millilitre) ; 12] cm (centimetre) ; 13] dB (decibel) ; 14] kbit (kilobit) ; 15] Kibit (kibibit) ; 16] kB (kilobyte) ; 17] KiB (kibibyte) ; 18] MB (megabyte) ; 19] MiB (mebibyte) </a:documentation>
         <choice>
           <value>m</value>
           <a:documentation>(metre) SI base unit of length</a:documentation>
@@ -2735,9 +2757,9 @@ Suggested values include: 1] volume; 2] issue; 3] page; 4] line; 5] chapter; 6] 
           <value>part</value>
           <a:documentation>the element identifies a part of a book or collection.</a:documentation>
           <value>column</value>
-          <a:documentation>the element identifies an entry number or label in a list of entries.</a:documentation>
-          <value>entry</value>
           <a:documentation>the element identifies a column.</a:documentation>
+          <value>entry</value>
+          <a:documentation>the element identifies an entry number or label in a list of entries.</a:documentation>
           <data type="token">
             <param name="pattern">(\p{L}|\p{N}|\p{P}|\p{S})+</param>
           </data>
@@ -5250,7 +5272,7 @@ Suggested values include: 1] volume; 2] issue; 3] page; 4] line; 5] chapter; 6] 
     <optional>
       <attribute name="extent">
         <a:documentation>indicates whether the pronunciation or orthography applies to all or part of a word.
-Suggested values include: 1] full(full form) ; 2] pref(prefix) ; 3] suff(suffix) ; 4] inf(infix) ; 5] part(partial) </a:documentation>
+Suggested values include: 1] full (full form) ; 2] pref (prefix) ; 3] suff (suffix) ; 4] inf (infix) ; 5] part (partial) </a:documentation>
         <choice>
           <value>full</value>
           <a:documentation>(full form) </a:documentation>
@@ -5352,10 +5374,10 @@ Suggested values include: 1] page; 2] column; 3] line; 4] book; 5] poem; 6] cant
     <element name="tei:p">
       <a:documentation>(paragraph) marks paragraphs in prose. [3.1. Paragraphs 7.2.5. Speech Contents]</a:documentation>
       <ref name="macro.paraContent"/>
-      <sch:pattern id="tei_all-p-abstractModel-p-constraint-report-4">
+      <sch:pattern id="tei_all-p-abstractModel-structure-p-constraint-report-4">
             <sch:rule context="tei:p">
-               <sch:report test="not(ancestor::floatingText) and (ancestor::tei:p or ancestor::tei:ab)          and not(parent::tei:exemplum                |parent::tei:item                |parent::tei:note                |parent::tei:q                |parent::tei:quote                |parent::tei:remarks                |parent::tei:said                |parent::tei:sp                |parent::tei:stage                |parent::tei:cell                |parent::tei:figure                )">
-        Abstract model violation: Paragraphs may not contain other paragraphs or ab elements.
+               <sch:report test="not(ancestor::tei:floatingText) and (ancestor::tei:p or ancestor::tei:ab)          and not(parent::tei:exemplum                |parent::tei:item                |parent::tei:note                |parent::tei:q                |parent::tei:quote                |parent::tei:remarks                |parent::tei:said                |parent::tei:sp                |parent::tei:stage                |parent::tei:cell                |parent::tei:figure                )">
+        Abstract model violation: Paragraphs may not occur inside other paragraphs or ab elements.
       </sch:report>
 
             </sch:rule>
@@ -5443,7 +5465,7 @@ Suggested values include: 1] page; 2] column; 3] line; 4] book; 5] poem; 6] cant
       <ref name="att.global.attributes"/>
       <ref name="att.ascribed.attributes"/>
       <optional>
-        <attribute name="aloud" a:defaultValue="unknown">
+        <attribute name="aloud">
           <a:documentation>may be used to indicate whether the quoted matter is regarded as having been vocalized or signed.</a:documentation>
           <choice>
             <data type="boolean"/>
@@ -5480,6 +5502,7 @@ Suggested values include: 1] page; 2] column; 3] line; 4] book; 5] poem; 6] cant
       <ref name="att.global.attributes"/>
       <ref name="att.typed.attributes"/>
       <ref name="att.msExcerpt.attributes"/>
+      <ref name="att.notated.attributes"/>
       <empty/>
     </element>
   </define>
@@ -5613,12 +5636,12 @@ Suggested values include: 1] spoken; 2] thought; 3] written; 4] soCalled; 5] for
   <define name="choice">
     <element name="tei:choice">
       <a:documentation>groups a number of alternative encodings for the same point in a text. [3.4. Simple Editorial Changes]</a:documentation>
-      <zeroOrMore>
+      <oneOrMore>
         <choice>
           <ref name="model.choicePart"/>
           <ref name="choice"/>
         </choice>
-      </zeroOrMore>
+      </oneOrMore>
       <ref name="att.global.attributes"/>
       <empty/>
     </element>
@@ -5655,6 +5678,7 @@ Normalization 12. Critical Apparatus]</a:documentation>
       <ref name="att.global.attributes"/>
       <ref name="att.timed.attributes"/>
       <ref name="att.editLike.attributes"/>
+      <ref name="att.dimensions.attributes"/>
       <optional>
         <attribute name="reason">
           <a:documentation>gives the reason for omission
@@ -5685,12 +5709,6 @@ Suggested values include: 1] cancelled; 2] deleted; 3] editorial; 4] illegible; 
         </attribute>
       </optional>
       <optional>
-        <attribute name="hand">
-          <a:documentation>in the case of text omitted from the transcription because of deliberate deletion by an identifiable hand, indicates the hand which made the deletion.</a:documentation>
-          <data type="anyURI"/>
-        </attribute>
-      </optional>
-      <optional>
         <attribute name="agent">
           <a:documentation>in the case of text omitted because of damage, categorizes the cause of the damage, if it can be identified.
 Sample values include: 1] rubbing; 2] mildew; 3] smoke</a:documentation>
@@ -5710,6 +5728,7 @@ Sample values include: 1] rubbing; 2] mildew; 3] smoke</a:documentation>
       <ref name="att.transcriptional.attributes"/>
       <ref name="att.placement.attributes"/>
       <ref name="att.typed.attributes"/>
+      <ref name="att.dimensions.attributes"/>
       <empty/>
     </element>
   </define>
@@ -5720,6 +5739,7 @@ Sample values include: 1] rubbing; 2] mildew; 3] smoke</a:documentation>
       <ref name="att.global.attributes"/>
       <ref name="att.transcriptional.attributes"/>
       <ref name="att.typed.attributes"/>
+      <ref name="att.dimensions.attributes"/>
       <empty/>
     </element>
   </define>
@@ -5729,22 +5749,30 @@ Sample values include: 1] rubbing; 2] mildew; 3] smoke</a:documentation>
       <ref name="macro.paraContent"/>
       <ref name="att.global.attributes"/>
       <ref name="att.editLike.attributes"/>
+      <ref name="att.dimensions.attributes"/>
       <optional>
         <attribute name="reason">
-          <a:documentation>indicates why the material is hard to transcribe.</a:documentation>
+          <a:documentation>indicates why the material is hard to transcribe.
+Suggested values include: 1] illegible; 2] inaudible; 3] faded; 4] background_noise; 5] eccentric_ductus</a:documentation>
           <list>
             <oneOrMore>
-              <data type="token">
-                <param name="pattern">(\p{L}|\p{N}|\p{P}|\p{S})+</param>
-              </data>
+              <choice>
+                <value>illegible</value>
+                <a:documentation/>
+                <value>inaudible</value>
+                <a:documentation/>
+                <value>faded</value>
+                <a:documentation/>
+                <value>background_noise</value>
+                <a:documentation/>
+                <value>eccentric_ductus</value>
+                <a:documentation/>
+                <data type="token">
+                  <param name="pattern">(\p{L}|\p{N}|\p{P}|\p{S})+</param>
+                </data>
+              </choice>
             </oneOrMore>
           </list>
-        </attribute>
-      </optional>
-      <optional>
-        <attribute name="hand">
-          <a:documentation>Where the difficulty in transcription arises from action (partial deletion, etc.) assignable to an identifiable hand, signifies the hand responsible for the action.</a:documentation>
-          <data type="anyURI"/>
         </attribute>
       </optional>
       <optional>
@@ -5929,6 +5957,7 @@ Measures]</a:documentation>
       <ref name="att.datable.attributes"/>
       <ref name="att.duration.attributes"/>
       <ref name="att.editLike.attributes"/>
+      <ref name="att.dimensions.attributes"/>
       <ref name="att.typed.attributes"/>
       <empty/>
     </element>
@@ -5948,6 +5977,7 @@ Measures]</a:documentation>
       <ref name="att.datable.attributes"/>
       <ref name="att.duration.attributes"/>
       <ref name="att.editLike.attributes"/>
+      <ref name="att.dimensions.attributes"/>
       <ref name="att.typed.attributes"/>
       <empty/>
     </element>
@@ -6292,6 +6322,7 @@ Elements]</a:documentation>
       <ref name="att.typed.attributes"/>
       <ref name="att.spanning.attributes"/>
       <ref name="att.breaking.attributes"/>
+      <ref name="att.edition.attributes"/>
       <empty/>
     </element>
   </define>
@@ -6536,7 +6567,7 @@ Elements]</a:documentation>
       <optional>
         <attribute name="type">
           <a:documentation>classifies the title according to some convenient typology.
-Sample values include: 1] main; 2] sub(subordinate) ; 3] alt(alternate) ; 4] short; 5] desc(descriptive) </a:documentation>
+Sample values include: 1] main; 2] sub (subordinate) ; 3] alt (alternate) ; 4] short; 5] desc (descriptive) </a:documentation>
           <data type="token">
             <param name="pattern">(\p{L}|\p{N}|\p{P}|\p{S})+</param>
           </data>
@@ -6948,8 +6979,8 @@ Suggested values include: 1] setting; 2] entrance; 3] exit; 4] business; 5] nove
       <ref name="att.global.attributes"/>
       <ref name="att.typed.attributes"/>
       <optional>
-        <attribute name="version" a:defaultValue="5.0">
-          <a:documentation>The version of the TEI scheme</a:documentation>
+        <attribute name="version">
+          <a:documentation>specifies the version number of the TEI Guidelines against which this document is valid.</a:documentation>
           <data type="token">
             <param name="pattern">[\d]+(\.[\d]+){0,2}</param>
           </data>
@@ -7009,6 +7040,64 @@ Sample values include: 1] index; 2] toc; 3] figlist; 4] tablist</a:documentation
       <empty/>
     </element>
   </define>
+  <define name="att.linguistic.attributes">
+    <ref name="att.linguistic.attribute.lemma"/>
+    <ref name="att.linguistic.attribute.lemmaRef"/>
+    <ref name="att.linguistic.attribute.pos"/>
+    <ref name="att.linguistic.attribute.msd"/>
+    <ref name="att.linguistic.attribute.join"/>
+  </define>
+  <define name="att.linguistic.attribute.lemma">
+    <optional>
+      <attribute name="lemma">
+        <a:documentation>provides a lemma (base form) for the word, typically uninflected and serving both as an identifier (e.g. in dictionary contexts, as a headword), and as a basis for potential inflections.</a:documentation>
+        <data type="string"/>
+      </attribute>
+    </optional>
+  </define>
+  <define name="att.linguistic.attribute.lemmaRef">
+    <optional>
+      <attribute name="lemmaRef">
+        <a:documentation>provides a pointer to a definition of the lemma for the word, for example in an online lexicon.</a:documentation>
+        <data type="anyURI"/>
+      </attribute>
+    </optional>
+  </define>
+  <define name="att.linguistic.attribute.pos">
+    <optional>
+      <attribute name="pos">
+        <a:documentation>(part of speech) indicates the part of speech assigned to a token (i.e. information on whether it is a noun, adjective, or verb), usually according to some official reference vocabulary (e.g. for German: STTS, for English: CLAWS, for Polish: NKJP, etc.).</a:documentation>
+        <data type="string"/>
+      </attribute>
+    </optional>
+  </define>
+  <define name="att.linguistic.attribute.msd">
+    <optional>
+      <attribute name="msd">
+        <a:documentation>(morphosyntactic description) supplies morphosyntactic information for a token, usually according to some official reference vocabulary (e.g. for German: STTS-large tagset; for a feature description system designed as (pragmatically) universal, see Universal Features).</a:documentation>
+        <data type="string"/>
+      </attribute>
+    </optional>
+  </define>
+  <define name="att.linguistic.attribute.join">
+    <optional>
+      <attribute name="join">
+        <a:documentation>when present, it provides information on whether the token in question is adjacent to another, and if so, on which side. The definition of this attribute is adapted from ISO MAF (Morpho-syntactic Annotation Framework), ISO 24611:2012.</a:documentation>
+        <choice>
+          <value>no</value>
+          <a:documentation>(the token is not adjacent to another) </a:documentation>
+          <value>left</value>
+          <a:documentation>(there is no whitespace on the left side of the token) </a:documentation>
+          <value>right</value>
+          <a:documentation>(there is no whitespace on the right side of the token) </a:documentation>
+          <value>both</value>
+          <a:documentation>(there is no whitespace on either side of the token) </a:documentation>
+          <value>overlap</value>
+          <a:documentation>(the token overlaps with another; other devices (specifying the extent and the area of overlap) are needed to more precisely locate this token in the character stream) </a:documentation>
+        </choice>
+      </attribute>
+    </optional>
+  </define>
   <define name="att.global.analytic.attributes">
     <ref name="att.global.analytic.attribute.ana"/>
   </define>
@@ -7039,6 +7128,7 @@ Sample values include: 1] index; 2] toc; 3] figlist; 4] tablist</a:documentation
       <ref name="att.global.attributes"/>
       <ref name="att.segLike.attributes"/>
       <ref name="att.typed.attributes"/>
+      <ref name="att.notated.attributes"/>
       <empty/>
     </element>
   </define>
@@ -7049,6 +7139,7 @@ Sample values include: 1] index; 2] toc; 3] figlist; 4] tablist</a:documentation
       <ref name="att.global.attributes"/>
       <ref name="att.segLike.attributes"/>
       <ref name="att.typed.attributes"/>
+      <ref name="att.notated.attributes"/>
       <empty/>
     </element>
   </define>
@@ -7059,6 +7150,7 @@ Sample values include: 1] index; 2] toc; 3] figlist; 4] tablist</a:documentation
       <ref name="att.global.attributes"/>
       <ref name="att.segLike.attributes"/>
       <ref name="att.typed.attributes"/>
+      <ref name="att.notated.attributes"/>
       <empty/>
     </element>
   </define>
@@ -7083,18 +7175,8 @@ Sample values include: 1] index; 2] toc; 3] figlist; 4] tablist</a:documentation
       <ref name="att.global.attributes"/>
       <ref name="att.segLike.attributes"/>
       <ref name="att.typed.attributes"/>
-      <optional>
-        <attribute name="lemma">
-          <a:documentation>provides a lemma for the word, such as an uninflected dictionary entry form.</a:documentation>
-          <data type="string"/>
-        </attribute>
-      </optional>
-      <optional>
-        <attribute name="lemmaRef">
-          <a:documentation>provides a pointer to a definition of the lemma for the word, for example in an online lexicon.</a:documentation>
-          <data type="anyURI"/>
-        </attribute>
-      </optional>
+      <ref name="att.linguistic.attributes"/>
+      <ref name="att.notated.attributes"/>
       <empty/>
     </element>
   </define>
@@ -7115,6 +7197,7 @@ Sample values include: 1] index; 2] toc; 3] figlist; 4] tablist</a:documentation
       <ref name="att.global.attributes"/>
       <ref name="att.segLike.attributes"/>
       <ref name="att.typed.attributes"/>
+      <ref name="att.notated.attributes"/>
       <optional>
         <attribute name="baseForm">
           <a:documentation>supplies the morpheme's base form.</a:documentation>
@@ -7133,6 +7216,7 @@ Sample values include: 1] index; 2] toc; 3] figlist; 4] tablist</a:documentation
       <ref name="att.global.attributes"/>
       <ref name="att.segLike.attributes"/>
       <ref name="att.typed.attributes"/>
+      <ref name="att.notated.attributes"/>
       <empty/>
     </element>
   </define>
@@ -7150,6 +7234,7 @@ Sample values include: 1] index; 2] toc; 3] figlist; 4] tablist</a:documentation
       <ref name="att.global.attributes"/>
       <ref name="att.segLike.attributes"/>
       <ref name="att.typed.attributes"/>
+      <ref name="att.linguistic.attributes"/>
       <optional>
         <attribute name="force">
           <a:documentation>indicates the extent to which this punctuation mark conventionally separates words or phrases</a:documentation>
@@ -7584,7 +7669,7 @@ Sample values include: 1] original; 2] revision; 3] translation; 4] abridgment; 
       <optional>
         <attribute name="type">
           <a:documentation>categorizes the domain of use.
-Sample values include: 1] art; 2] domestic; 3] religious; 4] business; 5] education; 6] govt(government) ; 7] public</a:documentation>
+Sample values include: 1] art; 2] domestic; 3] religious; 4] business; 5] education; 6] govt (government) ; 7] public</a:documentation>
           <data type="token">
             <param name="pattern">(\p{L}|\p{N}|\p{P}|\p{S})+</param>
           </data>
@@ -7788,7 +7873,7 @@ Suggested values include: 1] persuade; 2] express; 3] inform; 4] entertain</a:do
     <optional>
       <attribute name="type" a:defaultValue="main">
         <a:documentation>indicates type of entry, in dictionaries with multiple types.
-Suggested values include: 1] main; 2] hom(homograph) ; 3] xref(cross reference) ; 4] affix; 5] abbr(abbreviation) ; 6] supplemental; 7] foreign</a:documentation>
+Suggested values include: 1] main; 2] hom (homograph) ; 3] xref (cross reference) ; 4] affix; 5] abbr (abbreviation) ; 6] supplemental; 7] foreign</a:documentation>
         <choice>
           <value>main</value>
           <a:documentation>a main entry (default).</a:documentation>
@@ -8106,9 +8191,7 @@ Suggested values include: 1] main; 2] hom(homograph) ; 3] xref(cross reference) 
   <define name="model.ptrLike.form">
     <choice>
       <ref name="oRef"/>
-      <ref name="oVar"/>
       <ref name="pRef"/>
-      <ref name="pVar"/>
     </choice>
   </define>
   <define name="superEntry">
@@ -8241,6 +8324,7 @@ Suggested values include: 1] main; 2] hom(homograph) ; 3] xref(cross reference) 
         </choice>
       </zeroOrMore>
       <ref name="att.global.attributes"/>
+      <ref name="att.typed.attribute.subtype"/>
       <ref name="att.lexicographic.attributes"/>
       <optional>
         <attribute name="type">
@@ -8277,6 +8361,7 @@ Suggested values include: 1] simple; 2] lemma; 3] variant; 4] compound; 5] deriv
       <ref name="att.global.attributes"/>
       <ref name="att.lexicographic.attributes"/>
       <ref name="att.partials.attributes"/>
+      <ref name="att.notated.attributes"/>
       <optional>
         <attribute name="type">
           <a:documentation>gives the type of spelling.</a:documentation>
@@ -8305,6 +8390,7 @@ Suggested values include: 1] simple; 2] lemma; 3] variant; 4] compound; 5] deriv
       <ref name="macro.paraContent"/>
       <ref name="att.global.attributes"/>
       <ref name="att.lexicographic.attributes"/>
+      <ref name="att.notated.attributes"/>
       <empty/>
     </element>
   </define>
@@ -8314,6 +8400,7 @@ Suggested values include: 1] simple; 2] lemma; 3] variant; 4] compound; 5] deriv
       <ref name="macro.paraContent"/>
       <ref name="att.global.attributes"/>
       <ref name="att.lexicographic.attributes"/>
+      <ref name="att.notated.attributes"/>
       <empty/>
     </element>
   </define>
@@ -8322,6 +8409,7 @@ Suggested values include: 1] simple; 2] lemma; 3] variant; 4] compound; 5] deriv
       <a:documentation>contains the stress pattern for a dictionary headword, if given separately. [9.3.1. Information on Written and Spoken Forms]</a:documentation>
       <ref name="macro.paraContent"/>
       <ref name="att.global.attributes"/>
+      <ref name="att.notated.attributes"/>
       <empty/>
     </element>
   </define>
@@ -8334,7 +8422,7 @@ Suggested values include: 1] simple; 2] lemma; 3] variant; 4] compound; 5] deriv
       <optional>
         <attribute name="type">
           <a:documentation>classifies the grammatical information given according to some convenient typology—in the case of terminological information, preferably the dictionary of data element types specified in ISO 12620.
-Sample values include: 1] pos(part of speech) ; 2] gen(gender) ; 3] num(number) ; 4] animate; 5] proper</a:documentation>
+Sample values include: 1] pos (part of speech) ; 2] gen (gender) ; 3] num (number) ; 4] animate; 5] proper</a:documentation>
           <data type="token">
             <param name="pattern">(\p{L}|\p{N}|\p{P}|\p{S})+</param>
           </data>
@@ -8478,17 +8566,19 @@ Sample values include: 1] abbrev; 2] verbTable</a:documentation>
         <choice>
           <text/>
           <ref name="model.gLike"/>
-          <ref name="model.phrase"/>
-          <ref name="model.inter"/>
-          <ref name="usg"/>
-          <ref name="lbl"/>
-          <ref name="def"/>
-          <ref name="gramGrp"/>
-          <ref name="xr"/>
           <ref name="model.global"/>
+          <ref name="model.inter"/>
+          <ref name="model.phrase"/>
+          <ref name="def"/>
+          <ref name="etym"/>
+          <ref name="gramGrp"/>
+          <ref name="lbl"/>
+          <ref name="usg"/>
+          <ref name="xr"/>
         </choice>
       </zeroOrMore>
       <ref name="att.global.attributes"/>
+      <ref name="att.typed.attributes"/>
       <ref name="att.lexicographic.attributes"/>
       <empty/>
     </element>
@@ -8511,7 +8601,7 @@ Sample values include: 1] abbrev; 2] verbTable</a:documentation>
       <optional>
         <attribute name="type">
           <a:documentation>classifies the usage information using any convenient typology.
-Sample values include: 1] geo(geographic) ; 2] time; 3] dom(domain) ; 4] register; 5] style; 6] plev(preference level) ; 7] lang(language) ; 8] gram(grammatical) ; 9] syn(synonym) ; 10] hyper(hypernym) ; 11] colloc(collocation) ; 12] comp(complement) ; 13] obj(object) ; 14] subj(subject) ; 15] verb; 16] hint</a:documentation>
+Sample values include: 1] geo (geographic) ; 2] time; 3] dom (domain) ; 4] register; 5] style; 6] plev (preference level) ; 7] lang (language) ; 8] gram (grammatical) ; 9] syn (synonym) ; 10] hyper (hypernym) ; 11] colloc (collocation) ; 12] comp (complement) ; 13] obj (object) ; 14] subj (subject) ; 15] verb; 16] hint</a:documentation>
           <data type="token">
             <param name="pattern">(\p{L}|\p{N}|\p{P}|\p{S})+</param>
           </data>
@@ -8556,7 +8646,7 @@ Sample values include: 1] geo(geographic) ; 2] time; 3] dom(domain) ; 4] registe
       <optional>
         <attribute name="type">
           <a:documentation>indicates the type of cross reference, using any convenient typology.
-Sample values include: 1] syn(synonym) ; 2] etym(etymological) ; 3] cf(compare or consult) ; 4] illus(illustration) </a:documentation>
+Sample values include: 1] syn (synonym) ; 2] etym (etymological) ; 3] cf (compare or consult) ; 4] illus (illustration) </a:documentation>
           <data type="token">
             <param name="pattern">(\p{L}|\p{N}|\p{P}|\p{S})+</param>
           </data>
@@ -8601,32 +8691,7 @@ Sample values include: 1] syn(synonym) ; 2] etym(etymological) ; 3] cf(compare o
       <optional>
         <attribute name="type">
           <a:documentation>indicates the kind of typographic modification made to the headword in the reference.
-Sample values include: 1] cap(capital) ; 2] noHyph(no hyphen) </a:documentation>
-          <data type="token">
-            <param name="pattern">(\p{L}|\p{N}|\p{P}|\p{S})+</param>
-          </data>
-        </attribute>
-      </optional>
-      <empty/>
-    </element>
-  </define>
-  <define name="oVar">
-    <element name="tei:oVar">
-      <a:documentation>(orthographic-variant reference) in a dictionary example, indicates a reference to variant orthographic form(s) of the headword. [9. Dictionaries]</a:documentation>
-      <zeroOrMore>
-        <choice>
-          <text/>
-          <ref name="model.gLike"/>
-          <ref name="oRef"/>
-        </choice>
-      </zeroOrMore>
-      <ref name="att.global.attributes"/>
-      <ref name="att.lexicographic.attributes"/>
-      <ref name="att.pointing.attributes"/>
-      <optional>
-        <attribute name="type">
-          <a:documentation>indicates the kind of variant involved.
-Sample values include: 1] pt(past tense) ; 2] pp(past participle) ; 3] prp(present participle) ; 4] f(feminine) ; 5] pl(plural) </a:documentation>
+Sample values include: 1] cap (capital) ; 2] noHyph (no hyphen) </a:documentation>
           <data type="token">
             <param name="pattern">(\p{L}|\p{N}|\p{P}|\p{S})+</param>
           </data>
@@ -8638,23 +8703,6 @@ Sample values include: 1] pt(past tense) ; 2] pp(past participle) ; 3] prp(prese
   <define name="pRef">
     <element name="tei:pRef">
       <a:documentation>(pronunciation reference) in a dictionary example, indicates a reference to the pronunciation(s) of the headword. [9.4. Headword and Pronunciation References]</a:documentation>
-      <zeroOrMore>
-        <choice>
-          <text/>
-          <ref name="model.gLike"/>
-          <ref name="pRef"/>
-        </choice>
-      </zeroOrMore>
-      <ref name="att.global.attributes"/>
-      <ref name="att.pointing.attributes"/>
-      <ref name="att.lexicographic.attributes"/>
-      <ref name="att.notated.attributes"/>
-      <empty/>
-    </element>
-  </define>
-  <define name="pVar">
-    <element name="tei:pVar">
-      <a:documentation>(pronunciation-variant reference) in a dictionary example, indicates a reference to variant pronunciation(s) of the headword. [9. Dictionaries]</a:documentation>
       <zeroOrMore>
         <choice>
           <text/>
@@ -8918,7 +8966,7 @@ Sample values include: 1] pt(past tense) ; 2] pp(past participle) ; 3] prp(prese
   </define>
   <define name="move">
     <element name="tei:move">
-      <a:documentation>(movement) marks the actual entrance or exit of one or more characters on stage. [7.2.4. Stage Directions]</a:documentation>
+      <a:documentation>(movement) marks the actual movement of one or more characters. [7.2.4. Stage Directions]</a:documentation>
       <empty/>
       <ref name="att.global.attributes"/>
       <ref name="att.ascribed.attributes"/>
@@ -8942,7 +8990,7 @@ Suggested values include: 1] entrance; 2] exit; 3] onStage</a:documentation>
       <optional>
         <attribute name="where">
           <a:documentation>specifies the direction of a stage movement.
-Sample values include: 1] L(left) ; 2] R(right) ; 3] C(center) </a:documentation>
+Sample values include: 1] L (left) ; 2] R (right) ; 3] C (center) </a:documentation>
           <list>
             <oneOrMore>
               <data type="token">
@@ -8996,7 +9044,7 @@ Sample values include: 1] L(left) ; 2] R(right) ; 3] C(center) </a:documentation
         </attribute>
       </optional>
       <optional>
-        <attribute name="discrete" a:defaultValue="unknown">
+        <attribute name="discrete">
           <a:documentation>indicates whether the sound overlaps the surrounding speeches or interrupts them.</a:documentation>
           <choice>
             <data type="boolean"/>
@@ -9027,7 +9075,8 @@ Sample values include: 1] L(left) ; 2] R(right) ; 3] C(center) </a:documentation
       <ref name="att.global.attributes"/>
       <optional>
         <attribute name="type">
-          <a:documentation>categorizes the technical stage direction.</a:documentation>
+          <a:documentation>categorizes the technical stage direction.
+Suggested values include: 1] light; 2] sound; 3] prop; 4] block</a:documentation>
           <choice>
             <value>light</value>
             <a:documentation>a lighting cue</a:documentation>
@@ -9037,6 +9086,9 @@ Sample values include: 1] L(left) ; 2] R(right) ; 3] C(center) </a:documentation
             <a:documentation>a prop cue</a:documentation>
             <value>block</value>
             <a:documentation>a blocking instruction</a:documentation>
+            <data type="token">
+              <param name="pattern">(\p{L}|\p{N}|\p{P}|\p{S})+</param>
+            </data>
           </choice>
         </attribute>
       </optional>
@@ -9547,7 +9599,7 @@ Suggested values include: 1] ISBN; 2] ISSN; 3] DOI; 4] URI; 5] VIAF; 6] ESTC; 7]
             <value>ESTC</value>
             <a:documentation>English Short-Title Catalogue number: an identifying number assigned to a document in English printed in the British Isles or North America before 1801.</a:documentation>
             <value>OCLC</value>
-            <a:documentation>union catalog number in WorldCat representing a resource held by one or more of the member libraries in the global cooperative Online Computer Library Center.</a:documentation>
+            <a:documentation>OCLC control number (record number) for the union catalog record in WorldCat, a union catalog for member libraries in the Online Computer Library Center global cooperative.</a:documentation>
             <data type="token">
               <param name="pattern">(\p{L}|\p{N}|\p{P}|\p{S})+</param>
             </data>
@@ -9569,7 +9621,7 @@ Suggested values include: 1] ISBN; 2] ISSN; 3] DOI; 4] URI; 5] VIAF; 6] ESTC; 7]
       <ref name="att.global.attributes"/>
       <ref name="att.declarable.attributes"/>
       <optional>
-        <attribute name="status" a:defaultValue="unknown">
+        <attribute name="status">
           <a:documentation>supplies a code identifying the current availability of the text.</a:documentation>
           <choice>
             <value>free</value>
@@ -9769,7 +9821,7 @@ Suggested values include: 1] ISBN; 2] ISSN; 3] DOI; 4] URI; 5] VIAF; 6] ESTC; 7]
       <ref name="att.global.attributes"/>
       <ref name="att.declarable.attributes"/>
       <optional>
-        <attribute name="status" a:defaultValue="unknown">
+        <attribute name="status">
           <a:documentation>indicates the degree of correction applied to the text.</a:documentation>
           <choice>
             <value>high</value>
@@ -9934,12 +9986,12 @@ On <sch:name/>
       </optional>
       <optional>
         <attribute name="placement">
-          <a:documentation>indicates whether punctation marks have been captured inside or outside of an adjacent element.</a:documentation>
+          <a:documentation>indicates the positioning of punctuation marks that are associated with marked up text as being encoded within the element surrounding the text or immediately before or after it.</a:documentation>
           <choice>
             <value>internal</value>
-            <a:documentation>punctuation marks are captured inside adjacent elements</a:documentation>
+            <a:documentation>punctuation marks found at the start or end of a marked up text component are included within its surrounding element;</a:documentation>
             <value>external</value>
-            <a:documentation>punctuation marks are captured outside adjacent elements</a:documentation>
+            <a:documentation>punctuation marks found at the start or end of a marked up text component appear immediately before or after the surrounding element</a:documentation>
           </choice>
         </attribute>
       </optional>
@@ -10219,7 +10271,7 @@ Sample values include: 1] first-line; 2] first-letter; 3] before; 4] after</a:do
       <optional>
         <attribute name="datum" a:defaultValue="WGS84">
           <a:documentation>supplies a commonly used code name for the datum employed.
-Suggested values include: 1] WGS84(World Geodetic System) ; 2] MGRS(Military Grid Reference System) ; 3] OSGB36(ordnance survey great britain) ; 4] ED50(European Datum coordinate system) </a:documentation>
+Suggested values include: 1] WGS84 (World Geodetic System) ; 2] MGRS (Military Grid Reference System) ; 3] OSGB36 (ordnance survey great britain) ; 4] ED50 (European Datum coordinate system) </a:documentation>
           <choice>
             <value>WGS84</value>
             <a:documentation>(World Geodetic System) a pair of numbers to be interpreted as latitude followed by longitude according to the World Geodetic System.</a:documentation>
@@ -11173,10 +11225,10 @@ Feature Value]</a:documentation>
     <element name="tei:ab">
       <a:documentation>(anonymous block) contains any arbitrary component-level unit of text, acting as an anonymous container for phrase or inter level elements analogous to, but without the semantic baggage of, a paragraph. [16.3. Blocks, Segments, and Anchors]</a:documentation>
       <ref name="macro.paraContent"/>
-      <sch:pattern id="tei_all-ab-abstractModel-structure-p-constraint-report-17">
+      <sch:pattern id="tei_all-ab-abstractModel-structure-ab-constraint-report-17">
             <sch:rule context="tei:ab">
-               <sch:report test="not(ancestor::floatingText) and (ancestor::tei:p or ancestor::tei:ab)          and not(parent::tei:exemplum         |parent::tei:item         |parent::tei:note         |parent::tei:q         |parent::tei:quote         |parent::tei:remarks         |parent::tei:said         |parent::tei:sp         |parent::tei:stage         |parent::tei:cell         |parent::tei:figure)">
-        Abstract model violation: ab may not contain paragraphs or other ab elements.
+               <sch:report test="not(ancestor::tei:floatingText) and (ancestor::tei:p or ancestor::tei:ab)          and not(parent::tei:exemplum         |parent::tei:item         |parent::tei:note         |parent::tei:q         |parent::tei:quote         |parent::tei:remarks         |parent::tei:said         |parent::tei:sp         |parent::tei:stage         |parent::tei:cell         |parent::tei:figure)">
+        Abstract model violation: ab may not occur inside paragraphs or other ab elements.
       </sch:report>
 
             </sch:rule>
@@ -11216,6 +11268,7 @@ Feature Value]</a:documentation>
       <ref name="att.segLike.attributes"/>
       <ref name="att.typed.attributes"/>
       <ref name="att.written.attributes"/>
+      <ref name="att.notated.attributes"/>
       <empty/>
     </element>
   </define>
@@ -11242,7 +11295,7 @@ Feature Value]</a:documentation>
       <optional>
         <attribute name="unit">
           <a:documentation>specifies the unit of time in which the interval value is expressed, if this is not inherited from the parent timeline.
-Suggested values include: 1] d(days) ; 2] h(hours) ; 3] min(minutes) ; 4] s(seconds) ; 5] ms(milliseconds) </a:documentation>
+Suggested values include: 1] d (days) ; 2] h (hours) ; 3] min (minutes) ; 4] s (seconds) ; 5] ms (milliseconds) </a:documentation>
           <choice>
             <value>d</value>
             <a:documentation>(days) </a:documentation>
@@ -11301,7 +11354,7 @@ Suggested values include: 1] d(days) ; 2] h(hours) ; 3] min(minutes) ; 4] s(seco
       <optional>
         <attribute name="unit">
           <a:documentation>specifies the unit of time corresponding to the interval value of the timeline or of its constituent points in time.
-Suggested values include: 1] d(days) ; 2] h(hours) ; 3] min(minutes) ; 4] s(seconds) ; 5] ms(milliseconds) </a:documentation>
+Suggested values include: 1] d (days) ; 2] h (hours) ; 3] min (minutes) ; 4] s (seconds) ; 5] ms (milliseconds) </a:documentation>
           <choice>
             <value>d</value>
             <a:documentation>(days) </a:documentation>
@@ -11481,7 +11534,7 @@ You must supply at least two values for @target on <sch:name/>
   </define>
   <define name="att.msExcerpt.attribute.defective">
     <optional>
-      <attribute name="defective" a:defaultValue="false">
+      <attribute name="defective">
         <a:documentation>indicates whether the passage being quoted is defective, i.e. incomplete through loss or damage.</a:documentation>
         <choice>
           <data type="boolean"/>
@@ -11754,6 +11807,7 @@ Sample values include: 1] leaves; 2] ruled; 3] pricked; 4] written; 5] miniature
       </zeroOrMore>
       <ref name="att.global.attributes"/>
       <ref name="att.datable.attributes"/>
+      <ref name="att.dimensions.attributes"/>
       <ref name="att.editLike.attributes"/>
       <ref name="att.typed.attributes"/>
       <empty/>
@@ -12263,7 +12317,7 @@ Sample values include: 1] leaves; 2] ruled; 3] pricked; 4] written; 5] miniature
       <optional>
         <attribute name="material">
           <a:documentation>a short project-defined name for the material composing the majority of the support
-Suggested values include: 1] paper; 2] parch(parchment) ; 3] mixed</a:documentation>
+Suggested values include: 1] paper; 2] parch (parchment) ; 3] mixed</a:documentation>
           <choice>
             <value>paper</value>
             <a:documentation/>
@@ -13277,6 +13331,7 @@ Suggested values include: 1] paper; 2] parch(parchment) ; 3] mixed</a:documentat
       <ref name="att.global.attributes"/>
       <ref name="att.naming.attributes"/>
       <ref name="att.typed.attributes"/>
+      <ref name="att.dimensions.attributes"/>
       <empty/>
     </element>
   </define>
@@ -13301,6 +13356,7 @@ Suggested values include: 1] paper; 2] parch(parchment) ; 3] mixed</a:documentat
       <ref name="att.global.attributes"/>
       <ref name="att.naming.attributes"/>
       <ref name="att.typed.attributes"/>
+      <ref name="att.dimensions.attributes"/>
       <empty/>
     </element>
   </define>
@@ -13333,10 +13389,11 @@ Sample values include: 1] sponsor; 2] recommend; 3] discredit; 4] pledged</a:doc
       <ref name="att.editLike.attributes"/>
       <ref name="att.datable.attributes"/>
       <ref name="att.typed.attribute.subtype"/>
+      <ref name="att.dimensions.attributes"/>
       <optional>
         <attribute name="type">
           <a:documentation>characterizes the element in some sense, using any convenient classification scheme or typology.
-Sample values include: 1] western; 2] sui; 3] subjective; 4] objective; 5] inWorld(in world) ; 6] chronological; 7] biological; 8] psychological; 9] functional</a:documentation>
+Sample values include: 1] western; 2] sui; 3] subjective; 4] objective; 5] inWorld (in world) ; 6] chronological; 7] biological; 8] psychological; 9] functional</a:documentation>
           <data type="token">
             <param name="pattern">(\p{L}|\p{N}|\p{P}|\p{S})+</param>
           </data>
@@ -13358,12 +13415,13 @@ Sample values include: 1] western; 2] sui; 3] subjective; 4] objective; 5] inWor
       <ref name="att.global.attributes"/>
       <ref name="att.editLike.attributes"/>
       <ref name="att.datable.attributes"/>
+      <ref name="att.dimensions.attributes"/>
       <ref name="att.naming.attributes"/>
       <ref name="att.typed.attribute.subtype"/>
       <optional>
         <attribute name="type">
           <a:documentation>characterizes the element in some sense, using any convenient classification scheme or typology.
-Sample values include: 1] caesarean(caesarean section) ; 2] vaginal(vaginal delivery) ; 3] exNihilo(ex nihilo) ; 4] incorporated; 5] founded; 6] established</a:documentation>
+Sample values include: 1] caesarean (caesarean section) ; 2] vaginal (vaginal delivery) ; 3] exNihilo (ex nihilo) ; 4] incorporated; 5] founded; 6] established</a:documentation>
           <data type="token">
             <param name="pattern">(\p{L}|\p{N}|\p{P}|\p{S})+</param>
           </data>
@@ -13412,9 +13470,10 @@ Sample values include: 1] caesarean(caesarean section) ; 2] vaginal(vaginal deli
     <element name="tei:death">
       <a:documentation>contains information about a person's death, such as its date and place. [15.2.2. The Participant Description]</a:documentation>
       <ref name="macro.phraseSeq"/>
-      <ref name="att.global.attributes"/>
-      <ref name="att.editLike.attributes"/>
       <ref name="att.datable.attributes"/>
+      <ref name="att.dimensions.attributes"/>
+      <ref name="att.editLike.attributes"/>
+      <ref name="att.global.attributes"/>
       <ref name="att.naming.attributes"/>
       <ref name="att.typed.attribute.subtype"/>
       <optional>
@@ -13519,6 +13578,7 @@ Sample values include: 1] practicing; 2] clandestine; 3] patrilineal; 4] matrili
       <ref name="macro.phraseSeq"/>
       <ref name="att.global.attributes"/>
       <ref name="att.datable.attributes"/>
+      <ref name="att.dimensions.attributes"/>
       <ref name="att.editLike.attributes"/>
       <empty/>
     </element>
@@ -13637,10 +13697,7 @@ Sample values include: 1] listening; 2] speaking; 3] reading; 4] writing</a:docu
           <ref name="model.headLike"/>
         </zeroOrMore>
         <oneOrMore>
-          <choice>
-            <ref name="event"/>
-            <ref name="listEvent"/>
-          </choice>
+          <ref name="model.eventLike"/>
         </oneOrMore>
         <zeroOrMore>
           <choice>
@@ -14101,6 +14158,7 @@ Sample values include: 1] primary; 2] other; 3] paid; 4] unpaid</a:documentation
       <ref name="att.editLike.attributes"/>
       <ref name="att.naming.attributes"/>
       <ref name="att.typed.attributes"/>
+      <ref name="att.dimensions.attributes"/>
       <empty/>
     </element>
   </define>
@@ -14308,6 +14366,7 @@ Sample values include: 1] atBirth; 2] atDeath; 3] dependent; 4] inherited; 5] in
       <ref name="att.editLike.attributes"/>
       <ref name="att.typed.attributes"/>
       <ref name="att.naming.attributes"/>
+      <ref name="att.dimensions.attributes"/>
       <empty/>
     </element>
   </define>
@@ -14386,6 +14445,7 @@ Sample values include: 1] atBirth; 2] atDeath; 3] dependent; 4] inherited; 5] in
       <ref name="att.editLike.attributes"/>
       <ref name="att.naming.attributes"/>
       <ref name="att.typed.attributes"/>
+      <ref name="att.dimensions.attributes"/>
       <empty/>
     </element>
   </define>
@@ -15529,7 +15589,15 @@ Sample values include: 1] homeoteleuton; 2] homeoarchy; 3] paleographicConfusion
   <define name="witDetail">
     <element name="tei:witDetail">
       <a:documentation>(witness detail) gives further information about a particular witness, or witnesses, to a particular reading. [12.1. The Apparatus Entry, Readings, and Witnesses]</a:documentation>
-      <ref name="macro.phraseSeq"/>
+      <zeroOrMore>
+        <choice>
+          <text/>
+          <ref name="model.gLike"/>
+          <ref name="model.phrase"/>
+          <ref name="model.global"/>
+          <ref name="bibl"/>
+        </choice>
+      </zeroOrMore>
       <ref name="att.global.attributes"/>
       <ref name="att.placement.attributes"/>
       <ref name="att.pointing.attributes"/>
@@ -15664,10 +15732,12 @@ Sample values include: 1] homeoteleuton; 2] homeoarchy; 3] paleographicConfusion
   </define>
   <define name="TEI">
     <element name="tei:TEI">
-      <a:documentation>(TEI document) contains a single TEI-conformant document, combining a single TEI header with one or more members of the model.resourceLike class. Multiple TEI elements may be combined to form a teiCorpus element. [4. Default Text Structure 15.1. Varieties of Composite Text]</a:documentation>
+      <a:documentation>(TEI document) Two headers are required, teiHeader and TAN's head, because the two heads are very different animals. [4. Default Text Structure 15.1. Varieties of Composite Text]</a:documentation>
       <group>
-        <ref name="teiHeader"/>
-        <ref name="TAN-head"/>
+        <interleave>
+          <ref name="teiHeader"/>
+          <ref name="TAN-head"/>
+        </interleave>
         <choice>
           <group>
             <oneOrMore>
@@ -15702,7 +15772,7 @@ Sample values include: 1] homeoteleuton; 2] homeoarchy; 3] paleographicConfusion
       </attribute>
       <optional>
         <attribute name="version">
-          <a:documentation>specifies the major version number of the TEI Guidelines against which this document is valid.</a:documentation>
+          <a:documentation>specifies the version number of the TEI Guidelines against which this document is valid.</a:documentation>
           <data type="token">
             <param name="pattern">[\d]+(\.[\d]+){0,2}</param>
           </data>
@@ -15747,10 +15817,15 @@ Sample values include: 1] homeoteleuton; 2] homeoarchy; 3] paleographicConfusion
   </define>
   <define name="body">
     <element name="tei:body">
-      <a:documentation>(text body) contains the whole body of a single unitary text, excluding any front or back matter. [4. Default Text Structure]</a:documentation>
-      <oneOrMore>
-        <ref name="model.divLike"/>
-      </oneOrMore>
+      <a:documentation>(text body) The body contains either &lt;div&gt;s or empty elements (like &lt;milestone&gt;) [4. Default Text Structure]</a:documentation>
+      <interleave>
+        <oneOrMore>
+          <ref name="model.divLike"/>
+        </oneOrMore>
+        <zeroOrMore>
+          <ref name="model.milestoneLike"/>
+        </zeroOrMore>
+      </interleave>
       <ref name="att.global.attribute.ed-who"/>
       <ref name="att.global.attribute.ed-when"/>
       <ref name="att.global.attribute.xmlid"/>
@@ -15860,51 +15935,52 @@ Sample values include: 1] homeoteleuton; 2] homeoarchy; 3] paleographicConfusion
   </define>
   <define name="div">
     <element name="tei:div">
-      <a:documentation>(text division) contains a subdivision of the front, body, or back of a text. [4.1. Divisions of the Body]</a:documentation>
-      <group>
-        <zeroOrMore>
-          <choice>
-            <ref name="model.divTop"/>
-            <ref name="model.global"/>
-          </choice>
-        </zeroOrMore>
-        <optional>
-          <choice>
-            <oneOrMore>
-              <choice>
-                <ref name="model.divLike"/>
-                <ref name="model.divGenLike"/>
-              </choice>
+      <a:documentation>(text division) Every &lt;div&gt; either contains purely &lt;div&gt;s / empty elements (like &lt;milestone&gt;) or it does not (leaf &lt;div&gt;s). [4.1. Divisions of the Body]</a:documentation>
+      <choice>
+        <interleave>
+          <oneOrMore>
+            <ref name="model.divLike"/>
+          </oneOrMore>
+          <zeroOrMore>
+            <ref name="model.milestoneLike"/>
+          </zeroOrMore>
+        </interleave>
+        <group>
+          <zeroOrMore>
+            <choice>
+              <ref name="model.divTop"/>
+              <ref name="model.global"/>
+            </choice>
+          </zeroOrMore>
+          <optional>
+            <choice>
               <zeroOrMore>
                 <ref name="model.global"/>
               </zeroOrMore>
-            </oneOrMore>
-            <group>
-              <oneOrMore>
-                <ref name="model.common"/>
+              <group>
+                <oneOrMore>
+                  <ref name="model.common"/>
+                  <zeroOrMore>
+                    <ref name="model.global"/>
+                  </zeroOrMore>
+                </oneOrMore>
                 <zeroOrMore>
-                  <ref name="model.global"/>
-                </zeroOrMore>
-              </oneOrMore>
-              <zeroOrMore>
-                <choice>
-                  <ref name="model.divLike"/>
                   <ref name="model.divGenLike"/>
-                </choice>
-                <zeroOrMore>
-                  <ref name="model.global"/>
+                  <zeroOrMore>
+                    <ref name="model.global"/>
+                  </zeroOrMore>
                 </zeroOrMore>
-              </zeroOrMore>
-            </group>
-          </choice>
-          <zeroOrMore>
-            <ref name="model.divBottom"/>
+              </group>
+            </choice>
             <zeroOrMore>
-              <ref name="model.global"/>
+              <ref name="model.divBottom"/>
+              <zeroOrMore>
+                <ref name="model.global"/>
+              </zeroOrMore>
             </zeroOrMore>
-          </zeroOrMore>
-        </optional>
-      </group>
+          </optional>
+        </group>
+      </choice>
       <sch:pattern id="tei_all-div-abstractModel-structure-l-constraint-report-25">
             <sch:rule context="tei:div">
                <sch:report test="ancestor::tei:l">
@@ -15923,47 +15999,11 @@ Sample values include: 1] homeoteleuton; 2] homeoarchy; 3] paleographicConfusion
             </sch:rule>
 
          </sch:pattern>
-      <ref name="att.global.attribute.ed-who"/>
-      <ref name="att.global.attribute.ed-when"/>
-      <ref name="att.global.attribute.xmlid"/>
-      <ref name="att.global.attribute.xmllang"/>
-      <ref name="att.global.attribute.xmlbase"/>
-      <ref name="att.global.attribute.xmlspace"/>
-      <ref name="att.global.rendition.attribute.rend"/>
-      <ref name="att.global.rendition.attribute.style"/>
-      <ref name="att.global.rendition.attribute.rendition"/>
-      <ref name="att.global.linking.attribute.corresp"/>
-      <ref name="att.global.linking.attribute.synch"/>
-      <ref name="att.global.linking.attribute.sameAs"/>
-      <ref name="att.global.linking.attribute.copyOf"/>
-      <ref name="att.global.linking.attribute.next"/>
-      <ref name="att.global.linking.attribute.prev"/>
-      <ref name="att.global.linking.attribute.exclude"/>
-      <ref name="att.global.linking.attribute.select"/>
-      <ref name="att.global.analytic.attribute.ana"/>
-      <ref name="att.global.facs.attribute.facs"/>
-      <ref name="att.global.change.attribute.change"/>
-      <ref name="att.global.responsibility.attribute.cert"/>
-      <ref name="att.global.responsibility.attribute.resp"/>
-      <ref name="att.global.source.attribute.source"/>
+      <ref name="att.global.attributes"/>
       <ref name="att.divLike.attributes"/>
-      <ref name="att.typed.attribute.subtype"/>
+      <ref name="att.typed.attributes"/>
       <ref name="att.declaring.attributes"/>
       <ref name="att.written.attributes"/>
-      <optional>
-        <attribute name="n">
-          <a:documentation>(number) gives a number (or other label) for an element, which is not necessarily unique within the document.</a:documentation>
-          <data type="string"/>
-        </attribute>
-      </optional>
-      <optional>
-        <attribute name="type">
-          <a:documentation>characterizes the element in some sense, using any convenient classification scheme or typology.</a:documentation>
-          <data type="token">
-            <param name="pattern">(\p{L}|\p{N}|\p{P}|\p{S})+</param>
-          </data>
-        </attribute>
-      </optional>
       <optional>
         <attribute name="include">
           <a:documentation>This attribute signals that the parent element is to be replaced by all elements of the same name found in the referred inclusion</a:documentation>
@@ -16556,7 +16596,7 @@ Sample values include: 1] homeoteleuton; 2] homeoarchy; 3] paleographicConfusion
       <optional>
         <attribute name="type" a:defaultValue="main">
           <a:documentation>specifies the role of this subdivision of the title.
-Suggested values include: 1] main; 2] sub(subordinate) ; 3] alt(alternate) ; 4] short; 5] desc(descriptive) </a:documentation>
+Suggested values include: 1] main; 2] sub (subordinate) ; 3] alt (alternate) ; 4] short; 5] desc (descriptive) </a:documentation>
           <choice>
             <value>main</value>
             <a:documentation>main title of the work</a:documentation>
@@ -17020,6 +17060,7 @@ Sample values include: 1] glued; 2] pinned; 3] sewn</a:documentation>
       <ref name="att.placement.attributes"/>
       <ref name="att.typed.attributes"/>
       <ref name="att.spanning.attributes"/>
+      <ref name="att.dimensions.attributes"/>
       <empty/>
     </element>
   </define>
@@ -17083,6 +17124,7 @@ The @spanTo attribute of <sch:name/>
       <ref name="att.transcriptional.attributes"/>
       <ref name="att.typed.attributes"/>
       <ref name="att.spanning.attributes"/>
+      <ref name="att.dimensions.attributes"/>
       <empty/>
     </element>
   </define>
@@ -17092,6 +17134,7 @@ The @spanTo attribute of <sch:name/>
       <ref name="macro.xtext"/>
       <ref name="att.global.attributes"/>
       <ref name="att.editLike.attributes"/>
+      <ref name="att.dimensions.attributes"/>
       <empty/>
     </element>
   </define>
@@ -17105,7 +17148,7 @@ The @spanTo attribute of <sch:name/>
       <optional>
         <attribute name="type">
           <a:documentation>classifies the material encoded according to some useful typology.
-Sample values include: 1] header; 2] footer; 3] pageNum(page number) ; 4] lineNum(line number) ; 5] sig(signature) ; 6] catch(catchword) </a:documentation>
+Sample values include: 1] header; 2] footer; 3] pageNum (page number) ; 4] lineNum (line number) ; 5] sig (signature) ; 6] catch (catchword) </a:documentation>
           <data type="token">
             <param name="pattern">(\p{L}|\p{N}|\p{P}|\p{S})+</param>
           </data>
@@ -17162,6 +17205,7 @@ Sample values include: 1] header; 2] footer; 3] pageNum(page number) ; 4] lineNu
       <ref name="att.global.attributes"/>
       <ref name="att.transcriptional.attributes"/>
       <ref name="att.typed.attributes"/>
+      <ref name="att.dimensions.attributes"/>
       <empty/>
     </element>
   </define>
@@ -17244,6 +17288,7 @@ Sample values include: 1] header; 2] footer; 3] pageNum(page number) ; 4] lineNu
          </sch:pattern>
       <ref name="att.global.attributes"/>
       <ref name="att.transcriptional.attributes"/>
+      <ref name="att.dimensions.attributes"/>
       <empty/>
     </element>
   </define>
@@ -17259,6 +17304,7 @@ Sample values include: 1] header; 2] footer; 3] pageNum(page number) ; 4] lineNu
       <ref name="att.global.attributes"/>
       <ref name="att.pointing.attributes"/>
       <ref name="att.transcriptional.attributes"/>
+      <ref name="att.dimensions.attributes"/>
       <empty/>
     </element>
   </define>
@@ -17268,6 +17314,7 @@ Sample values include: 1] header; 2] footer; 3] pageNum(page number) ; 4] lineNu
       <ref name="macro.paraContent"/>
       <ref name="att.global.attributes"/>
       <ref name="att.editLike.attributes"/>
+      <ref name="att.dimensions.attributes"/>
       <optional>
         <attribute name="reason">
           <a:documentation>one or more words indicating why the text has had to be supplied, e.g. overbinding, faded-ink, lost-folio, omitted-in-original.</a:documentation>
@@ -17289,6 +17336,7 @@ Sample values include: 1] header; 2] footer; 3] pageNum(page number) ; 4] lineNu
       <ref name="macro.paraContent"/>
       <ref name="att.global.attributes"/>
       <ref name="att.editLike.attributes"/>
+      <ref name="att.dimensions.attributes"/>
       <optional>
         <attribute name="reason">
           <a:documentation>one or more words indicating why this text is believed to be superfluous, e.g. repeated, interpolated etc.</a:documentation>
@@ -17310,6 +17358,7 @@ Sample values include: 1] header; 2] footer; 3] pageNum(page number) ; 4] lineNu
       <ref name="macro.paraContent"/>
       <ref name="att.global.attributes"/>
       <ref name="att.editLike.attributes"/>
+      <ref name="att.dimensions.attributes"/>
       <optional>
         <attribute name="reason">
           <a:documentation>one or more words indicating why this text has been secluded, e.g. interpolated etc.</a:documentation>
@@ -17389,6 +17438,7 @@ Sample values include: 1] header; 2] footer; 3] pageNum(page number) ; 4] lineNu
       <ref name="att.transcriptional.attributes"/>
       <ref name="att.typed.attributes"/>
       <ref name="att.spanning.attributes"/>
+      <ref name="att.dimensions.attributes"/>
       <empty/>
     </element>
   </define>
@@ -17399,6 +17449,7 @@ Sample values include: 1] header; 2] footer; 3] pageNum(page number) ; 4] lineNu
       <ref name="att.global.attributes"/>
       <ref name="att.spanning.attributes"/>
       <ref name="att.transcriptional.attributes"/>
+      <ref name="att.dimensions.attributes"/>
       <optional>
         <attribute name="target">
           <a:documentation>points to one or more elements representing the interventions which are being reasserted.</a:documentation>
@@ -17419,6 +17470,7 @@ Sample values include: 1] header; 2] footer; 3] pageNum(page number) ; 4] lineNu
       <ref name="att.global.attributes"/>
       <ref name="att.spanning.attributes"/>
       <ref name="att.transcriptional.attributes"/>
+      <ref name="att.dimensions.attributes"/>
       <empty/>
     </element>
   </define>
@@ -17442,6 +17494,7 @@ Sample values include: 1] header; 2] footer; 3] pageNum(page number) ; 4] lineNu
       <ref name="att.global.attributes"/>
       <ref name="att.spanning.attributes"/>
       <ref name="att.transcriptional.attributes"/>
+      <ref name="att.dimensions.attributes"/>
       <optional>
         <attribute name="target">
           <a:documentation>points to one or more elements representing the interventions which are to be reverted or undone.</a:documentation>
@@ -17771,7 +17824,7 @@ should correspond to an existing module, via a moduleSpec or
       <optional>
         <attribute name="scheme" a:defaultValue="TEI">
           <a:documentation>supplies an identifier for the scheme in which this name is defined.
-Sample values include: 1] TEI(text encoding initiative) ; 2] DBK(docbook) ; 3] XX(unknown) ; 4] imaginary; 5] XHTML; 6] XML; 7] XI</a:documentation>
+Sample values include: 1] TEI (text encoding initiative) ; 2] DBK (docbook) ; 3] XX (unknown) ; 4] imaginary; 5] XHTML; 6] XML; 7] XI</a:documentation>
           <data type="token">
             <param name="pattern">(\p{L}|\p{N}|\p{P}|\p{S})+</param>
           </data>
@@ -17798,7 +17851,7 @@ Sample values include: 1] TEI(text encoding initiative) ; 2] DBK(docbook) ; 3] X
   </define>
   <define name="eg">
     <element name="tei:eg">
-      <a:documentation>(example) contains any kind of illustrative example. [22.5. Element Specifications 22.5.4. Attribute List Specification]</a:documentation>
+      <a:documentation>(example) contains any kind of illustrative example. [22.5. Element Specifications 22.5.3. Attribute List Specification]</a:documentation>
       <ref name="macro.phraseSeq"/>
       <ref name="att.global.attributes"/>
       <empty/>
@@ -17838,7 +17891,7 @@ Sample values include: 1] TEI(text encoding initiative) ; 2] DBK(docbook) ; 3] X
       <optional>
         <attribute name="scheme" a:defaultValue="TEI">
           <a:documentation>supplies the name of the scheme in which this name is defined.
-Sample values include: 1] TEI; 2] DBK(docbook) ; 3] XX(unknown) ; 4] Schematron; 5] HTML</a:documentation>
+Sample values include: 1] TEI; 2] DBK (docbook) ; 3] XX (unknown) ; 4] Schematron; 5] HTML</a:documentation>
           <data type="token">
             <param name="pattern">(\p{L}|\p{N}|\p{P}|\p{S})+</param>
           </data>
@@ -17883,7 +17936,7 @@ Sample values include: 1] TEI; 2] DBK(docbook) ; 3] XX(unknown) ; 4] Schematron;
       <optional>
         <attribute name="scheme" a:defaultValue="TEI">
           <a:documentation>supplies the name of the schema in which this tag is defined.
-Sample values include: 1] TEI(text encoding initiative) ; 2] DBK(docbook) ; 3] XX(unknown) ; 4] Schematron; 5] HTML</a:documentation>
+Sample values include: 1] TEI (text encoding initiative) ; 2] DBK (docbook) ; 3] XX (unknown) ; 4] Schematron; 5] HTML</a:documentation>
           <data type="token">
             <param name="pattern">(\p{L}|\p{N}|\p{P}|\p{S})+</param>
           </data>
@@ -17894,7 +17947,7 @@ Sample values include: 1] TEI(text encoding initiative) ; 2] DBK(docbook) ; 3] X
   </define>
   <define name="val">
     <element name="tei:val">
-      <a:documentation>(value) contains a single attribute value. [22. Documentation Elements 22.5.4. Attribute List Specification]</a:documentation>
+      <a:documentation>(value) contains a single attribute value. [22. Documentation Elements 22.5.3. Attribute List Specification]</a:documentation>
       <text/>
       <ref name="att.global.attributes"/>
       <empty/>
@@ -18469,7 +18522,7 @@ Child elements of <sch:name/>
   </define>
   <define name="remarks">
     <element name="tei:remarks">
-      <a:documentation>contains any commentary or discussion about the usage of an element, attribute, class, or entity not otherwise documented within the containing element. [22.5. Element Specifications 22.5.4. Attribute List Specification 22.6. Class Specifications 22.7. Macro Specifications]</a:documentation>
+      <a:documentation>contains any commentary or discussion about the usage of an element, attribute, class, or entity not otherwise documented within the containing element. [22.5. Element Specifications 22.5.3. Attribute List Specification 22.6. Class Specifications 22.7. Macro Specifications]</a:documentation>
       <oneOrMore>
         <ref name="model.pLike"/>
       </oneOrMore>
@@ -18481,14 +18534,9 @@ Child elements of <sch:name/>
   <define name="listRef">
     <element name="tei:listRef">
       <a:documentation>(list of references) supplies a list of significant references to places where this element is discussed, in the current document or elsewhere.</a:documentation>
-      <choice>
-        <oneOrMore>
-          <ref name="ptr"/>
-        </oneOrMore>
-        <oneOrMore>
-          <ref name="ref"/>
-        </oneOrMore>
-      </choice>
+      <oneOrMore>
+        <ref name="model.ptrLike"/>
+      </oneOrMore>
       <ref name="att.global.attributes"/>
       <empty/>
     </element>
@@ -18622,7 +18670,7 @@ Child elements of <sch:name/>
   </define>
   <define name="model">
     <element name="tei:model">
-      <a:documentation>describes the processing intended for a specified element. [22.5.5.1. The TEI processing model]</a:documentation>
+      <a:documentation>describes the processing intended for a specified element. [22.5.4.1. The TEI processing model]</a:documentation>
       <group>
         <zeroOrMore>
           <choice>
@@ -18765,7 +18813,7 @@ Sample values include: 1] web; 2] print; 3] plain</a:documentation>
   </define>
   <define name="modelSequence">
     <element name="tei:modelSequence">
-      <a:documentation>any sequence of model or modelSequence elements which is to be processed as a single set of actions [22.5.5.7. Model sequence]</a:documentation>
+      <a:documentation>any sequence of model or modelSequence elements which is to be processed as a single set of actions [22.5.4.7. Model sequence]</a:documentation>
       <group>
         <zeroOrMore>
           <choice>
@@ -18824,7 +18872,7 @@ Suggested values include: 1] web; 2] print; 3] plaintext</a:documentation>
   </define>
   <define name="modelGrp">
     <element name="tei:modelGrp">
-      <a:documentation>any grouping of model or modelSequence elements with a common output method [22.5.5.4. Model Contexts and Outputs]</a:documentation>
+      <a:documentation>any grouping of model or modelSequence elements with a common output method [22.5.4.4. Model Contexts and Outputs]</a:documentation>
       <group>
         <zeroOrMore>
           <choice>
@@ -18898,7 +18946,7 @@ Sample values include: 1] first-line; 2] first-letter; 3] before; 4] after</a:do
   </define>
   <define name="paramSpec">
     <element name="tei:paramSpec">
-      <a:documentation>supplies specification for one parameter of a model behaviour [22.5.5.8. Defining a processing model]</a:documentation>
+      <a:documentation>supplies specification for one parameter of a model behaviour [22.5.4.8. Defining a processing model]</a:documentation>
       <zeroOrMore>
         <choice>
           <ref name="model.glossLike"/>
@@ -18912,7 +18960,7 @@ Sample values include: 1] first-line; 2] first-letter; 3] before; 4] after</a:do
   </define>
   <define name="param">
     <element name="tei:param">
-      <a:documentation>provides a parameter for a model behaviour by supplying its name and an XPath expression identifying the location of its content. [22.5.5.5. Behaviours and their parameters]</a:documentation>
+      <a:documentation>provides a parameter for a model behaviour by supplying its name and an XPath expression identifying the location of its content. [22.5.4.5. Behaviours and their parameters]</a:documentation>
       <empty/>
       <ref name="att.global.attributes"/>
       <attribute name="name">
@@ -18954,13 +19002,15 @@ Suggested values include: 1] alternate; 2] default; 3] height; 4] id; 5] label; 
   </define>
   <define name="content">
     <element name="tei:content">
-      <a:documentation>(content model) contains the text of a declaration for the schema documented. [22.5. Element Specifications]</a:documentation>
-      <zeroOrMore>
-        <choice>
-          <ref name="anyElement-content"/>
+      <a:documentation>(content model) contains a declaration of the intended content model for the element (or other construct) being specified. [22.5. Element Specifications]</a:documentation>
+      <choice>
+        <zeroOrMore>
           <ref name="model.contentPart"/>
-        </choice>
-      </zeroOrMore>
+        </zeroOrMore>
+        <oneOrMore>
+          <ref name="anyElement-content"/>
+        </oneOrMore>
+      </choice>
       <ref name="att.global.attributes"/>
       <optional>
         <attribute name="autoPrefix" a:defaultValue="true">
@@ -18978,7 +19028,7 @@ Suggested values include: 1] alternate; 2] default; 3] height; 4] id; 5] label; 
   </define>
   <define name="sequence">
     <element name="tei:sequence">
-      <a:documentation>sequence of references [22.5.1. Defining Content Models]</a:documentation>
+      <a:documentation>indicates that the constructs referenced by its children form a sequence [22.5.1. Defining Content Models]</a:documentation>
       <oneOrMore>
         <ref name="model.contentPart"/>
       </oneOrMore>
@@ -19002,7 +19052,7 @@ Suggested values include: 1] alternate; 2] default; 3] height; 4] id; 5] label; 
   </define>
   <define name="alternate">
     <element name="tei:alternate">
-      <a:documentation>an alternation of references [22.5.1. Defining Content Models]</a:documentation>
+      <a:documentation>indicates that the constructs referenced by its children form an alternation [22.5.1. Defining Content Models]</a:documentation>
       <oneOrMore>
         <ref name="model.contentPart"/>
       </oneOrMore>
@@ -19059,17 +19109,16 @@ Suggested values include: 1] alternate; 2] default; 3] height; 4] id; 5] label; 
       <sch:ns prefix="sch" uri="http://purl.oclc.org/dsdl/schematron"/>
       <sch:pattern id="tei_all-constraintSpec-isosch-constraint-report-33">
             <sch:rule context="tei:constraintSpec">
-               <sch:report test="tei:constraint/sch:*  and  not( @scheme = ('isoschematron','schematron') )">Rules
+               <sch:report test="tei:constraint/sch:*  and  not( @scheme eq 'schematron')">Rules
         in the ISO Schematron language must be inside a constraintSpec
-        with a value of 'isoschematron' (deprecated) or 'schematron' on the
-        scheme attribute</sch:report>
+        with the value 'schematron' on the scheme attribute</sch:report>
 
             </sch:rule>
 
          </sch:pattern>
       <sch:ns prefix="sch" uri="http://purl.oclc.org/dsdl/schematron"/>
       <sch:pattern id="tei_all-constraintSpec-needrules-constraint-rule-19">
-            <sch:rule context="tei:macroSpec/tei:constraintSpec[@scheme=('isoschematron','schematron')]/tei:constraint">
+            <sch:rule context="tei:macroSpec/tei:constraintSpec[@scheme eq 'schematron']/tei:constraint">
                <sch:report test="sch:assert|sch:report">An ISO Schematron constraint specification for a macro should not
         have an 'assert' or 'report' element without a parent 'rule' element</sch:report>
 
@@ -19081,10 +19130,8 @@ Suggested values include: 1] alternate; 2] default; 3] height; 4] id; 5] label; 
       <ref name="att.typed.attributes"/>
       <attribute name="scheme">
         <a:documentation>supplies the name of the language in which the constraints are defined
-Suggested values include: 1] schematron(ISO Schematron) ; 2] schematron(ISO Schematron) </a:documentation>
+Suggested values include: 1] schematron (ISO Schematron) </a:documentation>
         <choice>
-          <value>schematron</value>
-          <a:documentation>(ISO Schematron) </a:documentation>
           <value>schematron</value>
           <a:documentation>(ISO Schematron) </a:documentation>
           <data type="token">
@@ -19122,7 +19169,7 @@ Suggested values include: 1] schematron(ISO Schematron) ; 2] schematron(ISO Sche
   </define>
   <define name="attDef">
     <element name="tei:attDef">
-      <a:documentation>(attribute definition) contains the definition of a single attribute. [22.5.4. Attribute List Specification]</a:documentation>
+      <a:documentation>(attribute definition) contains the definition of a single attribute. [22.5.3. Attribute List Specification]</a:documentation>
       <group>
         <zeroOrMore>
           <choice>
@@ -19170,7 +19217,7 @@ Suggested values include: 1] schematron(ISO Schematron) ; 2] schematron(ISO Sche
          </sch:pattern>
       <sch:pattern id="tei_all-attDef-noDefault4Required-constraint-rule-20">
             <sch:rule context="tei:attDef[@usage eq 'req']">
-	              <sch:report test="tei:defaultVal">It does not make sense to make "<sch:value-of select="normalize-space(tei:defaultVal)"/>
+               <sch:report test="tei:defaultVal">It does not make sense to make "<sch:value-of select="normalize-space(tei:defaultVal)"/>
 " the default value of @<sch:value-of select="@ident"/>
 , because that attribute is required.</sch:report>
 
@@ -19179,26 +19226,26 @@ Suggested values include: 1] schematron(ISO Schematron) ; 2] schematron(ISO Sche
          </sch:pattern>
       <sch:pattern id="tei_all-attDef-defaultIsInClosedList-twoOrMore-constraint-rule-21">
             <sch:rule context="tei:attDef[   tei:defaultVal   and   tei:valList[@type eq 'closed']   and   tei:datatype[    @maxOccurs &gt; 1    or    @minOccurs &gt; 1    or    @maxOccurs = 'unbounded'    ]   ]">
-	              <sch:assert test="     tokenize(normalize-space(tei:defaultVal),' ')     =     tei:valList/tei:valItem/@ident">In the <sch:value-of select="local-name(ancestor::*[@ident][1])"/>
+               <sch:assert test="     tokenize(normalize-space(tei:defaultVal),' ')     =     tei:valList/tei:valItem/@ident">In the <sch:value-of select="local-name(ancestor::*[@ident][1])"/>
  defining
-	<sch:value-of select="ancestor::*[@ident][1]/@ident"/>
+        <sch:value-of select="ancestor::*[@ident][1]/@ident"/>
  the default value of the
-	@<sch:value-of select="@ident"/>
+        @<sch:value-of select="@ident"/>
  attribute is not among the closed list of possible
-	values</sch:assert>
+        values</sch:assert>
 
             </sch:rule>
 
          </sch:pattern>
       <sch:pattern id="tei_all-attDef-defaultIsInClosedList-one-constraint-rule-22">
             <sch:rule context="tei:attDef[   tei:defaultVal   and   tei:valList[@type eq 'closed']   and   tei:datatype[    not(@maxOccurs)    or (    if ( @maxOccurs castable as xs:integer )     then ( @maxOccurs cast as xs:integer eq 1 )     else false()    )]   ]">
-	              <sch:assert test="string(tei:defaultVal)      =      tei:valList/tei:valItem/@ident">In the <sch:value-of select="local-name(ancestor::*[@ident][1])"/>
+               <sch:assert test="string(tei:defaultVal)      =      tei:valList/tei:valItem/@ident">In the <sch:value-of select="local-name(ancestor::*[@ident][1])"/>
  defining
-	<sch:value-of select="ancestor::*[@ident][1]/@ident"/>
+        <sch:value-of select="ancestor::*[@ident][1]/@ident"/>
  the default value of the
-	@<sch:value-of select="@ident"/>
+        @<sch:value-of select="@ident"/>
  attribute is not among the closed list of possible
-	values</sch:assert>
+        values</sch:assert>
 
             </sch:rule>
 
@@ -19251,7 +19298,7 @@ Suggested values include: 1] schematron(ISO Schematron) ; 2] schematron(ISO Sche
   </define>
   <define name="datatype">
     <element name="tei:datatype">
-      <a:documentation>specifies the declared value for an attribute, by referring to any datatype defined by the chosen schema language. [1.4.2. Datatype Specifications 22.5.4. Attribute List Specification]</a:documentation>
+      <a:documentation>specifies the declared value for an attribute, by referring to any datatype defined by the chosen schema language. [1.4.2. Datatype Specifications 22.5.3. Attribute List Specification]</a:documentation>
       <choice>
         <ref name="dataRef"/>
         <ref name="anyElement-datatype"/>
@@ -19278,7 +19325,7 @@ Suggested values include: 1] schematron(ISO Schematron) ; 2] schematron(ISO Sche
   </define>
   <define name="dataRef">
     <element name="tei:dataRef">
-      <a:documentation>identifies the datatype of an attribute value, either by referencing an item in an externally defined datatype library, or by pointing to a TEI-defined data specification [22.5.4.1. Datatypes]</a:documentation>
+      <a:documentation>identifies the datatype of an attribute value, either by referencing an item in an externally defined datatype library, or by pointing to a TEI-defined data specification [22.5.3.1. Datatypes]</a:documentation>
       <zeroOrMore>
         <ref name="dataFacet"/>
       </zeroOrMore>
@@ -19329,7 +19376,7 @@ Suggested values include: 1] schematron(ISO Schematron) ; 2] schematron(ISO Sche
   </define>
   <define name="dataFacet">
     <element name="tei:dataFacet">
-      <a:documentation>Restricts the value of the strings used to represent values of a datatype, according to XML Schemas: Part 2: Datatypes. [22.5.4.1. Datatypes]</a:documentation>
+      <a:documentation>Restricts the value of the strings used to represent values of a datatype, according to XML Schemas: Part 2: Datatypes. [22.5.3.1. Datatypes]</a:documentation>
       <empty/>
       <ref name="att.global.attributes"/>
       <attribute name="name">
@@ -19370,7 +19417,7 @@ Suggested values include: 1] schematron(ISO Schematron) ; 2] schematron(ISO Sche
   </define>
   <define name="defaultVal">
     <element name="tei:defaultVal">
-      <a:documentation>(default value) specifies the default declared value for an attribute. [22.5.4. Attribute List Specification]</a:documentation>
+      <a:documentation>(default value) specifies the default declared value for an attribute. [22.5.3. Attribute List Specification]</a:documentation>
       <text/>
       <ref name="att.global.attributes"/>
       <ref name="att.deprecated.attributes"/>
@@ -19379,7 +19426,7 @@ Suggested values include: 1] schematron(ISO Schematron) ; 2] schematron(ISO Sche
   </define>
   <define name="valDesc">
     <element name="tei:valDesc">
-      <a:documentation>(value description) specifies any semantic or syntactic constraint on the value that an attribute may take, additional to the information carried by the datatype element. [22.5.4. Attribute List Specification]</a:documentation>
+      <a:documentation>(value description) specifies any semantic or syntactic constraint on the value that an attribute may take, additional to the information carried by the datatype element. [22.5.3. Attribute List Specification]</a:documentation>
       <ref name="macro.phraseSeq.limited"/>
       <ref name="att.global.attributes"/>
       <ref name="att.translatable.attributes"/>
@@ -19389,14 +19436,25 @@ Suggested values include: 1] schematron(ISO Schematron) ; 2] schematron(ISO Sche
   </define>
   <define name="valItem">
     <element name="tei:valItem">
-      <a:documentation>documents a single value in a predefined list of values. [22.5.4. Attribute List Specification]</a:documentation>
+      <a:documentation>documents a single value in a predefined list of values. [22.5.3. Attribute List Specification]</a:documentation>
       <group>
         <zeroOrMore>
-          <choice>
-            <ref name="model.descLike"/>
-            <ref name="model.glossLike"/>
-          </choice>
+          <ref name="model.glossLike"/>
         </zeroOrMore>
+        <optional>
+          <oneOrMore>
+            <ref name="model.descLike"/>
+          </oneOrMore>
+          <zeroOrMore>
+            <ref name="model.glossLike"/>
+            <zeroOrMore>
+              <ref name="model.descLike"/>
+            </zeroOrMore>
+          </zeroOrMore>
+          <zeroOrMore>
+            <ref name="remarks"/>
+          </zeroOrMore>
+        </optional>
         <optional>
           <ref name="paramList"/>
         </optional>
@@ -19412,7 +19470,7 @@ Suggested values include: 1] schematron(ISO Schematron) ; 2] schematron(ISO Sche
   </define>
   <define name="valList">
     <element name="tei:valList">
-      <a:documentation>(value list) contains one or more valItem elements defining possible values. [22.5.4. Attribute List Specification]</a:documentation>
+      <a:documentation>(value list) contains one or more valItem elements defining possible values. [22.5.3. Attribute List Specification]</a:documentation>
       <zeroOrMore>
         <ref name="valItem"/>
       </zeroOrMore>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <grammar ns="tag:textalign.net,2015:ns" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:local="tag:textalign.net,2015:ns" xmlns="http://relaxng.org/ns/structure/1.0">
-  <include href="incl/TAN-class-2.rng">
+  <include href="TAN-class-2.rng">
     <start>
       <element name="TAN-A-tok">
         <a:documentation>specifies that the file is a token-based TAN alignment file. Root element.</a:documentation>

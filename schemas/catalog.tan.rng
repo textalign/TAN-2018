@@ -14,8 +14,36 @@
           <attribute name="root">
             <data type="NCName"/>
           </attribute>
+          <ref name="any-content"/>
         </element>
       </oneOrMore>
     </element>
   </start>
+  <define name="any-content">
+    <interleave>
+      <zeroOrMore>
+        <ref name="any-element"/>
+      </zeroOrMore>
+      <text/>
+    </interleave>
+  </define>
+  <define name="any-element">
+    <element>
+      <anyName/>
+      <zeroOrMore>
+        <ref name="any-attribute"/>
+      </zeroOrMore>
+      <ref name="any-content"/>
+    </element>
+  </define>
+  <!-- We omit @xml:id to avoid id conflicts -->
+  <define name="any-attribute">
+    <attribute>
+      <anyName>
+        <except>
+          <name>xml:id</name>
+        </except>
+      </anyName>
+    </attribute>
+  </define>
 </grammar>

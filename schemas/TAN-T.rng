@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <grammar ns="tag:textalign.net,2015:ns" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:local="tag:textalign.net,2015:ns" xmlns="http://relaxng.org/ns/structure/1.0">
-  <include href="incl/TAN-class-1.rng">
+  <include href="TAN-class-1.rng">
     <start>
       <element name="TAN-T">
         <a:documentation>specifies that the TAN file contains a transcription. Root element.</a:documentation>

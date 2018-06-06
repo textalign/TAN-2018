@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <grammar ns="tag:textalign.net,2015:ns" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
-  <include href="incl/TAN-class-2.rng">
+  <include href="TAN-class-2.rng">
     <start>
       <element name="TAN-A-lm">
         <a:documentation>specifies that the file is a TAN file containing lexico-morphology data about a text. Root element.</a:documentation>
@@ -110,6 +110,26 @@
     <zeroOrMore>
       <ref name="lang-outside"/>
     </zeroOrMore>
+    <interleave>
+      <zeroOrMore>
+        <ref name="tok-start-indicator"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="tok-is-indicator"/>
+      </zeroOrMore>
+    </interleave>
+  </define>
+  <define name="tok-start-indicator">
+    <element name="tok-starts-with">
+      <a:documentation>specifies an opening string that characterizes the @val of &lt;tok&gt;s in the file.</a:documentation>
+      <text/>
+    </element>
+  </define>
+  <define name="tok-is-indicator">
+    <element name="tok-is">
+      <a:documentation>specifies the exact values of every @val of &lt;tok&gt;s in the file.</a:documentation>
+      <text/>
+    </element>
   </define>
   <define name="TAN-A-lm-item">
     <element name="ana">
@@ -127,7 +147,13 @@
             <ref name="certainty-stamp"/>
           </optional>
           <optional>
+            <ref name="claimant-data"/>
+          </optional>
+          <optional>
             <ref name="group-ref"/>
+          </optional>
+          <optional>
+            <ref name="attr-tok-pop"/>
           </optional>
           <interleave>
             <zeroOrMore>
@@ -174,6 +200,12 @@
         </group>
       </choice>
     </element>
+  </define>
+  <define name="attr-tok-pop">
+    <attribute name="tok-pop">
+      <a:documentation>specifies the quantity of tokens that are the subject of the &lt;ana&gt;.. This attribute is useful for language-specific TAN-A-lm files, where the total number of tokens that formed the set might be lost. It is also usefor calculating the relative probability of token to lm combinations.</a:documentation>
+      <data type="integer"/>
+    </attribute>
   </define>
   <define name="lm-tok-ref">
     <choice>
