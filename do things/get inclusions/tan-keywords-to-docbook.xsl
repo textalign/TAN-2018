@@ -9,12 +9,6 @@
     <!-- Output: a docbook representation of those keywords -->
     <!-- Written primarily to support creation of TAN guideline content -->
     <xsl:template match="*" mode="deep-skip"/>
-    <xsl:template match="*" mode="shallow-copy">
-        <xsl:copy>
-            <xsl:copy-of select="@*"/>
-            <xsl:apply-templates mode="#current"/>
-        </xsl:copy>
-    </xsl:template>
     <xsl:template match="tan:head" mode="keyword-to-docbook">
         <xsl:apply-templates select="tan:name | tan:desc | tan:master-location" mode="#current"/>
     </xsl:template>

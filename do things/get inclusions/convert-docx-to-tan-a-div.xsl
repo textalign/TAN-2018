@@ -10,7 +10,7 @@
 
     <xsl:template match="/w:comments" priority="1" mode="input-pass-1">
 
-        <xsl:variable name="this-base-uri" select="@base-uri"/>
+        <xsl:variable name="this-base-uri" select="@xml:base"/>
         <xsl:variable name="this-base-uri-without-percentage"
             select="replace($this-base-uri, '%\d+', '')"/>
         <xsl:variable name="this-homily-number"
@@ -18,7 +18,7 @@
         <xsl:variable name="this-source-idref"
             select="tan:clio-scripta-idrefs($this-base-uri-without-percentage, 'source')"/>
         <xsl:variable name="this-source-pass-1" as="document-node()*">
-            <xsl:apply-templates select="$input-items[w:document/@base-uri = $this-base-uri]"
+            <xsl:apply-templates select="$input-items[w:document/@xml:base = $this-base-uri]"
                 mode="input-pass-1">
                 <xsl:with-param name="target-root-element-name" select="'TAN-T'"/>
                 <xsl:with-param name="keep-anchors" select="true()" tunnel="yes"/>

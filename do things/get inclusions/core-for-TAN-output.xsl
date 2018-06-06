@@ -8,7 +8,7 @@
    <!--<xsl:param name="stylesheet-iri" as="xs:string" required="yes"/>
    <xsl:param name="stylesheet-url" as="xs:string" select="static-base-uri()"/>
    <xsl:param name="change-message" as="xs:string*" required="yes"/>-->
-   <xsl:import href="../configure%20parameters/parameters-for-TAN-output.xsl"/>
+   <xsl:import href="../../parameters/output-parameters.xsl"/>
 
    <xsl:template match="/tan:*" mode="credit-stylesheet">
       <xsl:variable name="this-base-uri" select="tan:base-uri(.)"/>
@@ -47,7 +47,7 @@
       <xsl:variable name="stylesheet-role"
          select="$TAN-keyword-files/tan:TAN-key/tan:body[@affects-element = 'role']/tan:item[tan:name = 'stylesheet']"/>
       <xsl:variable name="role-element-for-stylesheet"
-         select="tan:definitions/tan:role[(tan:IRI = $stylesheet-role/tan:IRI) or (tan:name, @which) = $stylesheet-role/tan:name]"/>
+         select="tan:head/tan:definitions/tan:role[(tan:IRI = $stylesheet-role/tan:IRI) or (tan:name, @which) = $stylesheet-role/tan:name]"/>
       <xsl:variable name="stylesheet-role-id">
          <xsl:choose>
             <xsl:when test="exists($role-element-for-stylesheet)">
@@ -57,7 +57,7 @@
                <xsl:variable name="new-id-number-start"
                   select="
                      max((0,
-                     for $i in tan:definitons/tan:role/@xml:id[matches(., '^stylesheet\d+$')]
+                     for $i in tan:head/tan:definitons/tan:role/@xml:id[matches(., '^stylesheet\d+$')]
                      return
                         number(replace($i, '\D+', ''))))"
                />

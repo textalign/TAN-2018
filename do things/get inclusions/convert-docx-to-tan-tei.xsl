@@ -17,7 +17,7 @@
     <!-- The goal here is a simple, unadorned, plain TAN-TEI body, perhaps retaining anchors in case it is being treated as a source -->
 
     <xsl:template match="/w:document" priority="1" mode="input-pass-1">
-        <xsl:variable name="this-base-uri" select="@base-uri"/>
+        <xsl:variable name="this-base-uri" select="@xml:base"/>
         <xsl:variable name="this-base-uri-without-percentage"
             select="replace($this-base-uri, '%\d\d', '')"/>
         <xsl:variable name="numbers-in-filename" as="xs:integer*">
@@ -30,7 +30,7 @@
         </xsl:variable>
         <xsl:variable name="this-docx-number" select="$numbers-in-filename[1]"/>
         <xsl:variable name="these-comments"
-            select="$input-items[w:comments/@base-uri = $this-base-uri]"/>
+            select="$input-items[w:comments/@xml:base = $this-base-uri]"/>
         <xsl:element name="body" namespace="{$template-namespace}">
             <xsl:if test="$docx-is-first-level-hierarchy">
                 <div level="1" type="{$default-div-type-sequence[1]}" n="{$this-docx-number}"/>
