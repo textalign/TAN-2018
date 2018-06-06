@@ -6,10 +6,10 @@
     <xsl:import href="../../functions/TAN-extra-functions.xsl"/>
     <xsl:template match="tan:name">
         <xsl:variable name="this-indent" select="preceding-sibling::node()[1]/self::text()"/>
-        <xsl:variable name="viaf-search" select="tan:search-for-scripta(., 10)"/>
-        <xsl:variable name="viaf-results"
-            select="tan:search-results-to-IRI-name-pattern($viaf-search)"/>
+        <xsl:variable name="loc-search" select="tan:search-for-scripta(., 10)"/>
+        <xsl:variable name="loc-results"
+            select="tan:search-results-to-IRI-name-pattern($loc-search)"/>
         <xsl:copy-of select="."/>
-        <xsl:copy-of select="$viaf-results"/>
+        <xsl:copy-of select="$loc-results"/>
     </xsl:template>
 </xsl:stylesheet>
