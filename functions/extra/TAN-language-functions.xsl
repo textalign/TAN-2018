@@ -4,10 +4,13 @@
    xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:tei="http://www.tei-c.org/ns/1.0"
    xmlns:math="http://www.w3.org/2005/xpath-functions/math" xmlns:functx="http://www.functx.com"
    xmlns:sch="http://purl.oclc.org/dsdl/schematron" xmlns:xhtml="http://www.w3.org/1999/xhtml"
-   xmlns:mods="http://www.loc.gov/mods/v3" exclude-result-prefixes="#all" version="2.0">
+   xmlns:mods="http://www.loc.gov/mods/v3"  xmlns:map="http://www.w3.org/2005/xpath-functions/map"
+   exclude-result-prefixes="#all" version="3.0">
    <!-- This is a special set of extra functions for processing information about languages -->
 
    <xsl:variable name="iso-639-3" select="doc('lang/iso-639-3.xml')" as="document-node()?"/>
+   
+   <xsl:variable name="grc-tokens-without-accents" select="doc('lang/grc-tokens-without-accents.xml')/*/*"/>
 
    <xsl:function name="tan:lang-code" as="xs:string*">
       <!-- Input: the name of a language -->
@@ -44,5 +47,38 @@
          />
       </xsl:if>
    </xsl:function>
+   
+   <xsl:function name="tan:lang-catalog" as="document-node()*">
+      <!-- Input: a language code -->
+      <!-- Output: the catalogs for that language -->
+      <xsl:param name="lang-codes" as="xs:string*"/>
+      <xsl:variable name="lang-codes-rev"
+         select="
+            if ((count($lang-codes) lt 1) or $lang-codes = '*') then
+               '*'
+            else
+               $lang-codes"/>
+      <xsl:for-each select="$lang-codes-rev">
+         <xsl:variable name="this-lang-code" select="."/>
+         <xsl:variable name="these-catalog-uris"
+            select="
+               if ($this-lang-code = '*') then
+                  (for $i in $languages-supported
+                  return
+                     $lang-catalog-map($i))
+               else
+                  $lang-catalog-map($this-lang-code)"/>
+         <xsl:if test="not(exists($these-catalog-uris))">
+            <xsl:message select="'No catalogs defined for', $this-lang-code"/>
+         </xsl:if>
+         <xsl:for-each select="$these-catalog-uris">
+            <xsl:variable name="this-uri" select="resolve-uri(., $extra-parameters-base-uri)"/>
+            <xsl:if test="doc-available($this-uri)">
+               <xsl:sequence select="doc($this-uri)"/>
+            </xsl:if>
+         </xsl:for-each>
+      </xsl:for-each>
+   </xsl:function>
+   <xsl:variable name="languages-supported" select="map:keys($lang-catalog-map)"/>
    
 </xsl:stylesheet>
