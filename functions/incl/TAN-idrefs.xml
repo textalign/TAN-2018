@@ -87,6 +87,7 @@
     <id>
         <element>organization</element>
         <element>person</element>
+        <element>algorithm</element>
         <idrefs attribute="claimant"/>
     </id>
     <id>
