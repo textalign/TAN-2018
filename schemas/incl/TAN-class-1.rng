@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <grammar ns="tag:textalign.net,2015:ns" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:local="tag:textalign.net,2015:ns" xmlns="http://relaxng.org/ns/structure/1.0">
   <include href="TAN-core.rng">
+    <define name="other-files-non-core">
+      <interleave>
+        <zeroOrMore>
+          <ref name="redivision-item"/>
+        </zeroOrMore>
+        <optional>
+          <ref name="model-item"/>
+        </optional>
+        <zeroOrMore>
+          <ref name="annotation-item"/>
+        </zeroOrMore>
+      </interleave>
+    </define>
     <define name="definition-non-core">
       <interleave>
         <ref name="defn-class-1"/>
         <ref name="defn-non-class-1"/>
       </interleave>
-    </define>
-    <define name="body-group">
-      <empty/>
     </define>
     <define name="alter-non-core">
       <interleave>
@@ -19,6 +29,9 @@
           <ref name="alt-repl"/>
         </zeroOrMore>
       </interleave>
+    </define>
+    <define name="body-group">
+      <empty/>
     </define>
     <define name="body-content-non-core">
       <interleave>
@@ -32,6 +45,60 @@
   </define>
   <define name="body-content-non-class-1">
     <empty/>
+  </define>
+  <define name="redivision-item">
+    <element name="redivision">
+      <a:documentation>identifies a class 1 file that has the same work, scriptum, and version, but segmented according to a different reference system.
+The normalized transcriptions of redivided texts must be identical</a:documentation>
+      <optional>
+        <ref name="ed-stamp"/>
+      </optional>
+      <choice>
+        <ref name="inclusion"/>
+        <interleave>
+          <zeroOrMore>
+            <ref name="comment"/>
+          </zeroOrMore>
+          <ref name="entity-digital-tan-other-ref"/>
+        </interleave>
+      </choice>
+    </element>
+  </define>
+  <define name="model-item">
+    <element name="model">
+      <a:documentation>identifies a class 1 file has been used as a model for how the current file has been segmented and labeled.</a:documentation>
+      <a:documentation>To declare a model is to indicate that the reference system that has been adopted is likely not native to the scriptum, and users should take that into account. For example, if a file modeled on another has &lt;div type="sentence"&gt;, it should not be assumed that the text that is surrounded is really a sentence.</a:documentation>
+      <a:documentation>A file need not follow its model exactly.</a:documentation>
+      <optional>
+        <ref name="ed-stamp"/>
+      </optional>
+      <choice>
+        <ref name="inclusion"/>
+        <interleave>
+          <zeroOrMore>
+            <ref name="comment"/>
+          </zeroOrMore>
+          <ref name="entity-digital-tan-other-ref"/>
+        </interleave>
+      </choice>
+    </element>
+  </define>
+  <define name="annotation-item">
+    <element name="annotation">
+      <a:documentation>identifies a class 2 file that is an annotation on (and therefore a dependent of) the current file.</a:documentation>
+      <optional>
+        <ref name="ed-stamp"/>
+      </optional>
+      <choice>
+        <ref name="inclusion"/>
+        <interleave>
+          <zeroOrMore>
+            <ref name="comment"/>
+          </zeroOrMore>
+          <ref name="entity-digital-tan-other-ref"/>
+        </interleave>
+      </choice>
+    </element>
   </define>
   <define name="defn-class-1">
     <interleave>

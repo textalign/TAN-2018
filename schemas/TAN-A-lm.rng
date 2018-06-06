@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <grammar ns="tag:textalign.net,2015:ns" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
-  <include href="TAN-class-2.rng">
+  <include href="incl/TAN-class-2.rng">
     <start>
       <element name="TAN-A-lm">
         <a:documentation>specifies that the file is a TAN file containing lexico-morphology data about a text. Root element.</a:documentation>

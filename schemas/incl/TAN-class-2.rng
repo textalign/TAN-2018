@@ -69,7 +69,9 @@
     <empty/>
   </define>
   <define name="body-content-class-2">
-    <empty/>
+    <optional>
+      <ref name="claimant-data"/>
+    </optional>
   </define>
   <define name="body-content-non-class-2">
     <empty/>
@@ -208,6 +210,30 @@
       <data type="boolean"/>
     </attribute>
   </define>
+  <define name="claimant-data">
+    <ref name="claimant-ref"/>
+    <optional>
+      <ref name="claimant-when"/>
+    </optional>
+  </define>
+  <define name="claimant-ref">
+    <attribute name="claimant">
+      <a:documentation>points to a &lt;person&gt;, &lt;organization&gt;, or &lt;algorithm&gt; who makes a claim. @claimant within &lt;body&gt; indicates the default persons to be credited or blamed for an assertion.</a:documentation>
+      <a:documentation>This attribute is taken into account before all other attributes. That is, @claimant is to be interpreted to mean: "@claimant states the following:...." Multiple values of @claimant are interpreted to mean "and", resulting in distribution of the claim (e.g., claimant="x y" becomes "x claims that..." and "y claims that...").</a:documentation>
+      <a:documentation>In a TAN-A-div file, nested @claimants mean that claimant X claims that claimant Y claims that... and so forth.</a:documentation>
+      <a:documentation>In other class-2 files, a nested @claimant cancels out any inherited @claimants. </a:documentation>
+      <a:documentation>This attribute is inheritable. See main.xml#inheritable_attributes</a:documentation>
+    </attribute>
+  </define>
+  <define name="claimant-when">
+    <attribute name="claim-when">
+      <a:documentation>identifies a time when a claim was made.</a:documentation>
+      <choice>
+        <data type="dateTime"/>
+        <data type="date"/>
+      </choice>
+    </attribute>
+  </define>
   <!-- div references -->
   <define name="div-type-ref">
     <attribute name="div-type">
@@ -237,10 +263,10 @@
   </define>
   <define name="tok-mult-selector-attributes">
     <choice>
-      <ref name="token-value-ref"/>
+      <ref name="token-content-ref"/>
       <ref name="seq-pos-ref"/>
       <group>
-        <ref name="token-value-ref"/>
+        <ref name="token-content-ref"/>
         <ref name="seq-pos-ref"/>
       </group>
     </choice>
@@ -332,9 +358,24 @@
       <ref name="div-item-ref"/>
     </attribute>
   </define>
+  <define name="token-content-ref">
+    <choice>
+      <ref name="token-value-ref"/>
+      <ref name="token-regex-ref"/>
+    </choice>
+  </define>
   <define name="token-value-ref">
     <attribute name="val">
-      <a:documentation>specifies a particular word token by means of its string value. Treated as a constrained regular expression (the expression must match the entire token, case-sensitive).</a:documentation>
+      <a:documentation>contains a string that points to word token by its value. Matches are case and accent sensitive.</a:documentation>
+      <a:documentation>For more see main.xml#attr_pos_and_val</a:documentation>
+      <data type="string">
+        <param name="pattern">.+</param>
+      </data>
+    </attribute>
+  </define>
+  <define name="token-regex-ref">
+    <attribute name="rgx">
+      <a:documentation>contains a regular expression that points to a particular word token by means of its string value.</a:documentation>
       <a:documentation>For more see main.xml#attr_pos_and_val</a:documentation>
       <data type="string">
         <param name="pattern">.+</param>

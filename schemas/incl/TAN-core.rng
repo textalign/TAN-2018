@@ -520,12 +520,7 @@
         </zeroOrMore>
         <group>
           <ref name="head-prelude"/>
-          <interleave>
-            <ref name="inclusion-list"/>
-            <ref name="key-list"/>
-            <ref name="source-list"/>
-            <ref name="see-also-list"/>
-          </interleave>
+          <ref name="other-files"/>
           <ref name="definition-list"/>
           <ref name="alter-statement"/>
           <ref name="resp-list"/>
@@ -534,6 +529,7 @@
       </interleave>
     </element>
   </define>
+  <!-- HEAD: prelude -->
   <define name="head-prelude">
     <ref name="head-prelude-core"/>
     <ref name="head-prelude-non-core"/>
@@ -572,6 +568,30 @@
         <ref name="agent-ref"/>
       </choice>
     </element>
+  </define>
+  <!-- HEAD: other files -->
+  <define name="other-files">
+    <interleave>
+      <ref name="other-files-core"/>
+      <ref name="other-files-non-core"/>
+    </interleave>
+  </define>
+  <define name="other-files-core">
+    <interleave>
+      <ref name="inclusion-list"/>
+      <ref name="key-list"/>
+      <ref name="source-list"/>
+      <ref name="see-also-list"/>
+      <zeroOrMore>
+        <ref name="predecessor-item"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="successor-item"/>
+      </zeroOrMore>
+    </interleave>
+  </define>
+  <define name="other-files-non-core">
+    <empty/>
   </define>
   <define name="inclusion-list">
     <zeroOrMore>
@@ -619,6 +639,7 @@
       </choice>
     </element>
   </define>
+  <!-- The number of source items differs from one TAN format to the next -->
   <define name="source-list">
     <ref name="source-item"/>
   </define>
@@ -679,7 +700,41 @@
       </choice>
     </element>
   </define>
-  <!-- definitions are treated below -->
+  <define name="predecessor-item">
+    <element name="predecessor">
+      <a:documentation>identifies a file that the current file succeeds. Predecessors may or may not have the same @id value.</a:documentation>
+      <optional>
+        <ref name="ed-stamp"/>
+      </optional>
+      <choice>
+        <ref name="inclusion"/>
+        <interleave>
+          <zeroOrMore>
+            <ref name="comment"/>
+          </zeroOrMore>
+          <ref name="entity-digital-tan-other-ref"/>
+        </interleave>
+      </choice>
+    </element>
+  </define>
+  <define name="successor-item">
+    <element name="successor">
+      <a:documentation>identifies a file that succeeds the current file. Successors may or may not have the same @id value.</a:documentation>
+      <optional>
+        <ref name="ed-stamp"/>
+      </optional>
+      <choice>
+        <ref name="inclusion"/>
+        <interleave>
+          <zeroOrMore>
+            <ref name="comment"/>
+          </zeroOrMore>
+          <ref name="entity-digital-tan-other-ref"/>
+        </interleave>
+      </choice>
+    </element>
+  </define>
+  <!-- HEAD: definitions -->
   <define name="definition-list">
     <element name="definitions">
       <a:documentation>lists terminology and definitions assumed in encoding the data.</a:documentation>
@@ -695,6 +750,7 @@
       </interleave>
     </element>
   </define>
+  <!-- HEAD: alter -->
   <define name="alter-statement">
     <a:documentation>normalizations are defined at more specific levels</a:documentation>
     <optional>
