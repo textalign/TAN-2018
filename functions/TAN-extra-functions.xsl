@@ -2,6 +2,7 @@
 <xsl:stylesheet xmlns="tag:textalign.net,2015:ns" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tan="tag:textalign.net,2015:ns"
    xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:saxon="http://saxon.sf.net/"
+   xmlns:html="http://www.w3.org/1999/xhtml" xmlns:tei="http://www.tei-c.org/ns/1.0"
    xmlns:math="http://www.w3.org/2005/xpath-functions/math" exclude-result-prefixes="#all"
    version="3.0">
 
@@ -10,9 +11,12 @@
    <xsl:include href="extra/TAN-search-functions.xsl"/>
    <xsl:include href="extra/TAN-language-functions.xsl"/>
    <xsl:include href="extra/TAN-A-lm-extra-functions.xsl"/>
+   <xsl:include href="../parameters/extra-parameters.xsl"/>
 
    <!-- Functions that are not central to validating TAN files, but could be helpful in creating, editing, or reusing them -->
 
+   <xsl:key name="get-ana" match="tan:ana" use="tan:tok/@val"/>
+   
    <!-- GLOBAL VARIABLES AND PARAMETERS -->
 
    <xsl:variable name="doc-filename" select="replace($doc-uri, '.*/([^/]+)$', '$1')"/>
@@ -30,6 +34,7 @@
          <ns prefix="dcterms" uri="http://purl.org/dc/terms/"/>
          <ns prefix="html" uri="http://www.w3.org/1999/xhtml"/>
          <ns prefix="m" uri="http://schemas.openxmlformats.org/officeDocument/2006/math"/>
+         <ns prefix="map" uri="http://www.w3.org/2005/xpath-functions/map"/>
          <ns prefix="mc" uri="http://schemas.openxmlformats.org/markup-compatibility/2006"/>
          <ns prefix="mo" uri="http://schemas.microsoft.com/office/mac/office/2008/main"/>
          <ns prefix="mods" uri="http://www.loc.gov/mods/v3"/>
@@ -811,6 +816,72 @@
          />
       </xsl:for-each>
    </xsl:function>
+   
+   <xsl:function name="tan:revise-hrefs" as="item()*">
+      <!-- Input: an item that should have urls resolved; the original url of the item; the target url (the item's destination) -->
+      <!-- Output: the item with each @href (including those in processing instructions) and html:*/@src resolved -->
+      <xsl:param name="item-to-resolve" as="item()?"/>
+      <xsl:param name="original-url" as="xs:string"/>
+      <xsl:param name="target-url" as="xs:string"/>
+      <xsl:variable name="original-url-resolved" select="resolve-uri($original-url)"/>
+      <xsl:variable name="target-url-resolved" select="resolve-uri($target-url)"/>
+      <xsl:choose>
+         <xsl:when test="not($original-url = $original-url-resolved)">
+            <xsl:message select="'resolve param 2', $original-url, 'before using this function'"/>
+         </xsl:when>
+         <xsl:when test="not($target-url = $target-url-resolved)">
+            <xsl:message select="'resolve param 3', $target-url, 'before using this function'"/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:apply-templates select="$item-to-resolve" mode="revise-hrefs">
+               <xsl:with-param name="original-url" select="$original-url" tunnel="yes"/>
+               <xsl:with-param name="target-url" select="$target-url" tunnel="yes"/>
+            </xsl:apply-templates>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:function>
+   <xsl:template match="node() | @*" mode="revise-hrefs">
+      <xsl:copy>
+         <xsl:apply-templates select="node() | @*" mode="#current"/>
+      </xsl:copy>
+   </xsl:template>
+   <xsl:template match="processing-instruction()" priority="1" mode="revise-hrefs">
+      <xsl:param name="original-url" tunnel="yes" required="yes"/>
+      <xsl:param name="target-url" tunnel="yes" required="yes"/>
+      <xsl:variable name="href-regex" as="xs:string">(href=['"])([^'"]+)(['"])</xsl:variable>
+      <xsl:processing-instruction name="{name(.)}">
+            <xsl:analyze-string select="." regex="{$href-regex}">
+                <xsl:matching-substring>
+                    <xsl:value-of select="concat(regex-group(1), tan:uri-relative-to(resolve-uri(regex-group(2), $original-url), $target-url), regex-group(3))"/>
+                </xsl:matching-substring>
+                <xsl:non-matching-substring>
+                    <xsl:value-of select="."/>
+                </xsl:non-matching-substring>
+            </xsl:analyze-string>
+        </xsl:processing-instruction>
+   </xsl:template>
+   <xsl:template match="@href" mode="revise-hrefs">
+      <xsl:param name="original-url" tunnel="yes" required="yes"/>
+      <xsl:param name="target-url" tunnel="yes" required="yes"/>
+      <xsl:variable name="this-href-resolved" select="resolve-uri(., $original-url)"/>
+      <xsl:variable name="this-href-relative" select="tan:uri-relative-to($this-href-resolved, $target-url)"/>
+      <xsl:choose>
+         <xsl:when test="matches(., '^#')">
+            <xsl:copy/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:attribute name="href" select="$this-href-relative"/>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:template>
+   <xsl:template match="html:script/@src" mode="revise-hrefs">
+      <xsl:param name="original-url" tunnel="yes" required="yes"/>
+      <xsl:param name="target-url" tunnel="yes" required="yes"/>
+      <xsl:attribute name="src"
+         select="tan:uri-relative-to(resolve-uri(., $original-url), $target-url)"
+      />
+   </xsl:template>
+   
 
    <!-- Functions: XPath Functions and Operators -->
 
@@ -896,18 +967,8 @@
    </xsl:function>
 
 
-   <!-- Functions: TAN files -->
-
-   <xsl:function name="tan:reset-hierarchy" as="document-node()*">
-      <!-- Input: any expanded class-1 documents whose <div>s may be in the wrong place, because <rename> or <reassign> have altered the <ref> values; a boolean indicating whether misplaced leaf divs should be flagged -->
-      <!-- Output: the same documents, with <div>s restored to their proper place in the hierarchy -->
-      <xsl:param name="expanded-class-1-docs" as="document-node()*"/>
-      <xsl:param name="flag-misplaced-leaf-divs" as="xs:boolean?"/>
-      <xsl:apply-templates select="$expanded-class-1-docs" mode="reset-hierarchy">
-         <xsl:with-param name="flag-misplaced-leaf-divs" select="$flag-misplaced-leaf-divs"
-            tunnel="yes"/>
-      </xsl:apply-templates>
-   </xsl:function>
+   <!-- FUNCTIONS: TAN FILES -->
+   <!-- General TAN files -->
 
    <xsl:function name="tan:resolve-keyword" as="item()*">
       <!-- Input: any items; any extra keys -->
@@ -916,6 +977,19 @@
       <xsl:param name="extra-keys" as="document-node()*"/>
       <xsl:apply-templates select="$items" mode="resolve-keyword">
          <xsl:with-param name="extra-keys" select="$extra-keys" tunnel="yes"/>
+      </xsl:apply-templates>
+   </xsl:function>
+   
+   <!-- Functions: TAN-T(EI) -->
+   
+   <xsl:function name="tan:reset-hierarchy" as="document-node()*">
+      <!-- Input: any expanded class-1 documents whose <div>s may be in the wrong place, because <rename> or <reassign> have altered the <ref> values; a boolean indicating whether misplaced leaf divs should be flagged -->
+      <!-- Output: the same documents, with <div>s restored to their proper place in the hierarchy -->
+      <xsl:param name="expanded-class-1-docs" as="document-node()*"/>
+      <xsl:param name="flag-misplaced-leaf-divs" as="xs:boolean?"/>
+      <xsl:apply-templates select="$expanded-class-1-docs" mode="reset-hierarchy">
+         <xsl:with-param name="flag-misplaced-leaf-divs" select="$flag-misplaced-leaf-divs"
+            tunnel="yes"/>
       </xsl:apply-templates>
    </xsl:function>
 
@@ -955,6 +1029,79 @@
       </xsl:analyze-string>
    </xsl:template>
 
+   <!-- Functions: TAN-A-lm -->
+   
+   <xsl:function name="tan:lm-data" as="element()*">
+      <!-- Input: token value; a language code -->
+      <!-- Output: <lm> data for that token value from any available resources -->
+      <xsl:param name="token-value" as="xs:string?"/>
+      <xsl:param name="lang-codes" as="xs:string*"/>
+      
+      <!-- First, look in the local language catalog and get relevant TAN-A-lm files -->
+      <xsl:variable name="lang-catalogs" select="tan:lang-catalog($lang-codes)"
+         as="document-node()*"/>
+      <xsl:variable name="these-tan-a-lm-files" as="document-node()*">
+         <xsl:for-each select="$lang-catalogs">
+            <xsl:variable name="this-base-uri" select="tan:base-uri(.)"/>
+            <xsl:for-each
+               select="
+                  collection/doc[(not(exists(tan:tok-is)) and not(exists(tan:tok-starts-with)))
+                  or
+                  (tan:tok-is = $token-value)
+                  or (some $i in tan:tok-starts-with
+                     satisfies starts-with($token-value, $i))]">
+               <xsl:variable name="this-uri" select="resolve-uri(@href, string($this-base-uri))"/>
+               <xsl:if test="doc-available($this-uri)">
+                  <xsl:sequence select="doc($this-uri)"/>
+               </xsl:if>
+            </xsl:for-each>
+         </xsl:for-each>
+      </xsl:variable>
+
+      <!-- Look for easy, exact matches -->
+      <xsl:variable name="lex-val-matches"
+         select="
+            for $i in $these-tan-a-lm-files
+            return
+               key('get-ana', $token-value, $i)"/>
+
+      <!-- If there's no exact match, look for a near match -->
+      <xsl:variable name="this-string-approx" select="tan:string-base($token-value)"/>
+      <xsl:variable name="lex-rgx-and-approx-matches"
+         select="
+            $these-tan-a-lm-files/tan:TAN-A-lm/tan:body/tan:ana[tan:tok[@val = $this-string-approx or (if (string-length(@rgx) gt 0)
+            then
+               matches($token-value, @rgx)
+            else
+               false())]]"/>
+
+      <!-- If there's not even a near match, see if there's a search service -->
+      <xsl:variable name="lex-matches-via-search" as="element()*">
+         <xsl:if test="matches($lang-codes, '^(lat|grc)')">
+            <xsl:variable name="this-raw-search" select="tan:search-morpheus($token-value)"/>
+            <xsl:copy-of select="tan:search-results-to-claims($this-raw-search, 'morpheus')/*"/>
+         </xsl:if>
+      </xsl:variable>
+
+      <xsl:choose>
+         <xsl:when test="exists($lex-val-matches)">
+            <xsl:sequence select="$lex-val-matches"/>
+         </xsl:when>
+         <xsl:when test="exists($lex-rgx-and-approx-matches)">
+            <xsl:sequence select="$lex-rgx-and-approx-matches"/>
+         </xsl:when>
+         <xsl:when test="exists($lex-matches-via-search)">
+            <xsl:sequence select="$lex-matches-via-search"/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:if test="not(exists($these-tan-a-lm-files))">
+               <xsl:message select="'No local TAN-A-lm files found for', $lang-codes"/>
+            </xsl:if>
+            <xsl:message select="'No data found for', $token-value, 'in language', $lang-codes"/>
+         </xsl:otherwise>
+      </xsl:choose>
+
+   </xsl:function>
 
    <!-- BIBLIOGRAPHIES -->
    <xsl:param name="bibliography-words-to-ignore" as="xs:string*"

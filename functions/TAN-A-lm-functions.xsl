@@ -209,7 +209,7 @@
       </xsl:variable>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
-         <xsl:apply-templates select="$children-pass-1/*" mode="class-2-expansion-terse-pass-2">
+         <xsl:apply-templates select="$children-pass-1/node()" mode="class-2-expansion-terse-pass-2">
             <xsl:with-param name="dependencies" select="$dependencies" tunnel="yes"/>
             <xsl:with-param name="morphology-ids" select="ancestor::tan:body/tan:morphology"
                tunnel="yes"/>
@@ -235,21 +235,11 @@
             for $i in $these-morphologies
             return
                count($i/tan:TAN-mor/tan:body/tan:category)"/>
-
-      <!--<xsl:variable name="relevant-asserts-and-reports"
-         select="
-            $these-morphologies/tan:TAN-mor/tan:body/tan:rule[some $i in (self::*, tan:where)
-               satisfies tan:evaluate-morphological-test($i, $this-m)]"
-      />-->
       <xsl:variable name="relevant-asserts-and-reports"
          select="
             $these-morphologies/tan:TAN-mor/tan:body/tan:rule[some $i in (self::*, tan:where)
                satisfies tan:conditions-hold($i, $this-m)]"
       />
-      <!--<xsl:variable name="disobeyed-asserts"
-         select="$relevant-asserts-and-reports/tan:assert[not(tan:evaluate-morphological-test(., $this-m))]"/>-->
-      <!--<xsl:variable name="disobeyed-reports"
-         select="$relevant-asserts-and-reports/tan:report[tan:evaluate-morphological-test(., $this-m)]"/>-->
       <xsl:variable name="disobeyed-asserts"
          select="$relevant-asserts-and-reports/tan:assert[not(tan:conditions-hold(., $this-m))]"/>
       <xsl:variable name="disobeyed-reports"
