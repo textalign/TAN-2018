@@ -51,10 +51,18 @@
       <xsl:param name="elements-that-caused-this-error" as="element()*"/>
       <xsl:variable name="this-error" select="$errors//id($idref)"/>
       <xsl:for-each select="$this-error">
+         <xsl:if test="$error-messages-on">
+            <xsl:message select="xs:string(tan:rule)"/>
+         </xsl:if>
          <xsl:copy>
             <xsl:copy-of select="@*"/>
             <xsl:copy-of select="*"/>
             <xsl:for-each select="$diagnostic-message">
+               <xsl:if test="$error-messages-on">
+                  <xsl:message>
+                     <xsl:value-of select="."/>
+                  </xsl:message>
+               </xsl:if>
                <message>
                   <xsl:value-of select="."/>
                </message>

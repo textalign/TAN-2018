@@ -79,6 +79,9 @@
         <error xml:id="inc03"><rule>Inclusions may not be circular.</rule></error>
         <fatal xml:id="inc04"><rule>Inclusions are integral parts of any TAN file. Access to at least one copy is absolutely mandatory.</rule></fatal>
     </group>
+    <group affects-element="inclusion key">
+        <fatal xml:id="inc05"><rule>The key of a file may not include it.</rule></fatal>
+    </group>
     <group affects-element="location inclusion see-also source key redivision model predecessor successor">
         <error xml:id="loc01"><rule>Every element with a &lt;location> should have at least one document available.</rule></error>
         <error xml:id="loc02"><rule>Every TAN file referred to by way of an element containing &lt;location> should have an @id that matches the &lt;IRI> of the parent of the &lt;location></rule></error>
