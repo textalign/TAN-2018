@@ -5,7 +5,7 @@
    xmlns:math="http://www.w3.org/2005/xpath-functions/math" xmlns:functx="http://www.functx.com"
    xmlns:sch="http://purl.oclc.org/dsdl/schematron" exclude-result-prefixes="#all" version="2.0">
 
-   <xsl:import href="../../parameters/TAN-parameters.xsl"/>
+   <xsl:import href="../../parameters/validation-parameters.xsl"/>
 
    <!-- Core functions for all TAN files. Written principally for Schematron validation, but suitable for general use in other contexts -->
 
@@ -29,7 +29,7 @@
       </xsl:document>
    </xsl:template>
    <xsl:template priority="-5" match="*" mode="#all">
-      <xsl:copy>
+      <xsl:copy copy-namespaces="no">
          <xsl:copy-of select="@*"/>
          <xsl:apply-templates mode="#current"/>
       </xsl:copy>
@@ -669,6 +669,7 @@
       <!-- This version of the function takes a sequence of elements, each of which contains a sequences of shallow elements with text content -->
       <xsl:param name="elements-with-elements" as="element()*"/>
       <xsl:variable name="diagnostics" select="false()" as="xs:boolean"/>
+      <!-- Start with the element that has the greatest number of elements; that will be the grid into which the other sequences will be fit -->
       <xsl:variable name="input-sorted" as="element()*">
          <xsl:for-each select="$elements-with-elements">
             <xsl:sort select="count(*)" order="descending"/>
@@ -704,6 +705,7 @@
       </xsl:choose>
    </xsl:function>
    <xsl:function name="tan:collate-sequence-loop" as="xs:string*">
+      <!-- This companion function to the one above takes a pair of sequences and merges them -->
       <xsl:param name="elements-with-elements" as="element()*"/>
       <xsl:param name="results-so-far" as="xs:string*"/>
       <xsl:choose>
@@ -731,7 +733,6 @@
    </xsl:function>
 
    <xsl:function name="tan:collate-pair-of-sequences" as="xs:string*">
-      <!--  -->
       <!-- Input: two sequences of strings -->
       <!-- Output: a collation of the two strings, preserving their order -->
       <xsl:param name="string-sequence-1" as="xs:string*"/>
@@ -779,22 +780,24 @@
       <xsl:variable name="following-diffs"
          select="following-sibling::*[position() lt 3][self::tan:a or self::tan:b]"/>
       <!-- If the preceding differences terminate in the delimiter, or the next differences start with it, then the opening or closing fragment in the <common> should be kept -->
-      <xsl:variable name="opening-item-should-be-included"
-         select="count($preceding-diffs) = 2 and
-            (every $i in $preceding-diffs
-               satisfies matches($i, concat($delimiter-regex, '$')))"/>
-      <xsl:variable name="closing-item-should-be-included"
-         select="count($following-diffs) = 2 and
-            (every $i in $following-diffs
-               satisfies matches($i, concat('^', $delimiter-regex)))"/>
+      <xsl:variable name="opening-item-should-be-excluded"
+         select="count($preceding-diffs) gt 0 and
+            (some $i in $preceding-diffs
+               satisfies not(matches($i, concat($delimiter-regex, '$'))))"/>
+      <xsl:variable name="closing-item-should-be-excluded"
+         select="count($following-diffs) gt 0 and
+            (some $i in $following-diffs
+               satisfies not(matches($i, concat('^', $delimiter-regex))))"/>
       <xsl:variable name="this-tokenized" select="tokenize(., $delimiter-regex)"/>
       <xsl:for-each select="$this-tokenized">
          <xsl:choose>
             <xsl:when test="string-length(.) lt 1"/>
+            <!-- split the first item into <a> and <b> if it should not be included -->
+            <!-- split the last item into <a> and <b> if it's the 2nd or greater and it should not be included -->
             <xsl:when
                test="
-                  (position() = 1 and not($opening-item-should-be-included)) or
-                  (position() = count($this-tokenized) and (count($this-tokenized) gt 1) and not($closing-item-should-be-included))">
+                  (position() = 1 and $opening-item-should-be-excluded) or
+                  (position() = count($this-tokenized) and (count($this-tokenized) gt 1) and $closing-item-should-be-excluded)">
                <a>
                   <xsl:value-of select="."/>
                   <!-- We include the delimiter after initial fragments that get moved up, so they don't get conflated with fragments that follow -->
@@ -1693,9 +1696,9 @@
    <xsl:function name="tan:base-uri" as="xs:anyURI?">
       <!-- Input: any node -->
       <!-- Output: the base uri of the node's document -->
-      <!-- NB, this function differs from fn:base-uri in that it first looks for a @base-uri stamped at the document node. This is important because many TAN documents will be transformed, bound to variables, and so divorced from an original context dectable only through @base-uri. -->
       <xsl:param name="any-node" as="node()?"/>
-      <xsl:copy-of select="(root($any-node)/*/@base-uri, base-uri($any-node))[1]"/>
+      <xsl:value-of
+         select="($any-node/ancestor-or-self::*[@xml:base]/@xml:base, base-uri($any-node), root($any-node)/*/@xml:base)[string-length(.) gt 0][1]"/>
    </xsl:function>
    <xsl:function name="tan:uri-relative-to" as="xs:string?">
       <!-- Input: two strings representing URIs -->
@@ -2154,12 +2157,12 @@
    </xsl:function>
 
    <xsl:function name="tan:definition" as="element()*">
-      <!-- Input: an attribute or element that contains a text value; a resolved <head> -->
+      <!-- Input: items that contains a text value; a resolved or expanded <head> -->
       <!-- Output: the corresponding entity in <definitions>. If a value does not exist, an <error> is returned. -->
       <!-- Assumes space normalization, and ignores help requests -->
-      <xsl:param name="ref-nodes" as="node()*"/>
+      <xsl:param name="ref-items" as="node()*"/>
       <xsl:param name="resolved-head" as="element()?"/>
-      <xsl:for-each select="$ref-nodes">
+      <xsl:for-each select="$ref-items">
          <xsl:variable name="this-ref-node" select="."/>
          <xsl:variable name="ref-node-name" select="name($this-ref-node)"/>
          <xsl:variable name="ref-val" as="xs:string?">
@@ -2178,38 +2181,37 @@
             select="$resolved-head//*[name(.) = $should-refer-to-which-element]"/>
          <xsl:for-each select="tokenize($ref-val, ' +')">
             <xsl:variable name="this-val" select="."/>
+            <!-- The following works only if the head has been expanded -->
+            <xsl:variable name="this-alias"
+               select="$resolved-head/tan:definitions/tan:alias[@id = $this-val]/tan:idref"/>
             <xsl:variable name="entities-pointed-to"
-               select="$all-possible-valid-entities[(@xml:id, @id) = $this-val]"/>
-            <xsl:choose>
-               <xsl:when test="count($entities-pointed-to) gt 1">
-                  <xsl:copy-of select="tan:error('tan03')"/>
-               </xsl:when>
-               <xsl:when test="count($entities-pointed-to) lt 1">
-                  <xsl:copy-of select="tan:error('tan05')"/>
-               </xsl:when>
-               <xsl:otherwise>
-                  <xsl:sequence select="$entities-pointed-to"/>
-               </xsl:otherwise>
-            </xsl:choose>
+               select="$all-possible-valid-entities[(@xml:id, @id) = ($this-val, $this-alias)]"/>
+            <xsl:if test="count($entities-pointed-to) gt 1">
+               <xsl:copy-of select="tan:error('tan03')"/>
+            </xsl:if>
+            <xsl:if test="count($entities-pointed-to) lt 1">
+               <xsl:copy-of select="tan:error('tan05')"/>
+            </xsl:if>
+            <xsl:sequence select="$entities-pointed-to"/>
          </xsl:for-each>
       </xsl:for-each>
    </xsl:function>
 
    <xsl:function name="tan:glossary" as="element()*">
       <!-- one-parameter version of the master one, below -->
-      <xsl:param name="element-with-attr-which" as="element()"/>
+      <xsl:param name="element-with-attr-which" as="element()?"/>
       <xsl:sequence select="tan:glossary(name($element-with-attr-which), $element-with-attr-which/@which, $keys-1st-da, ())"/>
    </xsl:function>
    <xsl:function name="tan:glossary" as="element()*">
       <!-- two-parameter version of the master one, below -->
-      <xsl:param name="element-name" as="xs:string"/>
+      <xsl:param name="element-name" as="xs:string?"/>
       <xsl:param name="item-name" as="xs:string?"/>
       <xsl:sequence select="tan:glossary($element-name, $item-name, $keys-1st-da, ())"/>
    </xsl:function>
    <xsl:function name="tan:glossary" as="element()*">
       <!-- Input: any element that has @which (or a string value of the name of an element that takes @which); any TAN-key documents (expanded) other than the standard TAN ones; and an optional name that restricts the search to a particular group -->
       <!-- Output: the keyword <items> (most of which contain <IRI>, <name>, and <desc>) that are valid definitions for the element in question, filtered by matches on @which, if present in the first parameter -->
-      <xsl:param name="element-name" as="xs:string"/>
+      <xsl:param name="element-name" as="xs:string?"/>
       <xsl:param name="item-name" as="xs:string?"/>
       <xsl:param name="extra-TAN-keys-expanded" as="document-node()*"/>
       <xsl:param name="group-name-alter" as="xs:string?"/>

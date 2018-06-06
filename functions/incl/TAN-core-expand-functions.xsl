@@ -734,10 +734,8 @@
       <xsl:variable name="duplicate-refs" select="tan:duplicate-items($these-refs/*/text())"/>
       <xsl:variable name="dates"
          select="$this-from, $this-to, tan:dateTime-to-decimal((self::tan:*/@when, @ed-when, @when-accessed))"/>
-      <!-- replacement variable below December 2017: resolution should have happened in the previous major step, that of resolution -->
-      <xsl:variable name="this-href-resolved" select="@href"/>
-      <!--<xsl:variable name="this-href-resolved"
-         select="resolve-uri(@href, (root()/*/@base-uri, $doc-uri)[1])"/>-->
+      <!-- In an earlier step, that of resolving the file, each @href should have been resolved -->
+      <xsl:variable name="this-href" select="@href"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:if test="exists($duplicate-refs)">
@@ -767,13 +765,13 @@
          <xsl:if test="exists(self::tan:master-location) and matches(@href, '!/')">
             <xsl:copy-of select="tan:error('tan15')"/>
          </xsl:if>
-         <xsl:if test="$this-href-resolved = $doc-uri">
+         <xsl:if test="$this-href = $doc-uri">
             <xsl:copy-of select="tan:error('tan17')"/>
          </xsl:if>
          <xsl:if test="exists(@href) and not((self::tan:location, self::tan:master-location))">
             <xsl:choose>
-               <xsl:when test="doc-available($this-href-resolved)">
-                  <xsl:variable name="target-doc" select="doc($this-href-resolved)"/>
+               <xsl:when test="doc-available($this-href)">
+                  <xsl:variable name="target-doc" select="doc($this-href)"/>
                   <xsl:variable name="target-IRI" select="$target-doc/*/@id"/>
                   <xsl:variable name="target-name" select="$target-doc/*/tan:head/tan:name"/>
                   <xsl:variable name="target-desc" select="$target-doc/*/tan:head/tan:desc"/>
