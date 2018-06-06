@@ -19,7 +19,7 @@
    <xsl:function name="tan:resolve-doc" as="document-node()*">
       <!-- Input: any number of TAN documents; boolean indicating whether documents should be breadcrumbed or not; optional name of an attribute and a sequence of strings to stamp in each document's root element as a way of providing another identifier for the document; a list of element names to which any inclusion should be restricted; a list of ids for documents that should not be used to generate inclusions.
       Output: those same documents, resolved, along the following steps:
-           a. Stamp each document with @base-uri and the optional root attribute; resolve @href, putting the original (if different) in @orig-href
+           a. Stamp each document with @xml:base and the optional root attribute; resolve @href, putting the original (if different) in @orig-href
            b. Normalize @ref and @n, converting them whenever possible to Arabic numerals, and keeping the old versions as @orig-ref and @orig-n; if @n is a range or series, it will be expanded
            c. Resolve every element that has @include.
            d. Resolve every element that has @which.
@@ -60,9 +60,10 @@
                         name($i)"
                   as="xs:string*"/>
                <xsl:choose>
-                  <xsl:when test="not(exists($this-inclusion-element))">
+                  <xsl:when test="not(exists($this-inclusion-element))"/>
+                  <xsl:when test="$this-inclusion-doc/*/@id = $new-doc-ids-checked-so-far">
                      <xsl:document>
-                        <xsl:copy-of select="tan:error('tan05')"/>
+                        <xsl:copy-of select="tan:error('inc05')"/>
                      </xsl:document>
                   </xsl:when>
                   <xsl:otherwise>
@@ -93,7 +94,6 @@
                   <xsl:sequence select="$doc-with-n-and-ref-converted"/>
                </xsl:when>
                <xsl:otherwise>
-
                   <xsl:apply-templates select="$doc-with-n-and-ref-converted"
                      mode="resolve-attr-include">
                      <xsl:with-param name="tan-doc-ids-checked-so-far"
@@ -101,7 +101,6 @@
                      <xsl:with-param name="docs-whence-inclusion-resolved"
                         select="$included-docs-resolved" tunnel="yes"/>
                   </xsl:apply-templates>
-
                </xsl:otherwise>
             </xsl:choose>
          </xsl:variable>
@@ -113,7 +112,7 @@
          <xsl:variable name="extra-keys-1st-da"
             select="tan:get-1st-doc($doc-attr-include-resolved/*/tan:head/tan:key[not(@include)])"/>
          <xsl:variable name="extra-keys-resolved"
-            select="tan:resolve-doc($extra-keys-1st-da, false(), (), (), ('group', 'item'), ())"
+            select="tan:resolve-doc($extra-keys-1st-da, false(), (), (), ('group', 'item'), $new-doc-ids-checked-so-far)"
             as="document-node()*"/>
          <xsl:variable name="extra-keys-expanded" as="document-node()*">
             <xsl:for-each select="$extra-keys-resolved">
@@ -123,11 +122,9 @@
                   test="
                      not(some $i in $extra-keys-resolved[position() lt $pos]
                         satisfies deep-equal($i/*, $this-key/*))">
-                  <xsl:document>
-                     <xsl:apply-templates mode="expand-tan-key-dependencies">
-                        <xsl:with-param name="leave-breadcrumbs" select="false()" tunnel="yes"/>
-                     </xsl:apply-templates>
-                  </xsl:document>
+                  <xsl:apply-templates select="." mode="expand-tan-key-dependencies">
+                     <xsl:with-param name="leave-breadcrumbs" select="false()" tunnel="yes"/>
+                  </xsl:apply-templates>
                </xsl:if>
             </xsl:for-each>
          </xsl:variable>
@@ -137,16 +134,19 @@
             </xsl:apply-templates>
          </xsl:variable>
          <xsl:choose>
-            <xsl:when test="*/@id = $doc-ids-already-checked">
-               <xsl:sequence select="."/>
+            <xsl:when test="$this-doc-id = $doc-ids-already-checked">
+               <!--<xsl:sequence select="."/>-->
+               <xsl:document>
+                  <xsl:copy-of select="tan:error('inc05')"/>
+               </xsl:document>
             </xsl:when>
             <xsl:otherwise>
                <!-- diagnostics, results -->
                <!--<xsl:copy-of select="."/>-->
+               <!--<xsl:copy-of select="$included-docs-resolved"/>-->
                <!--<xsl:copy-of select="$doc-stamped"/>-->
-               <!--<xsl:copy-of select="$doc-attr-which-expanded"/>-->
-               <!--<xsl:copy-of select="$doc-attr-include-expanded"/>-->
-               <!--<xsl:document><xsl:copy-of select="$doc-attr-include-expanded/*/tan:head/tan:key"/></xsl:document>-->
+               <!--<xsl:copy-of select="$doc-with-n-and-ref-converted"/>-->
+               <!--<xsl:copy-of select="$doc-attr-include-resolved"/>-->
                <!--<xsl:copy-of select="$extra-keys-1st-da"/>-->
                <!--<xsl:copy-of select="$extra-keys-resolved"/>-->
                <!--<xsl:copy-of select="$duplicate-keys-removed"/>-->
@@ -159,7 +159,7 @@
    </xsl:function>
 
    <!-- Step 3a: stamp it -->
-   <xsl:template match="/*" mode="first-stamp expand-tan-key-dependencies">
+   <xsl:template match="/*" mode="first-stamp expand-tan-key-dependencies resolve-href">
       <!-- The first-stamp mode ensures that when a document is handed over to a variable, the original document URI is not lost. It also provides (1) the breadcrumbing service, so that errors occurring downstream, in an inclusion or TAN-key file can be diagnosed; (2) the option for @src to be imprinted on the root element, so that a class 1 TAN file can be tethered to a class 2 file that uses it as a source; (3) the conversion of @href to an absolute URI, resolved against the document's base.-->
       <xsl:param name="leave-breadcrumbs" as="xs:boolean" tunnel="yes"/>
       <xsl:param name="stamp-root-element-with-attr-name" as="xs:string?"/>
@@ -167,8 +167,8 @@
       <xsl:variable name="this-base-uri" select="tan:base-uri(.)" as="xs:anyURI?"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
-         <xsl:if test="not(exists(@base-uri))">
-            <xsl:attribute name="base-uri" select="$this-base-uri"/>
+         <xsl:if test="not(exists(@xml:base))">
+            <xsl:attribute name="xml:base" select="$this-base-uri"/>
          </xsl:if>
          <xsl:if test="string-length($stamp-root-element-with-attr-name) gt 0">
             <xsl:attribute name="{$stamp-root-element-with-attr-name}"
@@ -177,14 +177,18 @@
          <xsl:if test="$leave-breadcrumbs = true()">
             <xsl:attribute name="q" select="generate-id(.)"/>
          </xsl:if>
-         <xsl:for-each select="node()">
+         <xsl:apply-templates mode="#current">
+            <xsl:with-param name="base-uri" select="$this-base-uri" tunnel="yes"/>
+            <xsl:with-param name="leave-breadcrumbs" select="$leave-breadcrumbs" tunnel="yes"/>
+         </xsl:apply-templates>
+         <!--<xsl:for-each select="node()">
             <xsl:variable name="pos" select="position()"/>
             <xsl:apply-templates select="." mode="#current">
                <xsl:with-param name="base-uri" select="$this-base-uri" tunnel="yes"/>
                <xsl:with-param name="leave-breadcrumbs" select="$leave-breadcrumbs" tunnel="yes"/>
                <xsl:with-param name="pos" select="$pos"/>
             </xsl:apply-templates>
-         </xsl:for-each>
+         </xsl:for-each>-->
       </xsl:copy>
    </xsl:template>
    <xsl:template match="node()" mode="first-stamp">
@@ -198,7 +202,7 @@
          <xsl:if test="@href">
             <xsl:variable name="this-base-uri"
                select="
-                  if (exists($base-uri)) then
+                  if (string-length($base-uri) gt 0) then
                      $base-uri
                   else
                      tan:base-uri(.)"/>
@@ -228,6 +232,27 @@
          <xsl:with-param name="leave-breadcrumbs" select="$leave-breadcrumbs" tunnel="yes"/>
       </xsl:apply-templates>
    </xsl:function>
+   <xsl:template match="processing-instruction()" mode="resolve-href">
+      <xsl:param name="base-uri" as="xs:anyURI?" tunnel="yes"/>
+      <xsl:variable name="this-base-uri"
+         select="
+            if (exists($base-uri)) then
+               $base-uri
+            else
+               tan:base-uri(.)"
+      />
+      <xsl:variable name="href-regex" as="xs:string">(href=['"])([^'"]+)(['"])</xsl:variable>
+      <xsl:processing-instruction name="{name(.)}">
+            <xsl:analyze-string select="." regex="{$href-regex}">
+                <xsl:matching-substring>
+                    <xsl:value-of select="concat(regex-group(1), resolve-uri(regex-group(2), $this-base-uri), regex-group(3))"/>
+                </xsl:matching-substring>
+                <xsl:non-matching-substring>
+                    <xsl:value-of select="."/>
+                </xsl:non-matching-substring>
+            </xsl:analyze-string>
+        </xsl:processing-instruction>
+   </xsl:template>
    <xsl:template match="*[@href]" mode="resolve-href expand-tan-key-dependencies">
       <xsl:param name="base-uri" as="xs:anyURI?" tunnel="yes"/>
       <xsl:param name="leave-breadcrumbs" as="xs:boolean" tunnel="yes" select="true()"/>
