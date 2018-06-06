@@ -292,7 +292,13 @@
          <xsl:for-each select="$these-div-refs[tan:div[tan:tok]]">
             <xsl:variable name="this-src" select="tan:src"/>
             <xsl:variable name="this-ref" select="tan:ref"/>
-            <xsl:variable name="tokens-picked" select="tan:div/tan:tok[(. = $this-val) or tan:matches(., $this-rgx)]"/>
+            <xsl:variable name="tokens-picked"
+               select="
+                  tan:div/tan:tok[if (exists($this-val)) then
+                     (. = $this-val)
+                  else
+                     tan:matches(., $this-rgx)]"
+            />
             <xsl:variable name="count-of-tokens-picked" select="count($tokens-picked)"/>
             <xsl:variable name="these-pos-ints"
                select="tan:expand-pos-or-chars($this-element/(tan:pos, tan:range[tan:pos]), $count-of-tokens-picked)"/>
