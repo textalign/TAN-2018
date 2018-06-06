@@ -535,6 +535,12 @@
                 <desc>A unit of action, often a subdivision of an act</desc>
             </item>
             <item>
+                <IRI>tag:textalign.net,2015:div-type:scholium</IRI>
+                <IRI>http://dbpedia.org/resource/Scholia</IRI>
+                <name>scholium</name>
+                <name>scholion</name>
+            </item>
+            <item>
                 <IRI>tag:textalign.net,2015:div-type:section</IRI>
                 <IRI>http://dbpedia.org/resource/Section_(typography)</IRI>
                 <name>section</name>
