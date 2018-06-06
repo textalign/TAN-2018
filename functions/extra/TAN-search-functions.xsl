@@ -75,6 +75,8 @@
       <xsl:copy-of select="json-to-xml($morpheus-json)"/>
    </xsl:function>
 
+   <xsl:variable name="internet-available" as="xs:boolean"
+      select="unparsed-text-available('http://www.google.com')"/>
    <xsl:function name="tan:search-for-entities" as="item()*">
       <!-- Input: a sequence of strings (search keywords), a string (options: loc), a string (options: marcxml, dc, mods), a positive integer -->
       <!-- Output: up to N records (N = integer parameter) in the protocol of the 3rd paramater, using the SRU protocol of the library catalog specified in the 2nd parameter based on search words in the 1st -->
@@ -139,6 +141,7 @@
          select="concat($server-url-base, string-join($these-params,'&amp;'))"/>
 
       <xsl:choose>
+         <xsl:when test="not($internet-available)"/>
          <xsl:when test="doc-available($this-search-url)">
             <xsl:message select="concat('Success: ', $this-search-url)"/>
             <xsl:copy-of select="doc($this-search-url)"/>
@@ -325,7 +328,7 @@
          <xsl:map-entry key="'optative'" select="'mood optative'"/>
          <xsl:map-entry key="'subjunctive'" select="'modality subjunctive'"/>
          <xsl:map-entry key="'masculine/feminine'" select="'gender common'"/>
-         
+         <xsl:map-entry key="'irregular'" select="'noun'"/>
       </xsl:map>
    </xsl:variable>
    <xsl:template match="node()" mode="claims-morpheus">
@@ -447,6 +450,6 @@
    <!-- https://viaf.org/viaf/search?query=cql.any+%3D+%22kalvesmaki%22&recordSchema=http%3A%2F%2Fviaf.org%2FVIAFCluster&maximumRecords=100&startRecord=1&resultSetTTL=300&recordPacking=xml&recordXPath=&sortKeys= -->
    <!-- https://viaf.org/viaf/search?query=cql.any+%3D+%22kalvesmaki%22&recordSchema=http%3A%2F%2Fviaf.org%2FBriefVIAFCluster&maximumRecords=100&startRecord=1&resultSetTTL=300&recordPacking=xml&recordXPath=&sortKeys= -->
    <!-- http://services.perseids.org/bsp/morphologyservice/analysis/word?lang=lat&engine=morpheuslat&word=novum -->
-
+   <!-- http://services.perseids.org/bsp/morphologyservice/analysis/word?lang=grc&engine=morpheusgrc&word=Ἰησοῦν -->
 
 </xsl:stylesheet>

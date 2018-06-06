@@ -1537,7 +1537,7 @@
       <!-- Attempt is made to preserve original orders by means of <src> -->
       <xsl:param name="divs-to-group" as="element()*"/>
       <xsl:variable name="diagnostics" select="false()" as="xs:boolean"/>
-      <!-- Begin looking for overlaps between divs -->
+      <!-- Begin looking for overlaps between divs by creating <div>s with only <ref> and the plain text reference -->
       <xsl:variable name="ref-group-prep" as="element()*">
          <xsl:for-each select="$divs-to-group">
             <xsl:copy>
@@ -1549,6 +1549,7 @@
             </xsl:copy>
          </xsl:for-each>
       </xsl:variable>
+      <!-- Now create groups of those stripped <div>s -->
       <xsl:variable name="ref-groups"
          select="tan:group-elements-by-shared-node-values($ref-group-prep, 'ref')" as="element()*"/>
       <xsl:variable name="sort-key-prep" as="element()*">
@@ -1577,6 +1578,7 @@
       <xsl:if test="$diagnostics">
          <xsl:message select="$ref-groups"/>
          <xsl:message select="$sort-key-prep"/>
+         <xsl:message select="$sort-key"/>
       </xsl:if>
    </xsl:function>
 
