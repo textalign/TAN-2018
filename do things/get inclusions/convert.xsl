@@ -4,7 +4,7 @@
    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tei="http://www.tei-c.org/ns/1.0"
    xmlns:tan="tag:textalign.net,2015:ns"
    xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
-   exclude-result-prefixes="#all" version="2.0">
+   exclude-result-prefixes="#all" version="3.0">
 
    <xsl:include href="core-for-TAN-output.xsl"/>
    <xsl:include href="../../functions/TAN-A-div-functions.xsl"/>
@@ -28,11 +28,9 @@
    <!-- Main parameter: any XML file intended to be converted -->
    <!-- Main parameter: a series of passes where the input is converted -->
    <!-- Main parameter: a template in the target format (see 'do things/get templates' for examples) -->
-   <!-- Main parameter: a string indicating what element in the template should be replaced by the revised input -->
    <!-- Main parameter: a target url where the results should be saved -->
    <!-- Output: the input in parameter 1, tranformed by the templates in parameter 2, and inserted into parameter 3 at element with content in parameter 4, saved at location parameter 5 -->
    <!-- See other parameters below -->
-
 
    <!-- Set up default values if the output is TAN -->
    <xsl:param name="stylesheet-iri" select="'tag:textalign.net,2015:stylesheet:convert'"/>
@@ -49,22 +47,27 @@
 
 
 
+   <!-- Main parameter: Language data -->
+   <xsl:param name="languages-used" select="'grc'"/>
+   <xsl:variable name="lang-catalogs" select="tan:lang-catalog($languages-used)"
+      as="document-node()*"/>
+
+
 
    <!-- Main parameter: Template -->
-   <!-- The following looks for a stylesheet relative to this particular XSLT file (and not the master XSLT file that includes it) -->
-   <xsl:param name="template-url-relative-to-this-stylesheet" as="xs:string?" select="''"/>
    <xsl:param name="template-url-relative-to-input" as="xs:string?"/>
    <xsl:param name="template-url-resolved"
-      select="
-         if (string-length($template-url-relative-to-input) gt 0) then
-            resolve-uri($template-url-relative-to-input, $input-base-uri-resolved)
-         else
-            resolve-uri($template-url-relative-to-this-stylesheet, static-base-uri())"/>
+      select="resolve-uri($template-url-relative-to-input, $input-base-uri-resolved)"/>
+
    <xsl:variable name="template-extension"
       select="replace($template-url-resolved, '.+/([^/]+)$', '$1')"/>
 
    <xsl:param name="template-doc" as="document-node()*">
       <xsl:choose>
+         <xsl:when
+            test="not(exists($template-url-resolved)) or string-length($template-url-resolved) lt 1">
+            <xsl:message>No template url has been provided.</xsl:message>
+         </xsl:when>
          <xsl:when test="$template-extension = 'docx'">
             <xsl:copy-of select="tan:open-docx($template-url-resolved)"/>
          </xsl:when>
@@ -90,11 +93,10 @@
 
 
 
-   <!-- Main parameter: What part of the template should be replaced by the revised input? -->
-   <!-- By default, any element whose text matches this string exactly will be replaced by the revised input -->
-   <xsl:param name="replace-template-element-with-text-content" as="xs:string"
-      select="'new-content'"/>
-
+   <!-- Main parameter: intermediate steps that should be saved -->
+   <xsl:param name="items-to-be-saved" as="document-node()*">
+      <xsl:sequence select="$input-pass-1, $input-pass-2, $input-pass-3, $input-pass-4"/>
+   </xsl:param>
 
 
 
@@ -103,7 +105,7 @@
    <xsl:param name="output-url-relative-to-template" as="xs:string?" select="''"/>
 
    <xsl:param name="suffixes-for-multiple-output" as="xs:string*"/>
-   <xsl:variable name="output-url-resolved" as="xs:string">
+   <xsl:param name="output-url-resolved" as="xs:string">
       <!-- The output is a bit tricky. Sometimes you want it to go where the input is; other times where the template is -->
       <xsl:choose>
          <xsl:when test="string-length($output-url-relative-to-template) gt 0">
@@ -114,153 +116,167 @@
             <xsl:value-of
                select="resolve-uri($output-url-relative-to-input, $input-base-uri-resolved)"/>
          </xsl:when>
+         <!-- If no explicit output has been provided, use either the input or the template uri, modified with today's date, or the catalyzing document -->
          <xsl:when test="string-length($input-base-uri) gt 0">
             <xsl:value-of
                select="replace($input-base-uri-resolved, '(\.\w+)$', concat('-', $today-iso, '$1'))"
             />
          </xsl:when>
-         <xsl:otherwise>
+         <xsl:when test="string-length($template-url-resolved) gt 0">
             <xsl:value-of
                select="replace($template-url-resolved, '(\.\w+)$', concat('-', $today-iso, '$1'))"/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:value-of select="replace($doc-uri, '(\.\w+)$', concat('-', $today-iso, '$1'))"/>
          </xsl:otherwise>
       </xsl:choose>
-   </xsl:variable>
+   </xsl:param>
    <xsl:variable name="output-suffix-count" select="count($suffixes-for-multiple-output)"/>
 
 
 
 
    <!-- Now the process begins -->
-   <!-- Change the input -->
-   <!--<xsl:param name="input-pass-1" as="item()*">
-      <xsl:apply-templates select="$input-items" mode="input-pass-1"/>
-   </xsl:param>-->
-   <!--<xsl:param name="input-pass-2" as="item()*">
-      <xsl:apply-templates select="$input-pass-1" mode="input-pass-2"/>
-   </xsl:param>-->
-   <!--<xsl:param name="input-pass-3" as="item()*">
-      <xsl:apply-templates select="$input-pass-2" mode="input-pass-3"/>
-   </xsl:param>-->
-   <!--<xsl:param name="input-pass-4" as="item()*">
-      <xsl:apply-templates select="$input-pass-3" mode="input-pass-4"/>
-   </xsl:param>-->
+   <!-- Change the input, responsive to opening and saving intermediate steps -->
 
-   <xsl:param name="uri-input-pass-1"
-      select="resolve-uri(concat('input-pass-1-', $doc-filename), $temp-directory)"/>
-   <xsl:param name="input-pass-1" as="item()*">
-      <xsl:choose>
-         <xsl:when test="$use-saved-intermediate-steps and doc-available($uri-input-pass-1)">
-            <xsl:sequence select="doc($uri-input-pass-1)"/>
-         </xsl:when>
-         <xsl:otherwise>
-            <xsl:choose>
-               <xsl:when test="$save-intermediate-steps">
-                  <xsl:apply-templates select="tan:mark-save-as($input-items, $uri-input-pass-1)"
-                     mode="input-pass-1"/>
-               </xsl:when>
-               <xsl:otherwise>
-                  <xsl:apply-templates select="$input-items" mode="input-pass-1"/>
-               </xsl:otherwise>
-            </xsl:choose>
-         </xsl:otherwise>
-      </xsl:choose>
-   </xsl:param>
+   <xsl:function name="tan:build-intermediate-step" as="item()*">
+      <!-- Input: input items that are to be used to build a variable; a sequence of strings; a string -->
+      <!-- Output: the input items prepared, and if not retrieved from a previously saved copy, sent to a template mode corresponding to the name of the pass -->
+      <xsl:param name="preceding-items" as="item()*"/>
+      <xsl:param name="target-uris" as="xs:string*"/>
+      <xsl:param name="name-of-pass" as="xs:string"/>
+      <!-- We save any preceding steps that have been marked with @save-as -->
+      <xsl:variable name="variable-prepped" as="item()*">
+         <xsl:choose>
+            <xsl:when test="$save-intermediate-steps or $use-saved-intermediate-steps">
+               <xsl:for-each select="$preceding-items">
+                  <xsl:variable name="this-pos" select="position()"/>
+                  <xsl:variable name="this-uri" select="$target-uris[$this-pos]"/>
+                  <xsl:choose>
+                     <xsl:when test="string-length($this-uri) lt 1">
+                        <xsl:message
+                           select="'No uri selected for', tan:ordinal($this-pos), 'input to', $name-of-pass, 'item, so cannot open or save.'"/>
+                        <xsl:sequence select="."/>
+                     </xsl:when>
+                     <xsl:when test="$use-saved-intermediate-steps and doc-available($this-uri)">
+                        <xsl:message
+                           select="'Fetching previously saved', $name-of-pass, 'from', $this-uri"/>
+                        <xsl:apply-templates select="doc($this-uri)" mode="opened-from"/>
+                     </xsl:when>
+                     <xsl:when test="$save-intermediate-steps">
+                        <xsl:message select="'Marking', $name-of-pass, 'to be saved at', $this-uri"/>
+                        <xsl:copy-of select="tan:mark-save-as(., $this-uri)"/>
+                     </xsl:when>
+                     <xsl:otherwise>
+                        <xsl:sequence select="."/>
+                     </xsl:otherwise>
+                  </xsl:choose>
+               </xsl:for-each>
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:sequence select="$preceding-items"/>
+            </xsl:otherwise>
+         </xsl:choose>
+      </xsl:variable>
+      <xsl:if test="matches($name-of-pass,'input[ -]pass[ -][1234]')">
+         <xsl:message select="'Starting', $name-of-pass"/>
+      </xsl:if>
+      <xsl:for-each select="$variable-prepped">
+         <xsl:variable name="pos" select="position()"/>
+         <xsl:choose>
+            <xsl:when test="exists(root(.)/*/@opened-from) and not(exists(root(.)/*/@save-as))">
+               <xsl:sequence select="."/>
+            </xsl:when>
+            <xsl:when test="matches($name-of-pass,'input[ -]pass[ -]1')">
+               <xsl:apply-templates select="." mode="input-pass-1"/>
+            </xsl:when>
+            <xsl:when test="matches($name-of-pass,'input[ -]pass[ -]2')">
+               <xsl:apply-templates select="." mode="input-pass-2"/>
+            </xsl:when>
+            <xsl:when test="matches($name-of-pass,'input[ -]pass[ -]3')">
+               <xsl:apply-templates select="." mode="input-pass-3"/>
+            </xsl:when>
+            <xsl:when test="matches($name-of-pass,'input[ -]pass[ -]4')">
+               <xsl:apply-templates select="." mode="input-pass-4"/>
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:if test="string-length($name-of-pass) gt 0 and position() = 1">
+                  <xsl:message select="'No template mode has been defined for', $name-of-pass"/>
+               </xsl:if>
+               <xsl:sequence select="."/>
+            </xsl:otherwise>
+         </xsl:choose>
+      </xsl:for-each>
+   </xsl:function>
    
-   <xsl:param name="uri-input-pass-2"
-      select="resolve-uri(concat('input-pass-2-', $doc-filename), $temp-directory)"/>
-   <xsl:param name="input-pass-2" as="item()*">
-      <xsl:choose>
-         <xsl:when test="$use-saved-intermediate-steps and doc-available($uri-input-pass-2)">
-            <xsl:sequence select="doc($uri-input-pass-2)"/>
-         </xsl:when>
-         <xsl:otherwise>
-            <xsl:choose>
-               <xsl:when test="$save-intermediate-steps">
-                  <xsl:apply-templates select="tan:mark-save-as($input-pass-1, $uri-input-pass-2)"
-                     mode="input-pass-2"/>
-               </xsl:when>
-               <xsl:otherwise>
-                  <xsl:apply-templates select="$input-pass-1" mode="input-pass-2"/>
-               </xsl:otherwise>
-            </xsl:choose>
-         </xsl:otherwise>
-      </xsl:choose>
-   </xsl:param>
+   <xsl:template match="/*" mode="opened-from">
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:attribute name="opened-from" select="base-uri(.)"/>
+         <xsl:copy-of select="node()"/>
+      </xsl:copy>
+   </xsl:template>
 
-   <xsl:param name="uri-input-pass-3"
-      select="resolve-uri(concat('input-pass-3-', $doc-filename), $temp-directory)"/>
-   <xsl:param name="input-pass-3" as="item()*">
-      <xsl:choose>
-         <xsl:when test="$use-saved-intermediate-steps and doc-available($uri-input-pass-3)">
-            <xsl:sequence select="doc($uri-input-pass-3)"/>
-         </xsl:when>
-         <xsl:otherwise>
-            <xsl:choose>
-               <xsl:when test="$save-intermediate-steps">
-                  <xsl:apply-templates select="tan:mark-save-as($input-pass-2, $uri-input-pass-3)"
-                     mode="input-pass-3"/>
-               </xsl:when>
-               <xsl:otherwise>
-                  <xsl:apply-templates select="$input-pass-2" mode="input-pass-3"/>
-               </xsl:otherwise>
-            </xsl:choose>
-         </xsl:otherwise>
-      </xsl:choose>
-   </xsl:param>
+   <xsl:param name="uris-input-pass-1"
+      select="tan:generate-save-uris($input-items, 'input-pass-1', (), $temp-directory)"/>
+   <xsl:param name="input-pass-1" as="item()*"
+      select="tan:build-intermediate-step($input-items, $uris-input-pass-1, 'input pass 1')"/>
    
-   <xsl:param name="uri-input-pass-4"
-      select="resolve-uri(concat('input-pass-4-', $doc-filename), $temp-directory)"/>
-   <xsl:param name="input-pass-4" as="item()*">
-      <xsl:choose>
-         <xsl:when test="$use-saved-intermediate-steps and doc-available($uri-input-pass-4)">
-            <xsl:sequence select="doc($uri-input-pass-4)"/>
-         </xsl:when>
-         <xsl:otherwise>
-            <xsl:choose>
-               <xsl:when test="$save-intermediate-steps">
-                  <xsl:apply-templates select="tan:mark-save-as($input-pass-3, $uri-input-pass-4)"
-                     mode="input-pass-4"/>
-               </xsl:when>
-               <xsl:otherwise>
-                  <xsl:apply-templates select="$input-pass-3" mode="input-pass-4"/>
-               </xsl:otherwise>
-            </xsl:choose>
-         </xsl:otherwise>
-      </xsl:choose>
-   </xsl:param>
+
+   <xsl:param name="uris-input-pass-2"
+      select="tan:generate-save-uris($input-pass-1, 'input-pass-2', (), $temp-directory)"/>
+   <xsl:param name="input-pass-2" as="item()*"
+      select="tan:build-intermediate-step($input-pass-1, $uris-input-pass-2, 'input pass 2')"/>
    
+
+   <xsl:param name="uris-input-pass-3"
+      select="tan:generate-save-uris($input-pass-2, 'input-pass-3', (), $temp-directory)"/>
+   <xsl:param name="input-pass-3" as="item()*"
+      select="tan:build-intermediate-step($input-pass-2, $uris-input-pass-3, 'input pass 3')"/>
    
+
+
+   <xsl:param name="uris-input-pass-4"
+      select="tan:generate-save-uris($input-pass-3, 'input-pass-4', (), $temp-directory)"/>
+   <xsl:param name="input-pass-4" as="item()*"
+      select="tan:build-intermediate-step($input-pass-3, $uris-input-pass-4, 'input pass 4')"/>
+
+
 
    <!-- Infuse the template with the input -->
    <xsl:param name="template-infused-with-revised-input" as="document-node()*">
-      <xsl:apply-templates select="$template-doc" mode="infuse-template">
-         <xsl:with-param name="new-content" select="$input-pass-4" tunnel="yes"/>
-      </xsl:apply-templates>
+      <xsl:for-each select="$input-pass-4">
+         <xsl:apply-templates select="$template-doc" mode="infuse-template">
+            <xsl:with-param name="new-content" select="." tunnel="yes"/>
+         </xsl:apply-templates>
+      </xsl:for-each>
    </xsl:param>
 
-   <xsl:template match="*" mode="infuse-template">
+   <xsl:template match="*:body" mode="infuse-template">
+      <!-- It's unclear how you will want to put the new data in the template, but here is one obvious way -->
       <xsl:param name="new-content" tunnel="yes"/>
-      <!-- we arrange the text value this way because some docx files will have text content that's split between <w:r>s -->
-      <xsl:variable name="this-text" select="string-join(.//text(), '')"/>
-      <xsl:choose>
-         <xsl:when test="$this-text = $replace-template-element-with-text-content">
-            <xsl:copy-of select="$new-content"/>
-         </xsl:when>
-         <xsl:otherwise>
-            <xsl:copy>
-               <xsl:copy-of select="@*"/>
-               <xsl:apply-templates mode="#current"/>
-            </xsl:copy>
-         </xsl:otherwise>
-      </xsl:choose>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:copy-of select="$new-content"/>
+      </xsl:copy>
    </xsl:template>
 
 
    <!-- Revise the newly infused template -->
-   <xsl:param name="infused-template-revised" as="document-node()*">
+   <!-- Caution: all @hrefs in the input should be resolved before being inserted into the template -->
+   <xsl:param name="infused-template-revised"  as="document-node()*">
+      <xsl:for-each select="$template-infused-with-revised-input">
+         <xsl:variable name="pos" select="position()"/>
+         <xsl:variable name="this-target-url" select="($output-url-resolved[$pos], $output-url-resolved[1])[1]"/>
+         <!-- We revise hrefs before revising the infusion -->
+         <xsl:apply-templates select="tan:revise-hrefs(., $template-url-resolved, $this-target-url)"
+            mode="revise-infused-template"/>
+      </xsl:for-each>
+   </xsl:param>
+   <!--<xsl:param name="infused-template-revised" as="document-node()*">
       <xsl:apply-templates select="$template-infused-with-revised-input"
          mode="revise-infused-template"/>
-   </xsl:param>
+   </xsl:param>-->
 
    <xsl:template match="* | comment() | @*" mode="revise-infused-template">
       <xsl:copy>
@@ -280,30 +296,20 @@
             </xsl:analyze-string>
         </xsl:processing-instruction>
    </xsl:template>
-   <!--<xsl:template match="tan:head" mode="revise-infused-template">
-      <xsl:variable name="this-credited-head" as="element()">
-         <xsl:apply-templates select="." mode="credit-stylesheet"/>
-      </xsl:variable>
-      <head xmlns="tag:textalign.net,2015:ns">
-         <xsl:copy-of select="$this-credited-head/@*"/>
-         <xsl:apply-templates select="$this-credited-head/node()" mode="#current"/>
-      </head>
-   </xsl:template>-->
-   <!-- Caution: all @hrefs in the input should be resolved before being inserted into the template -->
-   <xsl:template match="@href" mode="revise-infused-template credit-stylesheet">
+
+   <!--<xsl:template match="@href" mode="revise-infused-template credit-stylesheet">
       <xsl:attribute name="href"
          select="tan:uri-relative-to(resolve-uri(., $template-url-resolved), $output-url-resolved)"
       />
-   </xsl:template>
-   <xsl:template match="html:script/@src" mode="revise-infused-template">
+   </xsl:template>-->
+   <!--<xsl:template match="html:script/@src" mode="revise-infused-template">
       <xsl:attribute name="src"
          select="tan:uri-relative-to(resolve-uri(., $template-url-resolved), $output-url-resolved)"
       />
-   </xsl:template>
-   
+   </xsl:template>-->
+
    <xsl:param name="infused-template-credited" as="document-node()*">
-      <xsl:apply-templates select="$infused-template-revised"
-         mode="credit-stylesheet"/>
+      <xsl:apply-templates select="$infused-template-revised" mode="credit-stylesheet"/>
    </xsl:param>
 
    <!-- For intermediate steps -->
@@ -316,11 +322,15 @@
    <xsl:template match="/">
       <!-- This template returns only secondary results; that is, it uses xsl:result-document -->
       <!-- For feedback, diagnostics, results, create a default template in the importing stylesheet -->
-      <xsl:message>Attempting to save results or intermediate steps.</xsl:message>
+      <xsl:if test="$save-intermediate-steps">
+         <xsl:message>Attempting to save results.</xsl:message>
+         <xsl:apply-templates select="$items-to-be-saved" mode="save-file"/>
+      </xsl:if>
+      <xsl:message>Attempting to save results.</xsl:message>
       <xsl:if test="string-length($output-url-resolved) gt 0">
          <xsl:variable name="output" select="$infused-template-credited"/>
          <xsl:variable name="distinct-output-base-uris"
-            select="distinct-values($infused-template-credited/*/@base-uri)"/>
+            select="distinct-values($infused-template-credited/*/@xml:base)"/>
          <xsl:variable name="output-count" as="xs:integer"
             select="
                count(if ($template-is-openxml)
@@ -354,7 +364,7 @@
                </xsl:when>
                <xsl:when test="$template-is-openxml">
                   <xsl:variable name="this-output"
-                     select="$output[*/@base-uri = $distinct-output-base-uris[$this-pos]]"/>
+                     select="$output[*/@xml:base = $distinct-output-base-uris[$this-pos]]"/>
                   <xsl:call-template name="tan:save-docx">
                      <xsl:with-param name="docx-parts" select="$this-output"/>
                      <xsl:with-param name="resolved-uri" select="$this-target-uri"/>
@@ -368,12 +378,6 @@
                </xsl:otherwise>
             </xsl:choose>
          </xsl:for-each>
-      </xsl:if>
-      <xsl:if test="$save-intermediate-steps">
-         <xsl:apply-templates select="$input-pass-1" mode="save-file"/>
-         <xsl:apply-templates select="$input-pass-2" mode="save-file"/>
-         <xsl:apply-templates select="$input-pass-3" mode="save-file"/>
-         <xsl:apply-templates select="$input-pass-4" mode="save-file"/>
       </xsl:if>
    </xsl:template>
 
