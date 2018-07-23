@@ -66,7 +66,7 @@
 																<serializableOrderedMap>
 																	<entry>
 																		<String>script</String>
-																		<String>${baseFramework}/do%20things/configure%20oXygen%20author/get-lm-data.xsl
+																		<String>${baseFramework}/applications/configure%20oXygen%20author/get-lm-data.xsl
 </String>
 																	</entry>
 																	<entry>
@@ -145,7 +145,7 @@
 																	</entry>
 																	<entry>
 																		<String>script</String>
-																		<String>${baseFramework}/do%20things/configure%20oXygen%20author/detect-lang.xsl
+																		<String>${baseFramework}/applications/configure%20oXygen%20author/detect-lang.xsl
 </String>
 																	</entry>
 																	<entry>
@@ -890,7 +890,7 @@ process-link-to
 								<cssFile-array>
 									<cssFile>
 										<field name="href">
-											<String>${framework}/do%20things/configure%20oXygen%20author/TAN-core.css</String>
+											<String>${framework}/applications/configure%20oXygen%20author/TAN-core.css</String>
 										</field>
 										<field name="title">
 											<String>TAN core</String>
@@ -1773,7 +1773,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/get-first-word.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/get-first-word.xsl</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
@@ -1831,7 +1831,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/get-first-clause.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/get-first-clause.xsl</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
@@ -1889,7 +1889,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/get-first-sent.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/get-first-sent.xsl</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
@@ -1947,7 +1947,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/get-first-char.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/get-first-char.xsl</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
@@ -2005,7 +2005,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/cut-first-word.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/cut-first-word.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -2067,7 +2067,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/cut-first-clause.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/cut-first-clause.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -2129,7 +2129,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/cut-first-sent.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/cut-first-sent.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -2191,7 +2191,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/cut-first-char.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/cut-first-char.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -2253,7 +2253,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/get-last-word.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/get-last-word.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -2315,7 +2315,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/get-last-clause.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/get-last-clause.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -2377,7 +2377,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/get-last-sent.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/get-last-sent.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -2439,7 +2439,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/get-last-char.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/get-last-char.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -2501,7 +2501,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/cut-last-word.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/cut-last-word.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -2563,7 +2563,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/cut-last-clause.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/cut-last-clause.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -2625,7 +2625,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/cut-last-sent.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/cut-last-sent.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -2687,7 +2687,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/cut-last-char.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/cut-last-char.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -2720,7 +2720,7 @@ go-to-prev-leaf-div</String>
 											<String>Move caret to the beginning of the next leaf div</String>
 										</field>
 										<field name="largeIconPath">
-											<String>${framework}/do%20things/configure%20oXygen%20author/img/next-leaf.png</String>
+											<String>${framework}/applications/configure%20oXygen%20author/img/next-leaf.png</String>
 										</field>
 										<field name="smallIconPath">
 											<String></String>
@@ -2849,7 +2849,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/get-last-word.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/get-last-word.xsl</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
@@ -2907,7 +2907,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/get-last-clause.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/get-last-clause.xsl</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
@@ -2965,7 +2965,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/get-last-sent.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/get-last-sent.xsl</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
@@ -3023,7 +3023,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/get-last-char.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/get-last-char.xsl</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
@@ -3081,7 +3081,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/cut-last-word.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/cut-last-word.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -3143,7 +3143,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/cut-last-clause.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/cut-last-clause.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -3205,7 +3205,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/cut-last-sent.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/cut-last-sent.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -3267,7 +3267,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/cut-last-char.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/cut-last-char.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -3329,7 +3329,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/get-first-word.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/get-first-word.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -3391,7 +3391,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/get-first-clause.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/get-first-clause.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -3453,7 +3453,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/get-first-sent.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/get-first-sent.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -3515,7 +3515,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/get-first-char.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/get-first-char.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -3577,7 +3577,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/cut-first-word.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/cut-first-word.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -3639,7 +3639,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/cut-first-clause.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/cut-first-clause.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -3701,7 +3701,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/cut-first-sent.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/cut-first-sent.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -3763,7 +3763,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/cut-first-char.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/cut-first-char.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -3796,7 +3796,7 @@ go-to-prev-leaf-div</String>
 											<String>Move caret to the start of the previous leaf div</String>
 										</field>
 										<field name="largeIconPath">
-											<String>${framework}/do%20things/configure%20oXygen%20author/img/prev-leaf.png</String>
+											<String>${framework}/applications/configure%20oXygen%20author/img/prev-leaf.png</String>
 										</field>
 										<field name="smallIconPath">
 											<String></String>
@@ -3846,7 +3846,7 @@ go-to-prev-leaf-div</String>
 											<String>Move caret to the beginning of the next top level div</String>
 										</field>
 										<field name="largeIconPath">
-											<String>${framework}/do%20things/configure%20oXygen%20author/img/next-tld.png</String>
+											<String>${framework}/applications/configure%20oXygen%20author/img/next-tld.png</String>
 										</field>
 										<field name="smallIconPath">
 											<String></String>
@@ -3896,7 +3896,7 @@ go-to-prev-leaf-div</String>
 											<String>Move caret to the beginning of the previous top level div</String>
 										</field>
 										<field name="largeIconPath">
-											<String>${framework}/do%20things/configure%20oXygen%20author/img/prev-tld.png</String>
+											<String>${framework}/applications/configure%20oXygen%20author/img/prev-tld.png</String>
 										</field>
 										<field name="smallIconPath">
 											<String></String>
@@ -4079,7 +4079,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/get-marked-text.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/get-marked-text.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -4141,7 +4141,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/get-marked-text.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/get-marked-text.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -4203,7 +4203,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/cut-marked-text.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/cut-marked-text.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -4362,7 +4362,7 @@ remove-marked-text</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/search-for-IRI+name.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/search-for-IRI+name.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -4395,7 +4395,7 @@ remove-marked-text</String>
 											<String>Normalize Unicode (NFC)</String>
 										</field>
 										<field name="largeIconPath">
-											<String>${framework}/do%20things/configure%20oXygen%20author/img/nfc.png</String>
+											<String>${framework}/applications/configure%20oXygen%20author/img/nfc.png</String>
 										</field>
 										<field name="smallIconPath">
 											<String></String>
@@ -4420,7 +4420,7 @@ remove-marked-text</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/normalize-unicode.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/normalize-unicode.xsl</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -4520,7 +4520,7 @@ remove-marked-text</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/replace-text-with-string-base.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/replace-text-with-string-base.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -4553,7 +4553,7 @@ remove-marked-text</String>
 											<String>Replace each character in the selected text with its base character</String>
 										</field>
 										<field name="largeIconPath">
-											<String>${framework}/do%20things/configure%20oXygen%20author/img/a-to-a.png</String>
+											<String>${framework}/applications/configure%20oXygen%20author/img/a-to-a.png</String>
 										</field>
 										<field name="smallIconPath">
 											<String></String>
@@ -4630,7 +4630,7 @@ replace-marked-text-with-string-base
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/replace-text-with-string-composite.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/replace-text-with-string-composite.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -4663,7 +4663,7 @@ replace-marked-text-with-string-base
 											<String>Replace each character in the selected text with its characters that use it as a base</String>
 										</field>
 										<field name="largeIconPath">
-											<String>${framework}/do%20things/configure%20oXygen%20author/img/a-to-aaa.png</String>
+											<String>${framework}/applications/configure%20oXygen%20author/img/a-to-aaa.png</String>
 										</field>
 										<field name="smallIconPath">
 											<String></String>
@@ -4711,7 +4711,7 @@ replace-marked-text-with-string-composite
 											<String>Resolve the text inside the braces of a \u{} regular expression</String>
 										</field>
 										<field name="largeIconPath">
-											<String>${framework}/do%20things/configure%20oXygen%20author/img/u.png</String>
+											<String>${framework}/applications/configure%20oXygen%20author/img/u.png</String>
 										</field>
 										<field name="smallIconPath">
 											<String></String>
@@ -4740,7 +4740,7 @@ replace-marked-text-with-string-composite
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/resolve-escape-u.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/resolve-escape-u.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -4773,7 +4773,7 @@ replace-marked-text-with-string-composite
 											<String>Use the current text to search VIAF for IRI + name patterns that might be appropriate</String>
 										</field>
 										<field name="largeIconPath">
-											<String>${framework}/do%20things/configure%20oXygen%20author/img/viaf.png</String>
+											<String>${framework}/applications/configure%20oXygen%20author/img/viaf.png</String>
 										</field>
 										<field name="smallIconPath">
 											<String></String>
@@ -4802,7 +4802,7 @@ replace-marked-text-with-string-composite
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/get-iri-name-via-viaf.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/get-iri-name-via-viaf.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -4835,7 +4835,7 @@ replace-marked-text-with-string-composite
 											<String>Use the current text to search the Library of Congress catalog for IRI + name patterns that might be appropriate</String>
 										</field>
 										<field name="largeIconPath">
-											<String>${framework}/do%20things/configure%20oXygen%20author/img/loc.png</String>
+											<String>${framework}/applications/configure%20oXygen%20author/img/loc.png</String>
 										</field>
 										<field name="smallIconPath">
 											<String></String>
@@ -4864,7 +4864,7 @@ replace-marked-text-with-string-composite
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/get-iri-name-via-loc.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/get-iri-name-via-loc.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -4897,7 +4897,7 @@ replace-marked-text-with-string-composite
 											<String>Using the value of an element's @href insert the referenced TAN file's IRI and name values</String>
 										</field>
 										<field name="largeIconPath">
-											<String>${framework}/do%20things/configure%20oXygen%20author/img/href-in.png</String>
+											<String>${framework}/applications/configure%20oXygen%20author/img/href-in.png</String>
 										</field>
 										<field name="smallIconPath">
 											<String></String>
@@ -4918,7 +4918,7 @@ replace-marked-text-with-string-composite
 														<serializableOrderedMap>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/get-iri-name-via-href.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/get-iri-name-via-href.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -4976,7 +4976,7 @@ replace-marked-text-with-string-composite
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/toggle-soft-hyphen.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/toggle-soft-hyphen.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -5034,7 +5034,7 @@ replace-marked-text-with-string-composite
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/update-text-via-redivided-copy.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/update-text-via-redivided-copy.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -5100,7 +5100,7 @@ replace-marked-text-with-string-composite
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/normalize-leaf-div-text.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/normalize-leaf-div-text.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -5310,7 +5310,7 @@ process-link-to
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/do%20things/configure%20oXygen%20author/link-to-file.xsl</String>
+																<String>${framework}/applications/configure%20oXygen%20author/link-to-file.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -6571,7 +6571,7 @@ process-link-to
 									<String></String>
 								</field>
 								<field name="inputXSLURL">
-									<String>${framework}/do%20things/copy/copy%20TAN%20file.xsl</String>
+									<String>${framework}/applications/copy/copy%20TAN%20file.xsl</String>
 								</field>
 								<field name="inputXMLURL">
 									<String>${currentFileURL}</String>

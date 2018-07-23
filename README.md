@@ -8,7 +8,7 @@ This project has submodules, which must be invoked using the --recursive option:
 
 New to TAN? Start with directories marked with an asterisk.
 
-* `/do things`: XSLT and XProc stylesheets intended for creating, editing, and working with TAN files. 
+* `/applications`: XSLT and XProc stylesheets intended for creating, editing, and working with TAN files. 
 * \*`/examples`: A small library of example TAN files. Snippets of these examples appear in the guidelines.
 * `functions/`: The TAN function library. This is the core of both the validation process and subsequent activities.
 * \* `/guidelines`: the main documentation for TAN. See also http://textalign.net/release/TAN-2018/guidelines/xhtml/index.xhtml. 

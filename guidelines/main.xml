@@ -17,9 +17,9 @@
                <email>kalvesmaki@gmail.com</email>
             </author>
          </info>
-         <remark> This document and the files it describes are licensed under a Creative Commons
-            Attribution 4.0 International License: http://creativecommons.org/licenses/by/4.0/
-         </remark>
+         <remark> This document and the files it describes are, unless otherwise specified, licensed
+            under a Creative Commons Attribution 4.0 International License:
+            http://creativecommons.org/licenses/by/4.0/ </remark>
       </legalnotice>
       <revhistory>
          <info>
@@ -66,7 +66,7 @@
                   comprehensive list of changes.</para>
                <para>General:<itemizedlist>
                   <listitem>
-                     <para>New errors introduced: wrn07, wrn08</para>
+                     <para>New errors introduced: wrn07, wrn08, inc05</para>
                   </listitem>
                      <listitem>
                         <para>New elements: &lt;predecessor> and &lt;successor>, to indicate how
@@ -82,7 +82,7 @@
                            tan:catalog-uris(), tan:collection(), tan:unique-char(),
                            tan:most-common-item-count(), tan:vertical-stops() (to support
                            tan:diff()), tan:nested-phrase-loop() (supports tan:chop-string()),
-                           tan:primary-agent()</para>
+                           tan:primary-agent(); tan:revise-href(); tan:lm-data()</para>
                   </listitem>
                      <listitem>
                         <para>New global variables: $shy (same as $dhy), $doc-catalog-uris,
@@ -110,7 +110,7 @@
                         <para>some enhancement of functions: </para>
                         <itemizedlist>
                            <listitem>
-                              <para>tan:resolve-href() has a longer version that provides
+                              <para>tan:resolve-href() now has a longer version that provides
                                  breadcrumbs.</para>
                            </listitem>
                            <listitem>
@@ -146,6 +146,10 @@
                            </listitem>
                            <listitem>
                               <para>tan:resolve-doc() now has a 2-parameter version.</para>
+                           </listitem>
+                           <listitem>
+                              <para>tan:error() now supports messagnig functions (validation won't
+                                 do this, but they would be useful for XSLT transformations)</para>
                            </listitem>
                         </itemizedlist>
                      </listitem>
@@ -246,7 +250,15 @@
                      <listitem>
                         <para>tan:search-morpheus()</para>
                      </listitem>
+                     <listitem>
+                        <para>tan:lang-catalog()</para>
+                     </listitem>
                </itemizedlist></para>
+               <para>Extra variables:<itemizedlist>
+                     <listitem>
+                        <para>$internet-available</para>
+                     </listitem>
+                  </itemizedlist></para>
                <para>Advanced / recommended best practices<itemizedlist>
                      <listitem>
                         <para>Class 1 filenames should terminate in something that expresses the
@@ -263,6 +275,8 @@
             </section>
             <section>
                <title>Things to do</title>
+               <para>Deeply audit and revise tan:resolve-doc() so that errors deep in keys and
+                  inclusions are returned to the document being validated.</para>
                <para>Develop error messages for &lt;predecessor>, &lt;successor>, &lt;redivision>,
                   &lt;model>, and &lt;annotation>.</para>
                <para>We assume now that any div, whether a leaf or not, that shares the same
@@ -270,6 +284,9 @@
                   occur when duplicates are not the same div type – that's the flag for an error.
                   For example, &lt;div type="title" n="1"> and &lt;div type="chapter" n="1"> should
                   raise a flag.</para>
+               <para>Change @when-accessed to @accessed-when (imitating @ed-when).</para>
+               <para>Rename /applications to /actions or /activities. Rename /TAN-key to /keys.</para>
+               <para>Add a README.md to each main directory.</para>
             </section>
             <section>
                <title>Changes desired for the future</title>
@@ -299,9 +316,6 @@
                      <listitem>
                         <para>Create TAN-A-tok, perhaps with options for IBM Model, but more
                            importantly with contextual data (esp. lexicomorphology).</para>
-                     </listitem>
-                     <listitem>
-                        <para>Create TAN-A-lm</para>
                      </listitem>
                   </itemizedlist>
                </para>
@@ -4692,7 +4706,7 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
                provided by Saxonica (<link
                   xlink:href="https://www.saxonica.com/documentation9.5/sourcedocs/collections.html"
                />), to .</para>
-            <para>Any XML file passed to the stylesheet <code>/do things/populate/populate TAN
+            <para>Any XML file passed to the stylesheet <code>/applications/populate/populate TAN
                   catalog file.xsl</code> will automatically generate one of these files.</para>
             <para>The root element of a catalog file is <code><link linkend="element-collection"
                      >&lt;collection></link></code>, with children <code><link linkend="element-doc"
@@ -4903,7 +4917,7 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
                is to think how how best to handle and manipulate a TAN file. But there is a good
                chance that the labor you have in mind has already been done for you in the built-in
                TAN functions (see <xref xlink:href="#variables-keys-functions-and-templates"/>). See
-               also the files provided under the subdirectory <code>/do things</code>.</para>
+               also the files provided under the subdirectory <code>/applications</code>.</para>
          </section>
          <section>
             <title>Sharing TAN files</title>
@@ -4932,8 +4946,8 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
          <section xml:id="tan-stylesheets-and-function-library">
             <title>Doing things with TAN files</title>
             <para>The TAN format is not an end in itself. Indeed, there is no point to any file
-               format, unless you can do things with it. TAN was designed to allow users to do
-               unusual and interesting things. <code>/do things</code>, a major subdirectory in the
+               format, unless you can applications with it. TAN was designed to allow users to do
+               unusual and interesting things. <code>/applications</code>, a major subdirectory in the
                project file, is populated with folders named with actions you might want to perform
                on a TAN file, and they contain XSLT stylesheets that fall into that area of
                activity.</para>

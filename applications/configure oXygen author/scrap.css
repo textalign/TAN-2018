@@ -1,0 +1,78 @@
+@namespace do "http://www.doaks.org";
+@namespace html "http://www.w3.org/1999/xhtml";
+/* display */
+*{
+    display: block
+}
+html|*{
+    display: inline
+}
+/* font */
+title,
+name{
+    font-size: larger;
+    font-weight: 900;
+}
+html|i{
+    font-style: italic
+}
+/* margin */
+do|*{
+    margin-left: 10px;
+}
+title,
+name{
+    margin-top: 20px;
+}
+/* border */
+article{
+    border: 2px solid black
+}
+/* oXygen */
+*[aka]:after{
+    content: " (aka: " oxy_textfield(
+    edit, "@aka",
+    columns, 20
+    ) ") " ;
+}
+*[when]{
+    content: 
+    oxy_datePicker(
+edit, "@when", 
+format, "yyyy-MM-dd");
+}
+*[who]{
+    content: 
+    oxy_combobox(
+edit, "@who", 
+values, oxy_xpath("string-join((doc('people.xml')/people/person/@xml:id, doc('orgs.xml')/orgs/org/@xml:id), ', ')")
+)
+ oxy_label(text, oxy_xpath("for $i in @who return normalize-space(string-join((doc('people.xml'), doc('orgs.xml'))//*[@xml:id = $i]/name//text(),' '))"), color, "gray")
+}
+*[href]{
+    content: 
+    oxy_urlChooser(
+edit, "@href", 
+columns 25);
+}
+* > * > do|*:before{
+    content: oxy_label(text, oxy_concat(oxy_name(), ' '), color, "brown")
+}
+*[which]{
+    content: 
+    oxy_combobox(
+edit, "@which", 
+values, oxy_xpath("string-join(collection('./?select=*.xml')//(article, journal, book, org, chapter)/@xml:id, ', ')")
+)
+"\a"
+ oxy_label(text, oxy_xpath("for $i in @which return normalize-space(string-join(collection('./?select=*.xml')//*[@xml:id = $i]/(title, subtitle, name)//text(),' '))"), color, "gray")
+}
+image{
+    content: oxy_textfield(
+    edit, "@type",
+    columns, 5
+    ) " " oxy_textfield(
+    edit, "@n",
+    columns, 5
+    ) ;
+}

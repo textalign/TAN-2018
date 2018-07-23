@@ -848,7 +848,7 @@
          </xsl:if>
          <expansion>terse</expansion>
          <xsl:if test="@TAN-version = $previous-TAN-versions">
-            <xsl:variable name="prev-version-uri" select="'../../do%20things/convert/convert%20TAN%202017%20to%20TAN%202018.xsl'"/>
+            <xsl:variable name="prev-version-uri" select="'../../applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl'"/>
             <xsl:copy-of
                select="tan:error('tan20', concat('To convert this file to the current version, try ', resolve-uri($prev-version-uri, static-base-uri())))"
             />
