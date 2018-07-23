@@ -1,6 +1,6 @@
 [submodule "functions/regex"]
 	path = functions/regex
 	url = https://github.com/textalign/TAN-regex.git
-[submodule "do things/get inclusions/xslt-for-docx"]
-	path = do things/get inclusions/xslt-for-docx
+[submodule "applications/get inclusions/xslt-for-docx"]
+	path = applications/get inclusions/xslt-for-docx
 	url = https://github.com/Arithmeticus/xslt-for-docx.git
