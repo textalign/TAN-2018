@@ -114,22 +114,22 @@
     <!-- revise the input's header; if some divs should be dropped, do so -->
     <xsl:variable name="some-text-has-been-cut"
         select="exists($input-precheck//tan:div[@type = $div-types-to-delete])" as="xs:boolean"/>
-    <xsl:variable name="new-see-alsos" as="element()*">
-        <see-also relationship="model">
+    <xsl:variable name="new-tan-links" as="element()*">
+        <model>
             <IRI>
                 <xsl:value-of select="$template-doc/tan:TAN-T/@id"/>
             </IRI>
             <xsl:copy-of select="$template-doc/tan:TAN-T/tan:head/tan:name"/>
             <location href="{$template-url-resolved}" when-accessed="{current-date()}"/>
-        </see-also>
+        </model>
         <xsl:if test="$some-text-has-been-cut = false()">
-            <see-also relationship="ade">
+            <redivision>
                 <IRI>
                     <xsl:value-of select="root()/*/@id"/>
                 </IRI>
                 <xsl:copy-of select="root()/*/tan:head/tan:name"/>
                 <location href="{$input-base-uri}" when-accessed="{current-date()}"/>
-            </see-also>
+            </redivision>
         </xsl:if>
     </xsl:variable>
     <xsl:variable name="this-relationship" as="element()*">
@@ -157,7 +157,7 @@
         <xsl:copy-of select="tan:resolve-href(., false())"/>
     </xsl:template>
     <xsl:template match="tan:see-also[1]" mode="input-pass-1">
-        <xsl:copy-of select="$new-see-alsos"/>
+        <xsl:copy-of select="$new-tan-links"/>
         <xsl:if test="not(tan:definition(@relationship)/@which = 'model')">
             <xsl:copy-of select="tan:resolve-href(., false())"/>
         </xsl:if>
@@ -169,7 +169,7 @@
     </xsl:template>
     <xsl:template match="tan:definitions" mode="input-pass-1">
         <xsl:if test="not(exists(../tan:see-also))">
-            <xsl:copy-of select="$new-see-alsos"/>
+            <xsl:copy-of select="$new-tan-links"/>
         </xsl:if>
         <xsl:copy>
             <xsl:copy-of select="@*"/>

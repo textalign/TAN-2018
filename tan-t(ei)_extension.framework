@@ -162,7 +162,338 @@ process-link-to
 									</poPatch>
 									<poPatch>
 										<field name="fieldPath">
+											<String>authorExtensionDescriptor/actionDescriptors</String>
+										</field>
+										<field name="index">
+											<Integer>82</Integer>
+										</field>
+										<field name="value">
+											<action>
+												<field name="id">
+													<String>mark-link-to-model</String>
+												</field>
+												<field name="name">
+													<String>Mark link-to for model</String>
+												</field>
+												<field name="description">
+													<String>Insert a &lt;link-to> before &lt;definitions>, as the first step in creating an &lt;model> to another file.</String>
+												</field>
+												<field name="largeIconPath">
+													<String></String>
+												</field>
+												<field name="smallIconPath">
+													<String></String>
+												</field>
+												<field name="accessKey">
+													<String></String>
+												</field>
+												<field name="accelerator">
+													<null/>
+												</field>
+												<field name="actionModes">
+													<actionMode-array>
+														<actionMode>
+															<field name="xpathCondition">
+																<String></String>
+															</field>
+															<field name="argValues">
+																<serializableOrderedMap>
+																	<entry>
+																		<String>fragment</String>
+																		<String>&lt;link-to element-name="model" xml:base="${cfdu}/${cfne}">${ask('Modeled after what TAN file?', relative_url, 'inclusion.${xpath_eval(name(/*))}.xml')}&lt;/link-to></String>
+																	</entry>
+																	<entry>
+																		<String>insertLocation</String>
+																		<String>/*/tan:head/tan:definitions</String>
+																	</entry>
+																	<entry>
+																		<String>insertPosition</String>
+																		<String>Before</String>
+																	</entry>
+																</serializableOrderedMap>
+															</field>
+															<field name="operationID">
+																<String>ro.sync.ecss.extensions.commons.operations.InsertFragmentOperation</String>
+															</field>
+														</actionMode>
+													</actionMode-array>
+												</field>
+												<field name="enabledInReadOnlyContext">
+													<Boolean>false</Boolean>
+												</field>
+											</action>
+										</field>
+										<field name="patchHandling">
+											<String>addIndex</String>
+										</field>
+										<field name="anchor">
+											<null/>
+										</field>
+									</poPatch>
+									<poPatch>
+										<field name="fieldPath">
+											<String>authorExtensionDescriptor/actionDescriptors</String>
+										</field>
+										<field name="index">
+											<Integer>83</Integer>
+										</field>
+										<field name="value">
+											<action>
+												<field name="id">
+													<String>mark-link-to-redivision</String>
+												</field>
+												<field name="name">
+													<String>Mark link-to for redivision</String>
+												</field>
+												<field name="description">
+													<String>Insert a &lt;link-to> before &lt;definitions>, as the first step in creating an &lt;redivision> to another file.</String>
+												</field>
+												<field name="largeIconPath">
+													<String></String>
+												</field>
+												<field name="smallIconPath">
+													<String></String>
+												</field>
+												<field name="accessKey">
+													<String></String>
+												</field>
+												<field name="accelerator">
+													<null/>
+												</field>
+												<field name="actionModes">
+													<actionMode-array>
+														<actionMode>
+															<field name="xpathCondition">
+																<String></String>
+															</field>
+															<field name="argValues">
+																<serializableOrderedMap>
+																	<entry>
+																		<String>fragment</String>
+																		<String>&lt;link-to element-name="model" xml:base="${cfdu}/${cfne}">${ask('Where is the redivided TAN file?', relative_url, 'inclusion.${xpath_eval(name(/*))}.xml')}&lt;/link-to></String>
+																	</entry>
+																	<entry>
+																		<String>insertLocation</String>
+																		<String>/*/tan:head/tan:definitions</String>
+																	</entry>
+																	<entry>
+																		<String>insertPosition</String>
+																		<String>Before</String>
+																	</entry>
+																</serializableOrderedMap>
+															</field>
+															<field name="operationID">
+																<String>ro.sync.ecss.extensions.commons.operations.InsertFragmentOperation</String>
+															</field>
+														</actionMode>
+													</actionMode-array>
+												</field>
+												<field name="enabledInReadOnlyContext">
+													<Boolean>false</Boolean>
+												</field>
+											</action>
+										</field>
+										<field name="patchHandling">
+											<String>addIndex</String>
+										</field>
+										<field name="anchor">
+											<null/>
+										</field>
+									</poPatch>
+									<poPatch>
+										<field name="fieldPath">
+											<String>authorExtensionDescriptor/actionDescriptors</String>
+										</field>
+										<field name="index">
+											<Integer>84</Integer>
+										</field>
+										<field name="value">
+											<action>
+												<field name="id">
+													<String>add-model</String>
+												</field>
+												<field name="name">
+													<String>Add model</String>
+												</field>
+												<field name="description">
+													<String>Add a model to the &lt;head></String>
+												</field>
+												<field name="largeIconPath">
+													<String></String>
+												</field>
+												<field name="smallIconPath">
+													<String></String>
+												</field>
+												<field name="accessKey">
+													<String></String>
+												</field>
+												<field name="accelerator">
+													<String>M1 M3 M</String>
+												</field>
+												<field name="actionModes">
+													<actionMode-array>
+														<actionMode>
+															<field name="xpathCondition">
+																<String></String>
+															</field>
+															<field name="argValues">
+																<serializableOrderedMap>
+																	<entry>
+																		<String>actionIDs</String>
+																		<String>mark-link-to-model
+process-link-to
+</String>
+																	</entry>
+																</serializableOrderedMap>
+															</field>
+															<field name="operationID">
+																<String>ro.sync.ecss.extensions.commons.operations.ExecuteMultipleActionsOperation</String>
+															</field>
+														</actionMode>
+													</actionMode-array>
+												</field>
+												<field name="enabledInReadOnlyContext">
+													<Boolean>false</Boolean>
+												</field>
+											</action>
+										</field>
+										<field name="patchHandling">
+											<String>addIndex</String>
+										</field>
+										<field name="anchor">
+											<null/>
+										</field>
+									</poPatch>
+									<poPatch>
+										<field name="fieldPath">
+											<String>authorExtensionDescriptor/actionDescriptors</String>
+										</field>
+										<field name="index">
+											<Integer>85</Integer>
+										</field>
+										<field name="value">
+											<action>
+												<field name="id">
+													<String>add-redivision</String>
+												</field>
+												<field name="name">
+													<String>Add redivision</String>
+												</field>
+												<field name="description">
+													<String>Add a redivision to the &lt;head></String>
+												</field>
+												<field name="largeIconPath">
+													<String></String>
+												</field>
+												<field name="smallIconPath">
+													<String></String>
+												</field>
+												<field name="accessKey">
+													<String></String>
+												</field>
+												<field name="accelerator">
+													<String>M1 M3 R</String>
+												</field>
+												<field name="actionModes">
+													<actionMode-array>
+														<actionMode>
+															<field name="xpathCondition">
+																<String></String>
+															</field>
+															<field name="argValues">
+																<serializableOrderedMap>
+																	<entry>
+																		<String>actionIDs</String>
+																		<String>mark-link-to-redivision
+process-link-to
+</String>
+																	</entry>
+																</serializableOrderedMap>
+															</field>
+															<field name="operationID">
+																<String>ro.sync.ecss.extensions.commons.operations.ExecuteMultipleActionsOperation</String>
+															</field>
+														</actionMode>
+													</actionMode-array>
+												</field>
+												<field name="enabledInReadOnlyContext">
+													<Boolean>false</Boolean>
+												</field>
+											</action>
+										</field>
+										<field name="patchHandling">
+											<String>addIndex</String>
+										</field>
+										<field name="anchor">
+											<null/>
+										</field>
+									</poPatch>
+									<poPatch>
+										<field name="fieldPath">
 											<String>authorExtensionDescriptor/menubarDescriptor/menuEntriesDescriptorList/[5]/menuEntriesDescriptorList</String>
+										</field>
+										<field name="index">
+											<Integer>2</Integer>
+										</field>
+										<field name="value">
+											<menuItem>
+												<field name="actionID">
+													<String>add-annotation</String>
+												</field>
+											</menuItem>
+										</field>
+										<field name="patchHandling">
+											<String>addIndex</String>
+										</field>
+										<field name="anchor">
+											<null/>
+										</field>
+									</poPatch>
+									<poPatch>
+										<field name="fieldPath">
+											<String>authorExtensionDescriptor/menubarDescriptor/menuEntriesDescriptorList/[5]/menuEntriesDescriptorList</String>
+										</field>
+										<field name="index">
+											<Integer>3</Integer>
+										</field>
+										<field name="value">
+											<menuItem>
+												<field name="actionID">
+													<String>add-model</String>
+												</field>
+											</menuItem>
+										</field>
+										<field name="patchHandling">
+											<String>addIndex</String>
+										</field>
+										<field name="anchor">
+											<null/>
+										</field>
+									</poPatch>
+									<poPatch>
+										<field name="fieldPath">
+											<String>authorExtensionDescriptor/menubarDescriptor/menuEntriesDescriptorList/[5]/menuEntriesDescriptorList</String>
+										</field>
+										<field name="index">
+											<Integer>4</Integer>
+										</field>
+										<field name="value">
+											<menuItem>
+												<field name="actionID">
+													<String>add-redivision</String>
+												</field>
+											</menuItem>
+										</field>
+										<field name="patchHandling">
+											<String>addIndex</String>
+										</field>
+										<field name="anchor">
+											<null/>
+										</field>
+									</poPatch>
+									<poPatch>
+										<field name="fieldPath">
+											<String>authorExtensionDescriptor/popupMenuDescriptor/menuEntriesDescriptorList/[5]/menuEntriesDescriptorList</String>
 										</field>
 										<field name="index">
 											<Integer>2</Integer>
@@ -186,12 +517,33 @@ process-link-to
 											<String>authorExtensionDescriptor/popupMenuDescriptor/menuEntriesDescriptorList/[5]/menuEntriesDescriptorList</String>
 										</field>
 										<field name="index">
-											<Integer>2</Integer>
+											<Integer>3</Integer>
 										</field>
 										<field name="value">
 											<menuItem>
 												<field name="actionID">
-													<String>add-annotation</String>
+													<String>add-model</String>
+												</field>
+											</menuItem>
+										</field>
+										<field name="patchHandling">
+											<String>addIndex</String>
+										</field>
+										<field name="anchor">
+											<null/>
+										</field>
+									</poPatch>
+									<poPatch>
+										<field name="fieldPath">
+											<String>authorExtensionDescriptor/popupMenuDescriptor/menuEntriesDescriptorList/[5]/menuEntriesDescriptorList</String>
+										</field>
+										<field name="index">
+											<Integer>4</Integer>
+										</field>
+										<field name="value">
+											<menuItem>
+												<field name="actionID">
+													<String>add-redivision</String>
 												</field>
 											</menuItem>
 										</field>
@@ -255,6 +607,16 @@ process-link-to
 														<toolbarItem>
 															<field name="actionID">
 																<String>add-annotation</String>
+															</field>
+														</toolbarItem>
+														<toolbarItem>
+															<field name="actionID">
+																<String>add-model</String>
+															</field>
+														</toolbarItem>
+														<toolbarItem>
+															<field name="actionID">
+																<String>add-redivision</String>
 															</field>
 														</toolbarItem>
 													</toolbarEntry-array>
@@ -4807,7 +5169,7 @@ process-link-to
 														<serializableOrderedMap>
 															<entry>
 																<String>fragment</String>
-																<String>&lt;link-to element-name="key" base-uri="${cfdu}/${cfne}">${ask('Link to what key?', relative_url, 'file.tan-key.xml')}&lt;/link-to></String>
+																<String>&lt;link-to element-name="key" xml:base="${cfdu}/${cfne}">${ask('Link to what key?', relative_url, 'file.tan-key.xml')}&lt;/link-to></String>
 															</entry>
 															<entry>
 																<String>insertLocation</String>
@@ -4919,7 +5281,7 @@ process-link-to
 														<serializableOrderedMap>
 															<entry>
 																<String>fragment</String>
-																<String>&lt;link-to element-name="inclusion" base-uri="${cfdu}/${cfne}" xml:id="${ask('Assign what value to @xml:id?', input_type, 'id')}">${ask('Link to what TAN file?', relative_url, 'inclusion.${xpath_eval(name(/*))}.xml')}&lt;/link-to></String>
+																<String>&lt;link-to element-name="inclusion" xml:base="${cfdu}/${cfne}" xml:id="${ask('Assign what value to @xml:id?', input_type, 'id')}">${ask('Link to what TAN file?', relative_url, 'inclusion.${xpath_eval(name(/*))}.xml')}&lt;/link-to></String>
 															</entry>
 															<entry>
 																<String>insertLocation</String>

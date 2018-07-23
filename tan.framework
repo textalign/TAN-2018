@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<serialized version="20.0" xml:space="preserve">
+<serialized version="20.1" xml:space="preserve">
 	<serializableOrderedMap>
 		<entry>
 			<String>document.types</String>
@@ -1847,13 +1847,13 @@ go-to-prev-leaf-div</String>
 									</action>
 									<action>
 										<field name="id">
-											<String>go-to-next-leaf-div</String>
+											<String>go-to-next-leaf-element</String>
 										</field>
 										<field name="name">
-											<String>Go to next leaf div</String>
+											<String>Go to next leaf</String>
 										</field>
 										<field name="description">
-											<String>Move caret to the beginning of the next leaf div</String>
+											<String>Move caret to the beginning of the next leaf element</String>
 										</field>
 										<field name="largeIconPath">
 											<String>${framework}/do%20things/configure%20oXygen%20author/img/next-leaf.png</String>
@@ -1881,7 +1881,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>xpathLocation</String>
-																<String>following::tan:div[not(tan:div)][1]</String>
+																<String>following::*[not(*)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -1931,7 +1931,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>xpathLocation</String>
-																<String>preceding::tan:div[not(tan:div)][1]</String>
+																<String>preceding::*:div[not(*:div)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -2923,13 +2923,13 @@ go-to-prev-leaf-div</String>
 									</action>
 									<action>
 										<field name="id">
-											<String>go-to-prev-leaf-div-start</String>
+											<String>go-to-prev-leaf-start</String>
 										</field>
 										<field name="name">
-											<String>Go to prev leaf div</String>
+											<String>Go to prev leaf</String>
 										</field>
 										<field name="description">
-											<String>Move caret to the start of the previous leaf div</String>
+											<String>Move caret to the start of the previous leaf element</String>
 										</field>
 										<field name="largeIconPath">
 											<String>${framework}/do%20things/configure%20oXygen%20author/img/prev-leaf.png</String>
@@ -2957,7 +2957,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>xpathLocation</String>
-																<String>preceding::tan:div[not(tan:div)][1]</String>
+																<String>preceding::*[not(*)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -4570,6 +4570,56 @@ process-link-to
 											<Boolean>false</Boolean>
 										</field>
 									</action>
+									<action>
+										<field name="id">
+											<String>go-to-next-leaf-div</String>
+										</field>
+										<field name="name">
+											<String>Go to next leaf div</String>
+										</field>
+										<field name="description">
+											<String>Move caret to the beginning of the next leaf div</String>
+										</field>
+										<field name="largeIconPath">
+											<String></String>
+										</field>
+										<field name="smallIconPath">
+											<String></String>
+										</field>
+										<field name="accessKey">
+											<String></String>
+										</field>
+										<field name="accelerator">
+											<null/>
+										</field>
+										<field name="actionModes">
+											<actionMode-array>
+												<actionMode>
+													<field name="xpathCondition">
+														<String></String>
+													</field>
+													<field name="argValues">
+														<serializableOrderedMap>
+															<entry>
+																<String>position</String>
+																<String>Inside, at the beginning</String>
+															</entry>
+															<entry>
+																<String>xpathLocation</String>
+																<String>following::*:div[not(*:div)][1]</String>
+															</entry>
+														</serializableOrderedMap>
+													</field>
+													<field name="operationID">
+														<String>ro.sync.ecss.extensions.commons.operations.MoveCaretOperation</String>
+													</field>
+												</actionMode>
+											</actionMode-array>
+										</field>
+										<field name="enabledInReadOnlyContext">
+											<Boolean>false</Boolean>
+										</field>
+									</action>
 								</action-array>
 							</field>
 							<field name="menubarDescriptor">
@@ -4680,12 +4730,12 @@ process-link-to
 													<menuEntry-array>
 														<menuItem>
 															<field name="actionID">
-																<String>go-to-prev-leaf-div-start</String>
+																<String>go-to-prev-leaf-start</String>
 															</field>
 														</menuItem>
 														<menuItem>
 															<field name="actionID">
-																<String>go-to-next-leaf-div</String>
+																<String>go-to-next-leaf-element</String>
 															</field>
 														</menuItem>
 														<menuItem>
@@ -5014,12 +5064,12 @@ process-link-to
 													<menuEntry-array>
 														<menuItem>
 															<field name="actionID">
-																<String>go-to-prev-leaf-div-start</String>
+																<String>go-to-prev-leaf-start</String>
 															</field>
 														</menuItem>
 														<menuItem>
 															<field name="actionID">
-																<String>go-to-next-leaf-div</String>
+																<String>go-to-next-leaf-element</String>
 															</field>
 														</menuItem>
 														<menuItem>
@@ -5494,12 +5544,12 @@ process-link-to
 											<toolbarEntry-array>
 												<toolbarItem>
 													<field name="actionID">
-														<String>go-to-prev-leaf-div-start</String>
+														<String>go-to-prev-leaf-start</String>
 													</field>
 												</toolbarItem>
 												<toolbarItem>
 													<field name="actionID">
-														<String>go-to-next-leaf-div</String>
+														<String>go-to-next-leaf-element</String>
 													</field>
 												</toolbarItem>
 												<toolbarItem>
