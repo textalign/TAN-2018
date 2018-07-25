@@ -252,7 +252,7 @@
    <xsl:key name="item-via-node-name" match="tan:item"
       use="tokenize(string-join(((ancestor-or-self::*/@affects-element)[last()], (ancestor-or-self::*/@affects-attribute)[last()]), ' '), '\s+')"/>
    <xsl:variable name="TAN-keyword-files" as="document-node()*"
-      select="collection('../../TAN-key/collection.xml')"/>
+      select="collection('../../keys/collection.xml')"/>
    <xsl:variable name="TAN-keywords" as="document-node()*">
       <!-- We do not put dependency TAN-key files through the customary tan:expand-doc(), which relies upon $TAN-keywords -->
       <xsl:apply-templates select="$TAN-keyword-files" mode="expand-tan-key-dependencies">

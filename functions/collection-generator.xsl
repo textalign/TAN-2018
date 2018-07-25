@@ -58,7 +58,7 @@
         <xsl:result-document href="{resolve-uri('../schemas/collection.xml',static-base-uri())}">
             <xsl:copy-of select="$schema-URIs"/>
         </xsl:result-document>
-        <xsl:result-document href="{resolve-uri('../TAN-key/collection.xml',static-base-uri())}">
+        <xsl:result-document href="{resolve-uri('../keys/collection.xml',static-base-uri())}">
             <xsl:copy-of select="$key-URIs"/>
         </xsl:result-document>
     </xsl:template>
