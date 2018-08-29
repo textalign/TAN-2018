@@ -1,40 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../schemas/TAN-key.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="../schemas/TAN-key.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<TAN-key xmlns="tag:textalign.net,2015:ns" TAN-version="2018" id="tag:textalign.net,2015:tan-key:tokenizations">
+<?xml-model href="../schemas/TAN-voc.rnc" type="application/relax-ng-compact-syntax"?>
+<?xml-model href="../schemas/TAN-voc.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2019" id="tag:textalign.net,2015:tan-key:tokenizations">
     <head>
         <name>TAN keywords for types of token definitions</name>
         <desc>Definitive list of key terms used to name standard token definitions.</desc>
-        <master-location href="http://textalign.net/release/TAN-2018/TAN-key/token-definitions.TAN-key.xml"/>
-        <license>
+        <master-location href="http://textalign.net/release/TAN-2018/TAN-voc/token-definitions.TAN-voc.xml"/>
+        <license licensor="kalvesmaki">
             <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
             <name>Creative Commons Attribution 4.0 International License</name>
             <desc>This license is granted independent of rights and licenses associated with the
                 source. </desc>
         </license>
-        <licensor who="kalvesmaki"/>
-        <definitions>
+        <adjustments>
+        </adjustments>
+        <vocabulary-key>
+            <algorithm xml:id="xslt2">
+                <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
+                <name>Stylesheet to create a TAN file.</name>
+                <location href="../../applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl" accessed-when="2018-08-09T07:40:06.912-04:00"/>
+            </algorithm>
             <person xml:id="kalvesmaki">
                 <IRI>http://viaf.org/viaf/299582703</IRI>
                 <IRI>tag:textalign.net,2015:agent:kalvesmaki:joel</IRI>
                 <name xml:lang="eng">Joel Kalvesmaki</name>
             </person>
-            <algorithm xml:id="xslt1"><IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI><name>Stylesheet to populate a TAN-A-div file from collections.</name><desc>Stylesheet at: ../do%20things/convert/convert%20TAN%202017%20to%20TAN%202018.xsl</desc></algorithm>
+            <algorithm xml:id="xslt1"><IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI><name>Stylesheet to populate a TAN-A-div file from collections.</name><location accessed-when="2018-08-09T07:40:06.912-04:00" href="../applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"/></algorithm>
             <role xml:id="creator">
                 <IRI>http://schema.org/creator</IRI>
                 <name xml:lang="eng">creator</name>
             </role>
-            <role xml:id="stylesheet1" which="stylesheet"/></definitions>
-        <alter>
-        </alter>
+            <role xml:id="stylesheet1" which="stylesheet"/></vocabulary-key>
+        
+        <file-resp who="kalvesmaki"/>
+        <resp who="xslt2" roles="stylesheet1"/>
         <resp roles="creator" who="kalvesmaki"/>
         <resp who="xslt1" roles="stylesheet1"/>
         <change when="2016-02-02" who="kalvesmaki">Started file</change>
         <change when="2016-02-22" who="kalvesmaki">Revised to suit new
             &lt;token-definition&gt;</change>
         <change who="xslt1" when="2017-11-02T23:06:29.935-04:00">TAN file updated to 2018 schemas.</change>
+        <change who="xslt2" when="2018-08-09T07:40:06.912-04:00">Converted from 2018 to 2019 schemas.</change>
+        <to-do/>
     </head>
-    <body in-progress="false" affects-element="token-definition">
+    <body affects-element="token-definition">
         <item>
             <token-definition pattern="[\w&#xad;​&#x200d;]+"/>
             <name>letters</name>
@@ -87,4 +96,4 @@
                 nonspace marks as a word.</desc>
         </item>
     </body>
-</TAN-key>
+</TAN-voc>

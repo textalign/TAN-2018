@@ -1,41 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../schemas/TAN-key.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="../schemas/TAN-key.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<TAN-key xmlns="tag:textalign.net,2015:ns" TAN-version="2018" id="tag:textalign.net,2015:tan-key:rights">
+<?xml-model href="../schemas/TAN-voc.rnc" type="application/relax-ng-compact-syntax"?>
+<?xml-model href="../schemas/TAN-voc.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2019" id="tag:textalign.net,2015:tan-key:rights">
    <head>
       <name>TAN keywords for types of rights</name>
       <desc>This file depends largely upon the vocabulary of Creative Commons</desc>
-      <master-location href="http://textalign.net/release/TAN-2018/TAN-key/rights.TAN-key.xml"/>
-      <license>
-         <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
-         <name>Creative Commons Attribution 4.0 International License</name>
-      </license>
-      <licensor who="kalvesmaki"/>
-      <definitions>
+      <master-location href="http://textalign.net/release/TAN-2018/TAN-voc/rights.TAN-voc.xml"/>
+      <license licensor="kalvesmaki" which="by 4.0"/>
+      <vocabulary-key>
+         <algorithm xml:id="xslt2">
+            <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
+            <name>Stylesheet to create a TAN file.</name>
+            <location href="../../applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl" accessed-when="2018-08-09T07:39:55.957-04:00"/>
+         </algorithm>
          <person xml:id="kalvesmaki">
             <IRI>http://viaf.org/viaf/299582703</IRI>
             <IRI>tag:textalign.net,2015:agent:kalvesmaki:joel</IRI>
             <name xml:lang="eng">Joel Kalvesmaki</name>
          </person>
-         <algorithm xml:id="xslt1"><IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI><name>Stylesheet to populate a TAN-A-div file from collections.</name><desc>Stylesheet at: ../do%20things/convert/convert%20TAN%202017%20to%20TAN%202018.xsl</desc></algorithm>
+         <algorithm xml:id="xslt1"><IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI><name>Stylesheet to populate a TAN-A-div file from collections.</name><location accessed-when="2018-08-09T07:39:55.957-04:00" href="../applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"/></algorithm>
          <role xml:id="creator">
             <IRI>http://schema.org/creator</IRI>
             <name xml:lang="eng">creator</name>
          </role>
-         <role xml:id="stylesheet1" which="stylesheet"/></definitions>
-      <alter>
-      </alter>
+         <role xml:id="stylesheet1" which="stylesheet"/>
+      </vocabulary-key>
+      
+      <file-resp who="kalvesmaki"/>
+
+      <resp who="xslt2" roles="stylesheet1"/>
+
       <resp roles="creator" who="kalvesmaki"/>
       <resp who="xslt1" roles="stylesheet1"/>
       <change when="2016-02-05" who="kalvesmaki">Started file</change>
       <change when="2016-02-05T16:57:16.61-05:00" who="kalvesmaki">Refreshed data</change>
       <change who="xslt1" when="2017-11-02T23:06:25.365-04:00">TAN file updated to 2018 schemas.</change>
+
+      <change who="xslt2" when="2018-08-09T07:39:55.957-04:00">Converted from 2018 to 2019 schemas.</change>
+
+      <to-do/>
    </head>
-   <body in-progress="false" affects-element="license">
+   <body affects-element="license">
       <item>
          <IRI>http://creativecommons.org/licenses/by-nc-nd/2.0/</IRI>
          <IRI>tag:textalign.net,2015:license:by-nc-nd/2.0/</IRI>
-         <name>by-nc-nd_2.0</name>
          <name>by-nc-nd 2.0</name>
          <name>Attribution-NonCommercial-NoDerivs 2.0 Generic</name>
       </item>
@@ -43,7 +51,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/by-nc-nd/3.0/</IRI>
          <IRI>tag:textalign.net,2015:license:by-nc-nd/3.0/</IRI>
-         <name>by-nc-nd_3.0</name>
          <name>by-nc-nd 3.0</name>
          <name>Attribution-NonCommercial-NoDerivs 3.0 Unported</name>
       </item>
@@ -51,7 +58,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/by-nc-nd/4.0/</IRI>
          <IRI>tag:textalign.net,2015:license:by-nc-nd/4.0/</IRI>
-         <name>by-nc-nd_4.0</name>
          <name>by-nc-nd 4.0</name>
          <name>Attribution-NonCommercial-NoDerivatives 4.0 International</name>
       </item>
@@ -59,7 +65,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/by-nc-sa/1.0/</IRI>
          <IRI>tag:textalign.net,2015:license:by-nc-sa/1.0/</IRI>
-         <name>by-nc-sa_1.0</name>
          <name>by-nc-sa 1.0</name>
          <name>Attribution-NonCommercial-ShareAlike 1.0 Generic</name>
       </item>
@@ -67,7 +72,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/by-nc-sa/2.0/</IRI>
          <IRI>tag:textalign.net,2015:license:by-nc-sa/2.0/</IRI>
-         <name>by-nc-sa_2.0</name>
          <name>by-nc-sa 2.0</name>
          <name>Attribution-NonCommercial-ShareAlike 2.0 Generic</name>
       </item>
@@ -75,7 +79,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/by-nc-sa/3.0/</IRI>
          <IRI>tag:textalign.net,2015:license:by-nc-sa/3.0/</IRI>
-         <name>by-nc-sa_3.0</name>
          <name>by-nc-sa 3.0</name>
          <name>Attribution-NonCommercial-ShareAlike 3.0 Unported</name>
       </item>
@@ -83,7 +86,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/by-nc-sa/4.0/</IRI>
          <IRI>tag:textalign.net,2015:license:by-nc-sa/4.0/</IRI>
-         <name>by-nc-sa_4.0</name>
          <name>by-nc-sa 4.0</name>
          <name>Attribution-NonCommercial-ShareAlike 4.0 International</name>
       </item>
@@ -91,7 +93,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/by-nc/1.0/</IRI>
          <IRI>tag:textalign.net,2015:license:by-nc/1.0/</IRI>
-         <name>by-nc_1.0</name>
          <name>by-nc 1.0</name>
          <name>Attribution-NonCommercial 1.0 Generic</name>
       </item>
@@ -99,7 +100,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/by-nc/2.0/</IRI>
          <IRI>tag:textalign.net,2015:license:by-nc/2.0/</IRI>
-         <name>by-nc_2.0</name>
          <name>by-nc 2.0</name>
          <name>Attribution-NonCommercial 2.0 Generic</name>
       </item>
@@ -107,7 +107,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/by-nc/3.0/</IRI>
          <IRI>tag:textalign.net,2015:license:by-nc/3.0/</IRI>
-         <name>by-nc_3.0</name>
          <name>by-nc 3.0</name>
          <name>Attribution-NonCommercial 3.0 Unported</name>
       </item>
@@ -115,7 +114,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/by-nc/4.0/</IRI>
          <IRI>tag:textalign.net,2015:license:by-nc/4.0/</IRI>
-         <name>by-nc_4.0</name>
          <name>by-nc 4.0</name>
          <name>Attribution-NonCommercial 4.0 International</name>
       </item>
@@ -123,7 +121,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/by-nd-nc/1.0/</IRI>
          <IRI>tag:textalign.net,2015:license:by-nd-nc/1.0/</IRI>
-         <name>by-nd-nc_1.0</name>
          <name>by-nd-nc 1.0</name>
          <name>Attribution-NoDerivs-NonCommercial 1.0 Generic</name>
       </item>
@@ -131,7 +128,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/by-nd/1.0/</IRI>
          <IRI>tag:textalign.net,2015:license:by-nd/1.0/</IRI>
-         <name>by-nd_1.0</name>
          <name>by-nd 1.0</name>
          <name>Attribution-NoDerivs 1.0 Generic</name>
       </item>
@@ -139,7 +135,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/by-nd/2.0/</IRI>
          <IRI>tag:textalign.net,2015:license:by-nd/2.0/</IRI>
-         <name>by-nd_2.0</name>
          <name>by-nd 2.0</name>
          <name>Attribution-NoDerivs 2.0 Generic</name>
       </item>
@@ -147,7 +142,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/by-nd/3.0/</IRI>
          <IRI>tag:textalign.net,2015:license:by-nd/3.0/</IRI>
-         <name>by-nd_3.0</name>
          <name>by-nd 3.0</name>
          <name>Attribution-NoDerivs 3.0 Unported</name>
       </item>
@@ -155,7 +149,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/by-nd/4.0/</IRI>
          <IRI>tag:textalign.net,2015:license:by-nd/4.0/</IRI>
-         <name>by-nd_4.0</name>
          <name>by-nd 4.0</name>
          <name>Attribution-NoDerivatives 4.0 International</name>
       </item>
@@ -163,7 +156,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/by-sa/1.0/</IRI>
          <IRI>tag:textalign.net,2015:license:by-sa/1.0/</IRI>
-         <name>by-sa_1.0</name>
          <name>by-sa 1.0</name>
          <name>Attribution-ShareAlike 1.0 Generic</name>
       </item>
@@ -171,7 +163,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/by-sa/2.0/</IRI>
          <IRI>tag:textalign.net,2015:license:by-sa/2.0/</IRI>
-         <name>by-sa_2.0</name>
          <name>by-sa 2.0</name>
          <name>Attribution-ShareAlike 2.0 Generic</name>
       </item>
@@ -179,7 +170,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/by-sa/3.0/</IRI>
          <IRI>tag:textalign.net,2015:license:by-sa/3.0/</IRI>
-         <name>by-sa_3.0</name>
          <name>by-sa 3.0</name>
          <name>Attribution-ShareAlike 3.0 Unported</name>
       </item>
@@ -187,7 +177,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/by-sa/4.0/</IRI>
          <IRI>tag:textalign.net,2015:license:by-sa/4.0/</IRI>
-         <name>by-sa_4.0</name>
          <name>by-sa 4.0</name>
          <name>Attribution-ShareAlike 4.0 International</name>
       </item>
@@ -195,7 +184,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/by/1.0/</IRI>
          <IRI>tag:textalign.net,2015:license:by/1.0/</IRI>
-         <name>by_1.0</name>
          <name>by 1.0</name>
          <name>Attribution 1.0 Generic</name>
       </item>
@@ -203,7 +191,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/by/2.0/</IRI>
          <IRI>tag:textalign.net,2015:license:by/2.0/</IRI>
-         <name>by_2.0</name>
          <name>by 2.0</name>
          <name>Attribution 2.0 Generic</name>
       </item>
@@ -211,7 +198,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/by/3.0/</IRI>
          <IRI>tag:textalign.net,2015:license:by/3.0/</IRI>
-         <name>by_3.0</name>
          <name>by 3.0</name>
          <name>Attribution 3.0 Unported</name>
       </item>
@@ -219,7 +205,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/by/4.0/</IRI>
          <IRI>tag:textalign.net,2015:license:by/4.0/</IRI>
-         <name>by_4.0</name>
          <name>by 4.0</name>
          <name>Attribution 4.0 International</name>
       </item>
@@ -227,7 +212,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/devnations/2.0/</IRI>
          <IRI>tag:textalign.net,2015:license:devnations/2.0/</IRI>
-         <name>devnations_2.0</name>
          <name>devnations 2.0</name>
          <name>Developing Nations License</name>
       </item>
@@ -235,7 +219,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/GPL/2.0/</IRI>
          <IRI>tag:textalign.net,2015:license:GPL/2.0/</IRI>
-         <name>GPL_2.0</name>
          <name>GPL 2.0</name>
          <name>GNU General Public License</name>
       </item>
@@ -243,7 +226,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/nc-sa/1.0/</IRI>
          <IRI>tag:textalign.net,2015:license:nc-sa/1.0/</IRI>
-         <name>nc-sa_1.0</name>
          <name>nc-sa 1.0</name>
          <name>NonCommercial-ShareAlike 1.0 Generic</name>
       </item>
@@ -251,7 +233,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/nc-sampling+/1.0/</IRI>
          <IRI>tag:textalign.net,2015:license:nc-sampling+/1.0/</IRI>
-         <name>nc-sampling+_1.0</name>
          <name>nc-sampling+ 1.0</name>
          <name>NonCommercial Sampling Plus 1.0</name>
       </item>
@@ -259,7 +240,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/nc/1.0/</IRI>
          <IRI>tag:textalign.net,2015:license:nc/1.0/</IRI>
-         <name>nc_1.0</name>
          <name>nc 1.0</name>
          <name>NonCommercial 1.0 Generic</name>
       </item>
@@ -267,7 +247,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/nd-nc/1.0/</IRI>
          <IRI>tag:textalign.net,2015:license:nd-nc/1.0/</IRI>
-         <name>nd-nc_1.0</name>
          <name>nd-nc 1.0</name>
          <name>NoDerivs-NonCommercial 1.0 Generic</name>
       </item>
@@ -275,7 +254,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/nd/1.0/</IRI>
          <IRI>tag:textalign.net,2015:license:nd/1.0/</IRI>
-         <name>nd_1.0</name>
          <name>nd 1.0</name>
          <name>NoDerivs 1.0 Generic</name>
       </item>
@@ -283,7 +261,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/sa/1.0/</IRI>
          <IRI>tag:textalign.net,2015:license:sa/1.0/</IRI>
-         <name>sa_1.0</name>
          <name>sa 1.0</name>
          <name>ShareAlike 1.0 Generic</name>
       </item>
@@ -291,7 +268,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/sampling+/1.0/</IRI>
          <IRI>tag:textalign.net,2015:license:sampling+/1.0/</IRI>
-         <name>sampling+_1.0</name>
          <name>sampling+ 1.0</name>
          <name>Sampling Plus 1.0</name>
       </item>
@@ -299,7 +275,6 @@
       <item>
          <IRI>http://creativecommons.org/licenses/sampling/1.0/</IRI>
          <IRI>tag:textalign.net,2015:license:sampling/1.0/</IRI>
-         <name>sampling_1.0</name>
          <name>Sampling 1.0</name>
       </item>
 
@@ -307,8 +282,7 @@
          <IRI>http://creativecommons.org/publicdomain/mark/1.0/</IRI>
          <IRI>tag:textalign.net,2015:license:mark/1.0/</IRI>
          <name>public mark</name>
-         <name>publicdomain_mark_1.0</name>
-         <name>publicdomain mark_1.0</name>
+         <name>publicdomain mark 1.0</name>
          <name>Public Domain Mark 1.0</name>
       </item>
 
@@ -316,9 +290,8 @@
          <IRI>http://creativecommons.org/publicdomain/zero/1.0/</IRI>
          <IRI>tag:textalign.net,2015:license:zero/1.0/</IRI>
          <name>public zero</name>
-         <name>publicdomain_zero_1.0</name>
-         <name>publicdomain zero_1.0</name>
+         <name>publicdomain zero 1.0</name>
          <name>CC0 1.0 Universal</name>
       </item>
    </body>
-</TAN-key>
+</TAN-voc>
