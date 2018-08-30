@@ -150,9 +150,6 @@
     <group affects-element="tei:lb tei:pb tei:cb">
         <error xml:id="tei05"><rule>A breaking element without @break="no" should have at least one space on either side; one with @break="no" should have no nearby spaces</rule></error>
     </group>
-    <!--<group affects-element="div-type" affects-attribute="n">
-        <error xml:id="cl114"><rule>To avoid ambiguous numerals, no @n's in any given div type should mix Roman and alphabet numerals.</rule></error>
-    </group>-->
     
     <!-- CLASS 2 ERRORS -->
     <group affects-attribute="ref src">

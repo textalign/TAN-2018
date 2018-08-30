@@ -195,6 +195,11 @@
     
     <xsl:template match="tan:licensor | text()[following-sibling::node()[1]/self::tan:licensor]" mode="input-pass-1" priority="1"/>
     
+    <xsl:template match="tan:ambiguous-letter-numerals-are-roman" mode="input-pass-1">
+        <xsl:variable name="is-true" select="xs:boolean(.)"/>
+        <numerals priority="{if ($is-true) then 'roman' else 'letters'}"/>
+    </xsl:template>
+    
     <xsl:template match="tan:key" mode="input-pass-1">
         <vocabulary>
             <xsl:apply-templates select="@* | node()" mode="#current"/>

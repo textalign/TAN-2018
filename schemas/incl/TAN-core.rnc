@@ -358,16 +358,20 @@ TAN-head =
 file-name = entity-digital-tan-self-content
 # HEAD: general declarations
 declaration-list = declaration-core & declaration-non-core
-declaration-core = nonsource-license+ & decl-ambig-numerals?
+declaration-core = nonsource-license+ & decl-numerals?
 declaration-non-core = empty
-decl-ambig-numerals =
+decl-numerals =
     
-    ## specifies whether letters that can be interpreted both as letter numerals and as roman numerals should be interpreted as the latter.
+    ## specifies how nonarabic numerals should be interpreted.
     
-    ## E.g., 'c' would be interpreted as 3 if false and 100 if true.
+    ## E.g., 'c' would be interpreted as 3 if @priority = 'letters' and 100 if 'roman'.
     
-    ## If element is not present, the value is assumed to be true.
-    element ambiguous-letter-numerals-are-roman { xsd:boolean }
+    ## If element is not present, the value is assumed to be 'roman'.
+    element numerals {
+        attribute priority {
+            xsd:string { pattern = "roman|letters" }
+        }
+    }
 nonsource-license =
     
     ## states the license under which the data is distributed and the rights associated with it, EXCLUSIVE of any rights attached to the source.
@@ -377,7 +381,8 @@ nonsource-license =
     ## For more discussion, see main.xml#license and for a list of standard vocabulary, main.xml#vocabulary-rights-excluding-sources
     element license {
         ed-stamp?,
-        (inclusion | (licensor, (comment* & entity-nondigital-content)))
+        (inclusion
+         | (licensor, (comment* & entity-nondigital-content)))
     }
 # HEAD: links to other networked files
 networked-files = networked-files-core & networked-files-non-core
@@ -445,7 +450,12 @@ adjust-non-core = empty
 # HEAD: vocabulary key
 vocabulary-list = vocabulary-key & vocabulary-item*
 vocabulary-key = element vocabulary-key { ed-stamp?, (comment* & voc-key-core & voc-key-non-core) }
-voc-key-core = voc-key-for-agent* & voc-key-for-role* & voc-key-for-period* & voc-key-for-alias* & voc-key-for-relationship*
+voc-key-core =
+    voc-key-for-agent*
+    & voc-key-for-role*
+    & voc-key-for-period*
+    & voc-key-for-alias*
+    & voc-key-for-relationship*
 voc-key-non-core = empty
 vocabulary-item =
     

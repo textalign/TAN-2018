@@ -340,7 +340,13 @@
 
    <!-- Step: convert numerals to Arabic numerals -->
    <xsl:template match="/*" priority="1" mode="resolve-numerals">
-      <xsl:variable name="ambig-is-roman" select="tan:head/tan:ambiguous-letter-numerals-are-roman"/>
+      <xsl:variable name="ambig-is-roman"
+         select="
+            if (tan:head/tan:numerals/@priority = 'letters') then
+               false()
+            else
+               true()"
+      />
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:apply-templates mode="#current">
@@ -456,7 +462,12 @@
                </xsl:variable>
                <!-- convert numerals to Arabic -->
                <xsl:variable name="ambig-is-roman"
-                  select="$this-inclusion-doc/*/tan:head/tan:ambiguous-letter-numerals-are-roman"/>
+                  select="
+                     if ($this-inclusion-doc/*/tan:head/tan:numerals/@priority = 'letters') then
+                        false()
+                     else
+                        true()"
+               />
                <xsl:variable name="substitutes-with-n-and-ref-converted" as="element()*">
                   <xsl:apply-templates select="$substitutes-stamped"
                      mode="resolve-numerals">

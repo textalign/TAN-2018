@@ -240,6 +240,12 @@
                         <para>Introduced the concept of catalogs.</para>
                      </listitem>
                      <listitem>
+                        <para>&lt;ambiguous-numerals-are-roman> has been replaced by &lt;numerals
+                           priority="letters|roman">. This is briefer, and allows flexibility for
+                           growth, e.g., in TAN-A files where one might specify which sources follow
+                           which schemes.</para>
+                     </listitem>
+                     <listitem>
                         <para>Some functions are furnished with local variable $diagnostics, to
                            allow for ad hoc testing.</para>
                      </listitem>

@@ -21,7 +21,7 @@
          <IRI>urn:uuid:31648039-3dbb-49b9-b66e-9bd2cd11630e</IRI>
          <name>zweite Version</name>
       </version>
-      <ambiguous-letter-numerals-are-roman>false</ambiguous-letter-numerals-are-roman>
+      <numerals priority="letters"/>
       <source>
          <IRI>http://www.worldcat.org/oclc/4574384</IRI>
          <name>Franz Magnus Böhme, Deutsches Kinderlied und Kinderspiel: Volksüberlieferungen aus
