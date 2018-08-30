@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar ns="tag:textalign.net,2015:ns" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns="http://relaxng.org/ns/structure/1.0">
+  <include href="incl/TAN-class-3.rng">
+    <start>
+      <element name="TAN-voc">
+        <a:documentation>specifies that the TAN file contains vocabulary—things given IRIs + names + descriptions, or token definitions. Root element.</a:documentation>
+        <ref name="TAN-root"/>
+      </element>
+    </start>
+    <define name="source-list">
+      <empty/>
+    </define>
+    <define name="body-attributes-non-core">
+      <optional>
+        <ref name="element-scope"/>
+      </optional>
+    </define>
+    <define name="group-attributes">
+      <optional>
+        <ref name="type"/>
+      </optional>
+      <optional>
+        <ref name="element-scope"/>
+      </optional>
+    </define>
+    <define name="body-content-non-class-3">
+      <interleave>
+        <zeroOrMore>
+          <ref name="body-group"/>
+        </zeroOrMore>
+        <zeroOrMore>
+          <ref name="body-item"/>
+        </zeroOrMore>
+      </interleave>
+    </define>
+    <define name="body-item">
+      <ref name="TAN-voc-item"/>
+    </define>
+  </include>
+  <define name="TAN-voc-item">
+    <element name="item">
+      <a:documentation>names an item that is being described. The item is assumed to be a species of the type of thing discussed by the TAN element that is affected.</a:documentation>
+      <optional>
+        <ref name="ed-stamp"/>
+      </optional>
+      <choice>
+        <ref name="inclusion"/>
+        <group>
+          <optional>
+            <ref name="element-scope"/>
+          </optional>
+          <optional>
+            <ref name="group-ref"/>
+          </optional>
+          <choice>
+            <ref name="entity-digital-tan-other-content"/>
+            <ref name="entity-nondigital-content"/>
+            <ref name="entity-nondigital-with-constraints-content"/>
+            <ref name="entity-tok-def"/>
+          </choice>
+        </group>
+      </choice>
+    </element>
+  </define>
+</grammar>

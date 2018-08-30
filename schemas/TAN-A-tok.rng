@@ -12,62 +12,39 @@
       <ref name="source-item"/>
       <ref name="source-item"/>
     </define>
-    <define name="defn-id-ref-opt">
-      <a:documentation>all definitions must have ids</a:documentation>
-      <ref name="internal-xml-id"/>
-    </define>
-    <define name="source-id-opt">
-      <a:documentation>TAN-A-tok sources must be named</a:documentation>
-      <ref name="internal-xml-id"/>
-    </define>
-    <define name="definition-non-class-2">
+    <define name="voc-key-for-non-class-2">
       <interleave>
         <oneOrMore>
-          <ref name="defn-brel"/>
+          <ref name="voc-key-for-brel"/>
         </oneOrMore>
         <oneOrMore>
-          <ref name="defn-reus"/>
+          <ref name="voc-key-for-reus"/>
         </oneOrMore>
       </interleave>
-    </define>
-    <define name="alter-non-class-2">
-      <empty/>
     </define>
     <define name="body-attributes-non-core">
       <ref name="bitext-relation-attr"/>
       <ref name="reuse-type-attr"/>
     </define>
-    <define name="body-content-non-class-2">
-      <interleave>
-        <zeroOrMore>
-          <ref name="body-group"/>
-        </zeroOrMore>
-        <zeroOrMore>
-          <ref name="body-item"/>
-        </zeroOrMore>
-      </interleave>
-    </define>
     <define name="body-item">
       <ref name="alignment"/>
     </define>
   </include>
-  <define name="defn-brel">
+  <define name="voc-key-for-brel">
     <element name="bitext-relation">
       <a:documentation>identifies how the text on one text-bearing object relates to that on another by specifying a relationship, e.g., B is a direct copy of A, B and A descent from a commont parent, etc. See main.xml#tan-a-tok for theoretical background.</a:documentation>
       <a:documentation>In most cases, there will be need for only one of these elements. But multiple values may be helpful for cases where a bitext has a complex history, for example, a textual object that was created over time, and in different phases.</a:documentation>
       <a:documentation>This element should not be used to describe any activities (e.g., translation, copying), reserved for &lt;reuse-type&gt;. </a:documentation>
-      <a:documentation>For examples see main.xml# keywords-bitext-relation</a:documentation>
-      <ref name="defn-pattern-default"/>
+      <a:documentation>For examples see main.xml#vocabulary-bitext-relation</a:documentation>
+      <ref name="entity-nondigital-id"/>
     </element>
   </define>
-  <define name="defn-reus">
-    <oneOrMore>
-      <element name="reuse-type">
-        <a:documentation>identifies a category of text reuse (e.g., translation, mistranslation, paraphrase, ridicule). See main.xml#tan-a-tok for theoretical background.</a:documentation>
-        <a:documentation>For examples see main.xml# keywords-reuse-type</a:documentation>
-        <ref name="defn-pattern-default"/>
-      </element>
-    </oneOrMore>
+  <define name="voc-key-for-reus">
+    <element name="reuse-type">
+      <a:documentation>identifies a category of text reuse (e.g., translation, mistranslation, paraphrase, ridicule). See main.xml#tan-a-tok for theoretical background.</a:documentation>
+      <a:documentation>For examples see main.xml#vocabulary-reuse-type</a:documentation>
+      <ref name="entity-nondigital-id"/>
+    </element>
   </define>
   <define name="bitext-relation-attr">
     <attribute name="bitext-relation">

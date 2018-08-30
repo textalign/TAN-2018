@@ -16,10 +16,19 @@
    <!-- Functions that are not central to validating TAN files, but could be helpful in creating, editing, or reusing them -->
 
    <xsl:key name="get-ana" match="tan:ana" use="tan:tok/@val"/>
-   
+
    <!-- GLOBAL VARIABLES AND PARAMETERS -->
 
+   <xsl:variable name="doc-history" select="tan:get-doc-history($self-resolved)"/>
    <xsl:variable name="doc-filename" select="replace($doc-uri, '.*/([^/]+)$', '$1')"/>
+
+   <xsl:variable name="most-common-indentations" as="xs:string*">
+      <xsl:for-each-group select="//text()[not(matches(., '\S'))][following-sibling::*]"
+         group-by="count(ancestor::*)">
+         <xsl:sort select="current-grouping-key()"/>
+         <xsl:value-of select="tan:most-common-item(current-group())"/>
+      </xsl:for-each-group>
+   </xsl:variable>
 
    <!-- An xpath pattern built into a text node or an attribute value looks like this: {PATTERN} -->
    <xsl:variable name="xpath-pattern" select="'\{[^\}]+?\}'"/>
@@ -86,7 +95,7 @@
       select="tan:collection($local-catalog, (), (), ())"/>-->
    <xsl:variable name="local-TAN-collection" as="document-node()*"
       select="collection(concat(resolve-uri('catalog.tan.xml', $doc-uri), '?on-error=warning'))"/>
-   <xsl:variable name="local-TAN-key-collection" select="$local-TAN-collection[name(*) = 'TAN-key']"/>
+   <xsl:variable name="local-TAN-voc-collection" select="$local-TAN-collection[name(*) = 'TAN-voc']"/>
 
    <xsl:variable name="today-iso" select="format-date(current-date(), '[Y0001]-[M01]-[D01]')"/>
 
@@ -526,6 +535,29 @@
       <xsl:value-of select="string-join($initials, '')"/>
    </xsl:function>
 
+   <xsl:variable name="url-regex" as="xs:string">\S+\.\w+</xsl:variable>
+   <xsl:function name="tan:parse-urls" as="element()*">
+      <!-- Input: any sequence of strings -->
+      <!-- Output: one element per string, parsed into children <non-url> and <url> -->
+      <xsl:param name="input-strings" as="xs:string*"/>
+      <xsl:for-each select="$input-strings">
+         <string>
+            <xsl:analyze-string select="." regex="{$url-regex}">
+               <xsl:matching-substring>
+                  <url>
+                     <xsl:value-of select="."/>
+                  </url>
+               </xsl:matching-substring>
+               <xsl:non-matching-substring>
+                  <non-url>
+                     <xsl:value-of select="."/>
+                  </non-url>
+               </xsl:non-matching-substring>
+            </xsl:analyze-string>
+         </string>
+      </xsl:for-each>
+   </xsl:function>
+
 
    <!-- Functions: booleans -->
 
@@ -782,6 +814,41 @@
          </xsl:for-each-group>
       </xsl:copy>
    </xsl:template>
+   
+   <xsl:function name="tan:remove-duplicate-siblings" as="item()*">
+      <xsl:param name="items-to-process" as="item()*"/>
+      <xsl:apply-templates select="$items-to-process" mode="remove-duplicate-siblings"/>
+   </xsl:function>
+   <xsl:function name="tan:remove-duplicate-siblings" as="item()*">
+      <!-- Input: any items -->
+      <!-- Output: the same documents after removing duplicate elements whose names match the second parameter. -->
+      <!-- This function is applied during document resolution, to prune duplicate elements that might have been included -->
+      <xsl:param name="items-to-process" as="document-node()*"/>
+      <xsl:param name="element-names-to-check" as="xs:string*"/>
+      <xsl:apply-templates select="$items-to-process" mode="remove-duplicate-siblings">
+         <xsl:with-param name="element-names-to-check" select="$element-names-to-check"
+            tunnel="yes"/>
+      </xsl:apply-templates>
+   </xsl:function>
+   <xsl:template match="*" mode="remove-duplicate-siblings">
+      <xsl:param name="element-names-to-check" as="xs:string*" tunnel="yes"/>
+      <xsl:variable name="check-this-element" select="not(exists($element-names-to-check))
+         or ($element-names-to-check = '*')
+         or ($element-names-to-check = name(.))"/>
+      <xsl:choose>
+         <xsl:when
+            test="
+               ($check-this-element = true()) and (some $i in preceding-sibling::*
+                  satisfies deep-equal(., $i))"
+         />
+         <xsl:otherwise>
+            <xsl:copy>
+               <xsl:copy-of select="@*"/>
+               <xsl:apply-templates mode="#current"/>
+            </xsl:copy>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:template>
 
 
    <!-- Functions: sequences-->
@@ -816,7 +883,7 @@
          />
       </xsl:for-each>
    </xsl:function>
-   
+
    <xsl:function name="tan:revise-hrefs" as="item()*">
       <!-- Input: an item that should have urls resolved; the original url of the item; the target url (the item's destination) -->
       <!-- Output: the item with each @href (including those in processing instructions) and html:*/@src resolved -->
@@ -864,7 +931,8 @@
       <xsl:param name="original-url" tunnel="yes" required="yes"/>
       <xsl:param name="target-url" tunnel="yes" required="yes"/>
       <xsl:variable name="this-href-resolved" select="resolve-uri(., $original-url)"/>
-      <xsl:variable name="this-href-relative" select="tan:uri-relative-to($this-href-resolved, $target-url)"/>
+      <xsl:variable name="this-href-relative"
+         select="tan:uri-relative-to($this-href-resolved, $target-url)"/>
       <xsl:choose>
          <xsl:when test="matches(., '^#')">
             <xsl:copy/>
@@ -878,10 +946,9 @@
       <xsl:param name="original-url" tunnel="yes" required="yes"/>
       <xsl:param name="target-url" tunnel="yes" required="yes"/>
       <xsl:attribute name="src"
-         select="tan:uri-relative-to(resolve-uri(., $original-url), $target-url)"
-      />
+         select="tan:uri-relative-to(resolve-uri(., $original-url), $target-url)"/>
    </xsl:template>
-   
+
 
    <!-- Functions: XPath Functions and Operators -->
 
@@ -970,18 +1037,18 @@
    <!-- FUNCTIONS: TAN FILES -->
    <!-- General TAN files -->
 
-   <xsl:function name="tan:resolve-keyword" as="item()*">
-      <!-- Input: any items; any extra keys -->
-      <!-- Output: the same items, but with elements with @which expanded into their full form, using the predefined TAN vocabulary and the extra keys supplied -->
+   <xsl:function name="tan:resolve-attr-which" as="item()*">
+      <!-- Input: any items; any extra vocabularies -->
+      <!-- Output: the same items, but with elements with @which expanded into their full form, using the predefined TAN vocabulary and the extra vocabularies supplied -->
       <xsl:param name="items" as="item()*"/>
-      <xsl:param name="extra-keys" as="document-node()*"/>
-      <xsl:apply-templates select="$items" mode="resolve-keyword">
-         <xsl:with-param name="extra-keys" select="$extra-keys" tunnel="yes"/>
+      <xsl:param name="extra-vocabularies" as="document-node()*"/>
+      <xsl:apply-templates select="$items" mode="resolve-attr-which">
+         <xsl:with-param name="extra-vocabularies" select="$extra-vocabularies" tunnel="yes"/>
       </xsl:apply-templates>
    </xsl:function>
-   
+
    <!-- Functions: TAN-T(EI) -->
-   
+
    <xsl:function name="tan:reset-hierarchy" as="document-node()*">
       <!-- Input: any expanded class-1 documents whose <div>s may be in the wrong place, because <rename> or <reassign> have altered the <ref> values; a boolean indicating whether misplaced leaf divs should be flagged -->
       <!-- Output: the same documents, with <div>s restored to their proper place in the hierarchy -->
@@ -1030,13 +1097,13 @@
    </xsl:template>
 
    <!-- Functions: TAN-A-lm -->
-   
+
    <xsl:function name="tan:lm-data" as="element()*">
       <!-- Input: token value; a language code -->
       <!-- Output: <lm> data for that token value from any available resources -->
       <xsl:param name="token-value" as="xs:string?"/>
       <xsl:param name="lang-codes" as="xs:string*"/>
-      
+
       <!-- First, look in the local language catalog and get relevant TAN-A-lm files -->
       <xsl:variable name="lang-catalogs" select="tan:lang-catalog($lang-codes)"
          as="document-node()*"/>

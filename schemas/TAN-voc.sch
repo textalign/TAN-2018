@@ -25,5 +25,5 @@
       <xsl:param name="validation-is-verbose" select="true()"/>
    </pattern>
    <include href="incl/TAN-core.sch"/>
-   <xsl:include href="../functions/TAN-key-functions.xsl"/>
+   <xsl:include href="../functions/TAN-voc-functions.xsl"/>
 </schema>

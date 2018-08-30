@@ -3,7 +3,7 @@
 <?xml-model href="../schemas/TAN-TEI.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <!--<?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-TEI.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-TEI.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
-<TEI xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:tan="tag:textalign.net,2015:ns" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns="http://www.tei-c.org/ns/1.0" TAN-version="2018" id="tag:parkj@textalign.net,2015:gomme.1898.ring-o-roses">
+<TEI xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:tan="tag:textalign.net,2015:ns" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns="http://www.tei-c.org/ns/1.0" TAN-version="2019" id="tag:parkj@textalign.net,2015:gomme.1898.ring-o-roses">
   <teiHeader>
     <fileDesc>
       <titleStmt><title/>
@@ -20,13 +20,16 @@
   <head xmlns="tag:textalign.net,2015:ns">
     <name>Dictionary entry by Alice Bertha Gomme on Ring a Ring o' Roses</name>
     <master-location href="http://textalign.net/release/TAN-2018/examples/gomme.1989.ring-o-roses.xml"/>
-    <license>
+    <license licensor="park">
       <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
       <name>This data file is licensed under a Creative Commons Attribution 4.0 International
         License. The license is granted independent of rights and licenses associated with the
         source. </name>
     </license>
-    <licensor who="park"/>
+    <work>
+      <IRI>tag:kalvesmaki@gmail.com,2014:work:gomme.1898.ring-o-roses</IRI>
+      <name>Article by Alice Bertha Gomme on Ring a Ring o' Roses</name>
+    </work>
     <source>
       <IRI>http://www.worldcat.org/oclc/2779087</IRI>
       <name>The traditional games of England, Scotland, and Ireland : with tunes, singing-rhymes,
@@ -35,11 +38,22 @@
       <comment when="2015-03-10" who="park">This work is to be found at vol. 2, pp.
         108-111.</comment>
     </source>
-    <definitions>
-      <work>
-        <IRI>tag:kalvesmaki@gmail.com,2014:work:gomme.1898.ring-o-roses</IRI>
-        <name>Article by Alice Bertha Gomme on Ring a Ring o' Roses</name>
-      </work>
+    <adjustments>
+      <normalization>
+        <IRI>tag:textalign.net,2015:normalization:music-printed-removed</IRI>
+        <name>Printed music has been removed.</name>
+      </normalization>
+      <normalization>
+        <IRI>tag:textalign.net,2015:normalization:hyphens-discretionary-removed</IRI>
+        <name>Suppression of hyphens</name>
+      </normalization>
+    </adjustments>
+    <vocabulary-key>
+      <algorithm xml:id="xslt2">
+        <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
+        <name>Stylesheet to create a TAN file.</name>
+        <location href="../../applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl" accessed-when="2018-08-09T11:09:27.084-04:00"/>
+      </algorithm>
       <div-type xml:id="sect">
         <IRI>http://dbpedia.org/resource/Section_(typography)</IRI>
         <name>section</name>
@@ -64,28 +78,25 @@
         <IRI>tag:parkj@textalign.net,2015:self</IRI>
         <name xml:lang="eng">Jenny Park</name>
       </person>
-      <algorithm xml:id="xslt1"><IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI><name>Stylesheet to populate a TAN-A-div file from collections.</name><desc>Stylesheet at: ../do%20things/convert/convert%20TAN%202017%20to%20TAN%202018.xsl</desc></algorithm>
+      <algorithm xml:id="xslt1"><IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI><name>Stylesheet to populate a TAN-A-div file from collections.</name><location accessed-when="2018-08-09T11:09:27.084-04:00" href="../applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"/></algorithm>
       <role xml:id="editor">
         <IRI>http://schema.org/editor</IRI>
         <name xml:lang="eng">Editor</name>
       </role>
       <role xml:id="stylesheet1" which="stylesheet"/>
-    </definitions>
-    <alter>
-      <normalization>
-        <IRI>tag:textalign.net,2015:normalization:music-printed-removed</IRI>
-        <name>Printed music has been removed.</name>
-      </normalization>
-      <normalization>
-        <IRI>tag:textalign.net,2015:normalization:hyphens-discretionary-removed</IRI>
-        <name>Suppression of hyphens</name>
-      </normalization>
-    </alter>
+    </vocabulary-key>
+    
+    <file-resp who="park"/>
+    <resp who="xslt2" roles="stylesheet1"/>
     <resp roles="editor" who="park"/>
     <resp who="xslt1" roles="stylesheet1"/>
     <change when="2015-03-10" who="park">Created new TAN-TEI file.</change>
     <change who="xslt1" when="2017-11-02T22:22:13.424-04:00">TAN file updated to 2018 schemas.</change>
     <change when="2017-11-02" who="park">Removed reference numerals from text.</change>
+    <change who="xslt2" when="2018-08-09T11:09:27.084-04:00">Converted from 2018 to 2019 schemas.</change>
+    <to-do>
+      <comment when="2018-08-09-04:00" who="park">Finish file.</comment>
+    </to-do>
   </head>
   <text>
     <body xml:lang="eng">

@@ -3,43 +3,51 @@
 <?xml-model href="../schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <!--<?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-T.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
-<TAN-T xmlns="tag:textalign.net,2015:ns" id="tag:kalvesmaki.com,2014:tan-t:ar.cat.eng.1926.edghill:semantic-refs" TAN-version="2018">
+<TAN-T xmlns="tag:textalign.net,2015:ns" id="tag:kalvesmaki.com,2014:tan-t:ar.cat.eng.1926.edghill:semantic-refs" TAN-version="2019">
    <head>
       <name>Categories, Aristotle, English translation by E. M. Edghill</name>
-      <license>
+      <master-location href="https://raw.githubusercontent.com/textalign/TAN-2019/master/examples/ar.cat.eng.1926.edghill.ref-logical.xml"/>
+      <license licensor="kalvesmaki">
          <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
          <name>Creative Commons Attribution 4.0 International License</name>
          <desc>Exclusive of rights held and licenses offered by rightsholders of the source or
             sources listed below, this data file, insofar as it constitutes an independent work, is
             licensed under a Creative Commons Attribution 4.0 International License.</desc>
       </license>
-      <licensor who="kalvesmaki"/>
+      <work>
+         <IRI>http://dbpedia.org/resource/Categories_(Aristotle)</IRI>
+         <name>Aristotle, Categories</name>
+      </work>
       <source>
          <IRI>http://id.lib.harvard.edu/aleph/007901738/catalog</IRI>
          <name>Aristotle: Categoriae &amp; De interpretatione by E.M. Edghill. Analytica priora / by
             A.J. Jenkinson. Analytica posteriora / by G.R.G. Mure. Oxford : Clarendon Press, 1926.
          </name>
       </source>
-      <see-also relationship="model">
+      <model>
          <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:semantic-refs</IRI>
          <name>Categories, Aristotle, Greek text by Minio-Paluello</name>
-         <location href="ar.cat.grc.1949.minio-paluello-sem.xml" when-accessed="2016-02-10T14:08:52.058-05:00"/>
-      </see-also>
+         <location href="ar.cat.grc.1949.minio-paluello.ref-logical.xml" accessed-when="2016-02-10T14:08:52.058-05:00"/>
+      </model>
       <see-also relationship="alt">
          <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:object-refs</IRI>
          <name>Categories, Aristotle, Greek text by Minio-Paluello</name>
-         <location href="ar.cat.grc.1949.minio-paluello-obj.xml" when-accessed="2016-02-11T12:40:42.823-05:00"/>
+         <location href="ar.cat.grc.1949.minio-paluello.ref-scriptum.xml" accessed-when="2016-02-11T12:40:42.823-05:00"/>
       </see-also>
-      <see-also relationship="ade">
+      <redivision>
          <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.eng.1926.edghill:model-object-refs</IRI>
          <name>Categories, Aristotle, English translation by E. M. Edghill</name>
-         <location href="ar.cat.eng.1926.edghill.obj.xml" when-accessed="2016-06-22T08:13:35.791-04:00"/>
-      </see-also>
-      <definitions>
-         <work>
-            <IRI>http://dbpedia.org/resource/Categories_(Aristotle)</IRI>
-            <name>Aristotle, Categories</name>
-         </work>
+         <location href="ar.cat.eng.1926.edghill.ref-scriptum.xml" accessed-when="2016-06-22T08:13:35.791-04:00"/>
+      </redivision>
+      <adjustments>
+         <normalization which="no hyphens"/>
+      </adjustments>
+      <vocabulary-key>
+         <algorithm xml:id="xslt2">
+            <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
+            <name>Stylesheet to create a TAN file.</name>
+            <location href="../../applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl" accessed-when="2018-08-04T23:55:36.096-04:00"/>
+         </algorithm>
          <div-type xml:id="ch">
             <IRI>http://dbpedia.org/resource/Chapter_(books)</IRI>
             <name>chapter</name>
@@ -64,19 +72,20 @@
             <IRI>tag:kalvesmaki.com,2014:self</IRI>
             <name xml:lang="eng">Joel Kalvesmaki</name>
          </person>
-         <algorithm xml:id="xslt1"><IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI><name>Stylesheet to populate a TAN-A-div file from collections.</name><desc>Stylesheet at: ../do%20things/convert/convert%20TAN%202017%20to%20TAN%202018.xsl</desc></algorithm>
+         <algorithm xml:id="xslt1">
+            <IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI>
+            <name>Stylesheet to populate a TAN-A-div file from collections.</name>
+            <location href="../applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl" accessed-when="2018-08-05"/>
+         </algorithm>
          <role xml:id="editor">
             <IRI>http://schema.org/editor</IRI>
             <name xml:lang="eng">Editor</name>
          </role>
          <role xml:id="stylesheet1" which="stylesheet"/>
-         <relationship which="model" xml:id="model"/>
-         <relationship which="alternatively divided edition" xml:id="ade"/>
          <relationship which="different work version" xml:id="alt"/>
-      </definitions>
-      <alter>
-         <normalization which="no hyphens"/>
-      </alter>
+      </vocabulary-key>
+      <file-resp who="kalvesmaki"/>
+      <resp who="xslt2" roles="stylesheet1"/>
       <resp roles="editor" who="kalvesmaki"/>
       <resp who="xslt1" roles="stylesheet1"/>
       <change when="2016-06-22T08:04:25.003-04:00" who="kalvesmaki">Reformatted according to first
@@ -84,6 +93,8 @@
          file:/C:/Users/jdkalv/Dropbox/TAN/library/TAN-2018/examples/ar.cat.eng.1926.edghill.sem-201606220804250030400.xml.</change>
       <change when="2016-01-26-04:00" who="kalvesmaki">Started new file.</change>
       <change who="xslt1" when="2017-11-02T22:29:17.742-04:00">TAN file updated to 2018 schemas.</change>
+      <change who="xslt2" when="2018-08-04T23:55:36.096-04:00">Converted from 2018 to 2019 schemas.</change>
+      <to-do/>
    </head>
    <body xml:lang="eng">
       <div type="ch" n="1">

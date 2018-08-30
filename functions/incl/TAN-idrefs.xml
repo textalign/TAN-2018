@@ -6,11 +6,12 @@
         <element>algorithm</element>
         <idrefs attribute="who"/>
         <idrefs attribute="ed-who"/>
+        <idrefs attribute="claimant"/>
     </id>
     <id>
         <element>person</element>
         <element>organization</element>
-        <idrefs attribute="rights-holder"/>
+        <idrefs attribute="licensor"/>
     </id>
     <id>
         <element>period</element>
@@ -31,9 +32,15 @@
     </id>
     <id>
         <element>div-type</element>
+        <idrefs element="div" attribute="type"/>
+    </id>
+    <id>
         <element>group-type</element>
+        <idrefs element="group" attribute="type"/>
+    </id>
+    <id>
         <element>feature</element>
-        <idrefs attribute="type"/>
+        <idrefs element="category" attribute="type"/>
     </id>
     <id>
         <element>lexicon</element>
@@ -85,12 +92,6 @@
         <idrefs attribute="relationship"/>
     </id>
     <id>
-        <element>organization</element>
-        <element>person</element>
-        <element>algorithm</element>
-        <idrefs attribute="claimant"/>
-    </id>
-    <id>
         <element>person</element>
         <element>work</element>
         <element>version</element>
@@ -112,8 +113,9 @@
         <element>div-type</element>
         <idrefs attribute="units"/>
     </id>
-    <id cross-file="true">
+    <!-- Aug 2018: commented out during retesting -->
+    <!--<id cross-file="true">
         <element>div-type</element>
         <idrefs attribute="div-type"/>
-    </id>
+    </id>-->
 </id-idrefs>

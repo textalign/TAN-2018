@@ -3,38 +3,43 @@
 <?xml-model href="../schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <!--<?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-T.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
-<TAN-T xmlns="tag:textalign.net,2015:ns" id="tag:kalvesmaki.com,2014:tan-t:ar.cat.eng.1926.edghill:model-object-refs" TAN-version="2018">
+<TAN-T xmlns="tag:textalign.net,2015:ns" id="tag:kalvesmaki.com,2014:tan-t:ar.cat.eng.1926.edghill:model-object-refs" TAN-version="2019">
    <head>
       <name>Categories, Aristotle, English translation by E. M. Edghill</name>
-      <license>
+      <master-location href="https://raw.githubusercontent.com/textalign/TAN-2019/master/examples/ar.cat.eng.1926.edghill.ref-scriptum.xml"/>
+      <license licensor="kalvesmaki">
          <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
          <name>Creative Commons Attribution 4.0 International License</name>
          <desc>Exclusive of rights held and licenses offered by rightsholders of the source or
             sources listed below, this data file, insofar as it constitutes an independent work, is
             licensed under a Creative Commons Attribution 4.0 International License.</desc>
       </license>
-      <licensor who="kalvesmaki"/>
+      <work>
+         <IRI>http://dbpedia.org/resource/Categories_(Aristotle)</IRI>
+         <name>Aristotle, Categories</name>
+      </work>
       <source>
          <IRI>http://id.lib.harvard.edu/aleph/007901738/catalog</IRI>
          <name>Aristotle: Categoriae &amp; De interpretatione by E.M. Edghill. Analytica priora / by
             A.J. Jenkinson. Analytica posteriora / by G.R.G. Mure. Oxford : Clarendon Press, 1926.
          </name>
       </source>
-      <see-also relationship="ade">
+      <redivision>
          <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.eng.1926.edghill:semantic-refs</IRI>
          <name>Categories, Aristotle, English translation by E. M. Edghill</name>
-         <location href="ar.cat.eng.1926.edghill.sem.xml" when-accessed="2016-07-07T16:36:28.867-04:00"/>
-      </see-also>
-      <see-also relationship="model">
+         <location href="ar.cat.eng.1926.edghill.ref-logical.xml"
+            accessed-when="2016-07-07T16:36:28.867-04:00"/>
+      </redivision>
+      <model>
          <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:object-refs</IRI>
          <name>Categories, Aristotle, Greek text by Minio-Paluello</name>
-         <location href="ar.cat.grc.1949.minio-paluello-obj.xml" when-accessed="2016-07-07T16:36:28.867-04:00"/>
-      </see-also>
-      <definitions>
-         <work>
-            <IRI>http://dbpedia.org/resource/Categories_(Aristotle)</IRI>
-            <name>Aristotle, Categories</name>
-         </work>
+         <location href="ar.cat.grc.1949.minio-paluello.ref-scriptum.xml"
+            accessed-when="2016-07-07T16:36:28.867-04:00"/>
+      </model>
+      <adjustments>
+         <normalization which="no hyphens"/>
+      </adjustments>
+      <vocabulary-key>
          <div-type xml:id="p">
             <IRI>http://dbpedia.org/resource/Page_(paper)</IRI>
             <name>page</name>
@@ -52,25 +57,29 @@
             <IRI>tag:kalvesmaki.com,2014:self</IRI>
             <name xml:lang="eng">Joel Kalvesmaki</name>
          </person>
-         <algorithm xml:id="xslt1"><IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI><name>Stylesheet to populate a TAN-A-div file from collections.</name><desc>Stylesheet at: ../do%20things/convert/convert%20TAN%202017%20to%20TAN%202018.xsl</desc></algorithm>
+         <algorithm xml:id="xslt1">
+            <IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI>
+            <name>Stylesheet to populate a TAN-A-div file from collections.</name>
+            <location href="../do%20things/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"
+               accessed-when="2018-08-02"/>
+         </algorithm>
          <role xml:id="editor">
             <IRI>http://schema.org/editor</IRI>
             <name xml:lang="eng">Editor</name>
          </role>
          <role xml:id="stylesheet1" which="stylesheet"/>
-         <relationship xml:id="model" which="model"/>
-         <relationship xml:id="ade" which="alternatively divided edition"/>
-      </definitions>
-      <alter>
-         <normalization which="no hyphens"/>
-      </alter>
+      </vocabulary-key>
+      <file-resp who="kalvesmaki"/>
       <resp roles="editor" who="kalvesmaki"/>
       <resp who="xslt1" roles="stylesheet1"/>
       <change when="2016-07-07T16:36:28.867-04:00" who="kalvesmaki">Reformatted file at
          ar.cat.eng.1926.edghill.sem.xml to the structure of the copy of the model.</change>
-      <change who="xslt1" when="2017-11-02T22:27:59.302-04:00">TAN file updated to 2018 schemas.</change>
+      <change who="xslt1" when="2017-11-02T22:27:59.302-04:00">TAN file updated to 2018
+         schemas.</change>
+      <change when="2018-07-30-04:00" who="kalvesmaki">updated to 2019 schemas</change>
+      <to-do/>
    </head>
-    <body xml:lang="eng">
+   <body xml:lang="eng">
       <div type="p" n="1">
          <div type="c" n="a">
             <div type="l" n="1">Things are said to be named 'equivocally' when, though they have a common name, the definition corresponding</div>

@@ -62,12 +62,144 @@
             <section>
                <title>Changes made since last stable version</title>
                <para>The following changes have been made since the last stable version, and are not
-                  documented in these development guidelines. See the git log for a more
-                  comprehensive list of changes.</para>
+                  yet documented in these development guidelines. See the git log of the dev branch
+                  for a more comprehensive account of all changes.</para>
                <para>General:<itemizedlist>
+                     <listitem>
+                        <para>The directories <code>do things</code> and <code>TAN-key</code> have
+                           been renamed <code>applications</code> and <code>vocabularies</code>
+                           respectively. (This ensures grammatical consistency among top-level
+                           directory names.)</para>
+                     </listitem>
+                     <listitem>
+                        <para>The head has been revised. Better management of the &lt;head> was
+                           needed, and semantic and grammatical clarity in its parts. The &lt;head>
+                           is now conceived of as consisting first of all of sequential parts:
+                           name/desc of the file; general declarations; links to other files;
+                           adjustments; abbreviations; credits; changes; and a to-do list.</para>
+                        <para>
+                           <itemizedlist>
+                              <listitem>
+                                 <para>General declarations included &lt;license> and &lt;licensor>;
+                                    they are now joined by &lt;ambiguous-letter-numerals-are-roman>;
+                                    &lt;token-definition>; &lt;work> (class 1 files); &lt;version>
+                                    (class 1 files); &lt;for-lang>, &lt;tok-starts-with>,
+                                    &lt;tok-is> (class 3 files)</para>
+                              </listitem>
+                              <listitem>
+                                 <para>There may be more than one &lt;license> (since some things
+                                    might be dual licensed). &lt;licensor> is removed and only
+                                    @licensor in &lt;license> is allowed</para>
+                              </listitem>
+                              <listitem>
+                                 <para>&lt;key> has been changed to &lt;vocabulary>. The files being
+                                    pointed to, after all, are not providing key-value pairs, or
+                                    anything similar to what we think of when we speak of keys.
+                                    Really those files provide IRI + name + desc + location values
+                                    for individual things. (Hence TAN-key files are now being called
+                                    TAN-voc.)</para>
+                              </listitem>
+                              <listitem>
+                                 <para>&lt;definitions> was strange, because what's happening there
+                                    was not what we ordinarily mean by "define," which requires
+                                    claims to be applied to sets of things. To assign IRIs and names
+                                    to something is not to define it, but to label it. Furthermore,
+                                    all the things that should populate this element are meant to
+                                    resolve idrefs, and to supply extra vocabulary (note change
+                                    above from &lt;key> to &lt;vocabulary>). So &lt;definitions> has
+                                    been changed to &lt;vocabulary-key> (see change to other
+                                    &lt;key> above) and any children that do not function as a way
+                                    of resolving idrefs (the traditional function of a key) have
+                                    been moved up into the general declarations. </para>
+                              </listitem>
+                              <listitem>
+                                 <para>&lt;alter> was the only child of &lt;head> that was a verb.
+                                    It has been changed to &lt;adjustments>, and because it seems to
+                                    have priority over &lt;abbreviations> it has been placed ahead
+                                    of it.</para>
+                              </listitem>
+                              <listitem>
+                                 <para>Required element &lt;file-resp> has been introduced. All TAN
+                                    files have data that constitute a series of claims, and TAN
+                                    requires all claims to be credited/blamed upon a claimant. This
+                                    element specifies who, unless otherwise spcefied, should be
+                                    treated as the claimant for the file.</para>
+                              </listitem>
+                              <listitem>
+                                 <para>A &lt;to-do> has been introduced in the last section of
+                                    &lt;head>. This takes the place of @in-progress, and uses
+                                    &lt;comment>s to itemize the things that still need to be done
+                                    to the file. &lt;to-do> is required, but it can be empty – a
+                                    possible sign that the file is no longer in progress. Thus,
+                                    users of TAN files will be better informed exactly what is meant
+                                    by a file being in progress, and the owner of the file can keep
+                                    a list of things that remain to be done.</para>
+                              </listitem>
+                           </itemizedlist>
+                        </para>
+                     </listitem>
+                     <listitem>
+                        <para>The system vocabulary referencing has been streamlined and simplified. </para>
+                        <itemizedlist>
+                           <listitem>
+                              <para>For any element named X with @which, the normalized form of
+                                 @which points to the normalized form of &lt;name> of some single
+                                 vocabulary item that has been defined for an element of name X.
+                                 This is similar to the previous version, except that name
+                                 normalization now affects _ and - (treated as spacing
+                                 characters).</para>
+                           </listitem>
+                           <listitem>
+                              <para>For any element named X with an attribute Y that takes idrefs,
+                                 the space-tokenized values of Y will be checked first against a
+                                 target @xml:id or @id and, failing that, will check for a match
+                                 against a &lt;name> in a vocabulary item defined for elements named
+                                 X. </para>
+                           </listitem>
+                           <listitem>
+                              <para>Implication: &lt;name> is effectively another kind of
+                                 identifier, like @xml:id or @id. But the latter are case sensitive
+                                 and matched exactly whereas &lt;name>s are compared after
+                                 normalization: everything changed to lowercase and hyphens and
+                                 underscores replaced with spaces.</para>
+                           </listitem>
+                           <listitem>
+                              <para>Implication: attributes like @who may take a mixture of idrefs
+                                 and names. But if you invoke any names, be sure to replace word
+                                 spaces with hyphens or underscores, otherwise a single value will
+                                 be parsed as if multiple ones.</para>
+                           </listitem>
+                        </itemizedlist>
+                     </listitem>
+                     <listitem>
+                        <para>Files are now resolved differently. The goal is to return a file that
+                           can be interpreted without needed to reference any vocabularies
+                           (including standard TAN ones) or inclusions. (But nothing is done with
+                           the &lt;source>s of class 2 files, or other linked files such as
+                           &lt;redivision>, &lt;successor>, etc.)</para>
+                        <para>In resolving a file a sharp distinction is made between (1) elements
+                           involved in inclusions and (2) those that aren't. All inclusions are
+                           resolved recursively and returned to their host including file as a set
+                           of &lt;inclusion>s that carry children errors, vocabulary items, and
+                           substitutions. All these are applied to the appropriate elements (1) in
+                           the including file, and then the rest (2) are resolved. This means that
+                           inclusion now brings back not just specific elements, but the vocabulary
+                           upon which it depends. It also means that the system of idrefs in
+                           included files are now in play. Under the previous system, if you used
+                           &lt;resp @include="incl1"> you would have to have also invoked @include
+                           for &lt;role> and &lt;person>. It also means that reference errors are
+                           now reported in the resolved file directly. Previously these were
+                           attended to in terse expansion.</para>
+                     </listitem>
                   <listitem>
-                     <para>New errors introduced: wrn07, wrn08, inc05</para>
+                     <para>New errors introduced: wrn07, wrn08, inc05, tan21</para>
                   </listitem>
+                     <listitem>
+                        <para>Deleted errors: tan13 (an &lt;alias> should be able to combine
+                           different element types, esp. &lt;person> and &lt;organization>; it's up
+                           to other elements that use the &lt;alias> @ids to import the correct
+                           kinds of vocabulary items).</para>
+                     </listitem>
                      <listitem>
                         <para>New elements: &lt;predecessor> and &lt;successor>, to indicate how
                            files have been revised.</para>
@@ -82,8 +214,15 @@
                            tan:catalog-uris(), tan:collection(), tan:unique-char(),
                            tan:most-common-item-count(), tan:vertical-stops() (to support
                            tan:diff()), tan:nested-phrase-loop() (supports tan:chop-string()),
-                           tan:primary-agent(); tan:revise-href(); tan:lm-data()</para>
+                           tan:primary-agent(); tan:revise-href(); tan:lm-data();
+                           tan:takes-idrefs(); tan:target-element-names();
+                           tan:consolidate-elements(); tan:element-vocabulary();
+                           tan:attribute-vocabulary(); tan:vocabulary()</para>
                   </listitem>
+                     <listitem>
+                        <para>Deleted functions: tan:glossary() (replaced by new tan:vocabulary()),
+                           tan:definition() (replaced by new tan:vocabulary()).</para>
+                     </listitem>
                      <listitem>
                         <para>New global variables: $shy (same as $dhy), $doc-catalog-uris,
                            $doc-catalogs, $local-catalog, $relationships-reserved,
@@ -91,13 +230,18 @@
                            $loop-tolerance</para>
                      </listitem>
                      <listitem>
+                        <para>$help-trigger moved to the validation parameters file, to allow easier
+                           manipulation of its value.</para>
+                     </listitem>
+                     <listitem>
                         <para>New frameworks file added, to enhance oXygen functionality</para>
                      </listitem>
                      <listitem>
-                        <para>Introduced the concept of catalogs</para>
+                        <para>Introduced the concept of catalogs.</para>
                      </listitem>
                      <listitem>
-                        <para>Some functions provided $diagnostics</para>
+                        <para>Some functions are furnished with local variable $diagnostics, to
+                           allow for ad hoc testing.</para>
                      </listitem>
                      <listitem>
                         <para>Tokens that straddle two leaf divs (marked by discretionary hyphen or
@@ -151,6 +295,16 @@
                               <para>tan:error() now supports messagnig functions (validation won't
                                  do this, but they would be useful for XSLT transformations)</para>
                            </listitem>
+                           <listitem>
+                              <para>tan:strip-duplicates() has been renamed
+                                 tan:remove-duplicate-siblings() and moved to the extra functions
+                                 file.</para>
+                           </listitem>
+                           <listitem>
+                              <para>tan:resolve-alias() has been simplified. Each &lt;alias> is
+                                 inserted with &lt;idref> for every terminal value. Nothing is done
+                                 to check the validity of the references. </para>
+                           </listitem>
                         </itemizedlist>
                      </listitem>
                </itemizedlist></para>
@@ -190,13 +344,13 @@
                            final example that convinced me that the LDUR rule had to be downgraded
                            was Migne's Patrology. One homily would have a final section that
                            straddled the top of, say, columns 83 and 84, and the very next homily
-                           would begin with column 83, then go to 84. In this case, there were no
-                           subcolumn letters. If the two homilies were treated as component partst
-                           of a single work, then LDUR had to be violated, or on must be forced to
-                           include line numeration (very time consuming). The process also made me
-                           realize that the notion of leaf div is relative and arbitrary. A leaf
-                           might easily in another version contain leaves, or be dropped, to make
-                           its non-leaf parent a leaf div.</para>
+                           would begin with the remaining part of column 83, then go to 84. In this
+                           case, there were no subcolumn letters. If the two homilies were treated
+                           as component partst of a single work, then LDUR had to be violated, or on
+                           must be forced to include line numeration (very time consuming). The
+                           process also made me realize that the notion of leaf div is relative and
+                           arbitrary. A leaf might easily in another version contain leaves, or be
+                           dropped, to make its non-leaf parent a leaf div.</para>
                      </listitem>
                      <listitem>
                         <para>New element: &lt;redivision> (replaces &lt;see-also
@@ -210,7 +364,8 @@
                         <para>New @tok-pop. (Need to write error rules.)</para>
                      </listitem>
                      <listitem>
-                        <para>New errors introduced: tlm05</para>
+                        <para>Deleted error tlm01 since morphological files may be language-specific
+                           and credit their sources.</para>
                      </listitem>
                      <listitem>
                         <para>New element: &lt;tok-starts-with>, &lt;tok-is> (meant to optimize a
@@ -219,11 +374,17 @@
                      </listitem>
                   </itemizedlist>
                </para>
-               <para>TAN-A-key:<itemizedlist>
-                  <listitem>
-                     <para>New errors introduced: tky05</para>
-                  </listitem>
-               </itemizedlist></para>
+               <para>TAN-key:<itemizedlist>
+                     <listitem>
+                        <para>New name TAN-voc</para>
+                     </listitem>
+                     <listitem>
+                        <para>@which in a TAN-voc file may point to its own vocabulary</para>
+                     </listitem>
+                     <listitem>
+                        <para>New errors introduced: tky05</para>
+                     </listitem>
+                  </itemizedlist></para>
                <para>Extra functions:<itemizedlist>
                   <listitem>
                      <para>tan:node-type()</para></listitem><listitem>
@@ -269,7 +430,8 @@
                            logical (i.e., non-scriptum-based) reference system is native to the
                            French edition. But
                            ar.cat.fra.1844.saint-hilaire.ref-logical-after-grc.xml indicates that
-                           the reference system follows the Greek archetype.</para>
+                           the transcription has been divided and labeled following the Greek
+                           archetype.</para>
                      </listitem>
                   </itemizedlist></para>
             </section>
@@ -282,11 +444,14 @@
                <para>We assume now that any div, whether a leaf or not, that shares the same
                   reference as a preceding div is a continuation of that div. The real problems
                   occur when duplicates are not the same div type – that's the flag for an error.
-                  For example, &lt;div type="title" n="1"> and &lt;div type="chapter" n="1"> should
-                  raise a flag.</para>
+                  For example, sibling elements &lt;div type="title" n="1"> and &lt;div
+                  type="chapter" n="1"> should raise a flag.</para>
                <para>Change @when-accessed to @accessed-when (imitating @ed-when).</para>
-               <para>Rename /applications to /actions or /activities. Rename /TAN-key to /keys.</para>
                <para>Add a README.md to each main directory.</para>
+               <para>In the guidelines the keywords section should be renamed, along with its
+                  idrefs, to vocabulary.</para>
+               <para>Do not require &lt;master-location> if there are no items in the to-do
+                  list.</para>
             </section>
             <section>
                <title>Changes desired for the future</title>
@@ -294,8 +459,7 @@
                <para>
                   <itemizedlist>
                      <listitem>
-                        <para>Think more about OSIS's standard and how the most essential TAN data
-                           can be put at users' fingertips</para>
+                        <para>Think about how to optimize TAN catalog files for discovery</para>
                      </listitem>
                   </itemizedlist>
                </para>

@@ -6,38 +6,29 @@ start =
     ## specifies that the file is a TAN file containing lexico-morphology data about a text. Root element.
     element TAN-A-lm { TAN-root }
     
-    # No more than one source; one without a source is considered to apply to a language
-    source-list = source-item?
-    # TAN-A-lm files must each have at least one lexicon and one TAN-mor definition
-    definition-non-class-2 =
-        defn-lexi+
-        & defn-morph+
-    
-    alter-non-class-2 = empty
+    decl-non-class-2 = lang-outside*, (tok-start-indicator* & tok-is-indicator*)
+    source-content = entity-digital-nontan-no-id
+    # Either one source with no language specifications, or a language specification with zero or more sources
+    source-list = source-item*
+    # TAN-A-lm files must each have at least one lexicon and one TAN-mor
+    voc-key-for-non-class-2 =
+        voc-key-for-lexi+
+        & voc-key-for-morph+
     
     ## Because TAN-A-lm files depend on only one source, no id references to sources are needed
     sources-ref = empty
     id-option = empty
-    body-content-non-class-2 = lang-preface?, (body-item* & body-group*)
     body-attributes-non-core = lexicon-attr, grammar-attr
     body-item = TAN-A-lm-item
 }
-defn-morph =
+voc-key-for-morph =
     
     ## identifies a <TAN-mor> file that defines the parts of speech for a language, the codes for those parts, and the rules for combining them
-    element morphology {
-        ed-stamp?,
-        (inclusion
-         | (internal-xml-id, lang-outside*, (keyword-ref | entity-digital-tan-other-ref)))
-    }
-defn-lexi =
+    element morphology { entity-digital-tan-id }
+voc-key-for-lexi =
     
     ## names a lexicographical authority. This element is optional, because the lexical informat could be based upon the knowledge of the <agent>s who wrote the data.
-    element lexicon {
-        ed-stamp?,
-        (inclusion
-         | (internal-xml-id, (entity-digital-generic-ref | entity-nondigital-ref)))
-    }
+    element lexicon { entity-digital-tan-id | entity-nondigital-id }
 lexicon-attr =
     
     ## points to one or more <lexicon> or <agent> IDs
@@ -50,7 +41,7 @@ grammar-attr =
     
     ## This attribute is inheritable. See main.xml#inheritable_attributes
     attribute morphology { text }
-lang-preface = lang-outside*, (tok-start-indicator* & tok-is-indicator*)
+
 tok-start-indicator =
 
     ## specifies an opening string that characterizes the @val of <tok>s in the file.

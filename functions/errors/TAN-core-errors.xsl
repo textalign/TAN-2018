@@ -64,6 +64,11 @@
                   </xsl:message>
                </xsl:if>
                <message>
+                  <xsl:if test=". instance of element() and exists(@*)">
+                     <xsl:text>[</xsl:text>
+                     <xsl:value-of select="@* except @q"/>
+                     <xsl:text>] </xsl:text>
+                  </xsl:if>
                   <xsl:value-of select="."/>
                </message>
             </xsl:for-each>
@@ -118,7 +123,6 @@
       </xsl:element>
    </xsl:template>
 
-   <xsl:param name="help-trigger" select="'???'"/>
    <xsl:variable name="help-trigger-regex" select="tan:escape($help-trigger)"/>
    <xsl:function name="tan:help" as="element()">
       <xsl:param name="diagnostic-message" as="item()*"/>

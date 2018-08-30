@@ -8,6 +8,7 @@
     <!-- Output: the file resolved, except for attributes and elements that would be invalid -->
 
     <xsl:import href="../../functions/TAN-A-div-functions.xsl"/>
+    <xsl:import href="../../functions/TAN-extra-functions.xsl"/>
     <xsl:import href="../get%20inclusions/core-for-TAN-output.xsl"/>
     <xsl:output indent="no" use-character-maps="tan"/>
     
@@ -34,7 +35,7 @@
 
     <xsl:template
         match="@xml:base | @which | @orig-group | @orig-href | @orig-n | @q | 
-        tan:name[@common] | tan:token-definition/node() | tan:error"
+        tan:name[@norm] | tan:token-definition/node() | tan:error"
         mode="remove-undefined-nodes"/>
     
     <xsl:template match="@n" mode="remove-undefined-nodes">

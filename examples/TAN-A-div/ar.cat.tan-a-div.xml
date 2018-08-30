@@ -3,58 +3,38 @@
 <?xml-model href="../../schemas/TAN-A-div.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <!--<?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-A-div.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-A-div.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
-<TAN-A-div xmlns="tag:textalign.net,2015:ns" TAN-version="2018" id="tag:parkj@textalign.net,2015:ar.cat.tan-a-div">
+<TAN-A-div xmlns="tag:textalign.net,2015:ns" TAN-version="2019" id="tag:parkj@textalign.net,2015:ar.cat.tan-a-div">
     <head>
         <name>Alignment of Aristotle's Categories</name>
         <master-location href="http://textalign.net/release/TAN-2018/examples/TAN-A-div/ar.cat.tan-a-div.xml"/>
-        <license>
+        <license licensor="park">
             <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
             <name>Creative Commons Attribution 4.0 International License</name>
             <desc>This data file is licensed under a Creative Commons Attribution 4.0 International
                 License. The license is granted independent of rights and licenses associated with
                 the source. </desc>
         </license>
-        <licensor who="park"/>
+        <ambiguous-letter-numerals-are-roman>false</ambiguous-letter-numerals-are-roman>
         <source xml:id="grc">
             <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:semantic-refs</IRI>
             <name>Categories, Aristotle, Greek text by Minio-Paluello</name>
-            <location href="../ar.cat.grc.1949.minio-paluello-sem.xml" when-accessed="2016-07-08T15:17:28.037-04:00"/>
+            <location href="../ar.cat.grc.1949.minio-paluello.ref-logical.xml" accessed-when="2016-07-08T15:17:28.037-04:00"/>
         </source>
         <source xml:id="fra">
             <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.fra.1844.saint-hilaire:semantic-refs</IRI>
             <name>Categories, Aristotle, French translation by J. Barthélemy Saint-Hilaire</name>
-            <location href="../ar.cat.fra.1844.saint-hilaire.sem-native.xml" when-accessed="2016-07-11T13:44:25.487-04:00"/>
+            <location href="../ar.cat.fra.1844.saint-hilaire.ref-logical.xml" accessed-when="2016-07-11T13:44:25.487-04:00"/>
         </source>
         <source xml:id="eng">
             <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.eng.1926.edghill:semantic-refs</IRI>
             <name>Categories, Aristotle, English translation by E. M. Edghill</name>
-            <location href="../ar.cat.eng.1926.edghill.sem.xml" when-accessed="2016-07-08T15:18:25.573-04:00"/>
+            <location href="../ar.cat.eng.1926.edghill.ref-logical.xml" accessed-when="2016-07-08T15:18:25.573-04:00"/>
         </source>
-        
-        <definitions>
-            <ambiguous-letter-numerals-are-roman>false</ambiguous-letter-numerals-are-roman>
-            <person xml:id="park">
-                <IRI>tag:parkj@textalign.net,2015:self</IRI>
-                <name xml:lang="eng">Jenny Park</name>
-            </person>
-            <algorithm xml:id="xslt1"><IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI><name>Stylesheet to populate a TAN-A-div file from collections.</name><desc>Stylesheet at: ../../do%20things/convert/convert%20TAN%202017%20to%20TAN%202018.xsl</desc></algorithm>
-            <role xml:id="creator">
-                <IRI>http://schema.org/creator</IRI>
-                <name xml:lang="eng">creator</name>
-            </role>
-            <role xml:id="stylesheet1" which="stylesheet"/>
-            <verb which="is about" xml:id="is-about"/>
-            <topic xml:id="predication">
-                <IRI>tag:parkj@textalign.net,2015:topic:predication</IRI>
-                <name>predication</name>
-                <desc>The act of asserting something about a grammatical subject.</desc>
-            </topic>
-        </definitions>
-        <alter src="*">
+        <adjustments src="*">
             <equate n="ti title"/>
             <equate n="pr praef pref preface"/>
-        </alter>
-        <alter src="fra">
+        </adjustments>
+        <adjustments src="fra">
             <skip div-type="sec"/>
             <rename ref="1 1-3" new="1 1 1-3"/>
             <rename ref="3 1-3" new="3 1 1-3"/>
@@ -1105,13 +1085,40 @@
                 </tok>
                 <to ref="15 1 1 10"/>
             </reassign>
-        </alter>
+        </adjustments>
+        
+        <vocabulary-key>
+            <algorithm xml:id="xslt2">
+                <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
+                <name>Stylesheet to create a TAN file.</name>
+                <location href="../../applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl" accessed-when="2018-08-05T00:55:47.739-04:00"/>
+            </algorithm>
+            <person xml:id="park">
+                <IRI>tag:parkj@textalign.net,2015:self</IRI>
+                <name xml:lang="eng">Jenny Park</name>
+            </person>
+            <role xml:id="creator">
+                <IRI>http://schema.org/creator</IRI>
+                <name xml:lang="eng">creator</name>
+            </role>
+            <role xml:id="stylesheet1" which="stylesheet"/>
+            <verb which="is about" xml:id="is-about"/>
+            <topic xml:id="predication">
+                <IRI>tag:parkj@textalign.net,2015:topic:predication</IRI>
+                <name>predication</name>
+                <desc>The act of asserting something about a grammatical subject.</desc>
+            </topic>
+        </vocabulary-key>
+        <file-resp who="park"/>
+        <resp who="xslt2" roles="stylesheet1"/>
         <resp who="park" roles="creator"/>
-        <resp who="xslt1" roles="stylesheet1"/>
         <change when="2016-07-07" who="park">Started file</change>
-        <change who="xslt1" when="2017-11-02T12:24:05.136-04:00">TAN file updated to 2018 schemas.</change>
+        <change who="xslt2" when="2018-08-05T00:55:47.739-04:00">Converted from 2018 to 2019 schemas.</change>
+        <to-do>
+            <comment when="2018-08-05-04:00" who="park">Need to finish file.</comment>
+        </to-do>
     </head>
-    <body claimant="park">
+    <body claimant="xslt2">
         <claim verb="is-about" object="predication">
             <subject work="grc" ref="1 1"/>
         </claim>

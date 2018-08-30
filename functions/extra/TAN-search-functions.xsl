@@ -338,7 +338,7 @@
       <xsl:variable name="this-tok"
          select="replace((.//fn:map[@key = 'hasTarget']/fn:map[@key = 'Description']/fn:string)[1], 'urn:word:', '')"/>
       <claims>
-         <!-- We use the element name that will appear in the <definitions>, to expedite processing. -->
+         <!-- We use the element name that will appear in the <key>, to expedite processing. -->
          <algorithm>
             <IRI>
                <xsl:value-of
@@ -424,7 +424,8 @@
             return
                (map:get($morpheus-map, $i), $i)[1]"/>
       <xsl:for-each select="$these-vals-norm">
-         <xsl:variable name="this-glossary" select="tan:glossary('feature', .)"/>
+         <!--<xsl:variable name="this-glossary" select="tan:glossary('feature', .)"/>-->
+         <xsl:variable name="this-glossary" select="tan:vocabulary('feature', false(), ., $self-resolved/*/tan:head)"/>
          <feature>
             <xsl:copy-of select="$this-glossary[1]/(* except tan:desc)"/>
          </feature>

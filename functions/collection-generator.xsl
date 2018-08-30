@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tan="tag:textalign.net,2015:ns" exclude-result-prefixes="#all" version="2.0">
     <!-- Input: any file -->
-    <!-- Output: a catalog file for schemas/, functions/, and TAN-key -->
+    <!-- Output: a catalog file for schemas/, functions/, and TAN-voc -->
     <!-- The resultant files are important for the function library and validation, which can use fn:collection() only in connection with an XML file listing the XML files available. -->
     <xsl:output indent="yes"/>
     <xsl:include href="incl/TAN-core-functions.xsl"/>
@@ -37,15 +37,15 @@
         </collection>
     </xsl:variable>
     
-    <xsl:variable name="key-directories" select="('../TAN-key')"/>
-    <xsl:variable name="base-key-directory-resolved" select="resolve-uri($key-directories[1])"/>
-    <xsl:variable name="key-URIs">
+    <xsl:variable name="vocabulary-directories" select="('../vocabularies')"/>
+    <xsl:variable name="base-vocabulary-directory-resolved" select="resolve-uri($vocabulary-directories[1])"/>
+    <xsl:variable name="vocabulary-URIs">
         <collection stable="true">
-            <xsl:for-each select="$key-directories">
+            <xsl:for-each select="$vocabulary-directories">
                 <xsl:variable name="this-directory" select="."/>
                 <xsl:for-each
                     select="collection(string-join(($this-directory, '.?select=*.xml'), '/'))">
-                    <doc href="{tan:uri-relative-to(base-uri(.), $base-key-directory-resolved)}"/>
+                    <doc href="{tan:uri-relative-to(base-uri(.), $base-vocabulary-directory-resolved)}"/>
                 </xsl:for-each>
             </xsl:for-each>
         </collection>
@@ -58,8 +58,8 @@
         <xsl:result-document href="{resolve-uri('../schemas/collection.xml',static-base-uri())}">
             <xsl:copy-of select="$schema-URIs"/>
         </xsl:result-document>
-        <xsl:result-document href="{resolve-uri('../keys/collection.xml',static-base-uri())}">
-            <xsl:copy-of select="$key-URIs"/>
+        <xsl:result-document href="{resolve-uri('../vocabularies/collection.xml',static-base-uri())}">
+            <xsl:copy-of select="$vocabulary-URIs"/>
         </xsl:result-document>
     </xsl:template>
 </xsl:stylesheet>

@@ -3,17 +3,21 @@
 <?xml-model href="../schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <!--<?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-T.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
-<TAN-T xmlns="tag:textalign.net,2015:ns" id="tag:kalvesmaki.com,2014:tan-t:ar.cat.lat.1961.a.minio-paluello:object-refs" TAN-version="2018">
+<TAN-T xmlns="tag:textalign.net,2015:ns" id="tag:kalvesmaki.com,2014:tan-t:ar.cat.lat.1961.a.minio-paluello:object-refs" TAN-version="2019">
     <head>
         <name>Categories, Aristotle, Latin translation by Boethius, first recension, edited by Minio-Paluello</name>
-        <license>
+       <master-location href="https://raw.githubusercontent.com/textalign/TAN-2019/master/examples/ar.cat.lat.1949.minio-paluello.ref-scriptum.xml"/>
+        <license licensor="kalvesmaki">
             <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
             <name>Creative Commons Attribution 4.0 International License</name>
             <desc>Exclusive of rights held and licenses offered by rightsholders of the source or
                 sources listed below, this data file, insofar as it constitutes an independent work,
                 is licensed under a Creative Commons Attribution 4.0 International License.</desc>
         </license>
-        <licensor who="kalvesmaki"/>
+   <work>
+      <IRI>http://dbpedia.org/resource/Categories_(Aristotle)</IRI>
+      <name>Aristotle, Categories</name>
+   </work>
         <source>
             <IRI>http://id.lib.harvard.edu/aleph/000987221/catalog</IRI>
             <IRI>http://www.worldcat.org/oclc/912995321</IRI>
@@ -24,13 +28,16 @@
         <see-also relationship="alt">
             <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:semantic-refs</IRI>
             <name>Categories, Aristotle, Greek text by Minio-Paluello</name>
-            <location href="ar.cat.grc.1949.minio-paluello-sem.xml" when-accessed="2016-07-09T23:54:42.291-04:00"/>
+            <location href="ar.cat.grc.1949.minio-paluello-sem.xml" accessed-when="2016-07-09T23:54:42.291-04:00"/>
         </see-also>
-      <definitions>
-         <work>
-            <IRI>http://dbpedia.org/resource/Categories_(Aristotle)</IRI>
-            <name>Aristotle, Categories</name>
-         </work>
+    <adjustments>
+    </adjustments>
+      <vocabulary-key>
+         <algorithm xml:id="xslt2">
+            <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
+            <name>Stylesheet to create a TAN file.</name>
+            <location href="../../applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl" accessed-when="2018-08-06T15:44:43.225-04:00"/>
+      </algorithm>
          <div-type xml:id="p">
             <IRI>http://dbpedia.org/resource/Page_(paper)</IRI>
             <name>page</name>
@@ -51,8 +58,7 @@
          <algorithm xml:id="xslt1">
             <IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI>
             <name>Stylesheet to populate a TAN-A-div file from collections.</name>
-            <desc>Stylesheet at:
-               ../do%20things/convert/convert%20TAN%202017%20to%20TAN%202018.xsl</desc>
+            <location href="../applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl" accessed-when="2018-08-05"/>
          </algorithm>
          <role xml:id="editor">
             <IRI>http://schema.org/editor</IRI>
@@ -60,13 +66,16 @@
          </role>
          <role xml:id="stylesheet1" which="stylesheet"/>
          <relationship xml:id="alt" which="different work version"/>
-      </definitions>
-    <alter>
-    </alter>
-    <resp roles="editor" who="kalvesmaki"/>
+      </vocabulary-key>
+    
+    <file-resp who="kalvesmaki"/>
+   <resp who="xslt2" roles="stylesheet1"/>
+   <resp roles="editor" who="kalvesmaki"/>
     <resp who="xslt1" roles="stylesheet1"/>
         <change when="2015-07-09-04:00" who="kalvesmaki">Started new file.</change>
         <change who="xslt1" when="2017-11-02T22:20:37.256-04:00">TAN file updated to 2018 schemas.</change>
+   <change who="xslt2" when="2018-08-06T15:44:43.225-04:00">Converted from 2018 to 2019 schemas.</change>
+      <to-do/>
     </head>
     <body xml:lang="lat">
    <div type="p" n="5">
@@ -74,11 +83,11 @@
       <div type="l" n="2">DE DECEM PRAEDICAMENTIS</div>
       <div type="l" n="3">[1] Aequivoca dicuntur quorum nomen solum commune est,</div>
       <div type="l" n="4">secundum nomen vero substantiae ratio diversa, ut animal homo</div>
-      <div type="l" n="5">et quod pingitur. Horum enim solum nomen commune est, secun­</div>
+      <div type="l" n="5">et quod pingitur. Horum enim solum nomen commune est, secun&#xad;</div>
       <div type="l" n="6">dum nomen vero substantiae ratio diversa; si enim quis assignet</div>
       <div type="l" n="7">quid est utrique eorum quo sint animalia, propriam assignabit</div>
       <div type="l" n="8">utriusque rationem.</div>
-      <div type="l" n="9">Univoca vero dicuntur quorum et nomen commune est et se­</div>
+      <div type="l" n="9">Univoca vero dicuntur quorum et nomen commune est et se&#xad;</div>
       <div type="l" n="10">cundum nomen eadem substantiae ratio, ut animal homo atque</div>
       <div type="l" n="11">bos. Communi enim nomine utrique animalia nuncupantur, et</div>
       <div type="l" n="12">est ratio substantiae eadem ; si quis enim assignet utriusque</div>
@@ -87,7 +96,7 @@
       <div type="l" n="15">Denominativa vero dicuntur quaecumque ab aliquo, solo</div>
       <div type="l" n="16">differentia casu, secundum nomen habent appellationem, ut a</div>
       <div type="l" n="17">grammatica grammaticus et a fortitudine fortis.</div>
-      <div type="l" n="18">[2] Eorum quae dicuntur alia quidem secundum complexio­</div>
+      <div type="l" n="18">[2] Eorum quae dicuntur alia quidem secundum complexio&#xad;</div>
       <div type="l" n="19">nem dicuntur, alia vero sine complexione. Et ea quae secundum</div>
       <div type="l" n="20">complexionem dicuntur sunt ut homo currit, homo vincit; ea</div>
       <div type="l" n="21">vero quae sine complexione, ut homo, bos, currit, vincit.</div>
@@ -102,17 +111,17 @@
       <div type="l" n="4">quidem est in anima, de subiecto vero nullo dicitur, et quoddam</div>
       <div type="l" n="5">album in subiecto est in corpore (omnis enim color in corpore est) ;</div>
       <div type="l" n="6">alia vero et de subiecto dicuntur et in subiecto sunt, ut scientia in</div>
-      <div type="l" n="7">subiecto quidem est in anima, de subiecto vero dicitur de gramma­</div>
+      <div type="l" n="7">subiecto quidem est in anima, de subiecto vero dicitur de gramma&#xad;</div>
       <div type="l" n="8">tica ; alia vero neque in subiecto sunt neque de subiecto dicuntur,</div>
       <div type="l" n="9">ut aliquis homo vel aliquis equus ; nihil enim horum neque in</div>
       <div type="l" n="10">subiecto est neque de subiecto dicitur. Simpliciter autem quae</div>
       <div type="l" n="11">sunt individua et numero singularia nullo de subiecto dicuntur,</div>
-      <div type="l" n="12">in subiecto autem nihil ea prohibet esse; quaedam enim gramma­</div>
+      <div type="l" n="12">in subiecto autem nihil ea prohibet esse; quaedam enim gramma&#xad;</div>
       <div type="l" n="13">tica in subiecto est.</div>
-      <div type="l" n="14">[3] Quando alterum de altero praedicatur ut de subiecto, quae­</div>
-      <div type="l" n="15">cumque de eo quod praedicatur dicuntur, omnia etiam de subie­</div>
+      <div type="l" n="14">[3] Quando alterum de altero praedicatur ut de subiecto, quae&#xad;</div>
+      <div type="l" n="15">cumque de eo quod praedicatur dicuntur, omnia etiam de subie&#xad;</div>
       <div type="l" n="16">cto dicentur, ut homo de quodam homine praedicatur, animal</div>
-      <div type="l" n="17">vero de homine, ergo et de quodam homine animal praedicabi­</div>
+      <div type="l" n="17">vero de homine, ergo et de quodam homine animal praedicabi&#xad;</div>
       <div type="l" n="18">tur ; quidam enim homo et homo est et animal.</div>
       <div type="l" n="19">Diversorum generum et non subalternatim positorum diversae</div>
       <div type="l" n="20">secundum speciem et differentiae sunt, ut animalis et scientiae;</div>
@@ -123,7 +132,7 @@
       <div type="l" n="25">generibus praedicantur, quare quaecumque praedicati differentiae</div>
       <div type="l" n="26">fuerint, eaedem erunt etiam subiecti.</div>
       <div type="l" n="27">[4] Eorum quae secundum nullam complexionem dicuntur</div>
-      <div type="l" n="28">singulum aut substantiam significat aut quantitatem aut quali­</div>
+      <div type="l" n="28">singulum aut substantiam significat aut quantitatem aut quali&#xad;</div>
       <div type="l" n="29">tatem aut ad aliquid aut ubi aut quando aut situm aut habitum</div>
       <div type="l" n="30">aut facere aut pati. Est autem substantia quidem ut figuratim</div>
       <div type="l" n="31">dicatur ut homo, equus; quantitas ut bicubitum, tricubitum;</div>
@@ -139,14 +148,14 @@
       <div type="l" n="8">nullam complexionem dicuntur neque verum quicquam neque</div>
       <div type="l" n="9">falsum est, ut homo, album, currit.</div>
       <div type="l" n="10">[5] DE SUBSTANTIA. -Substantia autem est, quae proprie et</div>
-      <div type="l" n="11">principaliter et maxime dicitur, quae neque de subiecto praedi­</div>
+      <div type="l" n="11">principaliter et maxime dicitur, quae neque de subiecto praedi&#xad;</div>
       <div type="l" n="12">catur neque in subiecto est, ut aliqui homo vel aliqui equus.</div>
       <div type="l" n="13">Secundae autem substantiae dicuntur, in quibus speciebus illae</div>
       <div type="l" n="14">quae principaliter substantiae dicuntur insunt, hae et harum</div>
-      <div type="l" n="15">specierum genera; ut aliquis homo in specie quidem est in ho­</div>
+      <div type="l" n="15">specierum genera; ut aliquis homo in specie quidem est in ho&#xad;</div>
       <div type="l" n="16">mine, genus vero speciei animal est ; secundae ergo substantiae</div>
       <div type="l" n="17">dicuntur, ut est homo atque animal. Manifestum est autem ex</div>
-      <div type="l" n="18">his quae dicta sunt quoniam eorum quae de subiecto dicuntur ne­</div>
+      <div type="l" n="18">his quae dicta sunt quoniam eorum quae de subiecto dicuntur ne&#xad;</div>
       <div type="l" n="19">cesse est et nomen et rationem de subiecto praedicari, ut homo de</div>
       <div type="l" n="20">subiecto dicitur aliquo homine, et praedicatur nomen ; namque</div>
       <div type="l" n="21">hominem de aliquo homine praedicabis. Ratio quoque hominis</div>
@@ -174,10 +183,10 @@
       <div type="l" n="15">impossibile est aliquid esse ceterorum.</div>
       <div type="l" n="16">Secundarum vero substantiarum magis est species substantia</div>
       <div type="l" n="17">quam genus; propinquior enim est primae substantiae. Si enim</div>
-      <div type="l" n="18">quis primam substantiam quid sit assignet, evidentius et conve­</div>
+      <div type="l" n="18">quis primam substantiam quid sit assignet, evidentius et conve&#xad;</div>
       <div type="l" n="19">nientius assignabit speciem proferens quam genus, ut de aliquo</div>
       <div type="l" n="20">homine evidentius assignabit hominem proferens quam animal ;</div>
-      <div type="l" n="21">illud enim magis est proprium alicuius hominis, hoc vero com­</div>
+      <div type="l" n="21">illud enim magis est proprium alicuius hominis, hoc vero com&#xad;</div>
       <div type="l" n="22">munius. Et aliquam arborem assignans, evidentius assignabit</div>
       <div type="l" n="23">arborem nominans quam plantam. Amplius primae substantiae,</div>
       <div type="l" n="24">propterea quod aliis omnibus subiacent et omnia cetera vel de</div>
@@ -201,7 +210,7 @@
       <div type="l" n="11">enim hominem si quis assignet quid sit, si speciem quam genus</div>
       <div type="l" n="12">protulerit, convenienter proferet, et manifestum faciet hominem</div>
       <div type="l" n="13">quam animal proferens ; ceterorum vero quicquid protulerit,</div>
-      <div type="l" n="14">aliena erit ilia prolatio, ut album vel currit vel quodlibet huius­</div>
+      <div type="l" n="14">aliena erit ilia prolatio, ut album vel currit vel quodlibet huius&#xad;</div>
       <div type="l" n="15">modi si reddat. Quare recte hae solae praeter cetera substantiae</div>
       <div type="l" n="16">dicuntur. Amplius primae substantiae, propterea quod aliis</div>
       <div type="l" n="17">omnibus subiacent, idcirco propriae substantiae dicuntur;</div>
@@ -230,7 +239,7 @@
       <div type="l" n="8">subiecto vera nullo est ; non enim in homine est bipes neque</div>
       <div type="l" n="9">gressibile .. Et ratio quoque differentiae de illo dicitur de quo ipsa</div>
       <div type="l" n="10">differentia praedicatur, ut si gressibile de homine dicatur, et</div>
-      <div type="l" n="11">ratio gressibilis de homine praedicabitur ; est enim homo gressi­</div>
+      <div type="l" n="11">ratio gressibilis de homine praedicabitur ; est enim homo gressi&#xad;</div>
       <div type="l" n="12">bile. Non nos vera conturbent substantiarum partes quae ita</div>
       <div type="l" n="13">sunt in toto quasi in subiecto sint, ne forte cogamur dicere non</div>
       <div type="l" n="14">eas esse substantias ; non enim sic dicebantur esse ea quae sunt</div>
@@ -241,9 +250,9 @@
       <div type="l" n="19">substantia nulla est praedicatio (de nullo enim subiecto dicitur),</div>
       <div type="l" n="20">secundarum vera substantiarum species quidem de individuo</div>
       <div type="l" n="21">praedicatur, genus autem et de specie et de individuo ; similiter</div>
-      <div type="l" n="22">autem et differentiae et de speciebus et de individuis praedi­</div>
-      <div type="l" n="23">cantur. Rationem quoque suscipiunt primae substantiae specie­</div>
-      <div type="l" n="24">rum et generum, et species generis (quaecumque enim de praedi­</div>
+      <div type="l" n="22">autem et differentiae et de speciebus et de individuis praedi&#xad;</div>
+      <div type="l" n="23">cantur. Rationem quoque suscipiunt primae substantiae specie&#xad;</div>
+      <div type="l" n="24">rum et generum, et species generis (quaecumque enim de praedi&#xad;</div>
       <div type="l" n="25">cato dicuntur, eadem et de subiecto dicentur) ; similiter autem</div>
       <div type="l" n="26">et differentiarum rationem suscipiunt species et individua;</div>
       <div type="l" n="27">univoca autem erant quorum et nomen commune est et ratio.</div>
@@ -270,11 +279,11 @@
       <div type="l" n="16">contrarium. Non est autem hoc substantiae proprium, sed</div>
       <div type="l" n="17">etiam multorum aliorum, ut quantitatis ; bicubito enim nihil</div>
       <div type="l" n="18">est contrarium, at vera nee decem nee alicui talium, nisi quis</div>
-      <div type="l" n="19">multa paucis dicat esse contraria vel magnum parvo; determina­</div>
+      <div type="l" n="19">multa paucis dicat esse contraria vel magnum parvo; determina&#xad;</div>
       <div type="l" n="20">torum vera nullum nulli est contrarium.</div>
       <div type="l" n="21">Videtur autem substantia non suscipere magis et minus;</div>
       <div type="l" n="22">dico autem non quoniam substantia non est a substantia magis</div>
-      <div type="l" n="23">substantia (hoc enim dictum est quoniam est), sed quoniam una­</div>
+      <div type="l" n="23">substantia (hoc enim dictum est quoniam est), sed quoniam una&#xad;</div>
       <div type="l" n="24">quaeque substantia hoc ipsum quod est non dicitur magis et</div>
       <div type="l" n="25">minus ; ut, si est ipsa substantia homo, non erit magis et minus</div>
       <div type="l" n="26">homo, nee ipse a se ipso nee ab altera. Neque enim est alter altero</div>
@@ -291,13 +300,13 @@
       <div type="l" n="5">sit idem et unum numero, contrariorum susceptibile est. Et in</div>
       <div type="l" n="6">aliis quidem nullis hoc quisquam habeat proferre quae non sunt</div>
       <div type="l" n="7">substantiae, quod unum numero contrariorum erit susceptibile;</div>
-      <div type="l" n="8">ut color, quod est unum et idem numero, non erit album et ni­</div>
+      <div type="l" n="8">ut color, quod est unum et idem numero, non erit album et ni&#xad;</div>
       <div type="l" n="9">grum, nee eadem actio et una numero erit mala et bona; similiter</div>
       <div type="l" n="10">autem et in aliis quaecumque substantiae non sunt. Ipsa vero</div>
-      <div type="l" n="11">substantia, cum sit una et eadem numero, contrariorum suscepti­</div>
+      <div type="l" n="11">substantia, cum sit una et eadem numero, contrariorum suscepti&#xad;</div>
       <div type="l" n="12">bilis est; ut quidam homo, unus et idem cum sit, aliquando albus</div>
       <div type="l" n="13">aliquando niger fit, et calidus et frigidus, et improbus et probus.</div>
-      <div type="l" n="14">In aliis vero nullis tale aliquid videtur, nisi quis opponat oratio­</div>
+      <div type="l" n="14">In aliis vero nullis tale aliquid videtur, nisi quis opponat oratio&#xad;</div>
       <div type="l" n="15">nem et opinionem dicens huiusmodi esse; eadem enim oratio et</div>
       <div type="l" n="16">vera et falsa esse videtur, ut, si vera oratio est aliquem sedere,</div>
       <div type="l" n="17">cum ipse surrexerit eadem ipsa erit falsa ; similiter autem et in</div>
@@ -307,19 +316,19 @@
       <div type="l" n="21">enim quae sunt in substantiis ipsa permutata contrariorum sunt</div>
       <div type="l" n="22">susceptibilia (frigidum enim ex calido factum permutatum est,</div>
       <div type="l" n="23">et nigrum ex albo et probum ex improbo, similiter autem et in</div>
-      <div type="l" n="24">aliis singula ipsa permutationem suscipientia contrariorum sus­</div>
+      <div type="l" n="24">aliis singula ipsa permutationem suscipientia contrariorum sus&#xad;</div>
       <div type="l" n="25">ceptibilia sunt), oratio vero et opinio ipsa quidem immobilia</div>
       <div type="l" n="26">omnino semperque permanent, re vero mota contrarietas circa ea</div>
    </div>
    <div type="p" n="13">
-      <div type="l" n="1">fit; oratio enim permanet eade'm sedere aliquem, re vero mota ali­</div>
+      <div type="l" n="1">fit; oratio enim permanet eade'm sedere aliquem, re vero mota ali&#xad;</div>
       <div type="l" n="2">quotiens quidem vera fit aliquotiens falsa; similiter autem et in</div>
       <div type="l" n="3">opinione. Quapropter hoc modo proprium erit substantiae ut</div>
       <div type="l" n="4">secundum propriam permutationem susceptibilis contrariorum</div>
       <div type="l" n="5">sit - si quis etiam hoc suscipiat, opinionem et orationem</div>
       <div type="l" n="6">contrariorum esse susceptibiles; non est autem hoc verum;</div>
-      <div type="l" n="7">etenim oratio et opinio non quod ea suscipiant aliquid contra­</div>
-      <div type="l" n="8">riorum esse susceptibilia dicuntur, sed quod circa alteram quan­</div>
+      <div type="l" n="7">etenim oratio et opinio non quod ea suscipiant aliquid contra&#xad;</div>
+      <div type="l" n="8">riorum esse susceptibilia dicuntur, sed quod circa alteram quan&#xad;</div>
       <div type="l" n="9">dam passionem sint. -Eo enim quo res est vel non est, eo</div>
       <div type="l" n="10">oratio vel vera vel falsa dicitur, non eo quod ipsa susceptibilis</div>
       <div type="l" n="11">est contrarii. Simpliciter enim nihil neque oratio movetur neque</div>
@@ -328,7 +337,7 @@
       <div type="l" n="14">contrariorum susceptibilis. Aegritudinem enim et sanitatem</div>
       <div type="l" n="15">suscipit, et albedinem et nigredinem; et unumquodque talium</div>
       <div type="l" n="16">ipsa suscipiens contrariorum esse dicitur susceptibilis. Quare</div>
-      <div type="l" n="17">proprium erit substantiae, cum sit idem et unum numero, sus­</div>
+      <div type="l" n="17">proprium erit substantiae, cum sit idem et unum numero, sus&#xad;</div>
       <div type="l" n="18">ceptibilem contrariorum esse. Et de substantia quidem haec</div>
       <div type="l" n="19">dicta sint.</div>
       <div type="l" n="20">[6] DE QUANTITATE. - Quantitatis aliud est continuum, aliud</div>
@@ -345,11 +354,11 @@
       <div type="l" n="2">nullum communem :terminum coniunguntur; neque omnino</div>
       <div type="l" n="3">aliquis habebit in numero sumere communem terminum partium,</div>
       <div type="l" n="4">sed semper discretae sunt; quare numerus discretorum est.</div>
-      <div type="l" n="5">Similiter est autem et oratio discretorum; (quoniam enim quanti­</div>
+      <div type="l" n="5">Similiter est autem et oratio discretorum; (quoniam enim quanti&#xad;</div>
       <div type="l" n="6">tas est et oratio manifestum est; mensuratur enim syllaba longa</div>
       <div type="l" n="7">et brevis; dico vero illam quae :fit cum voce orationem) ; ad</div>
       <div type="l" n="8">nullum enim communem terminum partes eius coniunguntur;</div>
-      <div type="l" n="9">neque enim est communis terminus ad quem syllabae coniungun­</div>
+      <div type="l" n="9">neque enim est communis terminus ad quem syllabae coniungun&#xad;</div>
       <div type="l" n="10">tur, sed unaquaeque discreta est secundum se ipsam. Linea vero</div>
       <div type="l" n="11">continua est; namque est sumere communem terminum ad quem</div>
       <div type="l" n="12">partes ipsius coniunguntur, hoc est autem punctum, et superficiei</div>
@@ -357,11 +366,11 @@
       <div type="l" n="14">coniunguntur). Similiter autem et in corpore habebit quis sumere</div>
       <div type="l" n="15">communem terminum, vel lineam vel super:ficiem; ad quem</div>
       <div type="l" n="16">partes corporis coniunguntur. Sunt autem talium et tempus et</div>
-      <div type="l" n="17">locus; praesens enim communis est terminus ad quem coniun­</div>
+      <div type="l" n="17">locus; praesens enim communis est terminus ad quem coniun&#xad;</div>
       <div type="l" n="18">guntur praeterita vel futura. Rursus locus continuorum est ·</div>
       <div type="l" n="19">locum enim quendam partes corporis retinent, quae ad quendam</div>
       <div type="l" n="20">communem terminum coniunguntur; ergo et loci partes, quas</div>
-      <div type="l" n="21">tenent singulae partes corporis, ad eundem terminum coniun­</div>
+      <div type="l" n="21">tenent singulae partes corporis, ad eundem terminum coniun&#xad;</div>
       <div type="l" n="22">guntur ad quem et partes corporis iungebantur; quare continuum</div>
       <div type="l" n="23">est et locus ; ad unum enim communem terminum eius partes</div>
       <div type="l" n="24">coniunguntur.</div>
@@ -373,7 +382,7 @@
    <div type="p" n="15">
       <div type="l" n="1">quam ceterarum partium coniungantur) ; similiter autem et</div>
       <div type="l" n="2">superficiei partes habent aliquam positionem (similiter enim</div>
-      <div type="l" n="3">designabuntur singulae ubi iacent, et quae ad se invicem coniun­</div>
+      <div type="l" n="3">designabuntur singulae ubi iacent, et quae ad se invicem coniun&#xad;</div>
       <div type="l" n="4">guntur). Et soliditatis quoque et loci similiter. In numero vero</div>
       <div type="l" n="5">nullus habet perspicere quemadmodum partes habeant ad se</div>
       <div type="l" n="6">invicem aliquam positionem vel ubi iaceant vel quae ad quam</div>
@@ -383,7 +392,7 @@
       <div type="l" n="10">dices retinere idcirco quod temporis hoc quidem prius est, illud</div>
       <div type="l" n="11">vero posterius. Et in numero quoque eo quod prius numeretur</div>
       <div type="l" n="12">unus quam duo et duo quam tres ; et sic habebunt aliquem</div>
-      <div type="l" n="13">ordinem, positionem vero non multum accipies. Et oratio simi­</div>
+      <div type="l" n="13">ordinem, positionem vero non multum accipies. Et oratio simi&#xad;</div>
       <div type="l" n="14">liter ; nihil enim eius partium permanet, sed dictum est et non est</div>
       <div type="l" n="15">ultra hoc sumere, quare non erit ulla positio eius partium cuius</div>
       <div type="l" n="16">permanet nihil. Igitur alia ex habentibus ad se invicem partibus</div>
@@ -394,8 +403,8 @@
       <div type="l" n="21">superficies multa sit, et actio longa eo quod tempus multum et</div>
       <div type="l" n="22">longum sit, et motus multus; neque enim horum singulum per se</div>
       <div type="l" n="23">quantitas dicitur ; ut, si quis assignet quanta sit actio, tempore</div>
-      <div type="l" n="24">definiet, annuam vel sic aliquo modo assignans, et album quan­</div>
-      <div type="l" n="25">tum sit assignans super:ficie de:finiet (quanta enim fuerit super­</div>
+      <div type="l" n="24">definiet, annuam vel sic aliquo modo assignans, et album quan&#xad;</div>
+      <div type="l" n="25">tum sit assignans super:ficie de:finiet (quanta enim fuerit super&#xad;</div>
       <div type="l" n="26">ficies, tan tum esse album dicet) ; quare solae proprie et secundum</div>
       <div type="l" n="27">se ipsae quantitates dicuntur quae dictae sunt, alioruin vero</div>
       <div type="l" n="28">nihil per se, sed, si forte, per accidens.</div>
@@ -414,15 +423,15 @@
       <div type="l" n="11">quidem aliquando parvus, milium vero magnum diceretur.</div>
       <div type="l" n="12">Rursus in vico quidem plures homines esse dicimus, in civitate</div>
       <div type="l" n="13">vero paucos cum sint eorum multiplices, et in domo quidem</div>
-      <div type="l" n="14">multos, in theatro vero paucos cum sint plures. Amplius bicubi­</div>
-      <div type="l" n="15">tum vel tricubitum et unumquodque talium quantitatem signifi­</div>
+      <div type="l" n="14">multos, in theatro vero paucos cum sint plures. Amplius bicubi&#xad;</div>
+      <div type="l" n="15">tum vel tricubitum et unumquodque talium quantitatem signifi&#xad;</div>
       <div type="l" n="16">cat, magnum vero vel parvum non significat quantitatem, sed</div>
-      <div type="l" n="17">magis ad aliquid ; quoniam ad aliud spectatur magnum et par­</div>
+      <div type="l" n="17">magis ad aliquid ; quoniam ad aliud spectatur magnum et par&#xad;</div>
       <div type="l" n="18">vum ; quare manifestum est quoniam haec ad aliquid sunt.</div>
       <div type="l" n="19">Amplius, sive aliquis ponat ea esse quantitates sive non ponat,</div>
       <div type="l" n="20">nihil illis erit contrarium ; quod enim non est sumere per se ipsum</div>
-      <div type="l" n="21">sed ad solam alterius relationem, quomodo huic aliquid erit con­</div>
-      <div type="l" n="22">trarium ? Amplius, si sunt magnum et parvum contraria, con­</div>
+      <div type="l" n="21">sed ad solam alterius relationem, quomodo huic aliquid erit con&#xad;</div>
+      <div type="l" n="22">trarium ? Amplius, si sunt magnum et parvum contraria, con&#xad;</div>
       <div type="l" n="23">tingit idem simul contraria suscipere et ea ipsa sibi esse contraria.</div>
       <div type="l" n="24">Contingit enim simul idem parvum esse et magnum (est enim</div>
       <div type="l" n="25">ad hoc quidem parvum, ad aliud vero hoc idem ipsum magnum);</div>
@@ -439,7 +448,7 @@
       <div type="l" n="4">sibi esse contrarium. Non est igitur magnum parvo contrarium</div>
       <div type="l" n="5">nec multa paucis ; quare si quis haec non relativa esse dicat,</div>
       <div type="l" n="6">quantitas tanien nihil contrarium habebit.</div>
-      <div type="l" n="7">Maxime autem circa locum esse videtur contrarietas quanti­</div>
+      <div type="l" n="7">Maxime autem circa locum esse videtur contrarietas quanti&#xad;</div>
       <div type="l" n="8">tatis; sursum enim ei quod est deorsum contrarium ponunt,</div>
       <div type="l" n="9">regionem mediam deorsum dicentes propterea quod multa</div>
       <div type="l" n="10">distantia est medietatis ad mundi terminos. Videntur autem et</div>
@@ -453,11 +462,11 @@
       <div type="l" n="18">dicitur; nec in his quae dicta sunt omnino aliquid magis et minus</div>
       <div type="l" n="19">dicitur. Quare quantitas non suscipit magis et minus.</div>
       <div type="l" n="20">Proprium autem maxime quantitatis est quod aequale et</div>
-      <div type="l" n="21">inaequale dicitur. Singulum enim earum quae dictae sunt quanti­</div>
-      <div type="l" n="22">tatum et aequale dicitur et inaequale, ut corpus aequale et inae­</div>
+      <div type="l" n="21">inaequale dicitur. Singulum enim earum quae dictae sunt quanti&#xad;</div>
+      <div type="l" n="22">tatum et aequale dicitur et inaequale, ut corpus aequale et inae&#xad;</div>
       <div type="l" n="23">quale, et numerus aequalis et inaequalis dicitur, et tempus</div>
       <div type="l" n="24">aequale et inaequale ; similiter autem et in aliis quae dicta sunt</div>
-      <div type="l" n="25">singulis aequale et inaequale dicitur. In ceteris vero quae quanti­</div>
+      <div type="l" n="25">singulis aequale et inaequale dicitur. In ceteris vero quae quanti&#xad;</div>
       <div type="l" n="26">tatis non sunt, non multum videbitur aequale et inaequale dici,</div>
       <div type="l" n="27">namque dispositio aequalis et inaequalis non multum dicitur sed</div>
    </div>
@@ -483,7 +492,7 @@
       <div type="l" n="19">quaedam, positio vero ad aliquid est ; iacere autem vel stare vel</div>
       <div type="l" n="20">sedere ipsa quidem non sunt positiones, denominative vero ex</div>
       <div type="l" n="21">his quae dictae sunt positionibus nominantur.</div>
-      <div type="l" n="22">Inest autem et contrarietas in relatione, ut virtus malitiae con­</div>
+      <div type="l" n="22">Inest autem et contrarietas in relatione, ut virtus malitiae con&#xad;</div>
       <div type="l" n="23">trarium est, cum sit utrumque ad aliquid, et scientia inscientiae.</div>
       <div type="l" n="24">Non autem omnibus relativis inest contrariet as ; duplici enim</div>
       <div type="l" n="25">nihil est contrarium, neque vero triplici neque ulli t alium.</div>
@@ -496,18 +505,18 @@
       <div type="l" n="1">et minus ; duplex enim non dicitur magis et minus duplex, nec</div>
       <div type="l" n="2">aliquid t alium.</div>
       <div type="l" n="3">Omnia autem relativa ad convertentia dicuntur, ut servus</div>
-      <div type="l" n="4">domini servus dicitur et dominus servi dominus, et duplum dimi­</div>
+      <div type="l" n="4">domini servus dicitur et dominus servi dominus, et duplum dimi&#xad;</div>
       <div type="l" n="5">dii duplum et dimidium dupli dimidium, et maius minore maius</div>
-      <div type="l" n="6">et minus maiore minus ; similiter autem et in aliis ; sed casu ali­</div>
+      <div type="l" n="6">et minus maiore minus ; similiter autem et in aliis ; sed casu ali&#xad;</div>
       <div type="l" n="7">quotiens differt secundum locutionem, ut scientia scibilis rei</div>
       <div type="l" n="8">dicitur scientia et scibile scientia scibile, et sensus sensibilis</div>
-      <div type="l" n="9">sensus et sensibile sensu sensibile. At vero aliquotiens non vide­</div>
+      <div type="l" n="9">sensus et sensibile sensu sensibile. At vero aliquotiens non vide&#xad;</div>
       <div type="l" n="10">bitur convertere nisi convenienter ad quod dicitur assignetur,</div>
-      <div type="l" n="11">sed peccet is qui assignat ; ut ala si assignetur avis, non converti­</div>
+      <div type="l" n="11">sed peccet is qui assignat ; ut ala si assignetur avis, non converti&#xad;</div>
       <div type="l" n="12">tur ut sit avis alae ; neque enim convenienter prius assignatum</div>
       <div type="l" n="13">est ala avis ; neque enim in eo quod avis, in eo eius ala dicitur,</div>
       <div type="l" n="14">sed in eo quod alata est (multorum enim et aliorum alae sunt,</div>
-      <div type="l" n="15">quae non sunt aves) ; quare si assignetur convenienter, et con­</div>
+      <div type="l" n="15">quae non sunt aves) ; quare si assignetur convenienter, et con&#xad;</div>
       <div type="l" n="16">vertitur ; ut ala alati ala, et alatum ala alatum. Aliquotiens</div>
       <div type="l" n="17">autem fort e et nomina fingere necesse erit, si non fuerit positum</div>
       <div type="l" n="18">nomen ad quod convenienter assignetur ; ut remus navis si</div>
@@ -528,12 +537,12 @@
       <div type="l" n="3">ponuntur, ut in his quae praedicta sunt ab ala alatum, a remo</div>
       <div type="l" n="4">remitum. Omnia ergo quae ad aliquid dicuntur, si convenienter</div>
       <div type="l" n="5">assignentur, ad convertentia dicuntur; nam, si ad quodlibet aliud</div>
-      <div type="l" n="6">assignentur et non ad illud dicantur, non convertuntur. Dico au­</div>
+      <div type="l" n="6">assignentur et non ad illud dicantur, non convertuntur. Dico au&#xad;</div>
       <div type="l" n="7">tem quoniam neque in his quae confesse conversim dicuntur et in</div>
       <div type="l" n="8">quibus nomen est positum, nihil convertitur, si ad aliquid eorum</div>
       <div type="l" n="9">quae sunt accidentia assignetur et non ad illud dicatur; ut servus</div>
-      <div type="l" n="10">si non domini assignetur, sed hominis vel bipedis vel alicuius ta­</div>
-      <div type="l" n="11">lium, non convertitur (non enim erit conveniens assignatio). Am­</div>
+      <div type="l" n="10">si non domini assignetur, sed hominis vel bipedis vel alicuius ta&#xad;</div>
+      <div type="l" n="11">lium, non convertitur (non enim erit conveniens assignatio). Am&#xad;</div>
       <div type="l" n="12">plius, si convenienter assignetur ad id quod dicitur, omnibus a.liis</div>
       <div type="l" n="13">circumscriptis quaecumque accidentia sunt, relicto vero solo Illo</div>
       <div type="l" n="14">ad quod assignatum est, semper ad ipsum dicetur ; ut si servus ad</div>
@@ -548,8 +557,8 @@
       <div type="l" n="23">enim dominus non sit, servus non est) ; similiter autem et de avi,</div>
       <div type="l" n="24">circumscribatur alatam esse ; non enim iam erit ala ad aliquid</div>
       <div type="l" n="25">(cum enim non sit alatum, nec ala erit alicuius). Quare oportet</div>
-      <div type="l" n="26">assignare ad id quod convenienter dicitur ; et si sit nomen posi­</div>
-      <div type="l" n="27">tum, facilis erit assignatio ; si autem non sit, fortasse erit necessa­</div>
+      <div type="l" n="26">assignare ad id quod convenienter dicitur ; et si sit nomen posi&#xad;</div>
+      <div type="l" n="27">tum, facilis erit assignatio ; si autem non sit, fortasse erit necessa&#xad;</div>
       <div type="l" n="28">rium nomen fingere. Quod si ita reddantur, manifestum est</div>
       <div type="l" n="29">quoniam omnia relativa conversim dicuntur.</div>
    </div>
@@ -560,10 +569,10 @@
       <div type="l" n="4">autem his et alia. Simul autem haec auferunt sese invicem ; si</div>
       <div type="l" n="5">enim non sit duplum non est dimidium, et si non sit dimidium</div>
       <div type="l" n="6">duplum non est ; similiter et in aliis quaecumque talia sunt.</div>
-      <div type="l" n="7">Non autem in omnibus relativis verum videtur esse simul natura­</div>
+      <div type="l" n="7">Non autem in omnibus relativis verum videtur esse simul natura&#xad;</div>
       <div type="l" n="8">liter ; scibile enim scientia prius esse videbitur ; namque in</div>
       <div type="l" n="9">pluribus subsistentibus iam rebus scientias accipimus ; in paucis</div>
-      <div type="l" n="10">enim vel in nullis hoc quisque perspiciet, simul cum scibili scien­</div>
+      <div type="l" n="10">enim vel in nullis hoc quisque perspiciet, simul cum scibili scien&#xad;</div>
       <div type="l" n="11">tiam factam. Amplius scibile sublatum simul aufert scientiam,</div>
       <div type="l" n="12">scientia vero non simul aufert scibile ; nam, si scibile non sit, non</div>
       <div type="l" n="13">est scientia, si scientia vero non sit, nihil prohibet esse scibile ;</div>
@@ -573,7 +582,7 @@
       <div type="l" n="17">autem his sese habent et quae in sensu sunt ; sensibile enim prius</div>
       <div type="l" n="18">sensu esse videtur; sublatum enim sensibile simul aufert sensum,</div>
       <div type="l" n="19">sensus vero sensibile non simul aufert. Sensus enim circa corpus</div>
-      <div type="l" n="20">et in corpore sunt; sensibili ergo sublato aufertur corpus (sensi­</div>
+      <div type="l" n="20">et in corpore sunt; sensibili ergo sublato aufertur corpus (sensi&#xad;</div>
       <div type="l" n="21">bilium enim et corpus est), cum autem corpus non sit sublatus</div>
       <div type="l" n="22">est sensus ; quare simul aufert sensibile sensum. Sensus vero</div>
       <div type="l" n="23">sensibile non ; sublato enim animali sublatus est sensus, sensibile</div>
@@ -587,18 +596,18 @@
    </div>
    <div type="p" n="22">
       <div type="l" n="1">Habet autem dubitationem an ulla substantia ad aliquid</div>
-      <div type="l" n="2">dicatur, quemadmodum videtur, an hoc quidem contingit secun­</div>
+      <div type="l" n="2">dicatur, quemadmodum videtur, an hoc quidem contingit secun&#xad;</div>
       <div type="l" n="3">dum quasdam secundarum substantiarum. N am in primis quidem</div>
       <div type="l" n="4">substantiis verum est ; nam neque totae neque partes ad aliquid</div>
       <div type="l" n="5">dicuntur ; nam aliquis homo non dicitur alicuius aliquis homo,</div>
       <div type="l" n="6">neque aliquis bos alicuius aliquis bos. Similiter autem et partes ;</div>
       <div type="l" n="7">quaedam enim manus non dicitur alicuius quaedam manus, sed</div>
       <div type="l" n="8">alicuius manus, et quoddam caput non dicitur alicuius quoddam</div>
-      <div type="l" n="9">caput, sed alicuius caput. Similiter autem et in secundis substan­</div>
+      <div type="l" n="9">caput, sed alicuius caput. Similiter autem et in secundis substan&#xad;</div>
       <div type="l" n="10">tiis, atque hoc quidem in pluribus ; ut homo non dicitur alicuius</div>
       <div type="l" n="11">homo, nec bos alicuius bos, nec lignum alicuius lignum, sed</div>
       <div type="l" n="12">alicuius possessio dicitur. Atque in huiusmodi quidem manifestum</div>
-      <div type="l" n="13">est quoniam non est ad aliquid ; in aliquibus vero secundis sub­</div>
+      <div type="l" n="13">est quoniam non est ad aliquid ; in aliquibus vero secundis sub&#xad;</div>
       <div type="l" n="14">stantiis habet aliquam dubitationem ; ut caput alicuius caput</div>
       <div type="l" n="15">dicitur et manus alicuius manus dicitur et singula huiusmodi ;</div>
       <div type="l" n="16">quare haec esse fortasse ad aliq uid vide bun tur. Si igi tur sufficien ter</div>
@@ -638,10 +647,10 @@
       <div type="l" n="19">autem difficile sit de huiusmodi rebus confidenter declarare</div>
       <div type="l" n="20">nisi saepius pertractata sint ; dubitare autem de singulis non erit</div>
       <div type="l" n="21">inutile.</div>
-      <div type="l" n="22">[8] DE QUALI ET QUALITATE. - Qualitatem vero dico se­</div>
+      <div type="l" n="22">[8] DE QUALI ET QUALITATE. - Qualitatem vero dico se&#xad;</div>
       <div type="l" n="23">cundum quam quales quidam dicimur. Est autem qualitas</div>
-      <div type="l" n="24">eorum quae multipliciter dicuntur. Et una quidem species quali­</div>
-      <div type="l" n="25">tatis habitus affectioque dicantur. Differt autem habitus affec­</div>
+      <div type="l" n="24">eorum quae multipliciter dicuntur. Et una quidem species quali&#xad;</div>
+      <div type="l" n="25">tatis habitus affectioque dicantur. Differt autem habitus affec&#xad;</div>
       <div type="l" n="26">tione quod permanentior et diuturnior est ; tales vero sunt</div>
    </div>
    <div type="p" n="24">
@@ -655,7 +664,7 @@
       <div type="l" n="8">et sanitas et alia huiusmodi ; affectus est enim quodammodo</div>
       <div type="l" n="9">circa eas homo, cito autem permutatur ut ex calido frigidus fiat</div>
       <div type="l" n="10">et ex sanitate in aegritudinem ; similiter autem et in aliis, nisi</div>
-      <div type="l" n="11">forte in his quoque contingit per temporis longitudinem in na­</div>
+      <div type="l" n="11">forte in his quoque contingit per temporis longitudinem in na&#xad;</div>
       <div type="l" n="12">turam cuiusque translat a et insanabilis vel difficile mobilis, quam</div>
       <div type="l" n="13">iam quilibet habitudinem vocet. Manifestum est autem quoniam</div>
       <div type="l" n="14">haec volunt habitus nominari, quae sunt diuturniora et difficile</div>
@@ -664,19 +673,19 @@
       <div type="l" n="17">peius meliusve dispositi. Quare differt habitus affectione, quod</div>
       <div type="l" n="18">hoc quidem facile mobile est, illud vero diuturnius et difficile</div>
       <div type="l" n="19">mobile. Sunt autem habitus etiam affectiones, affectiones vero</div>
-      <div type="l" n="20">non necessaria habitus; qui enim retinent habitum et quodammo­</div>
+      <div type="l" n="20">non necessaria habitus; qui enim retinent habitum et quodammo&#xad;</div>
       <div type="l" n="21">do affecti sunt ad ea vel peius vel melius ; qui autem affecti sunt,</div>
       <div type="l" n="22">non omnino retinent habitum.</div>
       <div type="l" n="23">Aliud vero genus qualitatis est secundum quod pugillatores vel</div>
-      <div type="l" n="24">cursores vel salubres vel insalubres dicimus, et simpliciter quae­</div>
-      <div type="l" n="25">cumque secundum potentiam naturalem vel impotentiam dicun­</div>
+      <div type="l" n="24">cursores vel salubres vel insalubres dicimus, et simpliciter quae&#xad;</div>
+      <div type="l" n="25">cumque secundum potentiam naturalem vel impotentiam dicun&#xad;</div>
       <div type="l" n="26">tur. Non enim quoniam sunt affecti aliquo modo, unumquodque</div>
       <div type="l" n="27">huiusmodi dicitur, sed quod habeant potentiam naturalem vel</div>
    </div>
    <div type="p" n="25">
       <div type="l" n="1">facere quid facile vel nihil pati; ut pugillatores vel cursores</div>
       <div type="l" n="2">dicuntur non quod sint affecti, sed quod habeant potentiam hoc</div>
-      <div type="l" n="3">facile faciendi, salubres autem dicuntur eo quod habeant poten­</div>
+      <div type="l" n="3">facile faciendi, salubres autem dicuntur eo quod habeant poten&#xad;</div>
       <div type="l" n="4">tiam naturalem ut nihil a quibuslibet accidentibus patiantur,</div>
       <div type="l" n="5">insalubres vero quod habeant impotentiam nihil patiendi.</div>
       <div type="l" n="6">Similiter autem ct durum et molle sese habent ; durum enim</div>
@@ -690,20 +699,20 @@
       <div type="l" n="14">quoniam dulcedinem suscepit, dicitur dulce, et corpus album</div>
       <div type="l" n="15">quod albedinem susceperit ; similiter autem sese habet etiam in</div>
       <div type="l" n="16">ceteris. Passibiles vero qualitates dicuntur non quo ea quae illas</div>
-      <div type="l" n="17">susceperint qualitates aliquid patiantur ; neque enim mel, quo­</div>
+      <div type="l" n="17">susceperint qualitates aliquid patiantur ; neque enim mel, quo&#xad;</div>
       <div type="l" n="18">niam aliquid passum sit, idcirco dicitur dulce, nec aliud aliquid</div>
-      <div type="l" n="19">huiusmodi; similiter autem his et calor et frigus passibiles dicun­</div>
+      <div type="l" n="19">huiusmodi; similiter autem his et calor et frigus passibiles dicun&#xad;</div>
       <div type="l" n="20">tur non quo ea quae eas suscipiunt qualitates aliquid patiantur, sed</div>
       <div type="l" n="21">quoniam singulum eorum quae dicta sunt secundum sensus</div>
-      <div type="l" n="22">qualitatum passionis perfectiva sunt, passibiles qualitates dicun­</div>
+      <div type="l" n="22">qualitatum passionis perfectiva sunt, passibiles qualitates dicun&#xad;</div>
       <div type="l" n="23">tur; dulcedo enim passionem quandam secundum gustum efficit,</div>
       <div type="l" n="24">et calor secundum tactum ; similiter autem et alia. Albedo autem</div>
-      <div type="l" n="25">et nigredo et alii colores non similiter his quae dicta sunt passi­</div>
+      <div type="l" n="25">et nigredo et alii colores non similiter his quae dicta sunt passi&#xad;</div>
       <div type="l" n="26">biles qualitates dicuntur, sed hoc quod hae ipsae ab aliquibus</div>
       <div type="l" n="27">passionibus innascuntur. Quoniam ergo fiunt propter aliquam</div>
    </div>
    <div type="p" n="26">
-      <div type="l" n="1">passionem multae colorum mutationes, manifestum est; erubes­</div>
+      <div type="l" n="1">passionem multae colorum mutationes, manifestum est; erubes&#xad;</div>
       <div type="l" n="2">cens enim aliquis rubicundus factus est et timens pallidus et</div>
       <div type="l" n="3">unumquodque talium ; quare vel si quis naturaliter aliquid talium</div>
       <div type="l" n="4">passionum passus est, similem colorem eum habere oportet;</div>
@@ -711,7 +720,7 @@
       <div type="l" n="6">et secundum naturalem constitutionem eadem affectio fit, quare</div>
       <div type="l" n="7">naturaliter color similis fit. Quaecumque igitur talium casuum</div>
       <div type="l" n="8">ab aliquibus passionibus difficile mobilibus et permanentibus</div>
-      <div type="l" n="9">principium ceperunt, qualitates dicuntur ; sive enim [vel] se­</div>
+      <div type="l" n="9">principium ceperunt, qualitates dicuntur ; sive enim [vel] se&#xad;</div>
       <div type="l" n="10">cundum naturalem substantiam pallor aut nigredo facta est,</div>
       <div type="l" n="11">qualitas dicitur (quales enim secundum eas dicimur), sive propter</div>
       <div type="l" n="12">aegritudinem longam vel propter aestum contingit vel nigredo vel</div>
@@ -724,7 +733,7 @@
       <div type="l" n="19">pallidus, sed magis quod aliquid passus sit ; quare passiones</div>
       <div type="l" n="20">huiusmodi dicuntur, qualitates vero minime. Similiter autem</div>
       <div type="l" n="21">his et secundum animam passibiles qualitates et passiones</div>
-      <div type="l" n="22">dicuntur. Quaecumque enim mox in nascendo ab aliquibus passio­</div>
+      <div type="l" n="22">dicuntur. Quaecumque enim mox in nascendo ab aliquibus passio&#xad;</div>
       <div type="l" n="23">nibus fiunt, qualitates dicuntur, ut dementia vel ira vel alia</div>
       <div type="l" n="24">huiusmodi; quales enim secundum eas dicimur, id est iracundi</div>
       <div type="l" n="25">et dementes. Similiter autem et quaecumque alienationes non</div>
@@ -746,8 +755,8 @@
       <div type="l" n="9">figuram vero unumquodque quale dicitur. Rarum vero et spissum</div>
       <div type="l" n="10">vel asperum vel lene putabitur quidem qualitatem significare,</div>
       <div type="l" n="11">videntur autem aliena esse huiusmodi a qualitatis divisione ;</div>
-      <div type="l" n="12">quandam enim quodammodo positionem videtur partium utrum­</div>
-      <div type="l" n="13">que monstrare; spissum quidem eo quod partes sibi ipsae pro­</div>
+      <div type="l" n="12">quandam enim quodammodo positionem videtur partium utrum&#xad;</div>
+      <div type="l" n="13">que monstrare; spissum quidem eo quod partes sibi ipsae pro&#xad;</div>
       <div type="l" n="14">pinquae sint, rarum vero quod distent a se invicem ; et lene</div>
       <div type="l" n="15">quidem quod in rectum sibi partes iaceant, asperum vero cum</div>
       <div type="l" n="16">haec quidem pars superet, illa vero sit inferior. Et fortasse alii</div>
@@ -758,17 +767,17 @@
       <div type="l" n="21">his. In pluribus quidem et paene in omnibus denominative</div>
       <div type="l" n="22">dicuntur, ut ab albedine albus et a grammatica grammaticus</div>
       <div type="l" n="23">et a iustitia iustus, similiter autem et in ceteris. In aliquibus</div>
-      <div type="l" n="24">vero propterea quod qualitatibus nomina non sunt posita impos­</div>
+      <div type="l" n="24">vero propterea quod qualitatibus nomina non sunt posita impos&#xad;</div>
       <div type="l" n="25">sibile est ab his denominative dici, ut cursor vel pugillator, si</div>
-      <div type="l" n="26">secundum potentiam naturalem dicitur, a nulla qualitate denomi­</div>
+      <div type="l" n="26">secundum potentiam naturalem dicitur, a nulla qualitate denomi&#xad;</div>
       <div type="l" n="27">native dicitur ; neque enim positum est nomen illis potestatibus</div>
       <div type="l" n="28">secundum quas isti quales dicuntur, quemadmodum etiam in</div>
    </div>
    <div type="p" n="28">
-      <div type="l" n="1">disciplinis secundum quas vel pugillatores vel palaestrici secun­</div>
+      <div type="l" n="1">disciplinis secundum quas vel pugillatores vel palaestrici secun&#xad;</div>
       <div type="l" n="2">dum affectionem dicuntur (pugillatoria enim disciplina dicitur</div>
       <div type="l" n="3">et palaestrica, quales vero ab his denominative qui ad eas sunt</div>
-      <div type="l" n="4">affecti dicuntur). Aliquando autem et posito nomine denomina­</div>
+      <div type="l" n="4">affecti dicuntur). Aliquando autem et posito nomine denomina&#xad;</div>
       <div type="l" n="5">tive non dicitur id quod secundum ipsam quale quid dicitur, uta</div>
       <div type="l" n="6">virtute probus dicitur; hoc enim quod habet virtutem probus</div>
       <div type="l" n="7">dicitur, sed non denominative a virtute; non est autem hoc in</div>
@@ -807,7 +816,7 @@
       <div type="l" n="11">triangula vel circuli sunt, de his autem quae non suscipiunt nihil</div>
       <div type="l" n="12">magis alterum altero dicitur ; nihil enim quadratum magis quam</div>
       <div type="l" n="13">parte altera longior forma circulus est ; nullum enim ipsorum</div>
-      <div type="l" n="14">suscipit circuli rationem. Simpliciter autem, si utraque non susci­</div>
+      <div type="l" n="14">suscipit circuli rationem. Simpliciter autem, si utraque non susci&#xad;</div>
       <div type="l" n="15">piunt propositi rationem, non dicitur alterum altero magis. Non</div>
       <div type="l" n="16">igitur omnia qualia suscipiunt magis et minus.</div>
       <div type="l" n="17">Ex his ergo quae dicta sunt nihil est proprium qualitatis,</div>
@@ -815,7 +824,7 @@
       <div type="l" n="19">simile enim alterum alteri non est secundum aliud nisi secundum</div>
       <div type="l" n="20">hoc quod quale est. Quare proprium erit qualitatis secundum</div>
       <div type="l" n="21">eam simile et dissimile dici.</div>
-      <div type="l" n="22">At vero non decet conturbari ne quis nos dicat de qualitate pro­</div>
+      <div type="l" n="22">At vero non decet conturbari ne quis nos dicat de qualitate pro&#xad;</div>
       <div type="l" n="23">positionem facientes multa de relativis interposuisse; habitudines</div>
       <div type="l" n="24">enim et affectiones eorum quae sunt ad aliquid esse diximus.</div>
       <div type="l" n="25">Paene enim ea quae sunt in omnibus his generibus ad aliquid</div>
@@ -871,14 +880,14 @@
       <div type="l" n="15">illa vero quae ut contraria, ipsa quidem quae sunt nullo modo ac</div>
       <div type="l" n="16">invicem dicuntur, contraria vero sibi invicem dicuntur; neque</div>
       <div type="l" n="17">enim bonum mali dicitur bonum, sed contrarium ; nec album nigri</div>
-      <div type="l" n="18">album, sed contrarium. Quare differunt istae oppositiones in­</div>
+      <div type="l" n="18">album, sed contrarium. Quare differunt istae oppositiones in&#xad;</div>
       <div type="l" n="19">vicem. Quaecumque vero contrariorum talia sunt ut in quibus</div>
       <div type="l" n="20">nata sunt fieri et de quibus praedicantur, necessarium sit alterum</div>
       <div type="l" n="21">ipsorum inesse, nihil eorum medium est (quorum autem non est</div>
       <div type="l" n="22">necessarium alterum inesse, horum omnium est aliquid medium) ;</div>
       <div type="l" n="23">ut aegritudo et sanitas in corpore animalis nata est fieri, et</div>
-      <div type="l" n="24">necesse est alterum ipsorum inesse animalis corpori, aut aegritu­</div>
-      <div type="l" n="25">dinem aut sanitatem; et par quidem et impar de numero prae­</div>
+      <div type="l" n="24">necesse est alterum ipsorum inesse animalis corpori, aut aegritu&#xad;</div>
+      <div type="l" n="25">dinem aut sanitatem; et par quidem et impar de numero prae&#xad;</div>
       <div type="l" n="26">dicatur, et necesse est horum alterum numero inesse, vel par vel</div>
       <div type="l" n="27">impar ; et non est horum aliquid medium, neque aegritudinis</div>
       <div type="l" n="28">neque sanitatis, neque imparis neque paris. Quorum autem non</div>
@@ -906,12 +915,12 @@
       <div type="l" n="19">dentes, nec caecum qui non habet visionem, sed qui, quando</div>
       <div type="l" n="20">contigit habere, non habet (multa enim ex nativitate neque</div>
       <div type="l" n="21">dentes habent neque visionem, sed non dicuntur edentula neque</div>
-      <div type="l" n="22">caeca). Privari vero et habere habitum non est habitus et pri­</div>
+      <div type="l" n="22">caeca). Privari vero et habere habitum non est habitus et pri&#xad;</div>
       <div type="l" n="23">vatio ; habitus enim est visus, privatio vero caecitas, habere</div>
       <div type="l" n="24">autem visum non est visus, nec caecum esse caecitas (privatio</div>
-      <div type="l" n="25">enim quaedam est caecitas, caecum vero esse privari, non priva­</div>
+      <div type="l" n="25">enim quaedam est caecitas, caecum vero esse privari, non priva&#xad;</div>
       <div type="l" n="26">tio est). Nam si idem esset caecitas et caecum esse, utraque de</div>
-      <div type="l" n="27">eodem praedicarentur; nunc vero minime, sed caecus quidem di­</div>
+      <div type="l" n="27">eodem praedicarentur; nunc vero minime, sed caecus quidem di&#xad;</div>
       <div type="l" n="28">citur homo, caecitas vero nullo modo dicitur. Opponi quidem et</div>
       <div type="l" n="29">ista videntur, privari scilicet et habere habitum, quemadmodum</div>
    </div>
@@ -922,7 +931,7 @@
       <div type="l" n="4">negatio oratio negativa, eorum vero quae sunt sub a:ffirmatione</div>
       <div type="l" n="5">vel negatione nihil est oratio. Dicuntur autem et ista sibi opponi</div>
       <div type="l" n="6">ut affirmatio et negatio ; nam etiam in his modus oppositionis</div>
-      <div type="l" n="7">idem est ; quemadmodum enim a:ffirmatio ad negationem oppo­</div>
+      <div type="l" n="7">idem est ; quemadmodum enim a:ffirmatio ad negationem oppo&#xad;</div>
       <div type="l" n="8">nitur, ut sedet -non sedet, sic res quae sub utrisque est sibi</div>
       <div type="l" n="9">opponitur, sedere et non sedere. Quoniam autem privatio et</div>
       <div type="l" n="10">habitus non sic opponuntur ut ad aliquid, manifestum est;</div>
@@ -932,7 +941,7 @@
       <div type="l" n="14">visus caecitas dicitur ( ... ). Amplius omnia quaecumque ad</div>
       <div type="l" n="15">aliquid dicuntur conversim dicuntur, quare etiam caecitas, si</div>
       <div type="l" n="16">esset eorum quae sunt ad aliquid, converteretur illud ad quod</div>
-      <div type="l" n="17">dicitur ; sed non convertuntur ; neque enim dicitur visus caeci­</div>
+      <div type="l" n="17">dicitur ; sed non convertuntur ; neque enim dicitur visus caeci&#xad;</div>
       <div type="l" n="18">tatis.</div>
       <div type="l" n="19">Quoniam autem neque ut contraria opponuntur ea quae</div>
       <div type="l" n="20">secundum privationem et habitum dicuntur, ex his manifestum</div>
@@ -947,12 +956,12 @@
    <div type="p" n="34">
       <div type="l" n="1">nec frigidum nec calidum (nihil enim prohibet aliquam ipsorum</div>
       <div type="l" n="2">inesse medietatem) ; erat etiam istorum medietas, quorum non</div>
-      <div type="l" n="3">necesse esset alterum inesse eorum susceptibili, nisi forte aliqui­</div>
+      <div type="l" n="3">necesse esset alterum inesse eorum susceptibili, nisi forte aliqui&#xad;</div>
       <div type="l" n="4">bus naturaliter contigerit unum ipsorum inesse, ut igni calidum</div>
       <div type="l" n="5">esse et nivi album (in his autem necesse est definite unum ipsorum</div>
       <div type="l" n="6">inesse, et non hoc aut illud ; neque enim potest ignis esse frigidus</div>
       <div type="l" n="7">nec nix esse nigra) ; quare non necesse est omnibus eorum</div>
-      <div type="l" n="8">susceptibilibus alterum horum inesse, sed solis his quibus natura­</div>
+      <div type="l" n="8">susceptibilibus alterum horum inesse, sed solis his quibus natura&#xad;</div>
       <div type="l" n="9">liter unum inest, et his definite unum, non autem hoc aut illud.</div>
       <div type="l" n="10">In privatione vero et habitu neutrum verum est eorum quae</div>
       <div type="l" n="11">dicta sunt, neque enim semper eorum susceptibili necesse est</div>
@@ -960,7 +969,7 @@
       <div type="l" n="13">visum neque caecum neque visum habere dicitur, ( ... ) habens</div>
       <div type="l" n="14">visum dicitur; et horum non definite alterum, sed aut hoc aut</div>
       <div type="l" n="15">illud (neque enim necesse est aut caecum aut habentem visum</div>
-      <div type="l" n="16">esse, sed aut hoc aut illud) ; in contrariis vero, quorum est medie­</div>
+      <div type="l" n="16">esse, sed aut hoc aut illud) ; in contrariis vero, quorum est medie&#xad;</div>
       <div type="l" n="17">tas, numquam necesse est omni alterum inesse, sed aliquibus,</div>
       <div type="l" n="18">et his definite unum. Quare manifestum est quoniam secundum</div>
       <div type="l" n="19">neutrum modum quemadmodum contraria opponuntur [ita sibi</div>
@@ -971,8 +980,8 @@
       <div type="l" n="24">fieri, et frigidum calidum, et ex probo improbum et ex improbo</div>
       <div type="l" n="25">probum fieri potest (improbus enim in meliorem consuetudinem</div>
       <div type="l" n="26">sermonemque perductus vel parum sese dabit in melius; sin</div>
-      <div type="l" n="27">vero vel semel parvam intentionem sumat, manifestum est quo­</div>
-      <div type="l" n="28">niam aut perfectissime permutetur aut magnam sumat intentio­</div>
+      <div type="l" n="27">vero vel semel parvam intentionem sumat, manifestum est quo&#xad;</div>
+      <div type="l" n="28">niam aut perfectissime permutetur aut magnam sumat intentio&#xad;</div>
    </div>
    <div type="p" n="35">
       <div type="l" n="1">nem ; semper enim mobilior ad virtutem fit, si quamlibet a</div>
@@ -984,14 +993,14 @@
       <div type="l" n="7">a privatione vero ad habitum impossibile est; neque enim factus</div>
       <div type="l" n="8">aliquis caecus rursus vidit, nec calvus rursus crinitus factus est,</div>
       <div type="l" n="9">nec edentulus dentes creavit.</div>
-      <div type="l" n="10">Quaecumque vero ut affirmatio et negatio opponuntur, mani­</div>
+      <div type="l" n="10">Quaecumque vero ut affirmatio et negatio opponuntur, mani&#xad;</div>
       <div type="l" n="11">festum est quoniam secundum nullum modum eorum qui diet</div>
       <div type="l" n="12">sunt opponuntur; in his enim solis necesse est hoc quidem esse</div>
       <div type="l" n="13">verum illud vero falsum. Nam neque in contrariis necesse est</div>
       <div type="l" n="14">semper alterum esse verum, alterum vero falsum, nec in relativis,</div>
       <div type="l" n="15">neque in habitu et privatione ; ut sanitas et aegritudo contraria</div>
       <div type="l" n="16">sunt, sed neutrum ipsorum neque verum neque falsum est;</div>
-      <div type="l" n="17">similiter autem et duplum et medium quae ut ad aliquid oppo­</div>
+      <div type="l" n="17">similiter autem et duplum et medium quae ut ad aliquid oppo&#xad;</div>
       <div type="l" n="18">nuntur, non est eorum alterum falsum alterum verum; nec vero</div>
       <div type="l" n="19">ea quae secundum habitum et privationem sunt, ut visus et</div>
       <div type="l" n="20">caecitas. Omnino autem nihil eorum quae secundum nullam</div>
@@ -1007,13 +1016,13 @@
    </div>
    <div type="p" n="36">
       <div type="l" n="1">neutrum verum est, et cum sit, non semper alterum verum est;</div>
-      <div type="l" n="2">visum enim habere Socraten et caecum esse Socraten opponun­</div>
+      <div type="l" n="2">visum enim habere Socraten et caecum esse Socraten opponun&#xad;</div>
       <div type="l" n="3">tur ut habitus et privatio, et cum sit, non est necesse alterum</div>
       <div type="l" n="4">verum esse vel falsum (quando enim non est natus ut habeat,</div>
       <div type="l" n="5">utraque falsa sunt), cum autem non sit omnino Socrates, sic</div>
       <div type="l" n="6">quoque utraque falsa sunt, et habere eum visum et eum esse</div>
       <div type="l" n="7">caecum. In affirmatione vero vel negatione semper, vel si sit vel</div>
-      <div type="l" n="8">si non sit, alterum ipsorum verum, alterum falsum erit ; aegro­</div>
+      <div type="l" n="8">si non sit, alterum ipsorum verum, alterum falsum erit ; aegro&#xad;</div>
       <div type="l" n="9">tare enim Socraten et non aegrotare Socraten, cum sit idem</div>
       <div type="l" n="10">ipse, manifestum est quoniam alterum eorum verum vel falsum</div>
       <div type="l" n="11">est, cum non sit, similiter (namque aegrotum esse, cum non sit,</div>
@@ -1031,7 +1040,7 @@
       <div type="l" n="23">Amplius in contrariis non est necesse, si alterum fuerit, et</div>
       <div type="l" n="24">reliquum esse ; sanis enim omnibus, sanitas quidem erit, aegritudo</div>
       <div type="l" n="25">vero minime ; similiter et albis omnibus albedo quidem erit,</div>
-      <div type="l" n="26">nigredo vero non erit. Amplius, si Socraten sanum esse et So­</div>
+      <div type="l" n="26">nigredo vero non erit. Amplius, si Socraten sanum esse et So&#xad;</div>
       <div type="l" n="27">craten aegrotare contrarium est, et non contingit simul eidem</div>
       <div type="l" n="28">utraque inesse, numquam continget, cum alterum contrariorum</div>
       <div type="l" n="29">sit, reliquum esse; nam cum sit sanum esse Socraten, non erit</div>
@@ -1042,7 +1051,7 @@
       <div type="l" n="2">genere nata sunt fieri contraria ; aegritudo namque et sanitas</div>
       <div type="l" n="3">circa corpus animalis, albedo vero et nigredo simpliciter circa</div>
       <div type="l" n="4">corpus, et iustitia et iniustitia in anima. Necesse est autem</div>
-      <div type="l" n="5">omnia contraria aut in eodem genere esse aut in contrariis gene­</div>
+      <div type="l" n="5">omnia contraria aut in eodem genere esse aut in contrariis gene&#xad;</div>
       <div type="l" n="6">ribus, vel ipsa esse genera; album quidem et nigrum in eodem</div>
       <div type="l" n="7">genere (color enim ipsorum genus est), iustitia vero et iniustitia</div>
       <div type="l" n="8">in contrariis generibus (huius enim virtus, huius vitium genus</div>
@@ -1064,7 +1073,7 @@
       <div type="l" n="24">ordinem, et in grammatica elementa priora sunt syllabis), et in</div>
       <div type="l" n="25">orationibus similiter (exordium enim narratione prius est ordine).</div>
       <div type="l" n="26">Amplius praeter haec omnia, quod melius et honorabilius est,</div>
-      <div type="l" n="27">prius natura esse videtur; solent autem plures honoratiores [ma­</div>
+      <div type="l" n="27">prius natura esse videtur; solent autem plures honoratiores [ma&#xad;</div>
    </div>
    <div type="p" n="38">
       <div type="l" n="1">gis] et quos ipsi maxime venerantur priores esse dicere ; est autem</div>
@@ -1082,38 +1091,38 @@
       <div type="l" n="13">res autem videtur quodammodo causa esse ut sermo verus sit ;</div>
       <div type="l" n="14">nam, quoniam est res vel non est, verus sermo vel falsus dicitur.</div>
       <div type="l" n="15">Quare secundum quinque modos prius alterum altero dicitur.</div>
-      <div type="l" n="16">[13] DE HIS QUAE SIMUL SUNT. - Simul autem dicuntur sim­</div>
+      <div type="l" n="16">[13] DE HIS QUAE SIMUL SUNT. - Simul autem dicuntur sim&#xad;</div>
       <div type="l" n="17">pliciter et proprie quorum generatio in eodem tempore est ;</div>
       <div type="l" n="18">neutrum enim neutro prius est aut posterius ; simul autem</div>
       <div type="l" n="19">secundum tempus ista dicuntur. Naturaliter autem simul sunt</div>
-      <div type="l" n="20">quaecumque convertuntur quidem secundum subsistendi conse­</div>
-      <div type="l" n="21">quentiam, si nullo modo alterum alteri subsistendi causa sit, ut du­</div>
+      <div type="l" n="20">quaecumque convertuntur quidem secundum subsistendi conse&#xad;</div>
+      <div type="l" n="21">quentiam, si nullo modo alterum alteri subsistendi causa sit, ut du&#xad;</div>
       <div type="l" n="22">plum et medium; convertuntur P-nim ista (nam cum sit duplum est</div>
       <div type="l" n="23">medium, et cum sit medium est duplum), neutrum vero neutri</div>
       <div type="l" n="24">subsistendi causa est. Et ea quae ex eodem genere in contrarium</div>
       <div type="l" n="25">dividuntur simul natura esse dicuntur. In contrarium vero dividi</div>
       <div type="l" n="26">dicuntur secundum eandem divisionem, ut volatile, gressibile</div>
       <div type="l" n="27">et aquatile; haec enim in contrarium dividuntur, cum ex eodem</div>
-      <div type="l" n="28">genere sint ; animal enim dividitur in volatile, gressibile et aqua­</div>
+      <div type="l" n="28">genere sint ; animal enim dividitur in volatile, gressibile et aqua&#xad;</div>
    </div>
    <div type="p" n="39">
       <div type="l" n="1">tile, et nullum horum prius est vel posterius, sed simul haec</div>
       <div type="l" n="2">videntur esse natura (dividitur autem et unumquodque eorum in</div>
       <div type="l" n="3">species iterum secundum eandem divisionem, ut gressibile</div>
       <div type="l" n="4">animal et volatile et aquatile) . Erunt igitur et illa simul natura,</div>
-      <div type="l" n="5">quaecumque ex eodem ipso genere secundum eandem subdivisio­</div>
-      <div type="l" n="6">nem sunt, genera autem semper priora sunt; non enim conver­</div>
+      <div type="l" n="5">quaecumque ex eodem ipso genere secundum eandem subdivisio&#xad;</div>
+      <div type="l" n="6">nem sunt, genera autem semper priora sunt; non enim conver&#xad;</div>
       <div type="l" n="7">tuntur secundum substantiae consequentiam, ut aquatile quidem</div>
       <div type="l" n="8">cum sit est animal, animal vero cum sit, non necesse est esse</div>
-      <div type="l" n="9">aquatile. Simul ergo natura esse dicuntur quaecumque conver­</div>
+      <div type="l" n="9">aquatile. Simul ergo natura esse dicuntur quaecumque conver&#xad;</div>
       <div type="l" n="10">tuntur quidem secundum essentiae consequentiam, nullo autem</div>
       <div type="l" n="11">modo alterum alteri subsistendi causa est, et ex eodem genere</div>
       <div type="l" n="12">quae in contrarium sibi dividuntur; simpliciter autem simul sunt</div>
       <div type="l" n="13">quorum generatio in eodem t empore est.</div>
       <div type="l" n="14">[14] DE MOTU. - Motus vero sunt species sex: generatio,</div>
       <div type="l" n="15">corruptio, crementum, diminutio, commutatio, secundum locum</div>
-      <div type="l" n="16">translatio. Alii quidem motus manifestum est quoniam a se invi­</div>
-      <div type="l" n="17">cem diversi sunt ; neque enim est generatio corruptio, nec cremen­</div>
+      <div type="l" n="16">translatio. Alii quidem motus manifestum est quoniam a se invi&#xad;</div>
+      <div type="l" n="17">cem diversi sunt ; neque enim est generatio corruptio, nec cremen&#xad;</div>
       <div type="l" n="18">tum diminutio nec secundum locum translatio ; similiter autem et</div>
       <div type="l" n="19">ceterae. In commutatione vero est aliqua dubitatio, ne forte</div>
       <div type="l" n="20">necesse sit quod commutatur secundum aliquem reliquorum</div>
@@ -1143,21 +1152,21 @@
       <div type="l" n="14">qualitatem quietem secundum qualitatem translationi quae in</div>
       <div type="l" n="15">contrarium, quemadmodum etiam in ea quae est secundum locum</div>
       <div type="l" n="16">translatione secundum locum quietem vel in contrarium locum</div>
-      <div type="l" n="17">translationem (est enim commutatio translatio secundum quali­</div>
+      <div type="l" n="17">translationem (est enim commutatio translatio secundum quali&#xad;</div>
       <div type="l" n="18">tatem) ; quare opponitur ei secundum qualitatem quies vel in</div>
       <div type="l" n="19">contrarium qualitatis translatio, ut album fieri quod est nigrum ;</div>
       <div type="l" n="20">commutatur enim, in contrarium qualitatis facta translatione.</div>
       <div type="l" n="21">[15] DE HABERE. - Habere secundum plures modos dicitur :</div>
-      <div type="l" n="22">aut enim ut habitum vel a:ffectionem vel aliam aliquam qualita­</div>
-      <div type="l" n="23">tem (dicimur enim scientiam habere et virtutem) ; aut ut quanti­</div>
-      <div type="l" n="24">tatem, ut quam quisque habet magnitudinem (dicitur enim bi­</div>
+      <div type="l" n="22">aut enim ut habitum vel a:ffectionem vel aliam aliquam qualita&#xad;</div>
+      <div type="l" n="23">tem (dicimur enim scientiam habere et virtutem) ; aut ut quanti&#xad;</div>
+      <div type="l" n="24">tatem, ut quam quisque habet magnitudinem (dicitur enim bi&#xad;</div>
       <div type="l" n="25">cubitam vel tricubitam habere magnitudinem) ; aut circa corpus</div>
    </div>
    <div type="p" n="41">
       <div type="l" n="1">vestitum aut tunicam ; aut in parte (ut in manu anulum) ; aut</div>
       <div type="l" n="2">partem (ut manum vel pedem) ; aut in vase (ut modius triticum</div>
       <div type="l" n="3">vel dolium vinum; vinum enim dolium habere dicitur, et modius</div>
-      <div type="l" n="4">triticum ; haec igitur habere dicuntur ut in vase) ; vel ut posses­</div>
+      <div type="l" n="4">triticum ; haec igitur habere dicuntur ut in vase) ; vel ut posses&#xad;</div>
       <div type="l" n="5">sionem (habere enim domum vel agrum dicimur). Dicimur vero</div>
       <div type="l" n="6">et habere uxorem et uxor virum; videtur autem alienissimus</div>
       <div type="l" n="7">esse habendi modus qui nunc dictus est ; nihil enim aliud habere</div>

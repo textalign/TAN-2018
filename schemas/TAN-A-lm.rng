@@ -7,25 +7,38 @@
         <ref name="TAN-root"/>
       </element>
     </start>
-    <!-- No more than one source; one without a source is considered to apply to a language -->
-    <define name="source-list">
-      <optional>
-        <ref name="source-item"/>
-      </optional>
-    </define>
-    <!-- TAN-A-lm files must each have at least one lexicon and one TAN-mor definition -->
-    <define name="definition-non-class-2">
+    <define name="decl-non-class-2">
+      <zeroOrMore>
+        <ref name="lang-outside"/>
+      </zeroOrMore>
       <interleave>
-        <oneOrMore>
-          <ref name="defn-lexi"/>
-        </oneOrMore>
-        <oneOrMore>
-          <ref name="defn-morph"/>
-        </oneOrMore>
+        <zeroOrMore>
+          <ref name="tok-start-indicator"/>
+        </zeroOrMore>
+        <zeroOrMore>
+          <ref name="tok-is-indicator"/>
+        </zeroOrMore>
       </interleave>
     </define>
-    <define name="alter-non-class-2">
-      <empty/>
+    <define name="source-content">
+      <ref name="entity-digital-nontan-no-id"/>
+    </define>
+    <!-- Either one source with no language specifications, or a language specification with zero or more sources -->
+    <define name="source-list">
+      <zeroOrMore>
+        <ref name="source-item"/>
+      </zeroOrMore>
+    </define>
+    <!-- TAN-A-lm files must each have at least one lexicon and one TAN-mor -->
+    <define name="voc-key-for-non-class-2">
+      <interleave>
+        <oneOrMore>
+          <ref name="voc-key-for-lexi"/>
+        </oneOrMore>
+        <oneOrMore>
+          <ref name="voc-key-for-morph"/>
+        </oneOrMore>
+      </interleave>
     </define>
     <define name="sources-ref">
       <a:documentation>Because TAN-A-lm files depend on only one source, no id references to sources are needed</a:documentation>
@@ -33,19 +46,6 @@
     </define>
     <define name="id-option">
       <empty/>
-    </define>
-    <define name="body-content-non-class-2">
-      <optional>
-        <ref name="lang-preface"/>
-      </optional>
-      <interleave>
-        <zeroOrMore>
-          <ref name="body-item"/>
-        </zeroOrMore>
-        <zeroOrMore>
-          <ref name="body-group"/>
-        </zeroOrMore>
-      </interleave>
     </define>
     <define name="body-attributes-non-core">
       <ref name="lexicon-attr"/>
@@ -55,42 +55,18 @@
       <ref name="TAN-A-lm-item"/>
     </define>
   </include>
-  <define name="defn-morph">
+  <define name="voc-key-for-morph">
     <element name="morphology">
       <a:documentation>identifies a &lt;TAN-mor&gt; file that defines the parts of speech for a language, the codes for those parts, and the rules for combining them</a:documentation>
-      <optional>
-        <ref name="ed-stamp"/>
-      </optional>
-      <choice>
-        <ref name="inclusion"/>
-        <group>
-          <ref name="internal-xml-id"/>
-          <zeroOrMore>
-            <ref name="lang-outside"/>
-          </zeroOrMore>
-          <choice>
-            <ref name="keyword-ref"/>
-            <ref name="entity-digital-tan-other-ref"/>
-          </choice>
-        </group>
-      </choice>
+      <ref name="entity-digital-tan-id"/>
     </element>
   </define>
-  <define name="defn-lexi">
+  <define name="voc-key-for-lexi">
     <element name="lexicon">
       <a:documentation>names a lexicographical authority. This element is optional, because the lexical informat could be based upon the knowledge of the &lt;agent&gt;s who wrote the data.</a:documentation>
-      <optional>
-        <ref name="ed-stamp"/>
-      </optional>
       <choice>
-        <ref name="inclusion"/>
-        <group>
-          <ref name="internal-xml-id"/>
-          <choice>
-            <ref name="entity-digital-generic-ref"/>
-            <ref name="entity-nondigital-ref"/>
-          </choice>
-        </group>
+        <ref name="entity-digital-tan-id"/>
+        <ref name="entity-nondigital-id"/>
       </choice>
     </element>
   </define>
@@ -105,19 +81,6 @@
       <a:documentation>points to one or more &lt;morphology&gt; IDs</a:documentation>
       <a:documentation>This attribute is inheritable. See main.xml#inheritable_attributes</a:documentation>
     </attribute>
-  </define>
-  <define name="lang-preface">
-    <zeroOrMore>
-      <ref name="lang-outside"/>
-    </zeroOrMore>
-    <interleave>
-      <zeroOrMore>
-        <ref name="tok-start-indicator"/>
-      </zeroOrMore>
-      <zeroOrMore>
-        <ref name="tok-is-indicator"/>
-      </zeroOrMore>
-    </interleave>
   </define>
   <define name="tok-start-indicator">
     <element name="tok-starts-with">

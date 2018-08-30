@@ -3,7 +3,7 @@
 <?xml-model href="../schemas/TAN-TEI.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <!--<?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-TEI.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-TEI.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
-<TEI xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:tan="tag:textalign.net,2015:ns" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns="http://www.tei-c.org/ns/1.0" TAN-version="2018" id="tag:parkj@textalign.net,2015:patricius.confession.2003.eng">
+<TEI xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:tan="tag:textalign.net,2015:ns" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns="http://www.tei-c.org/ns/1.0" TAN-version="2019" id="tag:parkj@textalign.net,2015:patricius.confession.2003.eng">
    <teiHeader>
       <fileDesc>
          <titleStmt>
@@ -138,13 +138,16 @@
       <name>The Confession of St Patrick: A digital edition of the English translation by Pádraig
          McCarthy</name>
       <master-location href="http://textalign.net/release/TAN-2018/examples/patricius.confessio.2003.eng.xml"/>
-      <license>
+      <license licensor="park">
          <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
          <name>This data file is licensed under a Creative Commons Attribution 4.0 International
             License. The license is granted independent of rights and licenses associated with the
             source. </name>
       </license>
-      <licensor who="park"/>
+      <work>
+         <IRI>tag:parkj@textalign.net,2015:work:patricius:confessio</IRI>
+         <name>Confession of St. Patrick</name>
+      </work>
       <source>
          <IRI>tag:parkj@textalign.net,2015:source:http://www.confessio.ie/sites/confessio.ie/files/downloads/confessio_english.xml</IRI>
          <name>The Saint Patrick's Confessio Hypertext Stack Project edition</name>
@@ -153,14 +156,21 @@
             <name>SHA-1</name>
             <value>91D95564ABDF2B2C1B9EEF016CBA51E8179646CC</value>
          </checksum>
-         <location href="confessio_english_temp.xml" when-accessed="2016-09-09"/>
-         <location href="http://www.confessio.ie/sites/confessio.ie/files/downloads/confessio_english.xml" when-accessed="2015-01-25"/>
+         <location href="confessio_english_temp.xml" accessed-when="2016-09-09"/>
+         <location href="http://www.confessio.ie/sites/confessio.ie/files/downloads/confessio_english.xml" accessed-when="2015-01-25"/>
       </source>
-      <definitions>
-         <work>
-            <IRI>tag:parkj@textalign.net,2015:work:patricius:confessio</IRI>
-            <name>Confession of St. Patrick</name>
-         </work>
+      <adjustments>
+         <normalization>
+            <IRI>tag:textalign.net,2015:normalization:annotation-content-removed</IRI>
+            <name>Footnotes or endnotes have been deleted.</name>
+         </normalization>
+      </adjustments>
+      <vocabulary-key>
+         <algorithm xml:id="xslt2">
+            <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
+            <name>Stylesheet to create a TAN file.</name>
+            <location href="../../applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl" accessed-when="2018-08-09T11:14:11.796-04:00"/>
+         </algorithm>
          <div-type xml:id="sect" which="section"/>
          <div-type xml:id="title" which="title"/>
          <div-type xml:id="para" which="paragraph"/><comment when="2016-01-25-05:00" who="park">The following agents and roles apply only to the
@@ -170,25 +180,26 @@
             <IRI>tag:parkj@textalign.net,2015:self</IRI>
             <name xml:lang="eng">Jenny Park</name>
          </person>
-         <algorithm xml:id="xslt1"><IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI><name>Stylesheet to populate a TAN-A-div file from collections.</name><desc>Stylesheet at: ../do%20things/convert/convert%20TAN%202017%20to%20TAN%202018.xsl</desc></algorithm>
+         <algorithm xml:id="xslt1"><IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI><name>Stylesheet to populate a TAN-A-div file from collections.</name><location accessed-when="2018-08-09T11:14:11.796-04:00" href="../applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"/></algorithm>
          <role xml:id="editor">
             <IRI>http://schema.org/editor</IRI>
             <name xml:lang="eng">Editor</name>
          </role>
          <role xml:id="stylesheet1" which="stylesheet"/>
-      </definitions>
-      <alter>
-         <normalization>
-            <IRI>tag:textalign.net,2015:normalization:annotation-content-removed</IRI>
-            <name>Footnotes or endnotes have been deleted.</name>
-         </normalization>
-      </alter>
+      </vocabulary-key>
+      
+      <file-resp who="park"/>
+      <resp who="xslt2" roles="stylesheet1"/>
       <resp roles="editor" who="park"/>
       <resp who="xslt1" roles="stylesheet1"/>
       
       <change when="2017-05-15" who="park">Normalized @n</change>
       <change when="2016-01-25" who="park">Created new TAN-TEI file.</change>
       <change who="xslt1" when="2017-11-02T22:26:38.519-04:00">TAN file updated to 2018 schemas.</change>
+      <change who="xslt2" when="2018-08-09T11:14:11.796-04:00">Converted from 2018 to 2019 schemas.</change>
+      <to-do>
+         <comment when="2018-08-09-04:00" who="park">File needs to be checked.</comment>
+      </to-do>
    </head>
    <text>
       <body xml:lang="eng">

@@ -41,6 +41,12 @@
         <xsl:param name="text" as="xs:string*"/>
         <xsl:copy-of select="tan:normalize-text($text, false())"/>
     </xsl:function>
+    <xsl:function name="tan:normalize-name" as="xs:string*">
+        <!-- one-parameter version of full function below -->
+        <!-- this version is for handling <name> -->
+        <xsl:param name="text" as="xs:string*"/>
+        <xsl:copy-of select="tan:normalize-text($text, true())"/>
+    </xsl:function>
     <xsl:function name="tan:normalize-text" as="xs:string*">
         <!-- Input: any sequence of strings; a boolean indicating whether the results should be normalized further to a common form -->
         <!-- Output: that sequence, with each item's space normalized, and removal of any help requested -->
@@ -48,7 +54,7 @@
         <!-- A final set of spaces is normalized to a single space, not removed altogether (because the text in every leaf <div> terminates either in a special character or a space character) -->
         <!-- Special end div characters are not removed in this operation. -->
         <xsl:param name="text" as="xs:string*"/>
-        <xsl:param name="render-common" as="xs:boolean"/>
+        <xsl:param name="treat-as-name-values" as="xs:boolean"/>
         <xsl:for-each select="$text">
             <xsl:variable name="results" as="xs:string*">
                 <xsl:analyze-string select="." regex="\s+$">
@@ -58,8 +64,8 @@
                     <xsl:non-matching-substring>
                         <xsl:variable name="pass-1"
                             select="
-                                if ($render-common = true()) then
-                                    lower-case(replace(., '-', ' '))
+                                if ($treat-as-name-values = true()) then
+                                    lower-case(replace(., '[_-]', ' '))
                                 else
                                     ."/>
                         <xsl:variable name="pass-2" select="replace($pass-1, '\s+(\p{M})', '$1')"/>

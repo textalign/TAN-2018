@@ -6,7 +6,7 @@
    <doc href="TAN-A-lm-functions.xsl"/>
    <doc href="TAN-A-tok-functions.xsl"/>
    <doc href="TAN-extra-functions.xsl"/>
-   <doc href="TAN-key-functions.xsl"/>
+   <doc href="TAN-voc-functions.xsl"/>
    <doc href="TAN-mor-functions.xsl"/>
    <doc href="TAN-T-functions.xsl"/>
    <doc href="TAN-TEI-functions.xsl"/>

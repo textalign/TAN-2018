@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../schemas/TAN-A-lm.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="../schemas/TAN-A-lm.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<TAN-A-lm xmlns="tag:textalign.net,2015:ns" TAN-version="2018"
+<TAN-A-lm xmlns="tag:textalign.net,2015:ns" TAN-version="2019"
     id="tag:FIXME.com,2015:tan-a-lm:FIXME">
     <head xmlns="tag:textalign.net,2015:ns">
         <name>TAN-A-lm template</name>
@@ -10,28 +10,28 @@
         <source>
             <IRI>tag:FIXME.com,2015:FIXME</IRI>
             <name>FIXME</name>
-            <location href="FIXME.xml" when-accessed="FIXME"/>
+            <location href="FIXME.xml" accessed-when="2018-02-15"/>
         </source>
-        <definitions>
+        <vocabulary-key>
             <lexicon xml:id="FIXLEXICON">
-                <IRI>tag:FIXME.com,2015:FIXME</IRI>
+                <IRI>tag:FIXME.com,2015:LEXICON.FIXME</IRI>
                 <name>FIXME</name>
             </lexicon>
             <morphology xml:id="FIXMORPHOLOGY">
-                <IRI>tag:FIXME.com,2014:FIXME</IRI>
+                <IRI>tag:FIXME.com,2015:MORPHOLOGY.FIXME</IRI>
                 <name>FIXME</name>
-                <location href="FIXME" when-accessed="2018-02-15"/>
+                <location href="FIXME" accessed-when="2018-02-15"/>
             </morphology>
             <person xml:id="FIXME">
                 <IRI>tag:FIXME.com,2015:self</IRI>
                 <name>FIXME</name>
             </person>
             <role which="editor" xml:id="editor"/>
-        </definitions>
+        </vocabulary-key>
+        <file-resp who="FIXME"/>
         <resp who="FIXME" roles="editor"/>
         <change when="2018-02-15" who="FIXME">Created file.</change>
+        <to-do/>
     </head>
-    <body lexicon="FIXLEXICON" morphology="FIXMORPHOLOGY">
-        <for-lang>grc</for-lang>
-    </body>
+    <body lexicon="FIXLEXICON" morphology="FIXMORPHOLOGY"/>
 </TAN-A-lm>

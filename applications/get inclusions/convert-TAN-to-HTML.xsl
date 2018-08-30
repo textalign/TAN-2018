@@ -112,7 +112,7 @@
                 <xsl:attribute name="class" select="string-join($all-class-attribute-values, ' ')"/>
             </xsl:if>
             <!-- child elements -->
-            <xsl:apply-templates select="@href, @when-accessed" mode="attr-to-element"/>
+            <xsl:apply-templates select="@href, @accessed-when" mode="attr-to-element"/>
             <xsl:apply-templates select="node()" mode="#current"/>
         </xsl:copy>
     </xsl:template>
@@ -124,7 +124,7 @@
             <xsl:value-of select="name(..)"/>
         </xsl:element>
     </xsl:template>
-    <xsl:template match="@when-accessed" mode="attr-to-element">
+    <xsl:template match="@accessed-when" mode="attr-to-element">
         <xsl:variable name="parent-namespace" select="namespace-uri(..)"/>
         <xsl:element name="{name(.)}" namespace="{$parent-namespace}">
             <xsl:value-of select="."/>
@@ -164,7 +164,7 @@
             </xsl:apply-templates>
         </div>
     </xsl:template>
-    <xsl:template match="tan:head | tei:teiHeader | tan:definitions" mode="tan-to-html-pass-3">
+    <xsl:template match="tan:head | tei:teiHeader | tan:vocabulary-key" mode="tan-to-html-pass-3">
         <!-- Some children items should be grouped and labeled, to make it easier to understand the data -->
         <div>
             <xsl:copy-of select="@*"/>

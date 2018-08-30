@@ -12,7 +12,7 @@
             <xsl:apply-templates select="$referenced-doc/*/@id"/>
             <xsl:copy-of select="$referenced-doc/*/tan:head/tan:name"/>
             <xsl:copy-of select="$referenced-doc/*/tan:head/tan:desc"/>
-            <location when-accessed="{$today-iso}" href="{$this-href}"/>
+            <location accessed-when="{$today-iso}" href="{$this-href}"/>
             <xsl:copy-of select="tan:location[position() gt 1]"/>
             <!-- tan:uri-relative-to(@href, $doc-uri) -->
         </xsl:copy>

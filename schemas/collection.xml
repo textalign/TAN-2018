@@ -4,7 +4,7 @@
    <doc href="TAN-A-div.sch"/>
    <doc href="TAN-A-lm.sch"/>
    <doc href="TAN-A-tok.sch"/>
-   <doc href="TAN-key.sch"/>
+   <doc href="TAN-voc.sch"/>
    <doc href="TAN-mor.sch"/>
    <doc href="TAN-T.sch"/>
    <doc href="TAN-TEI.sch"/>
@@ -12,7 +12,7 @@
    <doc href="TAN-A-div.rng"/>
    <doc href="TAN-A-lm.rng"/>
    <doc href="TAN-A-tok.rng"/>
-   <doc href="TAN-key.rng"/>
+   <doc href="TAN-voc.rng"/>
    <doc href="TAN-mor.rng"/>
    <doc href="TAN-T.rng"/>
    <doc href="TAN-TEI.rng"/>

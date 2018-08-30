@@ -82,7 +82,7 @@
   </define>
   <define name="element-scope">
     <attribute name="affects-element">
-      <a:documentation>names one or more TAN elements that the keywords apply to.</a:documentation>
+      <a:documentation>names one or more TAN elements that an item applies to.</a:documentation>
       <a:documentation>This attribute is non-cumulatively inheritable. An element will be affected only by its values of @affects-element and not those of its ancestors.</a:documentation>
     </attribute>
   </define>
@@ -171,12 +171,7 @@
   <define name="TAN-ver">
     <attribute name="TAN-version">
       <a:documentation>specifies the version of TAN schemas used. </a:documentation>
-      <value type="string">2018</value>
-    </attribute>
-  </define>
-  <define name="keyword-ref">
-    <attribute name="which">
-      <a:documentation>used to point to a reserved keyword, either a reserved tokenization pattern or a relationship.</a:documentation>
+      <value type="string">2019</value>
     </attribute>
   </define>
   <define name="lang-of-content">
@@ -195,33 +190,20 @@
       <data type="language"/>
     </element>
   </define>
-  <define name="period-ref">
-    <a:documentation>specifies whether the creation and editing of the data is still in progress. Default value is true.</a:documentation>
-    <attribute name="period">
-      <a:documentation>names one or more &lt;period&gt;s.</a:documentation>
-    </attribute>
-  </define>
-  <define name="progress">
-    <attribute name="in-progress">
-      <a:documentation>specifies whether or not the editors of the current file have not yet finished supplying the data, intend to make important changes, or otherwise wish to reserve the right to make major changes. </a:documentation>
-      <a:documentation>This attribute does not claim that the data is perfect or that it will not be changed. Rather, it signals to users, especially those who would use the file the object of a &lt;source&gt;, &lt;see-also&gt;, or &lt;inclusion&gt;, the possibility of major work that may render dependent data as wrong or invalid. </a:documentation>
-      <data type="boolean"/>
-    </attribute>
-  </define>
-  <define name="relationship">
-    <attribute name="relationship">
-      <a:documentation>names one or more &lt;relationship&gt;s</a:documentation>
-    </attribute>
-  </define>
   <define name="licensor">
     <attribute name="licensor">
       <a:documentation>specifies one or more &lt;agent&gt;s who hold the rights over the material specified by the parent element (either the data of the current file, or of the source that forms the basis for the data).</a:documentation>
-      <a:documentation>Nothing should be inferred from a missing @licensor from &lt;rights-source-only&gt;. Its absence does not mean that the rightsholder is unknown or nonexistent. For more, see main.xml#license</a:documentation>
+      <a:documentation>For more, see main.xml#license</a:documentation>
+    </attribute>
+  </define>
+  <define name="name-ref">
+    <attribute name="which">
+      <a:documentation>used to point to the name of a concept defined by the IRI + name pattern or of a tokenization pattern.</a:documentation>
     </attribute>
   </define>
   <define name="object-datatype">
     <attribute name="object-datatype">
-      <a:documentation>specifies the type of data that the object must take. This attribute is intended to specify that a particular verb governs raw units, not entities definable by the IRI + name pattern. Use this attribute if and only if the verb may not govern objects defined in &lt;definitions&gt;.</a:documentation>
+      <a:documentation>specifies the type of data that the object must take. This attribute is intended to specify that a particular verb governs raw units, not entities definable by the IRI + name pattern. Use this attribute if and only if the verb may not govern objects defined in an TAN-trm file.</a:documentation>
       <data type="string">
         <param name="pattern">string|boolean|decimal|float|double|duration|dateTime|time|date|gYearMonth|gYear|gMonthDay|gDay|gMonth|hexBinary|base64Binary|anyURI|QName|normalizedString|token|language|NMTOKEN|NMTOKENS|Name|NCName|ID|IDREF|IDREFS|ENTITY|ENTITIES|integer|nonPositiveInteger|negativeInteger|long|int|short|byte|nonNegativeInteger|unsignedLong|unsignedInt|unsignedShort|unsignedByte|positiveInteger</param>
       </data>
@@ -231,6 +213,16 @@
     <attribute name="object-lexical-constraint">
       <a:documentation>specifies a regular expression that constrains the value of any &lt;object&gt;. </a:documentation>
       <a:documentation>Note that the regular expression will be strictly followed, e.g., "\d+" will be satisfied by "a1" (because there is at least on digit). If you wish to constrain the entire value, be sure to use ^ and $, e.g., "^\d+$". </a:documentation>
+    </attribute>
+  </define>
+  <define name="period-ref">
+    <attribute name="period">
+      <a:documentation>names one or more &lt;period&gt;s.</a:documentation>
+    </attribute>
+  </define>
+  <define name="relationship">
+    <attribute name="relationship">
+      <a:documentation>names one or more &lt;relationship&gt;s</a:documentation>
     </attribute>
   </define>
   <define name="role-ref">
@@ -300,7 +292,7 @@
       <a:documentation>specifies some checksum that can be used to confirm the identity of a digital file being referred to. This element contains other elements that define the type and value of the checksum. Must begin with an IRI + name pattern that defines the type of checksum being used (e.g., SHA-1).</a:documentation>
       <a:documentation>This element allows later users ensure that a copies of a file are identical. </a:documentation>
       <a:documentation>The checksum will not be generated, checked, or validated by TAN schemas. Checksum validation must be provided by other means.</a:documentation>
-      <ref name="entity-nondigital-ref"/>
+      <ref name="entity-nondigital-content"/>
       <element name="value">
         <a:documentation>states the value of a &lt;checksum&gt;</a:documentation>
         <data type="string" datatypeLibrary=""/>
@@ -329,83 +321,6 @@
     <ref name="ed-agent"/>
     <ref name="ed-time"/>
   </define>
-  <!--
-    
-       FOUR TYPES OF ENTITIES THAT CAN BE REFERENCED USING THE IRI+NAME PATTERN
-  -->
-  <define name="entity-digital-tan-other-ref">
-    <a:documentation>Reference to an external digital entity that is a TAN file; unlike other types, the keyword-ref option much be turned on and off for specific elements (e.g., not advisable for &lt;inclusion&gt;)</a:documentation>
-    <choice>
-      <ref name="href-opt"/>
-      <group>
-        <ref name="IRI-gen-ref"/>
-        <ref name="metadata-human"/>
-        <zeroOrMore>
-          <ref name="checksum"/>
-        </zeroOrMore>
-        <oneOrMore>
-          <ref name="loc-src"/>
-        </oneOrMore>
-      </group>
-    </choice>
-  </define>
-  <define name="entity-digital-generic-ref">
-    <a:documentation>Reference to an external digital entity that is not a TAN file</a:documentation>
-    <choice>
-      <group>
-        <oneOrMore>
-          <ref name="IRI-gen-ref"/>
-        </oneOrMore>
-        <ref name="metadata-human"/>
-        <zeroOrMore>
-          <ref name="checksum"/>
-        </zeroOrMore>
-        <oneOrMore>
-          <ref name="loc-src"/>
-        </oneOrMore>
-      </group>
-      <ref name="keyword-ref"/>
-    </choice>
-  </define>
-  <define name="entity-digital-tan-self-ref">
-    <a:documentation>Reference to self as digital entity (i.e., TAN file)</a:documentation>
-    <ref name="metadata-human"/>
-    <zeroOrMore>
-      <ref name="loc-self"/>
-    </zeroOrMore>
-  </define>
-  <define name="entity-nondigital-ref">
-    <a:documentation>Reference to an external non-digital entity (e.g., persons, roles, works, topics)</a:documentation>
-    <choice>
-      <group>
-        <oneOrMore>
-          <ref name="IRI-gen-ref"/>
-        </oneOrMore>
-        <ref name="metadata-human"/>
-      </group>
-      <ref name="keyword-ref"/>
-    </choice>
-  </define>
-  <define name="entity-nondigital-with-constraints-ref">
-    <a:documentation>Reference to a nondigital entity that has constraints on its use</a:documentation>
-    <choice>
-      <group>
-        <optional>
-          <ref name="constraints-on-entity"/>
-        </optional>
-        <oneOrMore>
-          <ref name="IRI-gen-ref"/>
-        </oneOrMore>
-        <ref name="metadata-human"/>
-      </group>
-      <ref name="keyword-ref"/>
-    </choice>
-  </define>
-  <define name="entity-tok-def">
-    <a:documentation>Reference to a definition of a token</a:documentation>
-    <ref name="defn-tok-def"/>
-    <ref name="metadata-human"/>
-  </define>
   <define name="inclusion">
     <ref name="inclusion-att"/>
     <optional>
@@ -417,7 +332,7 @@
       <a:documentation>contains an International Resource Identifier that serves as a name for the a concept, person, or thing referred to by the parent element. IRIs are explained at main.xml#IRIs_and_linked_data.</a:documentation>
       <a:documentation>Any kind of IRIs are allowed: URLs, tag URNs, UUIDs, etc. For names of well-known resources, a URL identifier might be preferred (http://...), to facilitate linked data. If an entity/resource lacks a suitable URL-type name, you may use or coin any other valid IRI, such as a UUID, a tag URN, or an OID. Some concepts may be difficult to find IRIs for.</a:documentation>
       <a:documentation>Sibling &lt;IRI&gt;s are to be treated as names for the same thing, not as names of different things. Nevertheless, they are not synonymous, only poecilonymic. In the terms of Web Ontology Language (http://www.w3.org/TR/owl-ref/), sibling &lt;IRI&gt;s cannot be assumed to share the relationship owl:sameAs, because they will draw from independent vocabularies that may define similar concepts differently. </a:documentation>
-      <a:documentation>An element defined with multiple &lt;IRI&gt;s is technically within the intersection, not the union, of those definitions. Nevertheless, most interpretations of TAN files will draw inferences based upon the union. That is, if item A is defined by IRI X, item B by IRIs X and Y, and item C with IRI Y, it is likely that users of the data will infer identity between items A and C. It is advisable to be cautious is assigning multiple IRIs to entities.</a:documentation>
+      <a:documentation>An element defined with multiple &lt;IRI&gt;s is technically within the intersection, not the union, of the target concepts. Nevertheless, most interpretations of TAN files will draw inferences based upon the union. That is, if item A is defined by IRI X, item B by IRIs X and Y, and item C with IRI Y, it is likely that users of the data will infer identity between items A and C. It is advisable to be cautious is assigning multiple IRIs to entities.</a:documentation>
       <a:documentation>The element is named IRI instead of URI to encourage internationalization. Alphabets other than the Latin are welcome. </a:documentation>
       <optional>
         <ref name="ed-stamp"/>
@@ -427,7 +342,7 @@
   </define>
   <define name="loc-self">
     <element name="master-location">
-      <a:documentation>points to a location where a master copy of the file is to be found. Use of this element entails a commitment to updating the TAN file in those locations. Also, if @in-progress is false, a &lt;master-location&gt; must be provided.</a:documentation>
+      <a:documentation>points to a location where a master copy of the file is to be found. Use of this element entails a commitment to updating the TAN file in those locations.</a:documentation>
       <a:documentation>The URL may be absolute or relative to the current document. </a:documentation>
       <a:documentation>&lt;master-location&gt; does not disallow the file from being kept, published, or distributed elsewhere. It merely points to the main locations where an authoritative version of the file is to be found. </a:documentation>
       <optional>
@@ -436,14 +351,14 @@
       <ref name="href-opt"/>
     </element>
   </define>
-  <define name="loc-src">
+  <define name="loc-file">
     <element name="location">
       <a:documentation>declares where an electronic file was found and when. </a:documentation>
       <a:documentation>The URL may be absolute or relative to the current document. </a:documentation>
       <optional>
         <ref name="ed-stamp"/>
       </optional>
-      <attribute name="when-accessed">
+      <attribute name="accessed-when">
         <a:documentation>specifies when an electronic file was last examined</a:documentation>
         <choice>
           <data type="date"/>
@@ -481,12 +396,186 @@
         <choice>
           <ref name="metadata-desc"/>
           <choice>
-            <ref name="keyword-ref"/>
-            <ref name="entity-digital-tan-other-ref"/>
+            <ref name="name-ref"/>
+            <ref name="entity-digital-tan-other-content"/>
           </choice>
         </choice>
       </element>
     </zeroOrMore>
+  </define>
+  <!--    1C. ENTITIES (IRI + NAME PATTERN) -->
+  <define name="entity-digital-nontan-id">
+    <optional>
+      <ref name="ed-stamp"/>
+    </optional>
+    <choice>
+      <ref name="inclusion"/>
+      <group>
+        <ref name="internal-xml-id"/>
+        <interleave>
+          <zeroOrMore>
+            <ref name="comment"/>
+          </zeroOrMore>
+          <ref name="entity-digital-core-content"/>
+        </interleave>
+      </group>
+    </choice>
+  </define>
+  <define name="entity-digital-nontan-no-id">
+    <optional>
+      <ref name="ed-stamp"/>
+    </optional>
+    <choice>
+      <ref name="inclusion"/>
+      <interleave>
+        <zeroOrMore>
+          <ref name="comment"/>
+        </zeroOrMore>
+        <ref name="entity-digital-core-content"/>
+      </interleave>
+    </choice>
+  </define>
+  <define name="entity-digital-tan-id">
+    <optional>
+      <ref name="ed-stamp"/>
+    </optional>
+    <choice>
+      <ref name="inclusion"/>
+      <group>
+        <ref name="internal-xml-id"/>
+        <interleave>
+          <zeroOrMore>
+            <ref name="comment"/>
+          </zeroOrMore>
+          <ref name="entity-digital-tan-other-content"/>
+        </interleave>
+      </group>
+    </choice>
+  </define>
+  <define name="entity-digital-tan-no-id">
+    <optional>
+      <ref name="ed-stamp"/>
+    </optional>
+    <choice>
+      <ref name="inclusion"/>
+      <interleave>
+        <zeroOrMore>
+          <ref name="comment"/>
+        </zeroOrMore>
+        <ref name="entity-digital-tan-other-content"/>
+      </interleave>
+    </choice>
+  </define>
+  <!-- named patterns that MUST take an id -->
+  <define name="entity-nondigital-id">
+    <optional>
+      <ref name="ed-stamp"/>
+    </optional>
+    <choice>
+      <ref name="inclusion"/>
+      <group>
+        <ref name="internal-xml-id"/>
+        <interleave>
+          <zeroOrMore>
+            <ref name="comment"/>
+          </zeroOrMore>
+          <ref name="entity-nondigital-content"/>
+        </interleave>
+      </group>
+    </choice>
+  </define>
+  <!-- named patterns that MAY NOT take an id -->
+  <define name="entity-nondigital-no-id">
+    <optional>
+      <ref name="ed-stamp"/>
+    </optional>
+    <choice>
+      <ref name="inclusion"/>
+      <interleave>
+        <zeroOrMore>
+          <ref name="comment"/>
+        </zeroOrMore>
+        <ref name="entity-nondigital-content"/>
+      </interleave>
+    </choice>
+  </define>
+  <!-- named patterns that are constrained (verbs) -->
+  <define name="entity-nondigital-constrained">
+    <optional>
+      <ref name="ed-stamp"/>
+    </optional>
+    <choice>
+      <ref name="inclusion"/>
+      <group>
+        <ref name="internal-xml-id"/>
+        <interleave>
+          <zeroOrMore>
+            <ref name="comment"/>
+          </zeroOrMore>
+          <ref name="entity-nondigital-with-constraints-content"/>
+        </interleave>
+      </group>
+    </choice>
+  </define>
+  <!-- href-opt is turned on for TAN files, to allow SQFs to be applied to the element, to autocomplete IRI, name, and location -->
+  <define name="entity-digital-tan-other-content">
+    <choice>
+      <ref name="href-opt"/>
+      <ref name="entity-digital-core-content"/>
+    </choice>
+  </define>
+  <define name="entity-digital-core-content">
+    <choice>
+      <group>
+        <oneOrMore>
+          <ref name="IRI-gen-ref"/>
+        </oneOrMore>
+        <ref name="metadata-human"/>
+        <zeroOrMore>
+          <ref name="checksum"/>
+        </zeroOrMore>
+        <oneOrMore>
+          <ref name="loc-file"/>
+        </oneOrMore>
+      </group>
+      <ref name="name-ref"/>
+    </choice>
+  </define>
+  <define name="entity-digital-tan-self-content">
+    <ref name="metadata-human"/>
+    <zeroOrMore>
+      <ref name="loc-self"/>
+    </zeroOrMore>
+  </define>
+  <define name="entity-nondigital-content">
+    <choice>
+      <group>
+        <oneOrMore>
+          <ref name="IRI-gen-ref"/>
+        </oneOrMore>
+        <ref name="metadata-human"/>
+      </group>
+      <ref name="name-ref"/>
+    </choice>
+  </define>
+  <define name="entity-nondigital-with-constraints-content">
+    <choice>
+      <group>
+        <optional>
+          <ref name="constraints-on-entity"/>
+        </optional>
+        <oneOrMore>
+          <ref name="IRI-gen-ref"/>
+        </oneOrMore>
+        <ref name="metadata-human"/>
+      </group>
+      <ref name="name-ref"/>
+    </choice>
+  </define>
+  <define name="entity-tok-def">
+    <a:documentation>Reference to a definition of a token</a:documentation>
+    <ref name="decl-tok-def"/>
+    <ref name="metadata-human"/>
   </define>
   <!-- PART TWO OF THREE: STRUCTURE COMMON TO ALL TAN FILES -->
   <define name="TAN-root">
@@ -510,7 +599,6 @@
     <element name="head">
       <a:documentation>contains the metadata (data about the data contained by &lt;body&gt;)</a:documentation>
       <a:documentation>This element indicates at a bare minimum the name of the file, the sources, the most significant parts of the editorial history; the linguistic or scholarly conventions that have been adopted in creating the data; the license, i.e., who holds what rights to the data, and what kind of reuse is allowed; the persons, organizations, or entities that helped create the data, and the roles played by each.</a:documentation>
-      <a:documentation>The structure of &lt;head&gt; is shared across TAN files, with differences between them isolated to the child &lt;definitions&gt;.</a:documentation>
       <optional>
         <ref name="ed-stamp"/>
       </optional>
@@ -519,69 +607,91 @@
           <ref name="comment"/>
         </zeroOrMore>
         <group>
-          <ref name="head-prelude"/>
-          <ref name="other-files"/>
-          <ref name="definition-list"/>
-          <ref name="alter-statement"/>
+          <ref name="file-name"/>
+          <ref name="declaration-list"/>
+          <ref name="networked-files"/>
+          <ref name="adjustment-list"/>
+          <ref name="vocabulary-list"/>
           <ref name="resp-list"/>
-          <ref name="change-log"/>
+          <ref name="change-list"/>
+          <ref name="to-do-list"/>
         </group>
       </interleave>
     </element>
   </define>
-  <!-- HEAD: prelude -->
-  <define name="head-prelude">
-    <ref name="head-prelude-core"/>
-    <ref name="head-prelude-non-core"/>
+  <!-- HEAD: name and description of the file -->
+  <define name="file-name">
+    <ref name="entity-digital-tan-self-content"/>
   </define>
-  <define name="head-prelude-core">
-    <ref name="entity-digital-tan-self-ref"/>
-    <ref name="nonsource-license"/>
+  <!-- HEAD: general declarations -->
+  <define name="declaration-list">
+    <interleave>
+      <ref name="declaration-core"/>
+      <ref name="declaration-non-core"/>
+    </interleave>
   </define>
-  <define name="head-prelude-non-core">
+  <define name="declaration-core">
+    <interleave>
+      <oneOrMore>
+        <ref name="nonsource-license"/>
+      </oneOrMore>
+      <optional>
+        <ref name="decl-ambig-numerals"/>
+      </optional>
+    </interleave>
+  </define>
+  <define name="declaration-non-core">
     <empty/>
+  </define>
+  <define name="decl-ambig-numerals">
+    <element name="ambiguous-letter-numerals-are-roman">
+      <a:documentation>specifies whether letters that can be interpreted both as letter numerals and as roman numerals should be interpreted as the latter.</a:documentation>
+      <a:documentation>E.g., 'c' would be interpreted as 3 if false and 100 if true.</a:documentation>
+      <a:documentation>If element is not present, the value is assumed to be true.</a:documentation>
+      <data type="boolean"/>
+    </element>
   </define>
   <define name="nonsource-license">
     <element name="license">
       <a:documentation>states the license under which the data is distributed and the rights associated with it, EXCLUSIVE of any rights attached to the source.</a:documentation>
       <a:documentation>Diligently check to ensure that the license you have claimed respects the rights of your sources' rightsholders. It is recommended that you license your data under a license that is similar to or more liberal than the one under which your sources have been released.</a:documentation>
-      <a:documentation>For more discussion, see main.xml#license and for a list of standard vocabulary, main.xml# keywords-rights-excluding-sources</a:documentation>
+      <a:documentation>For more discussion, see main.xml#license and for a list of standard vocabulary, main.xml#vocabulary-rights-excluding-sources</a:documentation>
       <optional>
         <ref name="ed-stamp"/>
       </optional>
       <choice>
         <ref name="inclusion"/>
-        <interleave>
-          <zeroOrMore>
-            <ref name="comment"/>
-          </zeroOrMore>
-          <ref name="entity-nondigital-ref"/>
-        </interleave>
-      </choice>
-    </element>
-    <element name="licensor">
-      <optional>
-        <ref name="ed-stamp"/>
-      </optional>
-      <choice>
-        <ref name="inclusion"/>
-        <ref name="agent-ref"/>
+        <group>
+          <ref name="licensor"/>
+          <interleave>
+            <zeroOrMore>
+              <ref name="comment"/>
+            </zeroOrMore>
+            <ref name="entity-nondigital-content"/>
+          </interleave>
+        </group>
       </choice>
     </element>
   </define>
-  <!-- HEAD: other files -->
-  <define name="other-files">
+  <!-- HEAD: links to other networked files -->
+  <define name="networked-files">
     <interleave>
-      <ref name="other-files-core"/>
-      <ref name="other-files-non-core"/>
+      <ref name="networked-files-core"/>
+      <ref name="networked-files-non-core"/>
     </interleave>
   </define>
-  <define name="other-files-core">
+  <define name="networked-files-core">
     <interleave>
-      <ref name="inclusion-list"/>
-      <ref name="key-list"/>
+      <zeroOrMore>
+        <ref name="inclusion-item"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="vocabulary-item"/>
+      </zeroOrMore>
       <ref name="source-list"/>
-      <ref name="see-also-list"/>
+      <zeroOrMore>
+        <ref name="see-also-item"/>
+      </zeroOrMore>
       <zeroOrMore>
         <ref name="predecessor-item"/>
       </zeroOrMore>
@@ -590,20 +700,15 @@
       </zeroOrMore>
     </interleave>
   </define>
-  <define name="other-files-non-core">
+  <define name="networked-files-non-core">
     <empty/>
-  </define>
-  <define name="inclusion-list">
-    <zeroOrMore>
-      <ref name="inclusion-item"/>
-    </zeroOrMore>
   </define>
   <define name="inclusion-item">
     <element name="inclusion">
       <a:documentation>specifies a TAN file that is available for inclusion. An inclusion occurs whenever an element X points to this inclusion by means of @include. TAN-compliant validators and processors will find every X that is found in the included file (checked recursively, against any inclusions of X adopted by the inclusion) and insert them at that place in the main document.</a:documentation>
       <a:documentation>Only select elements will be included, not the entire inclusion file. Exactly which elements are included is dictated by @include.</a:documentation>
       <a:documentation>Invoking an &lt;inclusion&gt; does not require its use. </a:documentation>
-      <a:documentation>For more on this, see main.xml#inclusions-and-keys</a:documentation>
+      <a:documentation>For more on this, see main.xml#inclusions-and-vocabulary</a:documentation>
       <optional>
         <ref name="ed-stamp"/>
       </optional>
@@ -612,31 +717,8 @@
         <zeroOrMore>
           <ref name="comment"/>
         </zeroOrMore>
-        <ref name="entity-digital-tan-other-ref"/>
+        <ref name="entity-digital-tan-other-content"/>
       </interleave>
-    </element>
-  </define>
-  <define name="key-list">
-    <zeroOrMore>
-      <ref name="key-item"/>
-    </zeroOrMore>
-  </define>
-  <define name="key-item">
-    <element name="key">
-      <a:documentation>specifies a TAN-key file that defines concepts that may be invoked by @which.</a:documentation>
-      <a:documentation>For more discussion, see main.xml#tan-key</a:documentation>
-      <optional>
-        <ref name="ed-stamp"/>
-      </optional>
-      <choice>
-        <ref name="inclusion"/>
-        <interleave>
-          <zeroOrMore>
-            <ref name="comment"/>
-          </zeroOrMore>
-          <ref name="entity-digital-tan-other-ref"/>
-        </interleave>
-      </choice>
     </element>
   </define>
   <!-- The number of source items differs from one TAN format to the next -->
@@ -647,35 +729,12 @@
     <element name="source">
       <a:documentation>identifies the source upon which the data in the &lt;body&gt; of the current file depends.</a:documentation>
       <a:documentation>TAN-T and TAN-A-lm allow only one &lt;source&gt;. TAN-A-tok allows exactly two. All other TAN formats require one or more. </a:documentation>
-      <optional>
-        <ref name="ed-stamp"/>
-      </optional>
-      <choice>
-        <ref name="inclusion"/>
-        <group>
-          <ref name="source-id-opt"/>
-          <interleave>
-            <zeroOrMore>
-              <ref name="comment"/>
-            </zeroOrMore>
-            <choice>
-              <ref name="entity-nondigital-ref"/>
-              <ref name="entity-digital-generic-ref"/>
-              <ref name="entity-digital-tan-other-ref"/>
-            </choice>
-          </interleave>
-        </group>
-      </choice>
+      <ref name="source-content"/>
     </element>
   </define>
-  <define name="source-id-opt">
-    <a:documentation>Parameter to indicate whether &lt;source&gt; should be allowed to take xml:id (forbidden for TAN files with only one source; mandated otherwise)</a:documentation>
+  <!-- source content is defined at the class level, or higher -->
+  <define name="source-content">
     <empty/>
-  </define>
-  <define name="see-also-list">
-    <zeroOrMore>
-      <ref name="see-also-item"/>
-    </zeroOrMore>
   </define>
   <define name="see-also-item">
     <element name="see-also">
@@ -692,8 +751,8 @@
               <ref name="comment"/>
             </zeroOrMore>
             <choice>
-              <ref name="entity-digital-generic-ref"/>
-              <ref name="entity-digital-tan-other-ref"/>
+              <ref name="entity-digital-core-content"/>
+              <ref name="entity-digital-tan-other-content"/>
             </choice>
           </interleave>
         </group>
@@ -703,62 +762,24 @@
   <define name="predecessor-item">
     <element name="predecessor">
       <a:documentation>identifies a file that the current file succeeds. Predecessors may or may not have the same @id value.</a:documentation>
-      <optional>
-        <ref name="ed-stamp"/>
-      </optional>
-      <choice>
-        <ref name="inclusion"/>
-        <interleave>
-          <zeroOrMore>
-            <ref name="comment"/>
-          </zeroOrMore>
-          <ref name="entity-digital-tan-other-ref"/>
-        </interleave>
-      </choice>
+      <ref name="entity-digital-tan-no-id"/>
     </element>
   </define>
   <define name="successor-item">
     <element name="successor">
       <a:documentation>identifies a file that succeeds the current file. Successors may or may not have the same @id value.</a:documentation>
-      <optional>
-        <ref name="ed-stamp"/>
-      </optional>
-      <choice>
-        <ref name="inclusion"/>
-        <interleave>
-          <zeroOrMore>
-            <ref name="comment"/>
-          </zeroOrMore>
-          <ref name="entity-digital-tan-other-ref"/>
-        </interleave>
-      </choice>
+      <ref name="entity-digital-tan-no-id"/>
     </element>
   </define>
-  <!-- HEAD: definitions -->
-  <define name="definition-list">
-    <element name="definitions">
-      <a:documentation>lists terminology and definitions assumed in encoding the data.</a:documentation>
-      <optional>
-        <ref name="ed-stamp"/>
-      </optional>
-      <interleave>
-        <zeroOrMore>
-          <ref name="comment"/>
-        </zeroOrMore>
-        <ref name="definition-core"/>
-        <ref name="definition-non-core"/>
-      </interleave>
-    </element>
-  </define>
-  <!-- HEAD: alter -->
-  <define name="alter-statement">
+  <!-- HEAD: adjustments -->
+  <define name="adjustment-list">
     <a:documentation>normalizations are defined at more specific levels</a:documentation>
-    <optional>
-      <ref name="alter-element"/>
-    </optional>
+    <zeroOrMore>
+      <ref name="adjust-element"/>
+    </zeroOrMore>
   </define>
-  <define name="alter-element">
-    <element name="alter">
+  <define name="adjust-element">
+    <element name="adjustments">
       <a:documentation>declares alterations that have been made, or should be made, to the source(s).</a:documentation>
       <optional>
         <ref name="ed-stamp"/>
@@ -766,33 +787,89 @@
       <choice>
         <ref name="inclusion"/>
         <group>
-          <ref name="alter-condition"/>
+          <ref name="adjust-condition"/>
           <interleave>
             <zeroOrMore>
               <ref name="comment"/>
             </zeroOrMore>
             <group>
-              <ref name="alter-core"/>
-              <ref name="alter-non-core"/>
+              <ref name="adjust-core"/>
+              <ref name="adjust-non-core"/>
             </group>
           </interleave>
         </group>
       </choice>
     </element>
   </define>
-  <define name="alter-condition">
+  <define name="adjust-condition">
     <empty/>
   </define>
-  <define name="alter-core">
+  <define name="adjust-core">
     <empty/>
   </define>
-  <define name="alter-non-core">
+  <define name="adjust-non-core">
     <empty/>
   </define>
+  <!-- HEAD: vocabulary key -->
+  <define name="vocabulary-list">
+    <interleave>
+      <ref name="vocabulary-key"/>
+      <zeroOrMore>
+        <ref name="vocabulary-item"/>
+      </zeroOrMore>
+    </interleave>
+  </define>
+  <define name="vocabulary-key">
+    <element name="vocabulary-key">
+      <optional>
+        <ref name="ed-stamp"/>
+      </optional>
+      <interleave>
+        <zeroOrMore>
+          <ref name="comment"/>
+        </zeroOrMore>
+        <ref name="voc-key-core"/>
+        <ref name="voc-key-non-core"/>
+      </interleave>
+    </element>
+  </define>
+  <define name="voc-key-core">
+    <interleave>
+      <zeroOrMore>
+        <ref name="voc-key-for-agent"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="voc-key-for-role"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="voc-key-for-period"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="voc-key-for-alias"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="voc-key-for-relationship"/>
+      </zeroOrMore>
+    </interleave>
+  </define>
+  <define name="voc-key-non-core">
+    <empty/>
+  </define>
+  <define name="vocabulary-item">
+    <element name="vocabulary">
+      <a:documentation>specifies a TAN-voc file that defines concepts that may be invoked by @which.</a:documentation>
+      <a:documentation>For more discussion, see main.xml#tan-voc</a:documentation>
+      <ref name="entity-digital-tan-no-id"/>
+    </element>
+  </define>
+  <!-- HEAD: credit/blame -->
   <define name="resp-list">
-    <oneOrMore>
-      <ref name="resp-item"/>
-    </oneOrMore>
+    <interleave>
+      <oneOrMore>
+        <ref name="resp-item"/>
+      </oneOrMore>
+      <ref name="resp-default"/>
+    </interleave>
   </define>
   <define name="resp-item">
     <element name="resp">
@@ -812,7 +889,25 @@
       </choice>
     </element>
   </define>
-  <define name="change-log">
+  <define name="resp-default">
+    <element name="file-resp">
+      <a:documentation>specifies the agents that are primarily responsible for the file. Any unattributed claims or assertions made in the file will be credited to/blamed upon these agents. At least one of these agents must be given an IRI in the namespace of the file @id. </a:documentation>
+      <optional>
+        <ref name="ed-stamp"/>
+      </optional>
+      <choice>
+        <ref name="inclusion"/>
+        <ref name="agent-ref"/>
+      </choice>
+    </element>
+  </define>
+  <!-- HEAD: changes -->
+  <define name="change-list">
+    <oneOrMore>
+      <ref name="change-element"/>
+    </oneOrMore>
+  </define>
+  <define name="change-element">
     <oneOrMore>
       <element name="change">
         <a:documentation>declares a change made to the current file. Must credit an &lt;agent&gt;, specified by @who, and a time the change was made, specified by @when.</a:documentation>
@@ -831,13 +926,25 @@
       </element>
     </oneOrMore>
   </define>
+  <!-- HEAD: to-do list -->
+  <define name="to-do-list">
+    <element name="to-do">
+      <a:documentation>lists tasks that remain to be done (via &lt;comment&gt; children). Lack of content in &lt;to-do&gt; suggests that the file is no longer considered a work in progress, </a:documentation>
+      <optional>
+        <ref name="ed-stamp"/>
+      </optional>
+      <choice>
+        <ref name="inclusion"/>
+        <zeroOrMore>
+          <ref name="comment"/>
+        </zeroOrMore>
+      </choice>
+    </element>
+  </define>
   <!-- BODY -->
   <define name="TAN-body">
     <element name="body">
       <a:documentation>contains the data</a:documentation>
-      <optional>
-        <ref name="progress"/>
-      </optional>
       <optional>
         <ref name="ed-stamp"/>
       </optional>
@@ -927,134 +1034,17 @@
   </define>
   <!--
     
-    PART THREE OF THREE: DEFINITIONS
+    PART THREE OF THREE: KEY
+    agents are persons, organizations, or algorithms
   -->
-  <define name="definition-core">
-    <interleave>
-      <oneOrMore>
-        <ref name="defn-agent"/>
-      </oneOrMore>
-      <oneOrMore>
-        <ref name="defn-role"/>
-      </oneOrMore>
-      <zeroOrMore>
-        <ref name="defn-period"/>
-      </zeroOrMore>
-      <zeroOrMore>
-        <ref name="defn-alias"/>
-      </zeroOrMore>
-      <zeroOrMore>
-        <ref name="defn-relationship"/>
-      </zeroOrMore>
-      <optional>
-        <ref name="defn-ambig-numerals"/>
-      </optional>
-    </interleave>
-  </define>
-  <define name="definition-non-core">
-    <empty/>
-  </define>
-  <!-- definitions that take take an id if that is the default for the format -->
-  <define name="defn-pattern-default">
-    <optional>
-      <ref name="ed-stamp"/>
-    </optional>
+  <define name="voc-key-for-agent">
     <choice>
-      <ref name="inclusion"/>
-      <group>
-        <ref name="defn-id-ref-opt"/>
-        <interleave>
-          <zeroOrMore>
-            <ref name="comment"/>
-          </zeroOrMore>
-          <ref name="entity-nondigital-ref"/>
-        </interleave>
-      </group>
+      <ref name="voc-key-for-pers"/>
+      <ref name="voc-key-for-org"/>
+      <ref name="voc-key-for-alg"/>
     </choice>
   </define>
-  <!-- definitions that MUST take an id -->
-  <define name="defn-pattern-id">
-    <optional>
-      <ref name="ed-stamp"/>
-    </optional>
-    <choice>
-      <ref name="inclusion"/>
-      <group>
-        <ref name="internal-xml-id"/>
-        <interleave>
-          <zeroOrMore>
-            <ref name="comment"/>
-          </zeroOrMore>
-          <ref name="entity-nondigital-ref"/>
-        </interleave>
-      </group>
-    </choice>
-  </define>
-  <!-- definitions that MAY NOT take an id -->
-  <define name="defn-pattern-no-id">
-    <optional>
-      <ref name="ed-stamp"/>
-    </optional>
-    <choice>
-      <ref name="inclusion"/>
-      <interleave>
-        <zeroOrMore>
-          <ref name="comment"/>
-        </zeroOrMore>
-        <ref name="entity-nondigital-ref"/>
-      </interleave>
-    </choice>
-  </define>
-  <!-- definitions that are constrained (verbs) -->
-  <define name="defn-pattern-constrained">
-    <optional>
-      <ref name="ed-stamp"/>
-    </optional>
-    <choice>
-      <ref name="inclusion"/>
-      <group>
-        <ref name="defn-id-ref-opt"/>
-        <interleave>
-          <zeroOrMore>
-            <ref name="comment"/>
-          </zeroOrMore>
-          <ref name="entity-nondigital-with-constraints-ref"/>
-        </interleave>
-      </group>
-    </choice>
-  </define>
-  <!-- definitions for languages -->
-  <define name="defn-pattern-language">
-    <optional>
-      <ref name="ed-stamp"/>
-    </optional>
-    <choice>
-      <ref name="inclusion"/>
-      <group>
-        <ref name="defn-id-ref-opt"/>
-        <interleave>
-          <zeroOrMore>
-            <ref name="comment"/>
-          </zeroOrMore>
-          <group>
-            <zeroOrMore>
-              <ref name="lang-outside"/>
-            </zeroOrMore>
-            <ref name="entity-nondigital-ref"/>
-          </group>
-        </interleave>
-      </group>
-    </choice>
-  </define>
-  <!-- agents are persons, organizations, or algorithms -->
-  <define name="defn-agent">
-    <choice>
-      <ref name="defn-pers"/>
-      <ref name="defn-org"/>
-      <ref name="defn-alg"/>
-    </choice>
-  </define>
-  <define name="defn-alias">
+  <define name="voc-key-for-alias">
     <element name="alias">
       <a:documentation>assigns a group of xml:id values to a single xml:id.</a:documentation>
       <a:documentation>This feature is useful for referring repeatedly to a group of agents, works, scripta, etc. </a:documentation>
@@ -1073,46 +1063,34 @@
       </choice>
     </element>
   </define>
-  <define name="defn-ambig-numerals">
-    <element name="ambiguous-letter-numerals-are-roman">
-      <a:documentation>specifies whether letters that can be interpreted both as letter numerals and as roman numerals should be interpreted as the latter.</a:documentation>
-      <a:documentation>E.g., 'c' would be interpreted as 3 if false and 100 if true.</a:documentation>
-      <a:documentation>If element is not present, the value is assumed to be true.</a:documentation>
-      <data type="boolean"/>
-    </element>
-  </define>
-  <define name="defn-alg">
+  <define name="voc-key-for-alg">
     <element name="algorithm">
       <a:documentation>contains an IRI + name pattern identifying an algorithm.</a:documentation>
       <a:documentation>Algorithm covers any set of computational instructions. It does not include the hardware or software used to run the algorithm. For example, a set of XSLT styleshteets is an algorithm, but the engine (e.g., Saxon) or software (e.g., oXygen) is not.  </a:documentation>
-      <ref name="defn-pattern-id"/>
+      <ref name="entity-digital-nontan-id"/>
     </element>
   </define>
-  <define name="defn-div-type">
+  <define name="voc-key-for-div-type">
     <element name="div-type">
       <a:documentation>declares a type of textual division (e.g., title, paragraph, stanza). You may have as many &lt;div-types&gt; as you wish, and they need not all be used.</a:documentation>
       <a:documentation>For more information, see main.xml#reference_system</a:documentation>
-      <a:documentation>This element takes a reserved keyword or IRI + name pattern. See main.xml#keywords-div-type for suggested values. </a:documentation>
-      <ref name="defn-pattern-id"/>
+      <a:documentation>This element takes a reserved keyword or IRI + name pattern. See main.xml#vocabulary-div-type for suggested values. </a:documentation>
+      <ref name="entity-nondigital-id"/>
     </element>
   </define>
-  <define name="defn-group-type">
+  <define name="voc-key-for-group-type">
     <element name="group-type">
-      <a:documentation>defines types of &lt;group&gt;s. See main.xml# keywords-group-type</a:documentation>
-      <ref name="defn-pattern-id"/>
+      <a:documentation>names types of &lt;group&gt;s. See main.xml#vocabulary-group-type</a:documentation>
+      <ref name="entity-nondigital-id"/>
     </element>
   </define>
-  <define name="defn-id-ref-opt">
-    <a:documentation>Option to allow an @xml:id in children of &lt;definitions&gt;</a:documentation>
-    <empty/>
-  </define>
-  <define name="defn-org">
+  <define name="voc-key-for-org">
     <element name="organization">
       <a:documentation>contains an IRI + name pattern identifying an organization, a group of persons, whether formally incorporated or not.</a:documentation>
-      <ref name="defn-pattern-id"/>
+      <ref name="entity-nondigital-id"/>
     </element>
   </define>
-  <define name="defn-period">
+  <define name="voc-key-for-period">
     <element name="period">
       <a:documentation>defines a period of time.</a:documentation>
       <optional>
@@ -1140,36 +1118,27 @@
       </choice>
     </element>
   </define>
-  <define name="defn-pers">
+  <define name="voc-key-for-pers">
     <element name="person">
       <a:documentation>contains an IRI + name pattern identifying an individual human being.</a:documentation>
-      <ref name="defn-pattern-id"/>
+      <ref name="entity-nondigital-id"/>
     </element>
   </define>
-  <define name="defn-relationship">
+  <define name="voc-key-for-relationship">
     <element name="relationship">
       <a:documentation>specifies a relationship that one document has to another.</a:documentation>
-      <a:documentation>See main.xml#keywords-relationship for standardized vocabulary.</a:documentation>
-      <optional>
-        <ref name="ed-stamp"/>
-      </optional>
-      <choice>
-        <ref name="inclusion"/>
-        <group>
-          <ref name="internal-xml-id"/>
-          <ref name="entity-nondigital-ref"/>
-        </group>
-      </choice>
+      <a:documentation>See main.xml#vocabulary-relationship for standardized vocabulary.</a:documentation>
+      <ref name="entity-nondigital-id"/>
     </element>
   </define>
-  <define name="defn-role">
+  <define name="voc-key-for-role">
     <element name="role">
       <a:documentation>specifies a role (responsibility, task, or activity) that one or more &lt;agent&gt;s did in creating or editing the data.</a:documentation>
       <a:documentation>A role may be any activity, e.g., editor, funder, supervisor, data-processor, peer reviewer, patron, defined through the enclosed IRI + name pattern.</a:documentation>
-      <ref name="defn-pattern-id"/>
+      <ref name="entity-nondigital-id"/>
     </element>
   </define>
-  <define name="defn-tok-def">
+  <define name="decl-tok-def">
     <element name="token-definition">
       <a:documentation>takes a regular expression to define a word token. This element will be used to segment a string into token and non-token components. </a:documentation>
       <a:documentation>This element takes attributes that function as the parameters for the function xsl:analyze-string (see https://www.w3.org/TR/xslt-30/#element-analyze-string).</a:documentation>
@@ -1182,7 +1151,7 @@
         <group>
           <ref name="sources-ref"/>
           <choice>
-            <ref name="keyword-ref"/>
+            <ref name="name-ref"/>
             <group>
               <ref name="func-param-pattern"/>
               <optional>
@@ -1192,23 +1161,6 @@
           </choice>
         </group>
       </choice>
-    </element>
-  </define>
-  <define name="defn-vers">
-    <element name="version">
-      <a:documentation>identifies the version of a work. Applicable to sources that contain multiple versions, e.g., original text and facing translations. Like &lt;work&gt;, &lt;version&gt; points to a conceptual entity, not a physical one.</a:documentation>
-      <a:documentation>In the context of a class 1 file, the entity identified by &lt;version&gt; is assumed to be a version of the entity defined in &lt;work&gt;. In TAN-c files, however, no relationship is assumed between &lt;version&gt; and any putative work, unless explicitly stated in that file. </a:documentation>
-      <a:documentation>Very few work-versions have their own URN names. It is advisable to assign a tag URN or a UUID. If you have used an IRI for &lt;work&gt; that you are entitled to modify, you may wish to add a suffix that will name the version. If you need to specify exactly where on a text-bearing object a version appears, &lt;desc&gt; or &lt;comment&gt; should be used.</a:documentation>
-      <a:documentation>For more, see main.xml#conceptual_works</a:documentation>
-      <ref name="defn-pattern-default"/>
-    </element>
-  </define>
-  <define name="defn-work">
-    <element name="work">
-      <a:documentation>identifies a creative textual work, understood conceptually, not physically (e.g., Homer's Iliad, not a particular version or copy of it).</a:documentation>
-      <a:documentation>The term "work" is only loosely defined in TAN. Any text that has enough unity to be referred to in ordinary conversation as a single entity may be identified as a work. A work may be composed of other works, be a part of other works, or even overlap with other works. E.g., the Lord's Prayer, the Gospel of Luke, the Tetravengelion, the New Testament, and the Bible are all valid works, despite the complex relationship between each of them.</a:documentation>
-      <a:documentation>This element takes the IRI + name pattern. For more, see main.xml#conceptual_works</a:documentation>
-      <ref name="defn-pattern-default"/>
     </element>
   </define>
 </grammar>

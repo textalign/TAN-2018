@@ -3,17 +3,17 @@
 <?xml-model href="../../schemas/TAN-mor.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <!--<?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-R-mor.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-R-mor.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
-<TAN-mor xmlns="tag:textalign.net,2015:ns" TAN-version="2018" id="tag:kalvesmaki.com,2014:tan-r-mor:eng:penn">
+<TAN-mor xmlns="tag:textalign.net,2015:ns" TAN-version="2019" id="tag:kalvesmaki.com,2014:tan-r-mor:eng:penn">
    <head>
       <name>University of Pennsylvania (Penn) Treebank Tag-set</name>
       <master-location href="https://raw.githubusercontent.com/Arithmeticus/TAN-lexico-morphology/master/TAN-mor/eng.kalvesmaki.com%2C2014.2.xml"/>
-      <license>
+      <license licensor="kalvesmaki">
          <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
          <name>Creative Commons Attribution 4.0 International License</name>
          <name>This license is granted independent of rights and licenses associated with the
             source. </name>
       </license>
-      <licensor who="kalvesmaki"/>
+      <for-lang>eng</for-lang>
       <source>
          <IRI>tag:kalvesmaki.com,2014:project:penn-treebank</IRI>
          <name>University of Pennsylvania (Penn) Treebank</name>
@@ -21,13 +21,18 @@
       <comment when="2015-03-10" who="kalvesmaki">Codes developed as a synthesis of
          ftp://ftp.cis.upenn.edu/pub/treebank/doc/tagguide.ps.gz and
          http://www.comp.leeds.ac.uk/amalgam/tagsets/upenn.html</comment>
-      <definitions ed-when="2015-03-03" ed-who="kalvesmaki">
+      <vocabulary-key ed-when="2015-03-03" ed-who="kalvesmaki">
+         <algorithm xml:id="xslt2">
+            <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
+            <name>Stylesheet to create a TAN file.</name>
+            <location href="../../applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl" accessed-when="2018-08-09T11:22:47.928-04:00"/>
+         </algorithm>
          <person xml:id="kalvesmaki">
             <IRI>http://viaf.org/viaf/299582703</IRI>
             <IRI>tag:kalvesmaki.com,2014:self</IRI>
             <name>Joel Kalvesmaki</name>
          </person>
-         <algorithm xml:id="xslt1"><IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI><name>Stylesheet to populate a TAN-A-div file from collections.</name><desc>Stylesheet at: ../../../TAN-2018/do%20things/convert/convert%20TAN%202017%20to%20TAN%202018.xsl</desc></algorithm>
+         <algorithm xml:id="xslt1"><IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI><name>Stylesheet to populate a TAN-A-div file from collections.</name><location accessed-when="2018-08-09T11:22:47.928-04:00" href="../../../TAN-2018/applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"/></algorithm>
          <role xml:id="editor">
             <IRI>http://schema.org/editor</IRI>
             <name>Editor</name>
@@ -316,14 +321,18 @@
             <name>Wh-adverb</name>
             <desc>Examples: how however whence whenever where whereby whereever wherein whereof
             why</desc>
-         </feature></definitions>
+         </feature></vocabulary-key>
+      
+      <file-resp who="kalvesmaki"/>
+      <resp who="xslt2" roles="stylesheet"/>
       <resp roles="editor" who="kalvesmaki"/>
       <resp who="xslt1" roles="stylesheet"/>
       <change who="kalvesmaki" when="2015-03-10">started file</change>
       <change who="xslt1" when="2017-12-19T12:44:01.725-05:00">TAN file updated to 2018 schemas.</change>
+      <change who="xslt2" when="2018-08-09T11:22:47.928-04:00">Converted from 2018 to 2019 schemas.</change>
+      <to-do/>
    </head>
    <body>
-      <for-lang>eng</for-lang>
       <rule m-matches=".+">
          <assert m-has-how-many-features="1">Features may not be combined.</assert>
       </rule>

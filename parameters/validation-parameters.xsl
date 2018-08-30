@@ -28,4 +28,7 @@
    <!-- Shall error messages part of the validation process also be passed on as an xslt message (primarily affects transformations)? -->
    <xsl:param name="error-messages-on" as="xs:boolean" select="false()"/>
    
+   <!-- What string in an attribute value should be interpreted as a request for help? -->
+   <xsl:param name="help-trigger" select="'???'"/>
+   
 </xsl:stylesheet>

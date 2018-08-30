@@ -9,13 +9,7 @@ start =
     ## TAN-A-div files must have one or more sources
     source-list = source-item+
     
-    ## definitions by default have ids
-    defn-id-ref-opt = internal-xml-id
-    
-    ## TAN-A-div sources must be named
-    source-id-opt = internal-xml-id
-    definition-non-class-2 = defn-claims
-    alter-non-class-2 = empty
+    voc-key-for-non-class-2 = voc-key-for-claims
     tok-sources-ref-opt = empty
     tok-cert-opt = empty
     
@@ -29,44 +23,62 @@ work-ref =
     ## If you wish to avoid making a claim applying to all other versions of a work, use @src instead.
     attribute work { text }
 # claims
-defn-claims =
-    defn-work*
-    & defn-place*
-    & defn-unit*
-    & defn-div-type*
-    & defn-mode*
-    & defn-vers*
-    & defn-scri*
-    & defn-topic*
-    & defn-verb*
-defn-place =
+voc-key-for-claims =
+    voc-key-for-work*
+    & voc-key-for-place*
+    & voc-key-for-unit*
+    & voc-key-for-div-type*
+    & voc-key-for-mode*
+    & voc-key-for-vers*
+    & voc-key-for-scri*
+    & voc-key-for-topic*
+    & voc-key-for-verb*
+voc-key-for-mode =
+    
+    ## contains an IRI + name pattern identifying a modal or adverb that qualifies the verb of an assertion.
+    
+    ## See main.xml#vocabulary-modal for standard vocabulary.
+    element modal { entity-nondigital-id }
+voc-key-for-place =
     
     ## contains an IRI + name pattern identifying a spatial location, usually somewhere on earth
-    element place { defn-pattern-default }
-defn-scri =
+    element place { entity-nondigital-id }
+voc-key-for-scri =
     
     ## contains an IRI + name pattern identifying a text-bearing object.
-    element scriptum { defn-pattern-default }
-defn-topic =
+    element scriptum { entity-nondigital-id }
+voc-key-for-topic =
     
     ## declares one or more topics, to be used in conjunction with @topic under <align> to associate alignments with specific topics instead of verbatim parallels.  
-    element topic { defn-pattern-default }
-defn-verb =
+    element topic { entity-nondigital-id }
+voc-key-for-unit =
+    
+    ## contains an IRI + name pattern identifying a unit type (e.g., millimeters, seconds, Euros), to be used in conjunction with <object> to specify the meaning of a value
+    element unit { entity-nondigital-id }
+voc-key-for-verb =
     
     ## contains an IRI + name pattern identifying a property, relationship, action, or something else that is used to say something about something. 
     
     ## The preferred term "verb" is equivalent to RDF "predicate." The latter term is avoided as misleading, since in ordinary usage the term "predicate" implies everything in a sentence that is not the subject.
-    element verb { defn-pattern-constrained }
-defn-unit =
+    element verb { entity-nondigital-constrained }
+voc-key-for-vers =
     
-    ## contains an IRI + name pattern identifying a unit type (e.g., millimeters, seconds, Euros), to be used in conjunction with <object> to specify the meaning of a value
-    element unit { defn-pattern-default }
-defn-mode =
+    ## identifies the version of a work. Applicable to sources that contain multiple versions, e.g., original text and facing translations. Like <work>, <version> points to a conceptual entity, not a physical one.
     
-    ## contains an IRI + name pattern identifying a modal or adverb that qualifies the verb of an assertion.
+    ## In the context of a class 1 file, the entity identified by <version> is assumed to be a version of the entity defined in <work>. In TAN-c files, however, no relationship is assumed between <version> and any putative work, unless explicitly stated in that file. 
     
-    ## See main.xml# keywords-modal for standard vocabulary.
-    element modal { defn-pattern-default }
+    ## Very few work-versions have their own URN names. It is advisable to assign a tag URN or a UUID. If you have used an IRI for <work> that you are entitled to modify, you may wish to add a suffix that will name the version. If you need to specify exactly where on a text-bearing object a version appears, <desc> or <comment> should be used.
+    
+    ## For more, see main.xml#conceptual_works
+    element version { entity-nondigital-id }
+voc-key-for-work =
+    
+    ## identifies a creative textual work, understood conceptually, not physically (e.g., Homer's Iliad, not a particular version or copy of it).
+    
+    ## The term "work" is only loosely defined in TAN. Any text that has enough unity to be referred to in ordinary conversation as a single entity may be identified as a work. A work may be composed of other works, be a part of other works, or even overlap with other works. E.g., the Lord's Prayer, the Gospel of Luke, the Tetravengelion, the New Testament, and the Bible are all valid works, despite the complex relationship between each of them.
+    
+    ## This element takes the IRI + name pattern. For more, see main.xml#conceptual_works
+    element work { entity-nondigital-id }
 claim =
     
     ## makes one or more claims.

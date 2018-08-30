@@ -7,7 +7,7 @@
 head{
     background: tan
 }
-definitions{
+vocabulary-key{
     background: #eadbc8
 }
 
@@ -31,14 +31,14 @@ oxy|entity[name^='#']{
 *:root,
 head *:before(9),
 group *:before(9),
-TAN-key > body *:before(9),
+TAN-voc > body *:before(9),
 TAN-A-lm > body *:before(9){
     content: '<' oxy_local-name()'>' ;
 }
 *:root/*,
 head *:before(8),
 group *:before(8),
-TAN-key > body *:before(8)*/{
+TAN-voc > body *:before(8)*/{
     content: oxy_attributes();
 }
 
@@ -98,11 +98,11 @@ item {
     content: 
     oxy_combobox(
 edit, "@which", 
-values, oxy_xpath("string-join(root()/\*\/head/definitions/license/@xml:id, ', ')")
+values, oxy_xpath("string-join(root()/\*\/head/vocabulary-key/license/@xml:id, ', ')")
 )
- oxy_label(text, oxy_xpath("for $i in tokenize(@who,' ') return root()/\*\/head/definitions/(person, organization, algorithm)[@xml:id = $i]/name[1]/text()"), color, "gray");
+ oxy_label(text, oxy_xpath("for $i in tokenize(@who,' ') return root()/\*\/head/vocabulary-key/(person, organization, algorithm)[@xml:id = $i]/name[1]/text()"), color, "gray");
 }*/
-definitions > *[xml|id]:before(7),
+vocabulary-key > *[xml|id]:before(7),
 source[xml|id]:before(7){
     content: 
     'id:'oxy_textfield(
@@ -112,9 +112,9 @@ edit, "@xml:id");
     content: 
     oxy_combobox(
 edit, "@who", 
-values, oxy_xpath("string-join(root()/*/head/definitions/(person, organization, algorithm)/@xml:id, ', ')")
+values, oxy_xpath("string-join(root()/*/head/vocabulary-key/(person, organization, algorithm)/@xml:id, ', ')")
 )
- oxy_label(text, oxy_xpath("for $i in tokenize(@who,' ') return root()/*/head/definitions/(person, organization, algorithm)[@xml:id = $i]/name[1]/text()"), color, "gray");
+ oxy_label(text, oxy_xpath("for $i in tokenize(@who,' ') return root()/*/head/vocabulary-key/(person, organization, algorithm)[@xml:id = $i]/name[1]/text()"), color, "gray");
 }
 *[when]:before(8){
     content: oxy_datePicker(

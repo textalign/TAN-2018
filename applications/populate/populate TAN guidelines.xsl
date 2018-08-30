@@ -22,7 +22,7 @@
    <xsl:include href="../../functions/TAN-extra-functions.xsl"/>
    <xsl:include href="../get%20inclusions/rng-to-text.xsl"/>
    <xsl:include href="../get%20inclusions/tan-snippet-to-docbook.xsl"/>
-   <xsl:include href="../get%20inclusions/tan-keywords-to-docbook.xsl"/>
+   <xsl:include href="../get%20inclusions/tan-vocabularies-to-docbook.xsl"/>
    <xsl:include href="../get%20inclusions/XSLT%20analysis.xsl"/>
 
    <xsl:param name="indent-value" select="3"/>
@@ -42,11 +42,11 @@
    <xsl:variable name="target-uri-1" select="resolve-uri('../../guidelines/inclusions/elements-attributes-and-patterns.xml',static-base-uri())"/>
 
    <xsl:variable name="ex-collection"
-      select="collection('../../examples/?select=*.xml;recurse=yes'), collection('../../TAN-key/?select=*.xml;recurse=yes')"/>
+      select="collection('../../examples/?select=*.xml;recurse=yes'), collection('../../vocabularies/?select=*.xml;recurse=yes')"/>
    <xsl:variable name="fn-collection"
       select="collection('../../functions/?select=*.xsl;recurse=yes')"/>
-   <xsl:variable name="keyword-collection"
-      select="collection('../../TAN-key/?select=*key.xml;recurse=yes')"/>
+   <xsl:variable name="vocabulary-collection"
+      select="collection('../../vocabularies/?select=*voc.xml;recurse=yes')"/>
    <xsl:variable name="elements-excl-TEI" select="$rng-collection-without-TEI//rng:element[@name]"/>
    <xsl:variable name="attributes-excl-TEI"
       select="$rng-collection-without-TEI//rng:attribute[@name]"/>
@@ -68,7 +68,7 @@
             <sec n="TAN-A-lm"/>
          </sec>
          <sec n="TAN-class-3">
-            <sec n="TAN-key"/>
+            <sec n="TAN-voc"/>
             <sec n="TAN-mor"/>
             <sec n="catalog.tan"/>
          </sec>
@@ -541,23 +541,23 @@
          </chapter>
       </xsl:result-document>
 
-      <!-- Docbook inclusion for keywords -->
+      <!-- Docbook inclusion for vocabularies -->
 
       <xsl:result-document
-         href="{resolve-uri('../../guidelines/inclusions/keywords.xml',static-base-uri())}">
-         <chapter version="5.0" xml:id="keywords-master-list">
+         href="{resolve-uri('../../guidelines/inclusions/vocabularies.xml',static-base-uri())}">
+         <chapter version="5.0" xml:id="vocabularies-master-list">
             <xsl:variable name="intro-text" as="xs:string">In this section are collected all
-               official TAN keywords, i.e., values of @which predefined by TAN for certain elements.
-               Remember, these keywords are not @xml:id values, and do not fall under the same
+               official TAN vocabularies, i.e., values of @which predefined by TAN for certain elements.
+               Remember, these vocabularies are not @xml:id values, and do not fall under the same
                restrictions. They may contain punctuation, spaces, and so forth. For more on the use
-               of these keywords, see @which, specific elements, or various examples.
+               of these vocabularies, see @which, specific elements, or various examples.
             </xsl:variable>
-            <title>Official TAN keywords</title>
+            <title>Official TAN vocabularies</title>
             <para>
                <xsl:copy-of select="tan:prep-string-for-docbook(normalize-space($intro-text))"/>
             </para>
             <xsl:copy-of select="$chapter-caveat"/>
-            <xsl:apply-templates select="$keyword-collection" mode="keyword-to-docbook"/>
+            <xsl:apply-templates select="$vocabulary-collection" mode="vocabularies-to-docbook"/>
          </chapter>
       </xsl:result-document>
 

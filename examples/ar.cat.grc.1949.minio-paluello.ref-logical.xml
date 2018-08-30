@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../do%20things/schemas/TAN-T.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="../do%20things/schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../schemas/TAN-T.rnc" type="application/relax-ng-compact-syntax"?>
+<?xml-model href="../schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <!--<?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-T.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
-<TAN-T xmlns="tag:textalign.net,2015:ns" id="tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:semantic-refs" TAN-version="2018">
+<TAN-T xmlns="tag:textalign.net,2015:ns" id="tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:semantic-refs" TAN-version="2019">
    <head>
       <name>Categories, Aristotle, Greek text by Minio-Paluello</name>
-      <license>
+      <master-location href="https://raw.githubusercontent.com/textalign/TAN-2019/master/examples/ar.cat.grc.1949.minio-paluello.ref-logical.xml"/>
+      <license licensor="kalvesmaki">
          <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
          <name>Creative Commons Attribution 4.0 International License</name>
          <desc>Exclusive of rights held and licenses offered by rightsholders of the source or sources listed below, this data file, insofar as it constitutes an independent work, is licensed under a Creative Commons Attribution 4.0 International License.</desc>
       </license>
-      <licensor who="kalvesmaki"/>
+      <work>
+         <IRI>http://dbpedia.org/resource/Categories_(Aristotle)</IRI>
+         <name xml:lang="grc">Ἀριστοτέλης, Κατηγορίαι</name>
+         <name xml:lang="eng">Aristotle, Categories</name>
+      </work>
       <source>
          <IRI>http://lccn.loc.gov/50036648</IRI>
          <name>L. Minio-Paluello, Aristotelis categoriae et liber de interpretatione. Oxford, 1949</name>
@@ -19,14 +24,17 @@
       <redivision>
          <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:object-refs</IRI>
          <name>Categories, Aristotle, Greek text by Minio-Paluello, object-based references</name>
-         <location href="../do%20things/get%20inclusions/ar.cat.grc.1949.minio-paluello-obj.xml" when-accessed="2015-09-11-04:00"/>
+         <location href="ar.cat.grc.1949.minio-paluello.ref-scriptum.xml" accessed-when="2015-09-11-04:00"/>
       </redivision>
-      <definitions>
-         <work>
-            <IRI>http://dbpedia.org/resource/Categories_(Aristotle)</IRI>
-            <name xml:lang="grc">Ἀριστοτέλης, Κατηγορίαι</name>
-            <name xml:lang="eng">Aristotle, Categories</name>
-         </work>
+      <adjustments>
+         <normalization which="no hyphens"/>
+      </adjustments>
+      <vocabulary-key>
+         <algorithm xml:id="xslt2">
+            <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
+            <name>Stylesheet to create a TAN file.</name>
+            <location href="../../applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl" accessed-when="2018-08-05T00:07:27.401-04:00"/>
+         </algorithm>
          <div-type xml:id="ch">
             <IRI>http://dbpedia.org/resource/Chapter_(books)</IRI>
             <name>chapter</name>
@@ -49,25 +57,19 @@
             <IRI>tag:kalvesmaki.com,2014:self</IRI>
             <name xml:lang="eng">Joel Kalvesmaki</name>
          </person>
-         <algorithm xml:id="xslt1"><IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI><name>Stylesheet to populate a TAN-A-div file from collections.</name><desc>Stylesheet at: ../do%20things/convert/convert%20TAN%202017%20to%20TAN%202018.xsl</desc></algorithm>
          <role xml:id="editor">
             <IRI>http://schema.org/editor</IRI>
             <name xml:lang="eng">Editor</name>
          </role>
          <role xml:id="stylesheet1" which="stylesheet"/>
-         <relationship which="alternatively divided edition" xml:id="ade"/>
-      </definitions>
-      
-      <alter>
-         <normalization which="no hyphens"/>
-      </alter>
-      <resp who="xslt1" roles="stylesheet1"/>
+      </vocabulary-key>
+      <file-resp who="kalvesmaki"/>
+      <resp who="xslt2" roles="stylesheet1"/>
       <resp roles="editor" who="kalvesmaki"/>
-      <resp who="xslt1" roles="stylesheet1"/>
       <change when="2015-07-09-04:00" who="kalvesmaki">Started new file.</change>
-      <change who="xslt1" when="2017-11-02T22:18:18.426-04:00">TAN file updated to 2018 schemas.</change>
-   <change who="xslt1" when="2018-03-25T14:45:28.36-04:00">Converted from 2018 to 2019 schemas.</change>
-      </head>
+      <change who="xslt2" when="2018-08-05T00:07:27.401-04:00">Converted from 2018 to 2019 schemas.</change>
+      <to-do/>
+   </head>
    <body xml:lang="grc">
       <div type="ch" n="1">
          <div type="par" n="1">

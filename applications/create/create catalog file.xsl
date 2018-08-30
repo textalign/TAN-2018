@@ -52,15 +52,7 @@
                 <xsl:for-each
                     select="collection(concat($target-base-directory, '?select=*.xml;recurse=yes;on-error=ignore'))">
                     <xsl:variable name="this-base-uri" select="base-uri(.)"/>
-                    <!--<xsl:message select="'File at ', $this-base-uri"/>-->
-                    <!--<xsl:message
-                        select="
-                            if (string-length($exclude-filenames-that-match-what-pattern) gt 0) then
-                                not(matches($this-base-uri, $exclude-filenames-that-match-what-pattern))
-                            else
-                                true()"
-                    />-->
-                    <!--<xsl:message select="$tan-only, exists(root()/*/tan:head)"/>-->
+                    <xsl:variable name="this-doc-resolved" select="tan:resolve-doc(., false())"/>
                     <xsl:if
                         test="
                             if (string-length($exclude-filenames-that-match-what-pattern) gt 0) then
@@ -70,11 +62,13 @@
                         <xsl:if test="not($tan-only) or exists(root()/*/tan:head)">
                             <doc
                                 href="{tan:uri-relative-to($this-base-uri, $target-base-directory)}">
-                                <xsl:copy-of select="root()/*/@id"/>
-                                <xsl:copy-of select="root()/tei:TEI/tei:text/tei:body/@xml:lang"/>
-                                <xsl:copy-of select="root()/tan:TAN-T/tan:body/@xml:lang"/>
+                                <xsl:copy-of select="$this-doc-resolved/*/@id"/>
                                 <xsl:attribute name="root" select="name(root()/*)"/>
-                                <xsl:copy-of select="tan:TAN-A-lm/tan:body/(tan:for-lang, tan:tok-starts-with, tan:tok-is)"/>
+                                <xsl:copy-of select="$this-doc-resolved/(tei:TEI/tei:text, tan:*)/tei:body/@*"/>
+                                <xsl:copy-of select="$this-doc-resolved/*/tan:head/*"/>
+                                <!--<xsl:apply-templates select="root()/*/tan:head/*" mode="strip-specific-attributes">
+                                    <xsl:with-param name="attributes-to-strip" as="xs:string*" tunnel="yes" select="'q'"/>
+                                </xsl:apply-templates>-->
                             </doc>
                         </xsl:if>
                     </xsl:if>

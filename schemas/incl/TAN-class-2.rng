@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <grammar xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:ns1="tag:textalign.net,2015:ns" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
   <include href="TAN-core.rng" ns="tag:textalign.net,2015:ns">
-    <define name="definition-non-core">
+    <define name="declaration-non-core">
       <interleave>
-        <ref name="definition-class-2"/>
-        <ref name="definition-non-class-2"/>
+        <ref name="decl-class-2"/>
+        <ref name="decl-non-class-2"/>
       </interleave>
     </define>
-    <define name="alter-statement">
-      <zeroOrMore>
-        <ref name="alter-element"/>
-      </zeroOrMore>
+    <define name="source-content">
+      <ref name="entity-digital-tan-id"/>
     </define>
-    <define name="alter-non-core">
-      <ref name="alter-class-2"/>
-      <ref name="alter-non-class-2"/>
+    <define name="adjust-non-core">
+      <ref name="adjust-class-2"/>
+      <ref name="adjust-non-class-2"/>
     </define>
-    <define name="alter-condition">
+    <define name="adjust-condition">
       <ref name="action-condition"/>
     </define>
     <define name="action-condition-attributes">
@@ -25,6 +23,12 @@
         <ref name="div-type-ref"/>
       </optional>
     </define>
+    <define name="voc-key-non-core">
+      <interleave>
+        <ref name="voc-key-for-class-2"/>
+        <ref name="voc-key-for-non-class-2"/>
+      </interleave>
+    </define>
     <define name="body-content-non-core">
       <interleave>
         <ref name="body-content-class-2"/>
@@ -32,57 +36,39 @@
       </interleave>
     </define>
     <define name="sources-ref">
-      <a:documentation>All sources are TAN files, so no source rights should be declared--they're already stated</a:documentation>
       <attribute name="src">
         <a:documentation>refers to the ID of one or more &lt;source&gt;s </a:documentation>
       </attribute>
     </define>
   </include>
-  <define name="definition-class-2">
-    <interleave>
-      <zeroOrMore>
-        <ref name="defn-tok-def"/>
-      </zeroOrMore>
-      <zeroOrMore>
-        <ref name="defn-group-type"/>
-      </zeroOrMore>
-    </interleave>
+  <!-- HEAD: general declarations -->
+  <define name="decl-class-2">
+    <zeroOrMore>
+      <ref name="decl-tok-def"/>
+    </zeroOrMore>
   </define>
-  <define name="definition-non-class-2">
+  <define name="decl-non-class-2">
     <empty/>
   </define>
-  <define name="alter-class-2">
+  <!-- HEAD: adjustments -->
+  <define name="adjust-class-2">
     <zeroOrMore>
-      <ref name="alt-skip"/>
+      <ref name="adjust-skip"/>
     </zeroOrMore>
     <zeroOrMore>
-      <ref name="alt-rename"/>
+      <ref name="adjust-rename"/>
     </zeroOrMore>
     <zeroOrMore>
-      <ref name="alt-equate"/>
+      <ref name="adjust-equate"/>
     </zeroOrMore>
     <zeroOrMore>
-      <ref name="alt-reassign"/>
+      <ref name="adjust-reassign"/>
     </zeroOrMore>
   </define>
-  <define name="alter-non-class-2">
+  <define name="adjust-non-class-2">
     <empty/>
   </define>
-  <define name="body-content-class-2">
-    <optional>
-      <ref name="claimant-data"/>
-    </optional>
-  </define>
-  <define name="body-content-non-class-2">
-    <empty/>
-  </define>
-  <define name="source-ref">
-    <attribute name="src">
-      <a:documentation>refers to the ID of only one &lt;source&gt;</a:documentation>
-      <data type="NCName"/>
-    </attribute>
-  </define>
-  <define name="alt-skip">
+  <define name="adjust-skip">
     <element name="skip">
       <a:documentation>marks parts of a source that have been ignored or should be skipped, either shallowly (default) or deeply.</a:documentation>
       <a:documentation>Note, the shallow skip of a &lt;div&gt; may result in the source with leaf divs that have the same reference, breaking the Leaf Div Uniqueness Rule (LDUR). See main.xml#leaf_div_uniqueness_rule</a:documentation>
@@ -107,7 +93,7 @@
       </choice>
     </element>
   </define>
-  <define name="alt-rename">
+  <define name="adjust-rename">
     <element name="rename">
       <a:documentation>provisionally reassigns values of @n's in class 1 sources, or their calculated ref value, to another value.</a:documentation>
       <a:documentation>Values of @n will be renamed before attempting to rename references. Only the first renaming match will be applied.</a:documentation>
@@ -162,7 +148,7 @@
       <ref name="div-item-ref"/>
     </attribute>
   </define>
-  <define name="alt-equate">
+  <define name="adjust-equate">
     <element name="equate">
       <a:documentation>declares an ad hoc equivalence between works or @n values.</a:documentation>
       <a:documentation>This is useful for handling sources that have not used the the same &lt;IRI&gt;s in defining works that you believe to be equivalent, or for associating values of @n that should be treated as synonymous.</a:documentation>
@@ -177,7 +163,7 @@
       </choice>
     </element>
   </define>
-  <define name="alt-reassign">
+  <define name="adjust-reassign">
     <element name="reassign">
       <a:documentation>identifies word fragments that should be moved from one ref to another</a:documentation>
       <optional>
@@ -199,6 +185,15 @@
       <a:documentation>indicates a ref to which the preceding &lt;tok&gt;s should be moved.</a:documentation>
       <ref name="pointer-to-div-item"/>
     </element>
+  </define>
+  <!-- HEAD: abbreviations -->
+  <define name="voc-key-for-class-2">
+    <zeroOrMore>
+      <ref name="voc-key-for-group-type"/>
+    </zeroOrMore>
+  </define>
+  <define name="voc-key-for-non-class-2">
+    <empty/>
   </define>
   <define name="id-option">
     <a:documentation>Option to include an internal id. Not needed in TAN-A-lm files.</a:documentation>
@@ -232,6 +227,13 @@
         <data type="dateTime"/>
         <data type="date"/>
       </choice>
+    </attribute>
+  </define>
+  <!-- @src -->
+  <define name="source-ref">
+    <attribute name="src">
+      <a:documentation>refers to the ID of only one &lt;source&gt;</a:documentation>
+      <data type="NCName"/>
     </attribute>
   </define>
   <!-- div references -->
@@ -405,17 +407,19 @@
       <ref name="seq-picker"/>
     </attribute>
   </define>
+  <define name="body-content-class-2">
+    <optional>
+      <ref name="claimant-data"/>
+    </optional>
+  </define>
+  <define name="body-content-non-class-2">
+    <interleave>
+      <zeroOrMore>
+        <ref name="body-group"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="body-item"/>
+      </zeroOrMore>
+    </interleave>
+  </define>
 </grammar>
-<!--
-  continuation-opt = continuation
-  continuation =
-     
-     ## indicates whether the current element is continued by the next one and to be treated as a single one. Value must be 1 or true, implied by the very presence of the attribute. If you wish to decare it to be false, delete the attribute altogether.
--->
-<!--    ## This feature is useful in <tok> for rejoining the portion of a word split across two <div>s, or for uniting into a single linguistic token multiple tokens separated by the tokenization process, e.g., "pom pom". -->
-<!--
-     ## This feature is useful in <div-ref> for creating groups of references that cannot be expressed in a single <div-ref>  
-     attribute cont {
-         xsd:boolean { pattern = "true|1" }
-     }
--->

@@ -175,10 +175,10 @@
       <xsl:param name="dependencies" as="document-node()*" tunnel="yes"/>
       <xsl:variable name="this-head" select="."/>
       <xsl:variable name="work-elements" as="element()*">
-         <xsl:for-each select="$dependencies/*/tan:head/tan:definitions/tan:work">
+         <xsl:for-each select="$dependencies/*/tan:head/tan:work">
             <xsl:variable name="this-src" select="/*/@src"/>
             <xsl:variable name="these-equate-works"
-               select="$this-head/tan:definitions/tan:alias[tan:idref = $this-src]"/>
+               select="$this-head/tan:vocabulary-key/tan:alias[tan:idref = $this-src]"/>
             <xsl:copy>
                <xsl:copy-of select="$this-src"/>
                <xsl:copy-of select="@*"/>
@@ -201,7 +201,7 @@
          <xsl:apply-templates mode="#current">
             <xsl:with-param name="default-work-collation" select="$default-work-collation"
                tunnel="yes"/>
-            <xsl:with-param name="extra-definitions" select="$calculated-work-collation"
+            <xsl:with-param name="extra-vocabulary" select="$calculated-work-collation"
                tunnel="yes"/>
          </xsl:apply-templates>
       </xsl:copy>
@@ -211,7 +211,7 @@
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:apply-templates mode="#current">
-            <xsl:with-param name="definitions" select="../tan:head/tan:definitions"
+            <xsl:with-param name="vocabulary" select="../tan:head/tan:vocabulary-key"
                tunnel="yes"/>
             <xsl:with-param name="inherited-subjects" select="tan:subject" tunnel="yes"/>
             <xsl:with-param name="inherited-verbs" select="tan:verb" tunnel="yes"/>
@@ -220,7 +220,7 @@
    </xsl:template>
 
    <xsl:template match="tan:claim" mode="core-expansion-terse">
-      <xsl:param name="definitions" tunnel="yes"/>
+      <xsl:param name="vocabulary" tunnel="yes"/>
       <xsl:param name="inherited-subjects" tunnel="yes"/>
       <xsl:param name="inherited-verbs" tunnel="yes"/>
       <xsl:variable name="immediate-subject-refs" select="tan:subject"/>
@@ -240,11 +240,11 @@
                $inherited-verbs"/>
       <xsl:variable name="these-object-refs" select="(tan:object, tan:claim)"/>
 
-      <xsl:variable name="these-subjects" select="($these-subject-refs[not(@attr)], $definitions/tan:*[@xml:id = $these-subject-refs[@attr]])"/>
+      <xsl:variable name="these-subjects" select="($these-subject-refs[not(@attr)], $vocabulary/tan:*[@xml:id = $these-subject-refs[@attr]])"/>
       <xsl:variable name="subjects-that-are-not-textual"
          select="$these-subjects[not(name() = $elements-that-refer-to-textual-items or exists((@work, @src)))]"/>
 
-      <xsl:variable name="these-verbs" select="$definitions/tan:verb[@xml:id = $these-verb-refs]"/>
+      <xsl:variable name="these-verbs" select="$vocabulary/tan:verb[@xml:id = $these-verb-refs]"/>
       <xsl:variable name="these-verbs-with-object-constraints"
          select="$these-verbs[exists(@object-datatype)]"/>
       <xsl:variable name="verbal-groups"
@@ -254,7 +254,7 @@
                tokenize($i/@orig-group, '\s+')"/>
 
       <xsl:variable name="these-objects"
-         select="($these-object-refs[not(@attr)], $definitions/tan:*[@xml:id = $these-object-refs[@attr]])"/>
+         select="($these-object-refs[not(@attr)], $vocabulary/tan:*[@xml:id = $these-object-refs[@attr]])"/>
       <xsl:variable name="objects-that-are-not-textual"
          select="$these-objects[not(name() = $elements-that-refer-to-textual-items or exists((@work, @src)))]"/>
 
@@ -321,7 +321,7 @@
 
    <xsl:template match="tan:work[ancestor::tan:claim]" mode="core-expansion-normal">
       <xsl:variable name="this-work-id" select="."/>
-      <xsl:variable name="this-work-group" select="/tan:TAN-A-div/tan:head/tan:definitions/tan:group[tan:work/@src = $this-work-id]"/>
+      <xsl:variable name="this-work-group" select="/tan:TAN-A-div/tan:head/tan:vocabulary-key/tan:group[tan:work/@src = $this-work-id]"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:value-of select="$this-work-group/@n"/>

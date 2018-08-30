@@ -1,29 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../../schemas/TAN-A-lm.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="../../schemas/TAN-A-lm.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<TAN-A-lm xmlns="tag:textalign.net,2015:ns" TAN-version="2018" id="tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:semantic-refs:TAN-A-lm:2016-04-05T07:07:40.033-04:00">
+<TAN-A-lm xmlns="tag:textalign.net,2015:ns" TAN-version="2019" id="tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:semantic-refs:TAN-A-lm:2016-04-05T07:07:40.033-04:00">
    <head>
       <name>Lexico-morphological data for Categories, Aristotle, Greek text by Minio-Paluello</name>
-      <license>
+      <license licensor="kalvesmaki">
          <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
          <name>Creative Commons Attribution 4.0 International License</name>
          <desc>Exclusive of rights held and licenses offered by rightsholders of the source or
             sources listed below, this data file, insofar as it constitutes an independent work, is
             licensed under a Creative Commons Attribution 4.0 International License.</desc>
       </license>
-      <licensor who="kalvesmaki"/>
+      <token-definition pattern="[\w&#xad;​&#x200d;]+"/>
       <inclusion xml:id="rel">
          <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:object-refs</IRI>
          <name>Categories, Aristotle, Greek text by Minio-Paluello</name>
-         <location href="../ar.cat.grc.1949.minio-paluello-obj.xml" when-accessed="2016-09-28T08:50:23.457-04:00"/>
+         <location href="../ar.cat.grc.1949.minio-paluello.ref-scriptum.xml" accessed-when="2016-09-28T08:50:23.457-04:00"/>
       </inclusion>
       <source>
          <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:semantic-refs</IRI>
          <name>Categories, Aristotle, Greek text by Minio-Paluello</name>
-         <location href="../ar.cat.grc.1949.minio-paluello-sem.xml" when-accessed="2016-04-05T07:07:40.033-04:00"/>
+         <location href="../ar.cat.grc.1949.minio-paluello.ref-logical.xml" accessed-when="2016-04-05T07:07:40.033-04:00"/>
       </source>
-      <definitions>
-         <token-definition pattern="[\w­​‍]+"/>
+      <adjustments/>
+      <vocabulary-key>
+         <algorithm xml:id="xslt2">
+            <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
+            <name>Stylesheet to create a TAN file.</name>
+            <location href="../../applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl" accessed-when="2018-08-05T00:42:25.505-04:00"/>
+         </algorithm>
          <lexicon xml:id="LSJ">
             <IRI>http://lccn.loc.gov/95032369</IRI>
             <name xml:lang="eng">Liddell-Scott-Jones, 9th ed. plus rev. supplement</name>
@@ -38,10 +43,9 @@
                any other lexicon.</name>
          </lexicon>
          <morphology xml:id="Perseus">
-            <for-lang>grc</for-lang>
             <IRI>tag:kalvesmaki.com,2014:tan-r-mor:grc:perseus</IRI>
             <name xml:lang="eng">Perseus Greek morphology</name>
-            <location href="../../../library-arithmeticus/LM/TAN-mor/grc.kalvesmaki.com,2014.1.xml" when-accessed="2017-01-11"/>
+            <location href="../../../library-lm/grc/grc.perseus.tan-mor.xml" accessed-when="2017-01-11"/>
          </morphology>
          <group-type xml:id="status" which="status"/>
          <person include="rel"/>
@@ -49,18 +53,16 @@
             <IRI>tag:textalign.net,2015:stylesheet:create:tan-a-lm-from-tan-t</IRI>
             <name>TAN stylesheet to create a TAN-A-lm file from a TAN-T(EI)</name>
          </person>
-         <algorithm xml:id="xslt1"><IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI><name>Stylesheet to populate a TAN-A-div file from collections.</name><desc>Stylesheet at: ../../do%20things/convert/convert%20TAN%202017%20to%20TAN%202018.xsl</desc></algorithm>
          <role xml:id="editor">
             <IRI>http://schema.org/editor</IRI>
             <name xml:lang="eng">editor</name>
          </role>
          <role xml:id="stylesheet1" which="stylesheet"/>
-      </definitions>
-      <alter>
-      </alter>
+      </vocabulary-key>
+      <file-resp include="rel"/>
+      <resp who="xslt2" roles="stylesheet1"/>
       <resp include="rel"/>
       <resp roles="editor" who="stylesheet"/>
-      <resp who="xslt1" roles="stylesheet1"/>
       <change when="2016-04-05T07:07:40.033-04:00" who="stylesheet">Created file.</change>
       <change who="stylesheet" when="2016-04-10T00:47:17.434-04:00"> Reformatted version at
          file:/C:/Users/jdkalv/Dropbox/TAN/library/TAN-2018/examples/TAN-A-lm/ar.cat.grc.1949.minio-paluello-sem-TAN-A-lm.xml,
@@ -70,9 +72,12 @@
          file:/C:/Users/jdkalv/Dropbox/TAN/library/TAN-2018/examples/TAN-A-lm/ar.cat.grc.1949.minio-paluello-sem-TAN-A-lm.xml,
          using the following parameters: Groups before reformatting: 0 Convert to @pos/val: none
          Recombination: lm Sorted by: (ascending) Groups after reformatting: 0 </change>
-      <change who="xslt1" when="2017-11-02T21:48:54.974-04:00">TAN file updated to 2018 schemas.</change>
+      <change who="xslt2" when="2018-08-05T00:42:25.505-04:00">Converted from 2018 to 2019 schemas.</change>
+      <to-do>
+         <comment when="2018-08-05-04:00" who="kalvesmaki">Adjust file.</comment>
+      </to-do>
    </head>
-   <body lexicon="LSJ Lampe new" morphology="Perseus">
+   <body lexicon="LSJ Lampe new" morphology="Perseus" claimant="xslt2">
       <ana>
          <tok ref="11 2 1 1" pos="1"/>
          <lm>
@@ -80,7 +85,7 @@
             <m>n e - s - - - f a -</m>
          </lm>
       </ana>
-      <ana>
+      <!--<ana>
          <tok ref="10 6 3 2" pos="4"/>
          <tok ref="10 6 3 3" pos="15"/>
          <tok ref="10 6 4 2" pos="37"/>
@@ -5541,6 +5546,6 @@
             <l>ὥσπερ</l>
             <m>d r - - - - - - - -</m>
          </lm>
-      </ana>
+      </ana>-->
    </body>
 </TAN-A-lm>

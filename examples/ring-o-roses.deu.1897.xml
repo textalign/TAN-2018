@@ -3,37 +3,49 @@
 <?xml-model href="../schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <!--<?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-T.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
-<TAN-T xmlns="tag:textalign.net,2015:ns" TAN-version="2018" id="tag:hans@beispiel.com,2014:ringel">
+<TAN-T xmlns="tag:textalign.net,2015:ns" TAN-version="2019" id="tag:hans@beispiel.com,2014:ringel">
    <head>
       <name>TAN Transkription, Ringelreihen mit Riederfallen</name>
       <master-location href="http://beispiel.com/TAN-T/ringel.xml"/>
-      <license>
+      <license licensor="schmidt">
          <IRI>http://creativecommons.org/licenses/by/4.0/</IRI>
          <name>Creative Commons Namensnennung 4.0 International Lizenz</name>
          <desc>Dieses Werk ist lizenziert unter einer Creative Commons Namensnennung 4.0
             International Lizenz.</desc>
       </license>
-      <licensor who="schmidt"/>
+      <work>
+         <IRI>tag:beispiel.com,2014:texte:holderbusch</IRI>
+         <name>"Die Kinder auf dem Holderbusch"</name>
+      </work>
+      <version>
+         <IRI>urn:uuid:31648039-3dbb-49b9-b66e-9bd2cd11630e</IRI>
+         <name>zweite Version</name>
+      </version>
+      <ambiguous-letter-numerals-are-roman>false</ambiguous-letter-numerals-are-roman>
       <source>
          <IRI>http://www.worldcat.org/oclc/4574384</IRI>
          <name>Franz Magnus Böhme, Deutsches Kinderlied und Kinderspiel: Volksüberlieferungen aus
             allen Landen deutscher Zunge, gesammelt, geordnet und mit Angabe der Quellen. Leipzig,
             1897.</name>
       </source>
-      <definitions>
-         <work>
-            <IRI>tag:beispiel.com,2014:texte:holderbusch</IRI>
-            <name>"Die Kinder auf dem Holderbusch"</name>
-         </work>
-         <version>
-            <IRI>urn:uuid:31648039-3dbb-49b9-b66e-9bd2cd11630e</IRI>
-            <name>zweite Version</name>
-         </version>
+      <adjustments>
+         <normalization>
+            <IRI>tag:kalvesmaki@gmail.com,2014:normalization:hyphens-discretionary-off</IRI>
+            <name>Keine Bindestriche</name>
+         </normalization>
+      </adjustments>
+      <vocabulary-key>
+         <algorithm xml:id="xslt1">
+            <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
+            <name>Stylesheet to create a TAN file.</name>
+            <location href="../../applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl" accessed-when="2018-08-09T11:14:13.596-04:00"/>
+         </algorithm>
+         <role xml:id="stylesheet" which="stylesheet"/>
          <div-type xml:id="Zeile">
             <IRI>http://dbpedia.org/resource/Gedichtzeile</IRI>
             <name>Gedichtzeile</name>
          </div-type>
-         <div-type which="poem" xml:id="Gedicht"></div-type>
+         <div-type which="poem" xml:id="Gedicht"/>
          <person xml:id="schmidt">
             <IRI>tag:hans@beispiel.com,2014:selbst</IRI>
             <name xml:lang="eng">Hans Schmidt</name>
@@ -42,19 +54,17 @@
             <IRI>http://schema.org/producer</IRI>
             <name xml:lang="eng">Produzent</name>
          </role>
-         <ambiguous-letter-numerals-are-roman>false</ambiguous-letter-numerals-are-roman>
-      </definitions>
-      <alter>
-         <normalization>
-            <IRI>tag:kalvesmaki@gmail.com,2014:normalization:hyphens-discretionary-off</IRI>
-            <name>Keine Bindestriche</name>
-         </normalization>
-      </alter>
+      </vocabulary-key>
+      
+      <file-resp who="schmidt"/>
+      <resp who="xslt1" roles="stylesheet"/>
       <resp who="schmidt" roles="Produzent"/>
       <change when="2014-08-13" who="schmidt">Anfang</change>
+      <change who="xslt1" when="2018-08-09T11:14:13.596-04:00">Converted from 2018 to 2019 schemas.</change>
+      <to-do/>
       <comment when="2014-08-13" who="schmidt">unten auf der Z. 438, recht</comment>
    </head>
-   <body xml:lang="deu" in-progress="false">
+   <body xml:lang="deu">
       <div type="Gedicht" n="1">
          <div n="a" type="Zeile">Ringel, Ringel, Reihe!</div>
          <div n="b" type="Zeile">Sind der Kinder dreie,</div>

@@ -12,9 +12,24 @@
    <xsl:key name="div-via-orig-ref" match="tan:div"
       use="(tan:ref/tan:orig-ref, tan:ref[not(tan:orig-ref)]/text())"/>
 
+   <!-- CLASS 1 GLOBAL VARIABLES -->
+
    <xsl:variable name="tokenization-nonspace"
       select="$token-definitions-reserved[following-sibling::tan:name = 'nonspace']"/>
 
+   <!-- redivisions -->
+   <xsl:variable name="redivisions-1st-da" select="tan:get-1st-doc($head/tan:redivision)"/>
+   <xsl:variable name="redivisions-resolved" select="tan:resolve-doc($redivisions-1st-da)"/>
+   
+   <!-- models -->
+   <xsl:variable name="models-1st-da" select="tan:get-1st-doc($head/tan:model)"/>
+   <xsl:variable name="models-resolved" select="tan:resolve-doc($models-1st-da)"/>
+   
+   <!-- annotations -->
+   <xsl:variable name="annotations-1st-da" select="tan:get-1st-doc($head/tan:annotation)"/>
+   <xsl:variable name="annotations-resolved" select="tan:resolve-doc($annotations-1st-da)"/>
+   
+   
 
    <!-- CLASS 1 FUNCTIONS: TEXT -->
 
@@ -23,7 +38,7 @@
       select="concat('[', string-join($special-end-div-chars, ''), ']\s*$')" as="xs:string"/>
    <!-- regular expression to detect parts of a transcription that specify a line, column, or page break; these should be excluded from transcriptions and be rendered with markup -->
    <xsl:param name="break-marker-regex">[\|‖  ⁣￺]</xsl:param>
-   
+
 
    <xsl:function name="tan:text-join" as="xs:string?">
       <!-- Input: any document fragment of a TAN class 1 body, whether raw, resolved, or expanded  -->
@@ -42,7 +57,8 @@
    </xsl:template>
    <xsl:template match="*:div[not(*:div)]" mode="text-join">
       <xsl:variable name="text-nodes" select="text()[matches(., '\S')]"/>
-      <xsl:variable name="is-not-last-leaf-div" select="exists(following::*:div[not(*:div)][text()[matches(.,'\S')] or tan:tok or tei:*])"/>
+      <xsl:variable name="is-not-last-leaf-div"
+         select="exists(following::*:div[not(*:div)][text()[matches(., '\S')] or tan:tok or tei:*])"/>
       <xsl:variable name="text-nodes-to-process" as="xs:string*">
          <xsl:choose>
             <xsl:when test="exists(tan:tok)">
@@ -76,7 +92,8 @@
       <xsl:variable name="string-count" select="count($div-text-nodes)"/>
       <xsl:for-each select="$div-text-nodes">
          <xsl:variable name="this-norm" select="normalize-space(.)"/>
-         <xsl:variable name="ends-in-special-char" select="matches($this-norm, $special-end-div-chars-regex)"/>
+         <xsl:variable name="ends-in-special-char"
+            select="matches($this-norm, $special-end-div-chars-regex)"/>
          <xsl:choose>
             <xsl:when test="string-length(.) lt 1"/>
             <xsl:when test="position() lt $string-count">
@@ -124,15 +141,18 @@
          <xsl:when test="matches(., $special-end-div-chars-regex)">
             <!-- get next token -->
             <xsl:variable name="next-leaf" select="following::tan:div[not(tan:div)][1]"/>
-            <xsl:variable name="next-leaf-tokenized" select="tan:tokenize-text($next-leaf/text(), $token-definition, true())"/>
-            <xsl:variable name="next-leaf-fragment" select="$next-leaf-tokenized/*[xs:integer(@n) = 1]"/>
+            <xsl:variable name="next-leaf-tokenized"
+               select="tan:tokenize-text($next-leaf/text(), $token-definition, true())"/>
+            <xsl:variable name="next-leaf-fragment"
+               select="$next-leaf-tokenized/*[xs:integer(@n) = 1]"/>
             <xsl:copy-of select="$this-tokenized/*[xs:integer(@n) gt 1][not(@n = $last-tok/@n)]"/>
-            <xsl:for-each-group select="($this-tokenized/*[@n = $last-tok/@n], $next-leaf-fragment)" group-adjacent="name(.)">
+            <xsl:for-each-group select="($this-tokenized/*[@n = $last-tok/@n], $next-leaf-fragment)"
+               group-adjacent="name(.)">
                <xsl:element name="{current-grouping-key()}">
                   <xsl:copy-of select="current-group()[1]/@*"/>
                   <xsl:value-of select="string-join(current-group(), '')"/>
                </xsl:element>
-            </xsl:for-each-group> 
+            </xsl:for-each-group>
             <!--<tok>
                <xsl:value-of
                   select="replace($last-tok, concat($special-end-div-chars-regex, '\s*'), '')"/>
@@ -166,12 +186,66 @@
          <xsl:apply-templates mode="#current"/>
       </xsl:copy>
    </xsl:template>
+   
+   <xsl:template match="tan:redivision" mode="core-expansion-terse">
+      <xsl:variable name="these-iris" select="tan:IRI"/>
+      <xsl:variable name="this-redivision-doc-resolved" select="$redivisions-resolved[*/@id = $these-iris]"/>
+      <xsl:variable name="target-1st-da" select="tan:get-1st-doc(.)"/>
+      <xsl:variable name="target-doc-resolved"
+         select="
+            if (exists($this-redivision-doc-resolved)) then
+               $this-redivision-doc-resolved
+            else
+               tan:resolve-doc($target-1st-da)"/>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:if
+            test="not(/*/tan:head/tan:source/tan:IRI = $target-doc-resolved/*/tan:head/tan:source/tan:IRI)">
+            <xsl:copy-of select="tan:error('cl101')"/>
+         </xsl:if>
+         <xsl:if test="not(/*/tan:head/tan:work/tan:IRI = $target-doc-resolved/*/tan:head/tan:work/tan:IRI)">
+            <xsl:copy-of select="tan:error('cl102')"/>
+         </xsl:if>
+         <xsl:if
+            test="
+               exists(/tan:TAN-T/tan:head/tan:version) and
+               exists($target-doc-resolved/*/tan:head/tan:version) and
+               not(/*/tan:head/tan:version/tan:IRI = $target-doc-resolved/*/tan:head/tan:version/tan:IRI)">
+            <xsl:copy-of select="tan:error('cl103')"/>
+         </xsl:if>
+         <xsl:apply-templates mode="#current"/>
+      </xsl:copy>
+   </xsl:template>
+   
+   <xsl:template match="tan:model" mode="core-expansion-terse">
+      <xsl:variable name="these-iris" select="tan:IRI"/>
+      <xsl:variable name="this-model-doc-resolved" select="$models-resolved[*/@id = $these-iris]"/>
+      <xsl:variable name="target-1st-da" select="tan:get-1st-doc(.)"/>
+      <xsl:variable name="target-doc-resolved"
+         select="
+            if (exists($this-model-doc-resolved)) then
+               $this-model-doc-resolved
+            else
+               tan:resolve-doc($target-1st-da)"/>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:if test="not(/*/tan:head/tan:work/tan:IRI = $target-doc-resolved/*/tan:head/tan:work/tan:IRI)">
+            <xsl:copy-of select="tan:error('cl102')"/>
+         </xsl:if>
+         <xsl:variable name="other-models"
+            select="(preceding-sibling::tan:model, following-sibling::tan:model)"/>
+         <xsl:if test="exists($other-models)">
+            <xsl:copy-of select="tan:error('cl106')"/>
+         </xsl:if>
+         <xsl:apply-templates mode="#current"/>
+      </xsl:copy>
+   </xsl:template>
 
    <xsl:template match="tei:teiHeader" mode="#all" priority="-4">
       <xsl:copy-of select="."/>
    </xsl:template>
    <xsl:template match="tei:div[not(tei:div)]/tei:*"
-      mode="core-resolution-arabic-numerals core-expansion-terse-attributes">
+      mode="resolve-numerals core-expansion-terse-attributes">
       <xsl:copy-of select="."/>
    </xsl:template>
 
@@ -179,16 +253,16 @@
       <!-- Homogenize tei:TEI to tan:TAN-T -->
       <xsl:param name="class-2-doc" tunnel="yes" as="document-node()?"/>
       <!--<xsl:param name="definitions" tunnel="yes" as="element()*"/>-->
-      <xsl:variable name="definitions" select="$class-2-doc/*/tan:head/tan:definitions"/>
+      <xsl:variable name="vocabulary" select="$class-2-doc/*/tan:head/tan:vocabulary-key"/>
       <xsl:variable name="this-src-id" select="@src"/>
       <xsl:variable name="is-self" select="@id = $doc-id" as="xs:boolean"/>
       <xsl:variable name="this-expansion" select="'terse'"/>
       <xsl:variable name="this-work-group"
-         select="$definitions/tan:group[tan:work/@src = $this-src-id]"/>
-      <xsl:variable name="these-div-types" select="tan:head/tan:definitions/tan:div-type"/>
-      <xsl:variable name="this-alter"
+         select="$vocabulary/tan:group[tan:work/@src = $this-src-id]"/>
+      <xsl:variable name="these-div-types" select="tan:head/tan:vocabulary-key/tan:div-type"/>
+      <xsl:variable name="these-adjustments"
          select="
-            $class-2-doc/*/tan:head/tan:alter[(tan:src, tan:where/tan:src) = $this-src-id][if (exists(tan:div-type)) then
+            $class-2-doc/*/tan:head/tan:adjustments[(tan:src, tan:where/tan:src) = $this-src-id][if (exists(tan:div-type)) then
                tan:div-type = $these-div-types/@xml:id
             else
                true()]"/>
@@ -201,27 +275,27 @@
          <xsl:if test="exists($this-last-change-agent/self::tan:algorithm)">
             <xsl:copy-of select="tan:error('wrn07', 'The last change was made by an algorithm.')"/>
          </xsl:if>
-         <expansion>terse</expansion>
+         <expanded>terse</expanded>
          <xsl:variable name="these-skips"
             select="
-               $this-alter/tan:skip[if (exists(tan:div-type)) then
+               $these-adjustments/tan:skip[if (exists(tan:div-type)) then
                   tan:div-type = $these-div-types/@xml:id
                else
                   true()]"/>
          <xsl:variable name="these-renames"
             select="
-               $this-alter/tan:rename[if (exists(tan:div-type)) then
+               $these-adjustments/tan:rename[if (exists(tan:div-type)) then
                   tan:div-type = $these-div-types/@xml:id
                else
                   true()]"/>
-         <xsl:variable name="these-equates" select="$this-alter/tan:equate[exists(tan:n)]"/>
+         <xsl:variable name="these-equates" select="$these-adjustments/tan:equate[exists(tan:n)]"/>
          <xsl:choose>
             <xsl:when
                test="exists($these-skips) or exists($these-renames) or exists($these-equates)">
                <xsl:apply-templates mode="dependency-expansion-terse">
-                  <xsl:with-param name="alter-skips" tunnel="yes" select="$these-skips"/>
-                  <xsl:with-param name="alter-renames" tunnel="yes" select="$these-renames"/>
-                  <xsl:with-param name="alter-equates" tunnel="yes" select="$these-equates"/>
+                  <xsl:with-param name="adjustment-skips" tunnel="yes" select="$these-skips"/>
+                  <xsl:with-param name="adjustment-renames" tunnel="yes" select="$these-renames"/>
+                  <xsl:with-param name="adjustment-equates" tunnel="yes" select="$these-equates"/>
                </xsl:apply-templates>
             </xsl:when>
             <xsl:otherwise>
@@ -241,8 +315,8 @@
       <xsl:apply-templates mode="#current"/>
    </xsl:template>
    <xsl:template match="tan:div | tei:div"
-      mode="core-expansion-terse dependency-expansion-terse-no-alter">
-      <!-- streamlined expansion of <div>s; applied to dependencies of class-2 files only when there are no more alter items to process -->
+      mode="core-expansion-terse dependency-expansion-terse-no-adjustments">
+      <!-- streamlined expansion of <div>s; applied to dependencies of class-2 files only when there are no more adjustment items to process -->
       <xsl:param name="parent-new-refs" as="element()*" select="$empty-element"/>
       <xsl:variable name="is-tei" select="namespace-uri() = 'http://www.tei-c.org/ns/1.0'"
          as="xs:boolean"/>
@@ -295,16 +369,17 @@
    </xsl:template>
 
    <xsl:template match="tan:div | tei:div" mode="dependency-expansion-terse">
-      <!-- This template serves to make adjustments declared in the <alter> of a class 2 file upon a dependency class 1 file. -->
-      <!-- In the course of <alter> adjustments, errors may be detected that should be reported to the dependent class 2 file. In those cases, the specific instruction is copied along with its @q value, and the error is embedded inside. That way when the normalized source file is returned to the class 2 file, the specific error can be matched with the specific instruction in the <alter>. -->
-      <xsl:param name="alter-skips" tunnel="yes" as="element()*"/>
-      <xsl:param name="alter-renames" tunnel="yes" as="element()*"/>
-      <xsl:param name="alter-equates" tunnel="yes" as="element()*"/>
+      <!-- This template serves to make adjustments declared in the <adjustments> of a class 2 file upon a dependency class 1 file. -->
+      <!-- In the course of <adjustments>, errors may be detected that should be reported to the dependent class 2 file. In those cases, the specific instruction is copied along with its @q value, and the error is embedded inside. That way when the normalized source file is returned to the class 2 file, the specific error can be matched with the specific instruction in the <adjustments>. -->
+      <xsl:param name="adjustment-skips" tunnel="yes" as="element()*"/>
+      <xsl:param name="adjustment-renames" tunnel="yes" as="element()*"/>
+      <xsl:param name="adjustment-equates" tunnel="yes" as="element()*"/>
       <xsl:param name="parent-orig-refs" as="element()*" select="$empty-element"/>
       <xsl:param name="parent-new-refs" as="element()*" select="$empty-element"/>
       <xsl:variable name="diagnostics" as="xs:boolean" select="false()"/>
       <xsl:if test="$diagnostics">
-         <xsl:message>Diagnostics turned on for template mode dependency-expansion-terse</xsl:message>
+         <xsl:message>Diagnostics turned on for template mode
+            dependency-expansion-terse</xsl:message>
       </xsl:if>
       <xsl:variable name="is-tei" select="namespace-uri() = 'http://www.tei-c.org/ns/1.0'"
          as="xs:boolean"/>
@@ -328,7 +403,7 @@
       <!-- The expression below looks to see the div has a flagged reference (using the pre-modified reference system), @n, @type, or @n + @type combination. -->
       <xsl:variable name="skip-instructions"
          select="
-            $alter-skips[tan:ref/text() = $orig-refs/text()
+            $adjustment-skips[tan:ref/text() = $orig-refs/text()
             or (tan:div-type = $this-type-analyzed and not(exists(tan:n)))
             or (tan:n = $this-n-analyzed/* and not(exists(tan:div-type)))
             or (tan:div-type = $this-type-analyzed and tan:n = $this-n-analyzed)]"/>
@@ -365,7 +440,7 @@
             <!-- We are not skipping, so now we can analyze renaming, aliases -->
             <xsl:variable name="possible-rename-rules"
                select="
-                  $alter-renames[not(exists(tan:div-type))
+                  $adjustment-renames[not(exists(tan:div-type))
                   or tan:div-type = $this-type-analyzed/*]"/>
 
             <xsl:variable name="new-ns" as="element()*">
@@ -429,7 +504,8 @@
                         <xsl:message select="$this-n"/>
                      </xsl:if>
                      <xsl:copy-of select="."/>
-                     <xsl:copy-of select="$alter-equates[tan:n = $this-n]/tan:n[not(. = $this-n)]"/>
+                     <xsl:copy-of
+                        select="$adjustment-equates[tan:n = $this-n]/tan:n[not(. = $this-n)]"/>
                   </xsl:for-each>
                </xsl:for-each>
             </xsl:variable>
@@ -497,7 +573,7 @@
                            </xsl:otherwise>
                         </xsl:choose>
                         <xsl:if test="exists($first-rename)">
-                           <!-- We signal that the alter action has been acted on by copying the original reference, followed by a copy of the alter action -->
+                           <!-- We signal that an adjustment action has been acted on by copying the original reference, followed by a copy of the adjustment action -->
                            <orig-ref>
                               <xsl:value-of select="$this-ref"/>
                            </orig-ref>
@@ -526,7 +602,7 @@
 
             <xsl:variable name="skips-to-pass-to-children"
                select="
-                  $alter-skips[if (exists((tan:ref, tan:range/tan:ref))) then
+                  $adjustment-skips[if (exists((tan:ref, tan:range/tan:ref))) then
                      (some $i in (tan:ref, tan:range/tan:ref),
                         $j in $new-refs
                         satisfies matches($i/text(), concat('^', $j/text(), '\W')))
@@ -534,7 +610,7 @@
                      true()]"/>
             <xsl:variable name="renames-to-pass-to-children"
                select="
-                  $alter-renames[if (exists((tan:ref, tan:range/tan:ref))) then
+                  $adjustment-renames[if (exists((tan:ref, tan:range/tan:ref))) then
                      (some $i in (tan:ref, tan:range/tan:ref),
                         $j in $new-refs
                         satisfies matches($i/text(), concat('^', $j/text(), '\W')))
@@ -565,8 +641,8 @@
                </xsl:if>
                <xsl:choose>
                   <xsl:when
-                     test="not(exists($skips-to-pass-to-children)) and not(exists($renames-to-pass-to-children)) and not(exists($alter-equates))">
-                     <xsl:apply-templates mode="dependency-expansion-terse-no-alter">
+                     test="not(exists($skips-to-pass-to-children)) and not(exists($renames-to-pass-to-children)) and not(exists($adjustment-equates))">
+                     <xsl:apply-templates mode="dependency-expansion-terse-no-adjustments">
                         <xsl:with-param name="parent-new-refs" select="$new-refs"/>
                      </xsl:apply-templates>
                   </xsl:when>
@@ -574,9 +650,9 @@
                      <xsl:apply-templates mode="#current">
                         <xsl:with-param name="parent-orig-refs" select="$orig-refs"/>
                         <xsl:with-param name="parent-new-refs" select="$new-refs"/>
-                        <xsl:with-param name="alter-skips" tunnel="yes"
+                        <xsl:with-param name="adjustment-skips" tunnel="yes"
                            select="$skips-to-pass-to-children"/>
-                        <xsl:with-param name="alter-renames" tunnel="yes"
+                        <xsl:with-param name="adjustment-renames" tunnel="yes"
                            select="$renames-to-pass-to-children"/>
                      </xsl:apply-templates>
                   </xsl:otherwise>
@@ -633,19 +709,21 @@
       <xsl:param name="class-2-doc" tunnel="yes" as="document-node()?"/>
       <xsl:variable name="this-src-id" select="parent::tan:TAN-T/@src"/>
       <xsl:variable name="these-reassigns"
-         select="$class-2-doc/*/tan:head/tan:alter[(tan:src, tan:where/tan:src) = $this-src-id]/tan:reassign"/>
+         select="$class-2-doc/*/tan:head/tan:adjustments[(tan:src, tan:where/tan:src) = $this-src-id]/tan:reassign"/>
       <xsl:variable name="data-toks"
          select="$class-2-doc/*/tan:body//tan:tok[(self::*, parent::*)/(tan:src, tan:work) = $this-src-id]"/>
       <xsl:variable name="token-definition"
-         select="($class-2-doc/*/tan:head/tan:definitions/tan:token-definition[tan:src = $this-src-id])[1]"/>
+         select="($class-2-doc/*/tan:head/tan:token-definition[tan:src = $this-src-id])[1]"/>
+      <xsl:variable name="tokenize-everywhere" select="exists($class-2-doc/tan:TAN-A-lm/tan:body//tan:tok[not(@ref)])"/>
       <xsl:choose>
          <xsl:when test="exists($these-reassigns) or exists($data-toks)">
             <xsl:copy>
                <xsl:copy-of select="@*"/>
                <xsl:apply-templates mode="#current">
-                  <xsl:with-param name="alter-reassigns" select="$these-reassigns"/>
+                  <xsl:with-param name="adjustment-reassigns" select="$these-reassigns"/>
                   <xsl:with-param name="data-toks" select="$data-toks"/>
                   <xsl:with-param name="token-definition" select="$token-definition" tunnel="yes"/>
+                  <xsl:with-param name="tokenize-everywhere" select="$tokenize-everywhere" tunnel="yes"/>
                </xsl:apply-templates>
             </xsl:copy>
          </xsl:when>
@@ -657,20 +735,21 @@
    <xsl:template match="tan:div" mode="dependencies-tokenized-selectively">
       <!--<xsl:param name="class-2-doc" tunnel="yes" as="document-node()?"/>-->
       <!--<xsl:param name="src-id" tunnel="yes"/>-->
-      <xsl:param name="alter-reassigns" as="element()*"/>
+      <xsl:param name="adjustment-reassigns" as="element()*"/>
       <xsl:param name="data-toks" as="element()*"/>
       <xsl:param name="token-definition" as="element()*" tunnel="yes"/>
+      <xsl:param name="tokenize-everywhere" as="xs:boolean?" tunnel="yes"/>
       <xsl:variable name="this-div" select="."/>
       <xsl:variable name="is-leaf-div" select="not(exists(tan:div))"/>
-      <!-- In the course of altering a source, it is possible that <div>s get moved into leaf <div>s before those leaf <div>s can be reassigned -->
+      <!-- In the course of adjusting a source, it is possible that <div>s get moved into leaf <div>s before those leaf <div>s can be reassigned -->
       <xsl:variable name="is-mixed-div"
          select="not($is-leaf-div) and exists(text()[matches(., '\S')])"/>
       <xsl:variable name="these-refs" select="tan:ref/text()"/>
       <xsl:variable name="reassign-instructions"
-         select="$alter-reassigns[tan:tok/tan:ref/text() = $these-refs]"/>
+         select="$adjustment-reassigns[tan:tok/tan:ref/text() = $these-refs]"/>
       <xsl:variable name="reassigns-to-pass-to-children"
          select="
-            $alter-reassigns[some $i in $these-refs
+            $adjustment-reassigns[some $i in $these-refs
                satisfies matches((tan:tok/tan:ref/text())[1], concat('^', $i, '\W'))]"/>
       <xsl:variable name="these-data-toks" select="$data-toks[tan:ref/text() = $these-refs]"/>
       <xsl:variable name="data-toks-to-pass-to-children"
@@ -682,7 +761,7 @@
       <xsl:variable name="div-should-be-tokenized"
          select="($is-leaf-div or $is-mixed-div) and (exists($reassign-instructions) or exists($these-data-toks))"/>
       <xsl:choose>
-         <xsl:when test="$div-should-be-tokenized">
+         <xsl:when test="$tokenize-everywhere or $div-should-be-tokenized">
             <xsl:variable name="text-tokenized"
                select="tan:tokenize-text(text(), $token-definition, true())"/>
             <xsl:variable name="previous-renames" select="$this-div/tan:ref/tan:rename"/>
@@ -776,8 +855,7 @@
                                        $text-tokenized/tan:tok[if (exists($this-val)) then
                                           . = $this-val
                                        else
-                                          tan:matches(., $this-rgx)]"
-                                 />
+                                          tan:matches(., $this-rgx)]"/>
                                  <xsl:for-each select=".//tan:pos">
                                     <xsl:variable name="this-pos"
                                        select="tan:expand-pos-or-chars(., count($tokens-picked))"/>
@@ -815,7 +893,7 @@
                   <div q="{generate-id(current-group()[1])}">
                      <ref>
                         <xsl:value-of select="current-grouping-key()"/>
-                        <!-- We include the original reference children, except <n>, to check the work later (alter actions, original references). -->
+                        <!-- We include the original reference children, except <n>, to check the work later (adjustments, original references). -->
                         <xsl:copy-of select="$this-div/tan:ref/(* except tan:n)"/>
                         <xsl:for-each
                            select="tokenize(current-grouping-key(), $separator-hierarchy)">
@@ -829,7 +907,7 @@
                                  <xsl:value-of select="."/>
                               </orig-ref>
                            </xsl:for-each>
-                           <!-- Just as in pass 1, we signal that the alter action has been processed by placing a copy of the action as a sibling of the <orig-ref> -->
+                           <!-- Just as in pass 1, we signal that the adjustment has been processed by placing a copy of it as a sibling of the <orig-ref> -->
                            <xsl:copy-of select="tan:shallow-copy($specific-reassigns)"/>
                         </xsl:if>
                      </ref>
@@ -872,7 +950,8 @@
                <xsl:when
                   test="exists($reassigns-to-pass-to-children) or exists($data-toks-to-pass-to-children)">
                   <xsl:apply-templates select="tan:div" mode="#current">
-                     <xsl:with-param name="alter-reassigns" select="$reassigns-to-pass-to-children"/>
+                     <xsl:with-param name="adjustment-reassigns"
+                        select="$reassigns-to-pass-to-children"/>
                      <xsl:with-param name="data-toks" select="$data-toks-to-pass-to-children"/>
                   </xsl:apply-templates>
                </xsl:when>
@@ -886,7 +965,8 @@
             <xsl:copy>
                <xsl:copy-of select="@*"/>
                <xsl:apply-templates mode="#current">
-                  <xsl:with-param name="alter-reassigns" select="$reassigns-to-pass-to-children"/>
+                  <xsl:with-param name="adjustment-reassigns"
+                     select="$reassigns-to-pass-to-children"/>
                   <xsl:with-param name="data-toks" select="$data-toks-to-pass-to-children"/>
                </xsl:apply-templates>
             </xsl:copy>
@@ -920,7 +1000,8 @@
             <xsl:copy-of select="tan:error('cl109', $this-ref)"/>
          </xsl:if>
          <xsl:if
-            test="not(tan:div) and
+            test="
+               not(tan:div) and
                not(some $i in text()
                   satisfies matches($i, '\S'))">
             <xsl:copy-of select="tan:error('cl110')"/>
@@ -971,9 +1052,8 @@
       <xsl:if test="$diagnostics">
          <xsl:message>Diagnostics turned on for template class-1-expansion-verbose</xsl:message>
       </xsl:if>
-      <!-- Evaluate each alternatively divided edition (ade) -->
-      <xsl:variable name="redivisions"
-         select="tan:head/tan:redivision, tan:head/tan:see-also[tan:definition(tan:relationship)/tan:name = 'alternatively divided edition']"/>
+      <!-- Evaluate each redivision -->
+      <xsl:variable name="redivisions" select="tan:head/tan:redivision"/>
       <xsl:variable name="these-redivisions" as="document-node()*">
          <xsl:for-each select="$redivisions">
             <xsl:variable name="these-iris" select="tan:IRI"/>
@@ -1008,7 +1088,7 @@
       <xsl:variable name="relevant-ade-diffs"
          select="tan:analyze-leaf-div-string-length($these-redivision-diffs[position() = $relevant-ade-nos])"
          as="element()*"/>
-      <xsl:variable name="ade-diffs-prepped" as="element()*">
+      <xsl:variable name="redivision-diffs-prepped" as="element()*">
          <xsl:for-each select="$relevant-ade-diffs">
             <xsl:copy>
                <xsl:copy-of select="@*"/>
@@ -1085,8 +1165,10 @@
       </xsl:variable>
 
       <!-- Evaluate the model (only one model is allowed) -->
+      <!--<xsl:variable name="see-also-model"
+         select="(tan:head/tan:see-also[tan:vocabulary-key-item(tan:relationship)/tan:name = 'model'])[1]"/>-->
       <xsl:variable name="see-also-model"
-         select="(tan:head/tan:see-also[tan:definition(tan:relationship)/tan:name = 'model'])[1]"/>
+         select="(tan:head/tan:see-also[tan:element-vocabulary(.)//tan:name = 'model'])[1]"/>
       <xsl:variable name="model-already-resolved"
          select="$see-alsos-resolved[*/@id = $see-also-model/tan:IRI]"/>
       <xsl:variable name="this-model-resolved"
@@ -1122,66 +1204,65 @@
          </xsl:if>
          <xsl:apply-templates mode="#current">
             <xsl:with-param name="bad-see-alsos" select="$relevant-see-also-ades" tunnel="yes"/>
-            <xsl:with-param name="text-alternatives" select="$ade-diffs-prepped" tunnel="yes"/>
+            <xsl:with-param name="text-redivisions" select="$redivision-diffs-prepped" tunnel="yes"/>
             <xsl:with-param name="self-and-model-merged" select="$self-and-model-merged"
                tunnel="yes"/>
          </xsl:apply-templates>
       </xsl:copy>
    </xsl:template>
 
-   <xsl:template match="tan:see-also" mode="class-1-expansion-verbose">
-      <xsl:param name="bad-see-alsos" tunnel="yes"/>
+   <xsl:template match="tan:model" mode="class-1-expansion-verbose">
       <xsl:param name="self-and-model-merged" tunnel="yes"/>
-      <xsl:variable name="this-is-bad" select="$bad-see-alsos/tan:IRI = tan:IRI"/>
-      <xsl:variable name="this-relationship" select="tan:definition(tan:relationship)"/>
-      <xsl:variable name="this-is-model" select="$this-relationship/tan:name = 'model'"/>
+      <xsl:variable name="all-divs" select="$self-and-model-merged//tan:div[tan:div]"/>
+      <xsl:variable name="defective-divs" select="$all-divs[count(tan:src) = 1]"/>
+      <xsl:variable name="these-defective-divs" select="$defective-divs[tan:src = '1']"/>
+      <xsl:variable name="those-defective-divs" select="$defective-divs[tan:src = '2']"/>
+      <xsl:variable name="this-message" as="xs:string*">
+         <xsl:text>This file and its model diverge: </xsl:text>
+         <xsl:value-of
+            select="
+               if (exists($these-defective-divs)) then
+                  concat('uniquely here: ', string-join($these-defective-divs/tan:ref/text(), '; '), ' ')
+               else
+                  ()"/>
+         <xsl:value-of
+            select="
+               if (exists($those-defective-divs)) then
+                  concat('unique to model: ', string-join($those-defective-divs/tan:ref/text(), '; '), ' ')
+               else
+                  ()"
+         />
+      </xsl:variable>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
-         <xsl:choose>
-            <xsl:when
-               test="$this-relationship/tan:name = 'alternatively divided edition' and $this-is-bad">
-               <xsl:copy-of select="tan:error('cl104')"/>
-            </xsl:when>
-            <xsl:when test="$this-is-model">
-               <xsl:variable name="all-divs" select="$self-and-model-merged//tan:div[tan:div]"/>
-               <xsl:variable name="defective-divs" select="$all-divs[count(tan:src) = 1]"/>
-               <xsl:variable name="these-defective-divs" select="$defective-divs[tan:src = '1']"/>
-               <xsl:variable name="those-defective-divs" select="$defective-divs[tan:src = '2']"/>
-               <xsl:variable name="this-message" as="xs:string*">
-                  <xsl:text>This file and its model diverge: </xsl:text>
-                  <xsl:value-of
-                     select="
-                        if (exists($these-defective-divs)) then
-                           concat('uniquely here: ', string-join($these-defective-divs/tan:ref/text(), '; '), ' ')
-                        else
-                           ()"/>
-                  <xsl:value-of
-                     select="
-                        if (exists($those-defective-divs)) then
-                           concat('unique to model: ', string-join($those-defective-divs/tan:ref/text(), '; '), ' ')
-                        else
-                           ()"
-                  />
-               </xsl:variable>
-               <xsl:if test="exists($defective-divs)">
-                  <xsl:copy-of select="tan:error('cl107', $this-message)"/>
-               </xsl:if>
-            </xsl:when>
-         </xsl:choose>
+         <xsl:apply-templates mode="#current"/>
+         <xsl:if test="exists($defective-divs)">
+            <xsl:copy-of select="tan:error('cl107', $this-message)"/>
+         </xsl:if>
+      </xsl:copy>
+   </xsl:template>
+   <xsl:template match="tan:redivision" mode="class-1-expansion-verbose">
+      <xsl:param name="bad-see-alsos" tunnel="yes"/>
+      <xsl:variable name="this-is-bad" select="$bad-see-alsos/tan:IRI = tan:IRI"/>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:if test="$this-is-bad">
+            <xsl:copy-of select="tan:error('cl104')"/>
+         </xsl:if>
          <xsl:apply-templates mode="#current"/>
       </xsl:copy>
    </xsl:template>
 
    <xsl:template match="tan:body" mode="class-1-expansion-verbose">
-      <xsl:param name="text-alternatives" tunnel="yes"/>
+      <xsl:param name="text-redivisions" tunnel="yes"/>
       <xsl:variable name="this-revised-body"
          select="
-            if (exists($text-alternatives)) then
+            if (exists($text-redivisions)) then
                tan:analyze-leaf-div-string-length(.)
             else
                ."/>
       <xsl:variable name="leaf-div-pass-1" as="element()*">
-         <!-- First, look to see if any leaf divs showed up as anomalies in the diff operation with any alternatively divided edition -->
+         <!-- First, look to see if any leaf divs showed up as anomalies in the diff operation with any redivision -->
          <xsl:apply-templates select="$this-revised-body/*" mode="#current"/>
       </xsl:variable>
       <xsl:variable name="leaf-div-pass-2" as="element()*">
@@ -1234,7 +1315,7 @@
    </xsl:template>
 
    <xsl:template match="tan:div" mode="class-1-expansion-verbose">
-      <xsl:param name="text-alternatives" tunnel="yes"/>
+      <xsl:param name="text-redivisions" tunnel="yes"/>
       <xsl:param name="leaf-div-replacements" as="element()*" tunnel="yes"/>
       <xsl:param name="self-and-model-merged" tunnel="yes"/>
       <xsl:variable name="this-q" select="@q"/>
@@ -1247,8 +1328,8 @@
             <xsl:variable name="char-start" select="@string-pos" as="xs:integer?"/>
             <xsl:variable name="char-end" select="$char-start + xs:integer(@string-length)"
                as="xs:integer?"/>
-            <xsl:variable name="these-alternatives" as="element()*">
-               <xsl:for-each select="$text-alternatives">
+            <xsl:variable name="these-redivisions" as="element()*">
+               <xsl:for-each select="$text-redivisions">
                   <xsl:copy>
                      <xsl:copy-of select="@*"/>
                      <xsl:attribute name="alt" select="position()"/>
@@ -1266,8 +1347,8 @@
                         string-join((tan:tok, tan:non-tok), '')
                      else
                         text())"/>
-               <xsl:if test="not(exists(tan:div)) and exists($these-alternatives)">
-                  <!-- If it's a leaf div, and there is alternative text, process the options -->
+               <xsl:if test="not(exists(tan:div)) and exists($these-redivisions)">
+                  <!-- If it's a leaf div, and there is text from a redivision, process the options -->
                   <xsl:variable name="these-char-nos"
                      select="
                         for $i in (1 to @string-length)
@@ -1276,7 +1357,7 @@
                   <xsl:variable name="this-text-chopped" select="tan:chop-string($this-text)"/>
                   <xsl:variable name="this-char-count" select="count($this-text-chopped)"/>
                   <xsl:variable name="replacements" as="xs:string*">
-                     <xsl:for-each select="$these-alternatives[tan:c]">
+                     <xsl:for-each select="$these-redivisions[tan:c]">
                         <xsl:variable name="these-cs" select="tan:c"/>
                         <xsl:variable name="pass1" as="xs:string*">
                            <xsl:for-each select="$this-text-chopped">
@@ -1295,9 +1376,10 @@
                   </xsl:variable>
                   <xsl:for-each select="$replacements">
                      <xsl:variable name="this-diff" select="tan:diff($this-text, .)"/>
-                     <xsl:variable name="this-diff-trimmed" select="tan:trim-long-text($this-diff, 17)"/>
+                     <xsl:variable name="this-diff-trimmed"
+                        select="tan:trim-long-text($this-diff, 17)"/>
                      <xsl:copy-of
-                        select="tan:error('cl104', concat('Differs with copy (= b): ',tan:xml-to-string($this-diff-trimmed)), ., 'replace-text')"
+                        select="tan:error('cl104', concat('Differs with copy (= b): ', tan:xml-to-string($this-diff-trimmed)), ., 'replace-text')"
                      />
                   </xsl:for-each>
                </xsl:if>
@@ -1444,8 +1526,7 @@
                   if (exists(tan:rgx)) then
                      (tan:matches($this-val, tan:rgx))
                   else
-                     false()]"
-      />
+                     false()]"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:for-each select="$relevant-claims">
@@ -1558,11 +1639,13 @@
                <xsl:for-each select="current-group()/tan:ref[1]">
                   <xsl:variable name="this-first-ref" select="text()"/>
                   <ref>
-                     <xsl:value-of select="$ref-groups[tan:div/tan:ref = $this-first-ref]/tan:div[1]/tan:ref[1]"/>
+                     <xsl:value-of
+                        select="$ref-groups[tan:div/tan:ref = $this-first-ref]/tan:div[1]/tan:ref[1]"
+                     />
                   </ref>
                </xsl:for-each>
             </a>
-         </xsl:for-each-group> 
+         </xsl:for-each-group>
       </xsl:variable>
       <xsl:variable name="sort-key" select="tan:collate-sequences($sort-key-prep)" as="xs:string*"/>
       <xsl:for-each-group select="$divs-to-group"
@@ -1825,7 +1908,7 @@
          <xsl:value-of select="."/>
       </xsl:if>
    </xsl:template>
-   
+
    <xsl:template match="tan:mold" mode="infuse-tokenized-div-end-check">
       <xsl:apply-templates mode="#current"/>
    </xsl:template>
@@ -1983,7 +2066,7 @@
    <xsl:function name="tan:analyze-leaf-div-string-length" as="item()*">
       <!-- Input: any class 1 document fragment -->
       <!-- Output: Every leaf div stamped with @string-length and @string-pos, indicating how long the text node is, and where it is relative to all other leaf text nodes, after TAN text normalization rules have been applied. -->
-      <!-- This function is useful for statistical processing, and for comparing a TAN-T(EI) file against an alternatively divided edition. -->
+      <!-- This function is useful for statistical processing, and for comparing a TAN-T(EI) file against a redivision. -->
       <!-- It has also been designed to stamp the <a> and <common> results of tan:diff(), to facilitate SQFs that replace a text with that of the other version. -->
       <!-- This function does the same thing as tan:analyze-string-length(), but approaches the problem with a recursive loop -->
       <xsl:param name="document-fragment" as="item()*"/>

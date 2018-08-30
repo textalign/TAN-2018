@@ -1,30 +1,25 @@
 namespace ns1 = "tag:textalign.net,2015:ns"
 
 include "TAN-core.rnc" inherit = ns1 {
-    definition-non-core = definition-class-2 & definition-non-class-2
-    alter-statement = alter-element*
-    alter-non-core = alter-class-2, alter-non-class-2
-    alter-condition = action-condition
+    declaration-non-core = decl-class-2 & decl-non-class-2
+    source-content = entity-digital-tan-id
+    adjust-non-core = adjust-class-2, adjust-non-class-2
+    adjust-condition = action-condition
     action-condition-attributes = sources-ref, div-type-ref?
+    voc-key-non-core = voc-key-for-class-2 & voc-key-for-non-class-2
     body-content-non-core = body-content-class-2 & body-content-non-class-2
-    
-    ## All sources are TAN files, so no source rights should be declared--they're already stated
     sources-ref =
         
         ## refers to the ID of one or more <source>s 
         attribute src { text }
 }
-definition-class-2 = defn-tok-def* & defn-group-type*
-definition-non-class-2 = empty
-alter-class-2 = alt-skip*, alt-rename*, alt-equate*, alt-reassign*
-alter-non-class-2 = empty
-body-content-class-2 = claimant-data?
-body-content-non-class-2 = empty
-source-ref =
-    
-    ## refers to the ID of only one <source>
-    attribute src { xsd:NCName }
-alt-skip =
+# HEAD: general declarations
+decl-class-2 = decl-tok-def*
+decl-non-class-2 = empty
+# HEAD: adjustments
+adjust-class-2 = adjust-skip*, adjust-rename*, adjust-equate*, adjust-reassign*
+adjust-non-class-2 = empty
+adjust-skip =
     
     ## marks parts of a source that have been ignored or should be skipped, either shallowly (default) or deeply.
     
@@ -36,7 +31,7 @@ alt-skip =
         (inclusion
          | (shallow-option?, (n | pointer-to-div-item | div-type-ref)?))
     }
-alt-rename =
+adjust-rename =
     
     ## provisionally reassigns values of @n's in class 1 sources, or their calculated ref value, to another value.
     
@@ -59,7 +54,7 @@ new-ref-name =
     
     ## provides the new ref for a <div> that is to be renamed
     attribute new { div-item-ref }
-alt-equate =
+adjust-equate =
     
     ## declares an ad hoc equivalence between works or @n values.
     
@@ -69,7 +64,7 @@ alt-equate =
     
     ## This element does not imply that the works are necessarily one and the same, or than the @n values are the same. It merely states that, for the purposes of this alignment, they should be treated as equivalent.
     element equate { ed-stamp?, (inclusion | n) }
-alt-reassign =
+adjust-reassign =
     
     ## identifies word fragments that should be moved from one ref to another
     element reassign {
@@ -80,6 +75,9 @@ target-div-ref =
     
     ## indicates a ref to which the preceding <tok>s should be moved.
     element to { pointer-to-div-item }
+# HEAD: abbreviations
+voc-key-for-class-2 = voc-key-for-group-type*
+voc-key-for-non-class-2 = empty
 
 ## Option to include an internal id. Not needed in TAN-A-lm files.
 id-option = internal-xml-id
@@ -104,6 +102,11 @@ claimant-when =
     
     ## identifies a time when a claim was made.
     attribute claim-when { xsd:dateTime | xsd:date }
+# @src
+source-ref =
+    
+    ## refers to the ID of only one <source>
+    attribute src { xsd:NCName }
 # div references
 div-type-ref =
     
@@ -208,14 +211,5 @@ char-ref =
     
     ## Examples: '1', 'last', 'last-3 - last-1', '1, 3, 5, 7 - 11, last-8, last'
     attribute chars { seq-picker }
-# continuation-opt = continuation
-# continuation =
-#    
-#    ## indicates whether the current element is continued by the next one and to be treated as a single one. Value must be 1 or true, implied by the very presence of the attribute. If you wish to decare it to be false, delete the attribute altogether.
-
-#    ## This feature is useful in <tok> for rejoining the portion of a word split across two <div>s, or for uniting into a single linguistic token multiple tokens separated by the tokenization process, e.g., "pom pom". 
-
-#    ## This feature is useful in <div-ref> for creating groups of references that cannot be expressed in a single <div-ref>  
-#    attribute cont {
-#        xsd:boolean { pattern = "true|1" }
-#    }
+body-content-class-2 = claimant-data?
+body-content-non-class-2 = body-group* & body-item*

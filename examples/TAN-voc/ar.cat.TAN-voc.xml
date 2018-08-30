@@ -1,45 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../../schemas/TAN-key.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="../../schemas/TAN-key.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<TAN-key xmlns="tag:textalign.net,2015:ns" TAN-version="2018" id="tag:parkj@textalign.net,2015:TAN-key:ar.cat">
+<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2019" id="tag:parkj@textalign.net,2015:TAN-key:ar.cat">
     <head>
         <name>Keywords for Aristotle's Categories</name>
-        <license>
+        <master-location href="https://raw.githubusercontent.com/textalign/TAN-2018/master/examples/TAN-voc/ar.cat.TAN-voc.xml"/>
+        <license licensor="park">
             <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
             <name>Creative Commons Attribution 4.0 International License</name>
             <desc>This data file is licensed under a Creative Commons Attribution 4.0 International
                 License. The license is granted independent of rights and licenses associated with
                 the source. </desc>
         </license>
-        <licensor who="park"/>
-        <definitions>
+        <adjustments/>
+        <vocabulary-key>
+            <algorithm xml:id="xslt3">
+                <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
+                <name>Stylesheet to create a TAN file.</name>
+                <location href="../../applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl" accessed-when="2018-08-05T00:30:17.756-04:00"/>
+            </algorithm>
             <person xml:id="park">
                 <IRI>tag:parkj@textalign.net,2015:self</IRI>
                 <name xml:lang="eng">Jenny Park</name>
             </person>
-            <person xml:id="xslt1">
-                <IRI>tag:textalign.net,2015:stylesheet:rearrange-tan-file-and-tan-key</IRI>
-                <name>Stylesheet to populate a TAN-A-div file from collections.</name>
-                <desc>Stylesheet at: ../../../stylesheets/core-for-TAN-output.xsl</desc>
-            </person>
-            <algorithm xml:id="xslt2"><IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI><name>Stylesheet to populate a TAN-A-div file from collections.</name><desc>Stylesheet at: ../../do%20things/convert/convert%20TAN%202017%20to%20TAN%202018.xsl</desc></algorithm>
             <role xml:id="creator">
                 <IRI>http://schema.org/creator</IRI>
                 <name xml:lang="eng">creator</name>
             </role>
-            <role xml:id="stylesheet1" which="stylesheet"/></definitions>
-        <alter>
-        </alter>
+            <role xml:id="stylesheet1" which="stylesheet"/></vocabulary-key>
+        <file-resp who="park"/>
+        <resp who="xslt3" roles="stylesheet1"/>
         <resp roles="creator" who="park"/>
-        <resp roles="stylesheet1" who="xslt1"/>
-        <resp who="xslt2" roles="stylesheet1"/>
         <change when="2016-07-07" who="park">Started file</change>
-        <change who="xslt1" when="2017-03-13T12:39:16.391-04:00">File populated with &lt;item&gt;s
-            imported from dependent file tag:parkj@textalign.net,2015:ar.cat.tan-a-div:claims at
-            file:/Users/joelk/Dropbox/TAN/TAN-2018/examples/TAN-A-div/ar.cat.tan-a-div.claims.xml.</change>
-        <change who="xslt2" when="2017-11-02T22:58:12.208-04:00">TAN file updated to 2018 schemas.</change>
+        <change who="xslt3" when="2018-08-05T00:30:17.756-04:00">Converted from 2018 to 2019 schemas.</change>
+        <to-do/>
     </head>
-    <body in-progress="true" affects-element="work">
+    <body affects-element="work">
         <item>
             <IRI>tag:parkj@textalign.net,2015:work:porphyry:on-aristotles-categories</IRI>
             <name xml:lang="lat">Commentarium graecum Porphyrii</name>
@@ -143,4 +139,4 @@
             <name>Syriac translation of Aristotle's Categories by George, Bishop of the Arabs</name>
         </item>
     </body>
-</TAN-key>
+</TAN-voc>

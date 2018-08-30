@@ -18,7 +18,7 @@
     </squelch>
     
     <!-- CORE/GENERAL ERRORS -->
-    <group affects-element="TAN-T TEI TAN-A-div TAN-A-tok TAN-A-lm TAN-key TAN-mor">
+    <group affects-element="TAN-T TEI TAN-A-div TAN-A-tok TAN-A-lm TAN-voc TAN-mor">
         <warning xml:id="wrn04"><rule>Users should be warned about versions of TAN that are under development.</rule><message>This version of TAN is under development, and is subject to change. Participants in developing the TAN schemas, functions, and guidelines are welcome. See http://textalign.net for details.</message></warning>
         <warning xml:id="wrn06"><rule>Users should be warned about versions of TAN that are semi-stable.</rule><message>This version of TAN is semi-stable. RELAX-NG schemas will be changed only to correct egregious errors. Other files might be edited, but most efforts on improvement will be spent on future versions.</message></warning>
         <warning xml:id="wrn07"><rule>Users should be warned about TAN files whose last change was made by an algorithm.</rule></warning>
@@ -27,10 +27,10 @@
         <error xml:id="tan20"><rule>Files that point to older versions of TAN rules will be pointed to conversion stylesheets.</rule></error>
     </group>
     <group affects-element="agent" affects-attribute="id">
-        <error xml:id="tan01"><rule>Every TAN file must have a primary agent, the organization or person that takes the greatest responsibility for the content of the TAN file. The primary agent is defined as the first &lt;agent> with an &lt;IRI> that is a tag URI whose namespace matches the namespaces of @id in the root element.</rule></error>
+        <error xml:id="tan01"><rule>Every TAN file must have at least one organization or person with an &lt;IRI> that is a tag URI whose namespace matches the namespaces of @id in the root element.</rule></error>
     </group>
-    <group affects-attribute="in-progress" affects-element="master-location">
-        <error xml:id="tan02"><rule>Any TAN file marked as being no longer in progress should have at least one master-location.</rule></error>
+    <group affects-element="master-location to-do">
+        <error xml:id="tan02"><rule>Any TAN file without a to-do list will be treated as being no longer in progress and should have at least one master-location.</rule></error>
     </group>
     <group affects-attribute="xml:id id">
         <error xml:id="tan03"><rule>@xml:id values may not be repeated in the same document.</rule></error>
@@ -46,21 +46,21 @@
         <error xml:id="tan10"><rule>An IRI that names a TAN file must match that file's @id exactly.</rule></error>
         <error xml:id="tan19"><rule>Any IRI beginning urn: must continue with a name that is part of the official IANA Registry of URN Namespaces. See RFC 2414, https://tools.ietf.org/html/rfc8141, and https://www.iana.org/assignments/urn-namespaces/urn-namespaces.xhtml</rule></error>
     </group>
-    <group affects-element="key IRI">
-        <error xml:id="tan11"><rule>No file may import keys that have duplicate IRIs.</rule></error>
+    <group affects-element="vocabulary IRI">
+        <error xml:id="tan11"><rule>No file may import vocabularies with items that have duplicate IRIs.</rule></error>
     </group>
     <group affects-element="desc div name IRI">
         <error xml:id="tan04"><rule>All text must be normalized (Unicode NFC).</rule></error>
     </group>
-    <group affects-attribute="who ed-who roles src lexicon morphology reuse-type bitext-relation feature include">
-        <error xml:id="tan05"><rule>Every idref in an attribute must point to the @xml:id value of the appropriate corresponding element.</rule></error>
+    <group affects-attribute="who ed-who roles src lexicon morphology reuse-type bitext-relation feature include licensor">
+        <error xml:id="tan05"><rule>Every idref in an attribute must point to a vocabulary item (by @xml:id or name) that is of the appropriate corresponding element.</rule></error>
         <error xml:id="tan06"><rule>All idrefs in an attribute must be unique.</rule></error>
+        <error xml:id="tan21"><rule>Idrefs in an attribute should not point to the same entity.</rule></error>
     </group>
     <group affects-attribute="regex matches-m matches-tok rgx">
         <error xml:id="tan07"><rule>Attributes that take a regular expression must use escape sequences recognized by XML schema or TAN escape extensions (\u{}). See http://www.w3.org/TR/xmlschema-2/#regexs</rule></error>
     </group>
     <group affects-attribute="idrefs" affects-element="alias">
-        <error xml:id="tan13"><rule>An &lt;alias> may not mix idrefs from different elements.</rule></error>
         <error xml:id="tan14"><rule>&lt;alias> references must not be circular.</rule></error>
     </group>
     <group affects-element="master-location" affects-attribute="href">
@@ -79,32 +79,36 @@
         <error xml:id="inc03"><rule>Inclusions may not be circular.</rule></error>
         <fatal xml:id="inc04"><rule>Inclusions are integral parts of any TAN file. Access to at least one copy is absolutely mandatory.</rule></fatal>
     </group>
-    <group affects-element="inclusion key">
-        <fatal xml:id="inc05"><rule>The key of a file may not include it.</rule></fatal>
+    <group affects-element="inclusion vocabulary">
+        <fatal xml:id="inc05"><rule>The vocabulary of a file may not include it.</rule></fatal>
     </group>
-    <group affects-element="location inclusion see-also source key redivision model predecessor successor">
+    <group affects-element="location inclusion see-also source vocabulary redivision model predecessor successor">
         <error xml:id="loc01"><rule>Every element with a &lt;location> should have at least one document available.</rule></error>
         <error xml:id="loc02"><rule>Every TAN file referred to by way of an element containing &lt;location> should have an @id that matches the &lt;IRI> of the parent of the &lt;location></rule></error>
         <error xml:id="loc03"><rule>No element may point to a TAN file that has an identical @id value; the only exception is a &lt;see-also> pointing to an older or new version.</rule></error>
-        <warning xml:id="wrn03"><rule>If a target file does not explicitly give the &lt;body>'s @in-progress the value of true() a warning will be returned.</rule><message>Target file is marked as being in progress.</message></warning>
+        <warning xml:id="wrn03"><rule>If a target file has children items in the &lt;to-do>the corresponding comments will be returned as warnings.</rule></warning>
         <warning xml:id="wrn05"><rule>If a target file has a &lt;see-also> marked as a new version (update) a warning will be returned.</rule></warning>
         <warning xml:id="wrn08"><rule>If an element's &lt;location> is faulty and if a catalog file entry is found pointing to a document with the same IRI, location information on those alternative locations will be returned</rule></warning>
     </group>
-    <group affects-element="location inclusion see-also source key" affects-attribute="when-accessed">
-        <warning xml:id="wrn02"><rule>If @when-accessed predates one or more dates in a target file, a warning will be returned.</rule></warning>
+    <group affects-element="location inclusion see-also source vocabulary" affects-attribute="accessed-when">
+        <warning xml:id="wrn02"><rule>If @accessed-when predates one or more dates in a target file, a warning will be returned.</rule></warning>
     </group>
-    <group affects-attribute="when ed-when when-accessed from to">
+    <group affects-attribute="when ed-when accessed-when from to">
         <error xml:id="whe01"><rule>Date attributes must be castable either as xs:dateTime or xs:date</rule></error>
         <error xml:id="whe02"><rule>Future dates are not permitted.</rule></error>
     </group>
     <group affects-attribute="from to">
         <error xml:id="whe03"><rule>@from must predate @to</rule></error>
     </group>
-    <group affects-attribute="which" affects-element="key">
-        <error xml:id="whi01"><rule>An element's @which must have a value that corresponds to a &lt;name>, either in the core TAN keyword or an associated TAN-key file, that is marked as applying to that element.</rule></error>
-        <error xml:id="whi02"><rule>Keywords (values of @which) must be unique for a given element name.</rule></error>
-        <error xml:id="whi03"><rule>Any element that takes @which must have keywords defined for that element.</rule></error>
-        <fatal xml:id="whi04"><rule>Keys are integral parts of a document. Access to at least one version is absolutely mandatory.</rule></fatal>
+    <group affects-attribute="which" affects-element="vocabulary">
+        <error xml:id="whi01"><rule>An element's @which must have a value that corresponds to a &lt;name>, either in a standard TAN vocabulary or an associated TAN-voc file, that is marked as applying to that element.</rule></error>
+        <error xml:id="whi03"><rule>Any element that takes @which must have vocabulary items defined for that element.</rule></error>
+    </group>
+    <group affects-element="vocabulary">
+        <fatal xml:id="whi04"><rule>Vocabularies are integral parts of a document. Access to at least one version is absolutely mandatory.</rule></fatal>
+    </group>
+    <group affects-element="name item">
+        <error xml:id="whi02"><rule>Names must be unique for vocabulary items assigned to a given element name.</rule></error>
     </group>
     <group affects-attribute="pos chars feature-qty-test">
         <error xml:id="seq01"><rule>Sequences may not include values less than 1.</rule></error>
@@ -114,10 +118,10 @@
     
     <!-- CLASS 1 ERRORS -->
     <group affects-element="see-also relationship">
-        <error xml:id="cl101"><rule>Class 1 files must share the same source as any alternatively divided edition.</rule></error>
-        <error xml:id="cl102"><rule>Class 1 files must share the same work as any model or alternatively divided edition.</rule></error>
-        <error xml:id="cl103"><rule>Class 1 files must share the same work-version, if supplied, as any alternatively divided edition.</rule></error>
-        <error xml:id="cl104"><rule>Class 1 files must have identical transcriptions, after TAN normalization, as any alternatively divided edition.</rule></error>
+        <error xml:id="cl101"><rule>Class 1 files must share the same source as any redivision.</rule></error>
+        <error xml:id="cl102"><rule>Class 1 files must share the same work as any model or redivision.</rule></error>
+        <error xml:id="cl103"><rule>Class 1 files must share the same work-version, if supplied, as any redivision.</rule></error>
+        <error xml:id="cl104"><rule>Class 1 files must have identical transcriptions, after TAN normalization, as any redivision.</rule></error>
         <error xml:id="cl106"><rule>A class 1 file may have no more than one model.</rule></error>
         <warning xml:id="cl107"><rule>If a class 1 file diverges from the structure of its model a warning will be generated specifying where differences exist.</rule></warning>
     </group>
@@ -203,8 +207,8 @@
     <group affects-element="reassign rename">
         <warning xml:id="rea03"><rule>If a &lt;div> is renamed, and the target reference is subject to &lt;reassign> instructions, the following message will appear.</rule><message>&lt;reassign> targets a reference that has been altered by &lt;rename>. Any reassignments will treat the newly created &lt;div>, not the original.</message></warning>
     </group>
-    <group affects-element="reassign rename alter to" affects-attribute="new">
-        <error xml:id="cl217"><rule>No alter action should result in the mixing of leaf &lt;div>s and non-leaf &lt;div>s.</rule></error>
+    <group affects-element="reassign rename adjustments to" affects-attribute="new">
+        <error xml:id="cl217"><rule>No adjustment action should result in the mixing of leaf &lt;div>s and non-leaf &lt;div>s.</rule></error>
     </group>
     <group affects-element="tok ana align reassign subject object locus">
         <warning xml:id="cl211"><rule>No &lt;tok> should duplicate any sibling &lt;tok>.</rule></warning>
@@ -235,10 +239,6 @@
     </group>
     
     <!-- TAN-A-lm ERRORS -->
-    <group affects-element="for-lang source">
-        <error xml:id="tlm01"><rule>&lt;for-lang> and &lt;source> are mutually exclusive in a TAN-A-lm file.</rule></error>
-        <error xml:id="tlm05"><rule>A TAN-A-lm file must have either &lt;for-lang> or &lt;source></rule></error>
-    </group>
     <group affects-element="m">
         <error xml:id="tlm02"><rule>When using a category-based morphology, the number of feature codes in an &lt;m> may not exceed the number of categories.</rule></error>
         <error xml:id="tlm03"><rule>Every feature code in an &lt;m> must be found in the target morphology file.</rule></error>
@@ -247,16 +247,16 @@
     
     <!-- CLASS 3 ERRORS -->
     
-    <!-- TAN-key ERRORS -->
+    <!-- TAN-voc ERRORS -->
     <group affects-element="name">
-        <error xml:id="tky01"><rule>Names may not duplicate reserved TAN keyword names for the affected element.</rule></error>
+        <error xml:id="tky01"><rule>Names may not duplicate names reserved by standard TAN vocabulary for the affected element.</rule></error>
         <error xml:id="tky02"><rule>Names may not be duplicates of, case-variants of, or hyphen variants of other names for the same element.</rule></error>
     </group>
     <group affects-attribute="affects-element" affects-element="item group">
         <error xml:id="tky03"><rule>@affects-element must include only names of TAN elements that accept @which</rule></error>
     </group>
     <group affects-element="IRI item">
-        <error xml:id="tky04"><rule>Every item in a reserved TAN-key must have at least one IRI with a tag URN in the TAN namespace</rule></error>
+        <error xml:id="tky04"><rule>Every item in a reserved TAN-voc must have at least one IRI with a tag URN in the TAN namespace</rule></error>
     </group>
     <group affects-element="item" affects-attribute="object-datatype object-lexical-constraint">
         <error xml:id="tky05"><rule>An item may take @object-datatype and @object-lexical-constraint only if the governing @affects-element is set to 'verb'</rule></error>

@@ -25,7 +25,7 @@ as the context -->
          </sourceDesc>
       </fileDesc>
    </teiHeader>
-   <head xmlns="tag:textalign.net,2015:ns">
+   <head>
       <!-- Manually edit: the name -->
       <name>{($p1//tei:title)[1]//text()}</name>
       <!-- Manually edit: @rights-holder, @which (or IRI + name) -->
@@ -33,24 +33,30 @@ as the context -->
       <licensor who="primary-agent"/>
       <!-- If you are converting a number of TEI files from the same project, you may wish to create ahead of time your own TAN-key file, to which you would point here. 
          This allows a stylesheet accessing this template to reconcile vocabulary -->
-      <key>
+      <work>
+         <!-- Manually edit: <IRI>, <name> -->
+         <!-- See comment above for <source> -->
+         <IRI>{($p1//tei:titleStmt/tei:title/@ref)[1]}</IRI>
+         <name>{$p1//tei:titleStmt/tei:title[1]/text()}</name>
+      </work>
+      <vocabulary>
          <IRI>tag:kalvesmaki.com,2014:tan-key:syriac-corpus-misc</IRI>
          <name>Entities invoked by the Syriac Corpus Project</name>
-         <location href="../../../library/syriac-corpus/data/tan/tan-key/syriac-corpus.misc.TAN-key.xml" when-accessed="2017-05-31T21:48:05.918-04:00"/>
-      </key>
+         <location href="../../library-arithmeticus/syriac-corpus/tan-voc/syriac-corpus.misc.TAN-voc.xml" accessed-when="2017-05-31T21:48:05.918-04:00"/>
+      </vocabulary>
       <source>
          <!-- Manually edit: <IRI>, <name> -->
          <!-- This next bit may take some work, since TEI's header doesn't require naming the text-bearing object with a URI -->
          <IRI>tag:example@gmail.com,2010:scriptum:{replace(string-join(($p1//tei:sourceDesc//(tei:author, tei:editor)//text(), $p1//tei:sourceDesc//tei:date//text(), $p1//tei:sourceDesc//tei:title//text()),''),'\s','')}</IRI>
          <name>{$p1//tei:sourceDesc//(tei:author, tei:editor)//text()} {$p1//tei:sourceDesc//tei:date//text()} {$p1//tei:sourceDesc//tei:title//text()}</name>
       </source>
-      <definitions>
-         <work>
-            <!-- Manually edit: <IRI>, <name> -->
-            <!-- See comment above for <source> -->
-            <IRI>{($p1//tei:titleStmt/tei:title/@ref)[1]}</IRI>
-            <name>{$p1//tei:titleStmt/tei:title[1]/text()}</name>
-         </work>
+      <adjustments>
+         <normalization>
+            <IRI>tag:textalign.net,2015:normalization:annotation-content-removed</IRI>
+            <name>Footnotes or endnotes have been deleted.</name>
+         </normalization>
+      </adjustments>
+      <vocabulary-key>
          <div-type xml:id="title" which="title"/>
          <!-- Manually edit. -->
          <person xml:id="primary-agent">
@@ -59,15 +65,10 @@ as the context -->
          </person>
          <role xml:id="creator" which="creator"/>
          <role xml:id="stylesheet" which="stylesheet"/>
-      </definitions>
-      <alter>
-         <normalization>
-            <IRI>tag:textalign.net,2015:normalization:annotation-content-removed</IRI>
-            <name>Footnotes or endnotes have been deleted.</name>
-         </normalization>
-      </alter>
+      </vocabulary-key>
       <resp roles="creator" who="primary-agent"/>
       <change when="{string(current-dateTime())}" who="primary-agent">Created new TAN-TEI file.</change>
+      <to-do/>
    </head>
    <text>
       <body xml:lang="{($p1//tei:body//@xml:lang)[1]}">

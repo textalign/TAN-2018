@@ -12,6 +12,8 @@
    <xsl:include href="incl/TAN-class-3-functions.xsl"/>
    <xsl:include href="incl/TAN-core-functions.xsl"/>
 
+   <!-- TAN-A-LM GLOBAL VARIABLES -->
+   
    <xsl:variable name="morphologies-expanded"
       select="tan:expand-doc($morphologies-resolved)" as="document-node()*"/>
 
@@ -158,18 +160,6 @@
 
    <!--  TERSE EXPANSION -->
 
-   <xsl:template match="tan:body" mode="core-expansion-terse">
-      <xsl:copy>
-         <xsl:copy-of select="@*"/>
-         <xsl:if test="exists(tan:for-lang) and exists(root(.)/tan:TAN-A-lm/tan:head/tan:source)">
-            <xsl:copy-of select="tan:error('tlm01')"/>
-         </xsl:if>
-         <xsl:if test="not(exists(tan:for-lang) or exists(root(.)/tan:TAN-A-lm/tan:head/tan:source))">
-            <xsl:copy-of select="tan:error('tlm05')"/>
-         </xsl:if>
-         <xsl:apply-templates mode="#current"/>
-      </xsl:copy>
-   </xsl:template>
    <xsl:template match="tan:tok" mode="core-expansion-terse">
       <xsl:copy>
          <xsl:copy-of select="@*"/>
@@ -266,8 +256,8 @@
       <xsl:param name="morphologies" as="document-node()*"/>
       <xsl:variable name="this-pos" select="xs:integer(@n)"/>
       <xsl:variable name="those-categories" select="$morphologies/tan:TAN-mor/tan:body/tan:category"/>
-      <xsl:variable name="those-aliases" select="$morphologies/tan:TAN-mor/tan:head/tan:definitions/tan:alias"/>
-      <xsl:variable name="those-defined-features" select="$morphologies/tan:TAN-mor/tan:head/tan:definitions/tan:feature"/>
+      <xsl:variable name="those-aliases" select="$morphologies/tan:TAN-mor/tan:head/tan:vocabulary-key/tan:alias"/>
+      <xsl:variable name="those-defined-features" select="$morphologies/tan:TAN-mor/tan:head/tan:vocabulary-key/tan:feature"/>
       <xsl:variable name="this-code-resolved"
          select="
             if (exists($those-categories)) then

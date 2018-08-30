@@ -269,8 +269,17 @@
          <xsl:variable name="pos" select="position()"/>
          <xsl:variable name="this-target-url" select="($output-url-resolved[$pos], $output-url-resolved[1])[1]"/>
          <!-- We revise hrefs before revising the infusion -->
-         <xsl:apply-templates select="tan:revise-hrefs(., $template-url-resolved, $this-target-url)"
-            mode="revise-infused-template"/>
+         <xsl:variable name="item-to-revise" as="item()">
+            <xsl:choose>
+               <xsl:when test="string-length($template-url-resolved) gt 0">
+                  <xsl:copy-of select="tan:revise-hrefs(., $template-url-resolved, $this-target-url)"/>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:sequence select="."/>
+               </xsl:otherwise>
+            </xsl:choose>
+         </xsl:variable>
+         <xsl:apply-templates select="$item-to-revise" mode="revise-infused-template"/>
       </xsl:for-each>
    </xsl:param>
    <!--<xsl:param name="infused-template-revised" as="document-node()*">
@@ -288,7 +297,8 @@
       <xsl:processing-instruction name="{name(.)}">
             <xsl:analyze-string select="." regex="{$href-regex}">
                 <xsl:matching-substring>
-                    <xsl:value-of select="concat(regex-group(1), tan:uri-relative-to(resolve-uri(regex-group(2), $template-url-resolved), $output-url-resolved), regex-group(3))"/>
+                    <xsl:value-of select="concat(regex-group(1), tan:uri-relative-to(resolve-uri(regex-group(2), 
+                       $template-url-resolved), $output-url-resolved), regex-group(3))"/>
                 </xsl:matching-substring>
                 <xsl:non-matching-substring>
                     <xsl:value-of select="."/>

@@ -3,14 +3,14 @@
 <?xml-model href="../schemas/TAN-key.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <!-- Manually edit: @id -->
 
-<TAN-key xmlns="tag:textalign.net,2015:ns" TAN-version="2018" id="tag:example@gmail.com,2010:transcription-begun-{substring(replace(string(current-dateTime()),'\D',''),1, 14)}">
+<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2018" id="tag:example@gmail.com,2010:transcription-begun-{substring(replace(string(current-dateTime()),'\D',''),1, 14)}">
     <head>
         <!-- Manually edit: the name -->
         <name>{($p1//tei:title)[1]//text()}</name>
         <!-- Manually edit: @rights-holder, @which (or IRI + name) -->
         <license which="by_4.0"/>
         <licensor who="primary-agent"/>
-        <definitions>
+        <vocabulary-key>
             <!-- Manually edit. -->
             <person xml:id="primary-agent">
                 <IRI>tag:example@gmail.com,2010:self</IRI>
@@ -18,9 +18,11 @@
             </person>
             <role xml:id="creator" which="creator"/>
             <role xml:id="stylesheet" which="stylesheet"/>
-        </definitions>
+        </vocabulary-key>
+        <file-resp who="primary-agent"/>
         <resp roles="creator" who="primary-agent"/>
         <change when="{string(current-dateTime())}" who="primary-agent">Created new TAN-key file.</change>
+        <to-do/>
     </head>
     <body/>
-</TAN-key>
+</TAN-voc>

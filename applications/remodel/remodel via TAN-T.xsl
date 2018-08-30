@@ -91,7 +91,7 @@
                     <TAN-T>
                         <head>
                             <xsl:comment>metadata needs to be filled in by hand</xsl:comment>
-                            <definitions/>
+                            <vocabulary-key/>
                         </head>
                         <body>
                             <xsl:value-of select="normalize-space(string-join(//text(), ''))"/>
@@ -120,7 +120,7 @@
                 <xsl:value-of select="$template-doc/tan:TAN-T/@id"/>
             </IRI>
             <xsl:copy-of select="$template-doc/tan:TAN-T/tan:head/tan:name"/>
-            <location href="{$template-url-resolved}" when-accessed="{current-date()}"/>
+            <location href="{$template-url-resolved}" accessed-when="{current-date()}"/>
         </model>
         <xsl:if test="$some-text-has-been-cut = false()">
             <redivision>
@@ -128,23 +128,25 @@
                     <xsl:value-of select="root()/*/@id"/>
                 </IRI>
                 <xsl:copy-of select="root()/*/tan:head/tan:name"/>
-                <location href="{$input-base-uri}" when-accessed="{current-date()}"/>
+                <location href="{$input-base-uri}" accessed-when="{current-date()}"/>
             </redivision>
         </xsl:if>
     </xsl:variable>
     <xsl:variable name="this-relationship" as="element()*">
-        <xsl:if test="not(exists(/*/tan:head/tan:definitions/tan:relationship[@which = 'model']))">
+        <xsl:if test="not(exists(/*/tan:head/tan:vocabulary-key/tan:relationship[@which = 'model']))">
             <relationship xml:id="model" which="model"/>
         </xsl:if>
         <xsl:if
-            test="($some-text-has-been-cut = false()) and not(exists(/*/tan:head/tan:definitions/tan:relationship[@which = 'resegmented copy']))">
+            test="($some-text-has-been-cut = false()) and not(exists(/*/tan:head/tan:vocabulary-key/tan:relationship[@which = 'resegmented copy']))">
             <relationship xml:id="ade" which="resegmented copy"/>
         </xsl:if>
     </xsl:variable>
     <xsl:variable name="input-relationships"
-        select="$self-resolved/*/tan:head/tan:definitions/tan:relationship"/>
+        select="$self-resolved/*/tan:head/tan:vocabulary-key/tan:relationship"/>
+    <!--<xsl:variable name="input-relationship-model"
+        select="$input-relationships[tan:IRI = $relationship-model/tan:IRI]"/>-->
     <xsl:variable name="input-relationship-model"
-        select="$input-relationships[tan:IRI = $relationship-model/tan:IRI]"/>
+        select="$input-relationships"/>
 
     <xsl:template match="tei:TEI" mode="input-pass-1">
         <TAN-T>
@@ -156,24 +158,27 @@
     <xsl:template match="*[@href]" mode="input-pass-1">
         <xsl:copy-of select="tan:resolve-href(., false())"/>
     </xsl:template>
-    <xsl:template match="tan:see-also[1]" mode="input-pass-1">
+    <!--<xsl:template match="tan:see-also[1]" mode="input-pass-1">
         <xsl:copy-of select="$new-tan-links"/>
-        <xsl:if test="not(tan:definition(@relationship)/@which = 'model')">
+        <xsl:if test="not(tan:vocabulary-key-item(@relationship)/@which = 'model')">
             <xsl:copy-of select="tan:resolve-href(., false())"/>
         </xsl:if>
-    </xsl:template>
-    <xsl:template match="tan:see-also[position() gt 1]" mode="input-pass-1">
-        <xsl:if test="not(tan:definition(@relationship)/@which = 'model')">
+    </xsl:template>-->
+    <!--<xsl:template match="tan:see-also[position() gt 1]" mode="input-pass-1">
+        <xsl:if test="not(tan:vocabulary-key-item(@relationship)/@which = 'model')">
             <xsl:copy-of select="tan:resolve-href(., false())"/>
         </xsl:if>
+    </xsl:template>-->
+    <xsl:template match="tan:see-also" mode="input-pass-1">
+        <xsl:copy-of select="tan:resolve-href(., false())"/>
     </xsl:template>
-    <xsl:template match="tan:definitions" mode="input-pass-1">
+    <xsl:template match="tan:vocabulary-key" mode="input-pass-1">
         <xsl:if test="not(exists(../tan:see-also))">
             <xsl:copy-of select="$new-tan-links"/>
         </xsl:if>
         <xsl:copy>
             <xsl:copy-of select="@*"/>
-            <xsl:copy-of select="$template-doc/tan:TAN-T/tan:head/tan:definitions/tan:div-type"/>
+            <xsl:copy-of select="$template-doc/tan:TAN-T/tan:head/tan:vocabulary-key/tan:div-type"/>
             <xsl:apply-templates select="node() except tan:div-type" mode="#current"/>
             <xsl:if test="not(exists(tan:relationship))">
                 <xsl:copy-of select="$this-relationship"/>
@@ -805,15 +810,16 @@
     <xsl:variable name="template-language" select="$template-doc/tan:TAN-T/tan:body/@xml:lang"/>
     <xsl:variable name="template-resolved" select="tan:resolve-doc($template-doc)"/>
     <xsl:variable name="template-relationships"
-        select="$template-resolved/tan:TAN-T/tan:head/tan:definitions/tan:relationship"/>
-    <xsl:variable name="template-relationship-resegmented-copy"
-        select="$template-relationships[tan:IRI = $relationship-resegmented-copy/tan:IRI]"/>
+        select="$template-resolved/tan:TAN-T/tan:head/tan:vocabulary-key/tan:relationship"/>
+    <!--<xsl:variable name="template-relationship-resegmented-copy"
+        select="$template-relationships[tan:IRI = $relationship-resegmented-copy/tan:IRI]"/>-->
+    <xsl:variable name="template-relationship-resegmented-copy" select="$template-relationships"/>
     <xsl:variable name="template-leaf-div-types"
         select="$template-resolved//tan:div[not(tan:div)]/@type"/>
     <xsl:variable name="majority-leaf-div-type"
         select="tan:most-common-item($template-leaf-div-types)"/>
     <xsl:variable name="majority-leaf-div-type-definition"
-        select="$template-resolved/tan:TAN-T/tan:head/tan:definitions/tan:div-type[@xml:id = $majority-leaf-div-type]"/>
+        select="$template-resolved/tan:TAN-T/tan:head/tan:vocabulary-key/tan:div-type[@xml:id = $majority-leaf-div-type]"/>
     <xsl:param name="template-reference-system-is-based-on-physical-features" as="xs:boolean"
         select="tokenize($majority-leaf-div-type-definition/@orig-group, ' ') = ('physical', 'material', 'scriptum')"/>
 

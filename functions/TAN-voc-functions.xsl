@@ -5,7 +5,7 @@
    xmlns:math="http://www.w3.org/2005/xpath-functions/math" exclude-result-prefixes="#all"
    version="2.0">
 
-   <!-- Core functions for TAN-key files. Written principally for Schematron validation, but suitable for general use in other contexts -->
+   <!-- Core functions for TAN-voc files. Written principally for Schematron validation, but suitable for general use in other contexts -->
 
    <xsl:include href="incl/TAN-class-3-functions.xsl"/>
    <xsl:include href="extra/TAN-schema-functions.xsl"/>
@@ -21,7 +21,7 @@
             <xsl:with-param name="inherited-affects-elements" select="tan:affects-element"
                tunnel="yes"/>
             <xsl:with-param name="is-reserved"
-               select="matches(../@id, '^tag:textalign.net,2015:tan-key:')" tunnel="yes"/>
+               select="matches(parent::tan:TAN-voc/@id, '^tag:textalign.net,2015:')" tunnel="yes"/>
          </xsl:apply-templates>
       </xsl:copy>
    </xsl:template>
@@ -70,12 +70,12 @@
                $immediate-affects-elements
             else
                $inherited-affects-elements"/>
-      <xsl:variable name="reserved-keyword-doc"
-         select="$TAN-keywords[tan:TAN-key/tan:body[tokenize(@affects-element, '\s+') = $these-affects-elements]]"/>
-      <xsl:variable name="reserved-keyword-items"
+      <xsl:variable name="reserved-vocabulary-doc"
+         select="$TAN-vocabularies[tan:TAN-voc/tan:body[tokenize(@affects-element, '\s+') = $these-affects-elements]]"/>
+      <xsl:variable name="reserved-vocabulary-items"
          select="
-            if (exists($reserved-keyword-doc)) then
-               key('item-via-node-name', $these-affects-elements, $reserved-keyword-doc)
+            if (exists($reserved-vocabulary-doc)) then
+               key('item-via-node-name', $these-affects-elements, $reserved-vocabulary-doc)
             else
                ()"/>
       <xsl:copy>
@@ -93,20 +93,10 @@
             <xsl:copy-of select="tan:error('tky05')"/>
          </xsl:if>
          <xsl:apply-templates mode="#current">
-            <xsl:with-param name="reserved-keyword-items" select="$reserved-keyword-items"/>
+            <xsl:with-param name="reserved-vocabulary-items" select="$reserved-vocabulary-items"/>
             <xsl:with-param name="inherited-affects-elements" select="$these-affects-elements"
                tunnel="yes"/>
          </xsl:apply-templates>
-      </xsl:copy>
-   </xsl:template>
-   <xsl:template match="tan:IRI[parent::tan:item]" mode="core-expansion-terse">
-      <xsl:param name="duplicate-IRIs" tunnel="yes"/>
-      <xsl:copy>
-         <xsl:copy-of select="@*"/>
-         <xsl:if test=". = $duplicate-IRIs">
-            <xsl:copy-of select="tan:error('tan09')"/>
-         </xsl:if>
-         <xsl:apply-templates mode="#current"/>
       </xsl:copy>
    </xsl:template>
 

@@ -1,22 +1,42 @@
 default namespace local = "tag:textalign.net,2015:ns"
 
 include "TAN-core.rnc" {
-    other-files-non-core = redivision-item* & model-item? & annotation-item*
-    definition-non-core = defn-class-1 & defn-non-class-1
-    alter-non-core = alt-norm* & alt-repl*
+    source-content = entity-nondigital-no-id | entity-digital-nontan-no-id
+    networked-files-non-core = redivision-item* & model-item? & annotation-item*
+    declaration-non-core = decl-class-1 & decl-non-class-1
+    voc-key-non-core = voc-key-for-class-1 & voc-key-for-non-class-1
+    adjust-non-core = adjust-norm* & adjust-repl*
     body-group = empty
     body-content-non-core = body-content-class-1 & body-content-non-class-1
 }
-body-content-class-1 = empty
-body-content-non-class-1 = empty
+# HEAD: general declarations
+decl-class-1 = decl-work & decl-vers? & decl-tok-def*
+decl-non-class-1 = empty
+decl-work =
+    
+    ## identifies a creative textual work, understood conceptually, not physically (e.g., Homer's Iliad, not a particular version or copy of it).
+    
+    ## The term "work" is only loosely defined in TAN. Any text that has enough unity to be referred to in ordinary conversation as a single entity may be identified as a work. A work may be composed of other works, be a part of other works, or even overlap with other works. E.g., the Lord's Prayer, the Gospel of Luke, the Tetravengelion, the New Testament, and the Bible are all valid works, despite the complex relationship between each of them.
+    
+    ## This element takes the IRI + name pattern. For more, see main.xml#conceptual_works
+    element work { entity-nondigital-no-id }
+decl-vers =
+    
+    ## identifies the version of a work. Applicable to sources that contain multiple versions, e.g., original text and facing translations. Like <work>, <version> points to a conceptual entity, not a physical one.
+    
+    ## In the context of a class 1 file, the entity identified by <version> is assumed to be a version of the entity defined in <work>. In TAN-c files, however, no relationship is assumed between <version> and any putative work, unless explicitly stated in that file. 
+    
+    ## Very few work-versions have their own URN names. It is advisable to assign a tag URN or a UUID. If you have used an IRI for <work> that you are entitled to modify, you may wish to add a suffix that will name the version. If you need to specify exactly where on a text-bearing object a version appears, <desc> or <comment> should be used.
+    
+    ## For more, see main.xml#conceptual_works
+    element version { entity-nondigital-no-id }
+# HEAD: other files
 redivision-item =
     
     ## identifies a class 1 file that has the same work, scriptum, and version, but segmented according to a different reference system.
+    
     ## The normalized transcriptions of redivided texts must be identical
-    element redivision {
-        ed-stamp?,
-        (inclusion | (comment* & entity-digital-tan-other-ref))
-    }
+    element redivision { entity-digital-tan-no-id }
 model-item =
     
     ## identifies a class 1 file has been used as a model for how the current file has been segmented and labeled.
@@ -24,36 +44,23 @@ model-item =
     ## To declare a model is to indicate that the reference system that has been adopted is likely not native to the scriptum, and users should take that into account. For example, if a file modeled on another has <div type="sentence">, it should not be assumed that the text that is surrounded is really a sentence.
     
     ## A file need not follow its model exactly.
-    element model {
-        ed-stamp?,
-        (inclusion | (comment* & entity-digital-tan-other-ref))
-    }
+    element model { entity-digital-tan-no-id }
 annotation-item =
     
     ## identifies a class 2 file that is an annotation on (and therefore a dependent of) the current file.
-    element annotation {
-        ed-stamp?,
-        (inclusion | (comment* & entity-digital-tan-other-ref))
-    }
-defn-class-1 = defn-work & defn-vers? & defn-div-type+ & defn-tok-def*
-
-## Reserved for definitions specific to individual types of class 1 files
-defn-non-class-1 = empty
-alt-norm =
+    element annotation { entity-digital-tan-no-id }
+# HEAD: adjustments
+adjust-norm =
     
     ## specifies an alteration made to a source file to bring the transcription into conformity with standards or common expectations. This element is used typically for minor corrections, e.g., suppression of discretionary hyphenation. You should declare every change you have made to the source.
     
     ## <normalization> is especially helpful in reference to nondigital sources, but it may be made also for digital sources, to declare global changes that would be cumbersome, difficult, or impossible to describe in <replace>. 
     
-    ## See main.xml#keywords-normalization for suggested IRI + name values for normalizations. For general discussion see main.xml#normalizing_transcriptions 
-    element normalization {
-        ed-stamp?,
-        (inclusion
-         | (defn-id-ref-opt, (comment* & entity-nondigital-ref)))
-    }
+    ## See main.xml#vocabulary-normalization for suggested IRI + name values for normalizations. For general discussion see main.xml#normalizing_transcriptions 
+    element normalization { entity-nondigital-no-id }
 
 ## Replacements that have been made to an XML source file. 
-alt-repl = func-replace
+adjust-repl = func-replace
 func-replace =
     
     ## contains the equivalent of the XPath replace() function plus parameters, indicating a replacement operation that should be, or has been, applied to a digital file.
@@ -71,3 +78,9 @@ func-replace =
                attribute replacement { text },
                func-param-flags?)))
     }
+# HEAD: abbreviations
+voc-key-for-class-1 = voc-key-for-div-type+
+voc-key-for-non-class-1 = empty
+# BODY
+body-content-class-1 = empty
+body-content-non-class-1 = empty

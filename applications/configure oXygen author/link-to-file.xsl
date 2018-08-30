@@ -4,7 +4,7 @@
     xmlns:tan="tag:textalign.net,2015:ns" xmlns:tei="http://www.tei-c.org/ns/1.0" version="3.0"
     exclude-result-prefixes="#all">
     <!-- This stylesheet presumes that an href has been inserted into the <head> in a <link-to> and an element name in <element-name> -->
-    <!-- The result is a fragment that the oXygen author action will place before the <definitions> -->
+    <!-- The result is a fragment that the oXygen author action will place before the <vocabulary-key> -->
     <xsl:template match="*:link-to">
         <xsl:variable name="this-link-to-resolved" select="resolve-uri(., @xml:base)"/>
         <xsl:variable name="this-link-to-doc" select="doc($this-link-to-resolved)"/>
@@ -16,7 +16,7 @@
             </IRI>
             <xsl:copy-of select="$this-link-to-doc/*/tan:head/tan:name"/>
             <xsl:copy-of select="$this-link-to-doc/*/tan:head/tan:desc"/>
-            <location href="{.}" when-accessed="{current-date()}"/>
+            <location href="{.}" accessed-when="{current-date()}"/>
         </xsl:element>
     </xsl:template>
 </xsl:stylesheet>

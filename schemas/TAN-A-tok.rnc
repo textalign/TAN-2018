@@ -9,19 +9,12 @@ start =
     ## TAN-A-tok files take exactly two sources
     source-list = source-item, source-item
     
-    ## all definitions must have ids
-    defn-id-ref-opt = internal-xml-id
-    
-    ## TAN-A-tok sources must be named
-    source-id-opt = internal-xml-id
-    definition-non-class-2 = defn-brel+ & defn-reus+
-    alter-non-class-2 = empty
+    voc-key-for-non-class-2 = voc-key-for-brel+ & voc-key-for-reus+
     body-attributes-non-core = bitext-relation-attr, reuse-type-attr
 
-    body-content-non-class-2 = body-group* & body-item*
     body-item = alignment
 }
-defn-brel =
+voc-key-for-brel =
     
     ## identifies how the text on one text-bearing object relates to that on another by specifying a relationship, e.g., B is a direct copy of A, B and A descent from a commont parent, etc. See main.xml#tan-a-tok for theoretical background.
     
@@ -29,14 +22,14 @@ defn-brel =
     
     ## This element should not be used to describe any activities (e.g., translation, copying), reserved for <reuse-type>. 
     
-    ## For examples see main.xml# keywords-bitext-relation
-    element bitext-relation { defn-pattern-default }
-defn-reus =
+    ## For examples see main.xml#vocabulary-bitext-relation
+    element bitext-relation { entity-nondigital-id }
+voc-key-for-reus =
     
     ## identifies a category of text reuse (e.g., translation, mistranslation, paraphrase, ridicule). See main.xml#tan-a-tok for theoretical background.
     
-    ## For examples see main.xml# keywords-reuse-type
-    element reuse-type { defn-pattern-default }+
+    ## For examples see main.xml#vocabulary-reuse-type
+    element reuse-type { entity-nondigital-id }
 bitext-relation-attr =
     
     ## points to one or more <bitext-relation> @xml:id values that qualify the type of relation that holds. Multiple values assume inclusive or (A or B or A and B)

@@ -13,6 +13,7 @@
    </rule>-->
    <rule context="*">
       <let name="this-q-ref" value="generate-id(.)"/>
+      <let name="this-name" value="name(.)"/>
       <let name="this-checked-for-errors" value="tan:get-via-q-ref($this-q-ref, $self-expanded[1])"/>
       <let name="has-include-or-which-attr" value="exists(@include) or exists(@which)"/>
       <let name="relevant-fatalities"
@@ -64,7 +65,8 @@
       <let name="replacement-children" value="$these-fixes[@type = 'replace-children']"/>
       <let name="replacement-attributes" value="$these-fixes[@type = 'replace-attributes']"/>
       <let name="self-deletions" value="$these-fixes[@type = 'delete-self']"/>
-
+      <let name="vocabulary-key-item" value="$these-fixes[@type = 'add-vocabulary-key-item']"/>
+      
 
       <report test="exists($relevant-fatalities)" role="fatal"><value-of
             select="tan:error-report($relevant-fatalities)"/></report>
@@ -78,7 +80,7 @@
          <value-of select="$help-offered/tan:message"/>
       </report>
       <assert test="exists($this-checked-for-errors)"><value-of select="$this-q-ref"/> doesn't
-         match; root @q: <value-of select="$self-expanded/*/@q"/></assert>
+         match; other @q values of <value-of select="$this-name"/>: <value-of select="string-join($self-expanded//*[name() = $this-name]/@q, ', ')"/></assert>
       <sqf:group id="tan-sqf" use-when="$has-include-or-which-attr = false()">
          <sqf:fix id="replace-self" use-when="exists($self-replacements)">
             <sqf:description>
@@ -313,6 +315,15 @@
                select="current-dateTime()"/>
             <sqf:replace match="." target="when-accessed" node-type="attribute"
                use-when="@when-accessed" select="current-dateTime()"/>
+         </sqf:fix>
+         
+         <sqf:fix id="vocabulary-key-item" use-when="exists($vocabulary-key-item)">
+            <sqf:description>
+               <sqf:title>Add new item to the end of vocabulary-key</sqf:title>
+            </sqf:description>
+            <sqf:add position="last-child" match="root()/*/tan:head/tan:vocabulary-key">
+               <xsl:copy-of select="$vocabulary-key-item/node()"/>
+            </sqf:add>
          </sqf:fix>
       </sqf:group>
 

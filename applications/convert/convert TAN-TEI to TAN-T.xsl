@@ -20,9 +20,10 @@
     <xsl:variable name="this-stylesheet-uri" select="static-base-uri()"/>
     <xsl:variable name="change-message" select="'Converted from TAN-TEI to TAN-T.'"/>
 
-    <xsl:variable name="div-type-glossary" select="tan:glossary('div-type', '')"/>
+    <!--<xsl:variable name="div-type-glossary" select="tan:glossary('div-type', '')"/>-->
+    <xsl:variable name="div-type-glossary" select="tan:vocabulary('div-type', false(), '*', $self-resolved/*/tan:head)"/>
     <xsl:variable name="div-type-glossary-for-tei-element"
-        select="$div-type-glossary[tan:name[matches(., '^tei ')]]"/>
+        select="$div-type-glossary/*[tan:name[matches(., '^tei ')]]"/>
 
     <!-- Input pre-analysis -->
     
@@ -139,7 +140,7 @@
         <xsl:apply-templates mode="#current"/>
     </xsl:template>
 
-    <xsl:template match="tan:definitions" mode="tan-tei-to-tan-t">
+    <xsl:template match="tan:vocabulary-key" mode="tan-tei-to-tan-t">
         <xsl:copy>
             <xsl:copy-of select="@*"/>
             <xsl:apply-templates mode="#current"/>
@@ -417,12 +418,13 @@
             <xsl:variable name="most-common-leaf-div-type"
                 select="tan:most-common-item(root()/tan:TAN-T/tan:body//tan:div[not(tan:div)]/@type)"/>
             <xsl:variable name="mcldt-def"
-                select="root()/tan:TAN-T/tan:head/tan:definitions/tan:div-type[@xml:id = $most-common-leaf-div-type]"/>
+                select="root()/tan:TAN-T/tan:head/tan:vocabulary-key/tan:div-type[@xml:id = $most-common-leaf-div-type]"/>
             <xsl:if test="not(exists($mcldt-def))">
                 <xsl:message>Building suffixes failed</xsl:message>
                 <xsl:message select="root()/tan:TAN-T/tan:body//tan:div[not(tan:div)]/@type" terminate="yes"></xsl:message>
             </xsl:if>
-            <xsl:variable name="this-gloss" select="tan:glossary($mcldt-def)"/>
+            <!--<xsl:variable name="this-gloss" select="tan:glossary($mcldt-def)"/>-->
+            <xsl:variable name="this-gloss" select="$mcldt-def"/>
             <xsl:value-of
                 select="
                     concat('.ref-',if ($this-gloss/../@type = ('scriptum', 'physical', 'material')) then
@@ -439,7 +441,7 @@
                     <xsl:value-of select="$this-doc/tei:TEI/@id"/>
                 </IRI>
                 <xsl:copy-of select="$this-doc/tei:TEI/tan:head/tan:name[1]"/>
-                <location href="{$doc-uri}" when-accessed="{current-date()}"/>
+                <location href="{$doc-uri}" accessed-when="{current-date()}"/>
             </see-also>
             <xsl:for-each select="$suffixes-for-multiple-output">
                 <xsl:variable name="this-pos" select="position()"/>
@@ -467,7 +469,7 @@
                     </name>
                     <location
                         href="{replace($output-url-resolved, '(.+)(\.[^\.]+)$', concat('$1', $this-suffix, '$2'))}"
-                        when-accessed="{current-date()}"/>
+                        accessed-when="{current-date()}"/>
                 </see-also>
             </xsl:for-each>
         </xsl:if>

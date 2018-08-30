@@ -9,6 +9,7 @@
 
     <!-- The following is a stylesheet that ensures that this transformation gets credited/blamed in the resultant TAN-TEI file -->
     <xsl:import href="../../functions/incl/TAN-core-functions.xsl"/>
+    <xsl:import href="../../functions/TAN-extra-functions.xsl"/>
     <xsl:import href="../get%20inclusions/core-for-TAN-output.xsl"/>
     
     <xsl:output indent="no"/>
@@ -457,7 +458,7 @@
             </name>
             <xsl:copy-of select="tan:indent($ancestor-count + 1)"/>
             <location href="{tan:uri-relative-to(tan:base-uri(.), $doc-uri)}"
-                when-accessed="{current-date()}"/>
+                accessed-when="{current-date()}"/>
             <xsl:copy-of select="tan:indent($ancestor-count)"/>
         </key>
     </xsl:template>

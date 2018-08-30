@@ -3,37 +3,39 @@
 <?xml-model href="../../schemas/TAN-A-div.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <!--<?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-A-div.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-A-div.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
-<TAN-A-div xmlns="tag:textalign.net,2015:ns" TAN-version="2018"
-    id="tag:parkj@textalign.net,2015:ar.cat.tan-a-div:claims">
+<TAN-A-div xmlns="tag:textalign.net,2015:ns" TAN-version="2019" id="tag:parkj@textalign.net,2015:ar.cat.tan-a-div:claims">
     <head>
         <name>Comments and claims on Aristotle's Categories</name>
-        <master-location
-            href="http://textalign.net/release/TAN-2018/examples/TAN-A-div/ar.cat.tan-a-div.claims.xml"/>
-        <license>
+        <master-location href="http://textalign.net/release/TAN-2018/examples/TAN-A-div/ar.cat.tan-a-div.claims.xml"/>
+        <license licensor="park">
             <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
             <name>Creative Commons Attribution 4.0 International License</name>
             <desc>This data file is licensed under a Creative Commons Attribution 4.0 International
                 License. The license is granted independent of rights and licenses associated with
                 the source. </desc>
         </license>
-        <licensor who="park"/>
-        <key>
+        <vocabulary>
             <IRI>tag:parkj@textalign.net,2015:TAN-key:ar.cat</IRI>
             <name>Keywords for Aristotle's Categories</name>
-            <location href="../TAN-key/ar.cat.TAN-key.xml"
-                when-accessed="2017-03-10T11:50:15.499-05:00"/>
-        </key>
+            <location href="../TAN-voc/ar.cat.TAN-voc.xml" accessed-when="2017-03-10T11:50:15.499-05:00"/>
+        </vocabulary>
         <source xml:id="grc">
             <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:object-refs</IRI>
             <name>Categories, Aristotle, Greek text by Minio-Paluello</name>
-            <location href="../ar.cat.grc.1949.minio-paluello-obj.xml" when-accessed="2016-07-08T15:17:28.037-04:00"/>
+            <location href="../ar.cat.grc.1949.minio-paluello.ref-scriptum.xml" accessed-when="2016-07-08T15:17:28.037-04:00"/>
         </source>
         <source xml:id="eng">
             <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.eng.1926.edghill:model-object-refs</IRI>
             <name>Categories, Aristotle, Greek text by Minio-Paluello</name>
-            <location href="../ar.cat.eng.1926.edghill.obj.xml" when-accessed="2017-12-31"/>
+            <location href="../ar.cat.eng.1926.edghill.ref-scriptum.xml" accessed-when="2017-12-31"/>
         </source>
-        <definitions>
+        <vocabulary-key>
+            <algorithm xml:id="xslt1">
+                <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
+                <name>Stylesheet to create a TAN file.</name>
+                <location href="../../applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl" accessed-when="2018-08-05T01:05:10.039-04:00"/>
+            </algorithm>
+            <role xml:id="stylesheet" which="stylesheet"/>
             <person xml:id="andronicus">
                 <IRI>https://inpho.cogs.indiana.edu/thinker/2532</IRI>
                 <IRI>http://dbpedia.org/resource/Andronicus_of_Rhodes</IRI>
@@ -134,13 +136,13 @@
             <work xml:id="σc" which="Explanationes de commentario graeco Simplicii"/>
             <alias xml:id="σd" idrefs="σ σc"/>
             <alias xml:id="comm-omnes" idrefs="π δ αd φd οd ηd σd"/>
-
+            
             <verb xml:id="omits" which="omits"/>
             <verb xml:id="agrees" which="agrees"/>
             <verb xml:id="replaces" which="replaces"/>
             <verb xml:id="quotes" which="quotes"/>
             <verb which="refers or alludes to" xml:id="refers-to"/>
-
+            
             <modal which="possibly" xml:id="perhaps"/>
             <person xml:id="park">
                 <IRI>tag:parkj@textalign.net,2015:self</IRI>
@@ -155,11 +157,17 @@
                 <IRI>http://schema.org/creator</IRI>
                 <name xml:lang="eng">creator</name>
             </role>
-        </definitions>
+        </vocabulary-key>
+        <file-resp who="park"/>
+        <resp who="xslt1" roles="stylesheet"/>
         <resp who="duo" roles="creator"/>
         <change when="2016-07-07" who="duo">Started file</change>
+        <change who="xslt1" when="2018-08-05T01:05:10.039-04:00">Converted from 2018 to 2019 schemas.</change>
+        <to-do>
+            <comment when="2018-08-05-04:00" who="park">Finish file. Only the first couple of claims have been filled in.</comment>
+        </to-do>
     </head>
-    <body claimant="lmp">
+    <body claimant="xslt1">
         <!-- examples of claims relevant to the apparatus criticus -->
         <comment when="2017-03-10-05:00" who="park">The following two claims interpret
             Minio-Paluello's apparatus criticus entry for 1a2, which claims that Andronicus and

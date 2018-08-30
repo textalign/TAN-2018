@@ -18,16 +18,17 @@
     <xsl:variable name="change-message" select="concat('Created TAN-A-div from ', $doc-id, ' and nearby class 1 files that share the same model')"/>
     
     
-    <xsl:variable name="this-model"
-        select="($head/tan:see-also[tan:definition(tan:relationship)/tan:name = 'model'])[1]"/>
-    <xsl:variable name="this-work" select="$head/tan:definitions/tan:work"/>
+    <!--<xsl:variable name="this-model"
+        select="($head/tan:see-also[tan:vocabulary-key-item(tan:relationship)/tan:name = 'model'])[1]"/>-->
+    <xsl:variable name="this-model" select="$head/tan:model[1]"/>
+    <xsl:variable name="this-work" select="$head/tan:work"/>
     <xsl:variable name="other-versions-of-this-work" as="document-node()*">
         <xsl:for-each select="$local-TAN-collection">
             <xsl:variable name="that-doc-resolved" select="tan:resolve-doc(.)"/>
             <xsl:choose>
                 <xsl:when test="$group-by-model-only">
                     <xsl:variable name="model-id-ref"
-                        select="$that-doc-resolved/*/tan:head/tan:definitions/tan:relationship[tan:name = 'model']/@xml:id"/>
+                        select="$that-doc-resolved/*/tan:head/tan:vocabulary-key/tan:relationship[tan:name = 'model']/@xml:id"/>
                     <xsl:variable name="that-doc-model"
                         select="$that-doc-resolved/*/tan:head/(tan:see-also[@relationship = $model-id-ref])[1]"/>
                     <xsl:if
@@ -37,7 +38,7 @@
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:variable name="that-work"
-                        select="$that-doc-resolved/*/tan:head/tan:definitions/tan:work"/>
+                        select="$that-doc-resolved/*/tan:head/tan:work"/>
                     <xsl:if test="$this-work/tan:IRI = $that-work/tan:IRI">
                         <xsl:sequence select="$that-doc-resolved"/>
                     </xsl:if>
@@ -45,18 +46,22 @@
             </xsl:choose>
         </xsl:for-each>
     </xsl:variable>
-    <xsl:param name="input-pass-1" as="element()*">
-        <xsl:for-each select="$other-versions-of-this-work">
-            <source xml:id="s{position()}-{*//*:body/@xml:lang}">
-                <IRI>
-                    <xsl:value-of select="*/@id"/>
-                </IRI>
-                <name>
-                    <xsl:value-of select="*/tan:head/tan:name[1]"/>
-                </name>
-                <location href="{*/@xml:base}" when-accessed="{current-date()}"/>
-            </source>
-        </xsl:for-each>
+    <xsl:param name="input-pass-1" as="document-node()">
+        <xsl:document>
+            <sources>
+                <xsl:for-each select="$other-versions-of-this-work">
+                    <source xml:id="s{position()}-{*//*:body/@xml:lang}">
+                        <IRI>
+                            <xsl:value-of select="*/@id"/>
+                        </IRI>
+                        <name>
+                            <xsl:value-of select="*/tan:head/tan:name[1]"/>
+                        </name>
+                        <location href="{*/@xml:base}" accessed-when="{current-date()}"/>
+                    </source>
+                </xsl:for-each>
+            </sources>
+        </xsl:document>
     </xsl:param>
     
     

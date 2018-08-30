@@ -207,13 +207,13 @@
    </xsl:template>
 
    <xsl:template
-      match="tan:object[(tan:src, tan:work)] | tan:subject[(tan:src, tan:work)] | tan:tok[@ref] | tan:from | tan:tok/tan:to | tan:div-ref | tan:alter/tan:*"
+      match="tan:object[(tan:src, tan:work)] | tan:subject[(tan:src, tan:work)] | tan:tok[@ref] | tan:from | tan:tok/tan:to | tan:div-ref | tan:adjustments/tan:*"
       mode="class-2-expansion-terse">
       <xsl:param name="dependencies" as="document-node()*" tunnel="yes"/>
-      <xsl:variable name="is-alter-action" select="exists(ancestor::tan:alter)"/>
+      <xsl:variable name="is-adjustments-action" select="exists(ancestor::tan:adjustments)"/>
       <xsl:variable name="dependency-actions"
          select="
-            if ($is-alter-action) then
+            if ($is-adjustments-action) then
                tan:get-via-q-ref(@q, $dependencies)
             else
                ()"/>
@@ -251,18 +251,18 @@
          (parent::tan:group, parent::tan:tok)/parent::*/tan:work"/>
       <xsl:variable name="these-src-refs"
          select="
-            (tan:src, ancestor::tan:alter/(self::*, tan:where)/tan:src,
+            (tan:src, ancestor::tan:adjustments/(self::*, tan:where)/tan:src,
             (parent::tan:object, parent::tan:subject, parent::tan:locus)/tan:src,
             (parent::tan:group, parent::tan:tok)/parent::*/tan:src),
-            (root()/tan:TAN-A-div/tan:head/tan:definitions/tan:group[tan:work/@src = $these-work-refs]/tan:work/@src)"
+            (root()/tan:TAN-A-div/tan:head/tan:vocabulary-key/tan:group[tan:work/@src = $these-work-refs]/tan:work/@src)"
       />
       <xsl:variable name="these-div-refs" as="element()*">
          <xsl:for-each select="$these-src-refs">
             <xsl:variable name="this-src" select="."/>
-            <!-- In the case of alter actions, we fetch divs that go by the old names -->
+            <!-- In the case of adjustments, we fetch divs that go by the old names -->
             <xsl:for-each
                select="
-                  if ($is-alter-action) then
+                  if ($is-adjustments-action) then
                      $this-element/(self::tan:tok/tan:ref, tan:tok/tan:ref, parent::tan:tok/tan:ref)
                   else
                      $this-element/(self::tan:tok, parent::tan:tok, tan:range)/tan:ref">
@@ -271,7 +271,7 @@
                   select="
                      for $i in $dependencies[root()/*/@src = $this-src]
                      return
-                        if ($is-alter-action) then
+                        if ($is-adjustments-action) then
                            key('div-via-orig-ref', $this-ref-text, $dependencies[root()/*/@src = $this-src])
                         else
                            key('div-via-ref', $this-ref-text, $dependencies[root()/*/@src = $this-src])"
@@ -395,7 +395,7 @@
                select="tan:error('tok02', concat('try: ', string-join($these-div-refs//tan:div[not(tan:div)]/tan:ref/text(), ', ')))"
             />
          </xsl:if>
-         <xsl:if test="exists($missing-div-refs) and not($is-alter-action)">
+         <xsl:if test="exists($missing-div-refs) and not($is-adjustments-action)">
             <xsl:variable name="this-message" as="xs:string*">
                <xsl:for-each-group select="$missing-div-refs" group-by="tan:src/text()">
                   <xsl:value-of

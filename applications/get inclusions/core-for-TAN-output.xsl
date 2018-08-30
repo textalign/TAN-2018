@@ -10,14 +10,14 @@
    <xsl:param name="change-message" as="xs:string*" required="yes"/>-->
    <xsl:import href="../../parameters/output-parameters.xsl"/>
 
-   <xsl:template match="/tan:*" mode="credit-stylesheet">
+   <xsl:template match="/tan:* | /tei:TEI" mode="credit-stylesheet">
       <xsl:variable name="this-base-uri" select="tan:base-uri(.)"/>
-      <xsl:variable name="definition-for-this-stylesheet"
-         select="tan:head/tan:definitions/tan:algorithm[tan:IRI = $stylesheet-iri]"/>
+      <xsl:variable name="vocabulary-for-this-stylesheet"
+         select="tan:head/tan:vocabulary-key/tan:algorithm[tan:IRI = $stylesheet-iri]"/>
       <xsl:variable name="stylesheet-id" as="xs:string">
          <xsl:choose>
-            <xsl:when test="exists($definition-for-this-stylesheet)">
-               <xsl:value-of select="$definition-for-this-stylesheet/@xml:id"/>
+            <xsl:when test="exists($vocabulary-for-this-stylesheet)">
+               <xsl:value-of select="$vocabulary-for-this-stylesheet/@xml:id"/>
             </xsl:when>
             <xsl:otherwise>
                <xsl:variable name="new-id-number-start"
@@ -32,22 +32,26 @@
          </xsl:choose>
       </xsl:variable>
       <xsl:variable name="new-algorithm-element" as="element()?">
-         <xsl:if test="not(exists($definition-for-this-stylesheet))">
+         <xsl:if test="not(exists($vocabulary-for-this-stylesheet))">
             <algorithm xml:id="{$stylesheet-id}">
+               <xsl:value-of select="$most-common-indentations[4]"/>
                <IRI>
                   <xsl:value-of select="$stylesheet-iri"/>
                </IRI>
+               <xsl:value-of select="$most-common-indentations[4]"/>
                <name>Stylesheet to create a TAN file.</name>
-               <desc>Stylesheet at: <xsl:value-of
-                  select="tan:uri-relative-to($stylesheet-url, string($this-base-uri))"/></desc>
+               <xsl:value-of select="$most-common-indentations[4]"/>
+               <location href="{tan:uri-relative-to($stylesheet-url, string($this-base-uri))}"
+                  accessed-when="{current-dateTime()}"/>
+               <xsl:value-of select="$most-common-indentations[3]"/>
             </algorithm>
          </xsl:if>
       </xsl:variable>
       
       <xsl:variable name="stylesheet-role"
-         select="$TAN-keyword-files/tan:TAN-key/tan:body[@affects-element = 'role']/tan:item[tan:name = 'stylesheet']"/>
+         select="$TAN-vocabularies/tan:TAN-voc/tan:body[@affects-element = 'role']/tan:item[tan:name = 'stylesheet']"/>
       <xsl:variable name="role-element-for-stylesheet"
-         select="tan:head/tan:definitions/tan:role[(tan:IRI = $stylesheet-role/tan:IRI) or (tan:name, @which) = $stylesheet-role/tan:name]"/>
+         select="tan:head/(tan:definitions, tan:vocabulary-key)/tan:role[(tan:IRI = $stylesheet-role/tan:IRI) or (tan:name, @which) = $stylesheet-role/tan:name]"/>
       <xsl:variable name="stylesheet-role-id">
          <xsl:choose>
             <xsl:when test="exists($role-element-for-stylesheet)">
@@ -57,7 +61,7 @@
                <xsl:variable name="new-id-number-start"
                   select="
                      max((0,
-                     for $i in tan:head/tan:definitons/tan:role/@xml:id[matches(., '^stylesheet\d+$')]
+                     for $i in tan:head/(tan:definitions, tan:vocabulary-key)/tan:role/@xml:id[matches(., '^stylesheet\d+$')]
                      return
                         number(replace($i, '\D+', ''))))"
                />
@@ -82,34 +86,22 @@
          <resp who="{$stylesheet-id}" roles="{$stylesheet-role-id}"/>
       </xsl:variable>
       <xsl:copy>
-         <xsl:copy-of select="@*"/>
+         <!-- we apply templates to attributes, in case @xml:base or other attributes should be deleted -->
+         <xsl:apply-templates select="@*" mode="#current"/>
          <xsl:apply-templates mode="#current">
-            <xsl:with-param name="new-definition-children" tunnel="yes"
+            <xsl:with-param name="new-vocabulary-key-children" tunnel="yes" as="element()*"
                select="($new-algorithm-element, $new-role-element)"/>
             <xsl:with-param name="new-resp-elements" select="$new-resp-element" tunnel="yes"/>
          </xsl:apply-templates>
       </xsl:copy>
    </xsl:template>
 
-   <xsl:template match="tan:head" mode="credit-stylesheet">
-      <xsl:param name="new-definition-children" tunnel="yes"/>
-      <xsl:copy>
-         <xsl:copy-of select="@*"/>
-         <xsl:apply-templates mode="#current"/>
-         <change who="{$new-definition-children/self::tan:algorithm/@xml:id}"
-            when="{current-dateTime()}">
-            <xsl:value-of select="$change-message"/>
-         </change>
-         <xsl:copy-of select="node()[1][self::text()]"/>
-      </xsl:copy>
-   </xsl:template>
-   
-   <xsl:template match="tan:definitions" mode="credit-stylesheet">
-      <xsl:param name="new-definition-children" tunnel="yes"/>
+   <xsl:template match="tan:definitions | tan:vocabulary-key" mode="credit-stylesheet">
+      <xsl:param name="new-vocabulary-key-children" tunnel="yes"/>
       <xsl:variable name="first-indent" select="node()[1][self::text()]"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
-         <xsl:for-each select="$new-definition-children">
+         <xsl:for-each select="$new-vocabulary-key-children">
             <xsl:copy-of select="$first-indent"/>
             <xsl:copy-of select="."/>
          </xsl:for-each>
@@ -121,17 +113,27 @@
    <xsl:template match="tan:resp[1]" mode="credit-stylesheet">
       <xsl:param name="new-resp-elements" tunnel="yes"/>
       <xsl:copy-of select="$new-resp-elements"/>
-      <xsl:copy-of select="preceding-sibling::node()[1]/self::text()"/>
+      <xsl:value-of select="$most-common-indentations[2]"/>
       <xsl:copy-of select="."/>
+   </xsl:template>
+   
+   <xsl:template match="tan:change[last()]" mode="credit-stylesheet">
+      <xsl:param name="new-vocabulary-key-children" tunnel="yes" as="element()*"/>
+      <xsl:copy-of select="."/>
+      <xsl:value-of select="$most-common-indentations[2]"/>
+      <change who="{$new-vocabulary-key-children/self::tan:algorithm/@xml:id}"
+         when="{current-dateTime()}">
+         <xsl:value-of select="$change-message"/>
+      </change>
    </xsl:template>
 
    <xsl:template match="tan:body" mode="credit-stylesheet">
-      <xsl:param name="new-definition-children" tunnel="yes"/>
+      <xsl:param name="new-vocabulary-key-children" tunnel="yes" as="element()*"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:if test="tan:class-number(.) = 2">
             <!-- We presume that this process of creating class 2 data requires blaming/crediting the stylesheet with the data -->
-            <xsl:attribute name="claimant" select="$new-definition-children/self::tan:algorithm/@xml:id"/>
+            <xsl:attribute name="claimant" select="$new-vocabulary-key-children/self::tan:algorithm/@xml:id"/>
          </xsl:if>
       <xsl:copy-of select="node()"/>
       </xsl:copy>

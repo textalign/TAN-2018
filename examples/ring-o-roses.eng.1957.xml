@@ -3,7 +3,7 @@
 <?xml-model href="../schemas/TAN-TEI.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <!--<?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-TEI.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-TEI.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
-<TEI xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:tan="tag:textalign.net,2015:ns" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns="http://www.tei-c.org/ns/1.0" TAN-version="2018" id="tag:parkj@textalign.net,2015:ring04">
+<TEI xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:tan="tag:textalign.net,2015:ns" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns="http://www.tei-c.org/ns/1.0" TAN-version="2019" id="tag:parkj@textalign.net,2015:ring04">
   <teiHeader>
     <fileDesc>
       <titleStmt>
@@ -24,22 +24,28 @@
     <name>TAN transcription of 1790 version of Ring around the Rosie reported by Newell in
       1883</name>
     <master-location href="http://textalign.net/release/TAN-2018/examples/ring-o-roses.eng.1957.xml"/>
-    <license>
+    <license licensor="park">
       <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
       <name>This data file is licensed under a Creative Commons Attribution 4.0 International
         License. The license is granted independent of rights and licenses associated with the
         source. </name>
     </license>
-    <licensor who="park"/>
+    <work>
+      <IRI>http://dbpedia.org/resource/Ring_a_Ring_o%27_Roses</IRI>
+      <name>Ring around the Rosie</name>
+    </work>
     <source>
       <IRI>http://lccn.loc.gov/51014126</IRI>
       <name>The Oxford dictionary of nursery rhymes, edited by Iona and Peter Opie.</name>
     </source>
-    <definitions>
-      <work>
-        <IRI>http://dbpedia.org/resource/Ring_a_Ring_o%27_Roses</IRI>
-        <name>Ring around the Rosie</name>
-      </work>
+    <adjustments>
+    </adjustments>
+    <vocabulary-key>
+      <algorithm xml:id="xslt2">
+        <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
+        <name>Stylesheet to create a TAN file.</name>
+        <location href="../../applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl" accessed-when="2018-08-09T11:14:16.453-04:00"/>
+      </algorithm>
       <div-type which="poem" xml:id="poem"/>
       <div-type xml:id="l">
         <IRI>http://dbpedia.org/resource/Line_(poetry)</IRI>
@@ -49,23 +55,26 @@
         <IRI>tag:parkj@textalign.net,2015:self</IRI>
         <name>Jenny Park</name>
       </person>
-      <algorithm xml:id="xslt1"><IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI><name>Stylesheet to populate a TAN-A-div file from collections.</name><desc>Stylesheet at: ../do%20things/convert/convert%20TAN%202017%20to%20TAN%202018.xsl</desc></algorithm>
+      <algorithm xml:id="xslt1"><IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI><name>Stylesheet to populate a TAN-A-div file from collections.</name><location accessed-when="2018-08-09T11:14:16.453-04:00" href="../applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"/></algorithm>
       <role xml:id="editor">
         <IRI>http://schema.org/editor</IRI>
         <name xml:lang="eng">Editor</name>
       </role>
       <role xml:id="stylesheet1" which="stylesheet"/>
-    </definitions>
-    <alter>
-    </alter>
+    </vocabulary-key>
+    
+    <file-resp who="park"/>
+    <resp who="xslt2" roles="stylesheet1"/>
     <resp roles="editor" who="park"/>
     <resp who="xslt1" roles="stylesheet1"/>
     <change when="2014-10-28" who="park">Created new TAN-TEI file.</change>
     <change when="2017-10-21" who="park" flags="error">The unnecessary top-level div, poem, has been removed.</change>
     <change who="xslt1" when="2017-11-02T22:05:03.898-04:00">TAN file updated to 2018 schemas.</change>
+    <change who="xslt2" when="2018-08-09T11:14:16.453-04:00">Converted from 2018 to 2019 schemas.</change>
+    <to-do/>
   </head>
   <text>
-    <body xml:lang="eng" in-progress="false">
+    <body xml:lang="eng">
       <div type="l" n="1" part="N" org="uniform" sample="complete">
         <l part="N">Ring a ring a Rosie,</l>
       </div>

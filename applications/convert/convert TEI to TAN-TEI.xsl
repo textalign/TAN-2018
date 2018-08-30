@@ -50,16 +50,17 @@
         </xsl:document>
     </xsl:variable>
 
-    <xsl:variable name="extra-keys" select="tan:get-1st-doc($TAN-TEI-template/*/tan:head/tan:key)"/>
-    <xsl:variable name="extra-keys-resolved" select="tan:resolve-doc($extra-keys)"/>
-    <xsl:variable name="extra-keys-cleaned">
-        <xsl:for-each select="$extra-keys-resolved">
+    <xsl:variable name="extra-vocabularies" select="tan:get-1st-doc($TAN-TEI-template/*/tan:head/tan:vocabulary)"/>
+    <xsl:variable name="extra-vocabularies-resolved" select="tan:resolve-doc($extra-vocabularies)"/>
+    <xsl:variable name="extra-vocabularies-cleaned">
+        <xsl:for-each select="$extra-vocabularies-resolved">
             <xsl:document>
-                <xsl:apply-templates mode="adjust-keys"/>
+                <xsl:apply-templates mode="adjust-vocabularies"/>
             </xsl:document>
         </xsl:for-each>
     </xsl:variable>
-    <xsl:variable name="agent-glossary" select="tan:glossary('person', (), $extra-keys-cleaned, ()), tan:glossary('organization', (), $extra-keys-cleaned, ())"/>
+    <!--<xsl:variable name="agent-glossary" select="tan:glossary('person', (), $extra-vocabularies-cleaned, ()), tan:glossary('organization', (), $extra-vocabularies-cleaned, ())"/>-->
+    <xsl:variable name="agent-glossary" select="tan:vocabulary(('person', 'organization'), false(), '*', $self-resolved/*/tan:head)"/>
 
     <!-- These parameters modify the core TAN output stylesheet -->
     <xsl:variable name="stylesheet-iri"
@@ -127,18 +128,18 @@
     </xsl:template>
 
     <xsl:variable name="license-nodes" select="/tei:TEI/tei:teiHeader//tei:availability/tei:license"/>
-    <xsl:variable name="TAN-key-license-items"
+    <xsl:variable name="TAN-voc-license-items"
         select="
-            for $i in $TAN-keywords
+            for $i in $TAN-vocabularies
             return
                 key('item-via-node-name', 'license', $i)"/>
-    <xsl:variable name="TAN-key-license-matches"
-        select="$TAN-key-license-items[(tan:name, tan:IRI) = $license-nodes//(@*, *)]"/>
+    <xsl:variable name="TAN-voc-license-matches"
+        select="$TAN-voc-license-items[(tan:name, tan:IRI) = $license-nodes//(@*, *)]"/>
     <xsl:template match="tan:license" mode="adjust-template">
         <xsl:copy>
             <xsl:choose>
-                <xsl:when test="exists($TAN-key-license-matches)">
-                    <xsl:attribute name="which" select="$TAN-key-license-matches[1]/tan:name[1]"/>
+                <xsl:when test="exists($TAN-voc-license-matches)">
+                    <xsl:attribute name="which" select="$TAN-voc-license-matches[1]/tan:name[1]"/>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:copy-of select="@*"/>
@@ -245,12 +246,12 @@
     </xsl:template>
 
 
-    <xsl:template match="* | comment() | processing-instruction() | @*" mode="adjust-keys">
+    <xsl:template match="* | comment() | processing-instruction() | @*" mode="adjust-vocabularies">
         <xsl:copy>
             <xsl:apply-templates select="node() | @*" mode="#current"/>
         </xsl:copy>
     </xsl:template>
-    <xsl:template match="text()" mode="adjust-keys">
+    <xsl:template match="text()" mode="adjust-vocabularies">
         <xsl:value-of select="tan:normalize-text(.)"/>
     </xsl:template>
 
@@ -354,8 +355,10 @@
             <xsl:apply-templates select="node() | @*" mode="#current"/>
         </xsl:copy>
     </xsl:template>
+    <!--<xsl:variable name="div-type-glossary"
+        select="tan:glossary('div-type', (), $extra-vocabularies-cleaned, ())"/>-->
     <xsl:variable name="div-type-glossary"
-        select="tan:glossary('div-type', (), $extra-keys-cleaned, ())"/>
+        select="tan:vocabulary('div-type', false(), '*', $self-resolved/*/tan:head)"/>
     <xsl:template match="tan:div-type[not(exists(following-sibling::tan:div-type))]"
         mode="build-div-types-and-clean-ns">
         <xsl:copy-of select="."/>
@@ -427,7 +430,7 @@
     <xsl:template match="/">
         <!-- diagnostics, results -->
         <!--<xsl:copy-of select="$pass1"/>-->
-        <!--<xsl:copy-of select="$extra-keys-resolved"/>-->
+        <!--<xsl:copy-of select="$extra-vocabularies-resolved"/>-->
         <!--<xsl:copy-of select="$agent-glossary"/>-->
         <!--<temp><xsl:copy-of select="$agent-role-nodes-checked"/></temp>-->
         <xsl:apply-templates select="$pass1" mode="credit-stylesheet"/>

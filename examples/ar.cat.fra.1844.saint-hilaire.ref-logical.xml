@@ -3,33 +3,41 @@
 <?xml-model href="../schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <!--<?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-T.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
-<TAN-T xmlns="tag:textalign.net,2015:ns" id="tag:kalvesmaki.com,2014:tan-t:ar.cat.fra.1844.saint-hilaire:semantic-refs" TAN-version="2018">
+<TAN-T xmlns="tag:textalign.net,2015:ns" id="tag:kalvesmaki.com,2014:tan-t:ar.cat.fra.1844.saint-hilaire:semantic-refs" TAN-version="2019">
    <head>
       <name>Categories, Aristotle, French translation by J. Barthélemy Saint-Hilaire</name>
-      <license>
+      <master-location href="https://raw.githubusercontent.com/textalign/TAN-2019/master/examples/ar.cat.fra.1844.saint-hilaire.ref-logical-after.xml"/>
+      <license licensor="kalvesmaki">
          <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
          <name>Creative Commons Attribution 4.0 International License</name>
          <desc>Exclusive of rights held and licenses offered by rightsholders of the source or
             sources listed below, this data file, insofar as it constitutes an independent work, is
             licensed under a Creative Commons Attribution 4.0 International License.</desc>
       </license>
-      <licensor who="kalvesmaki"/>
+      <work>
+         <IRI>http://dbpedia.org/resource/Categories_(Aristotle)</IRI>
+         <name xml:lang="fra">Aristote, Catégories</name>
+         <name xml:lang="eng">Aristotle, Categories</name>
+      </work>
       <source>
          <IRI>http://id.lib.harvard.edu/aleph/002773288/catalog</IRI>
          <name>Logique d'Aristote: Traduite en français pour la première fois et accompagnée de
             notes perpétuelles par J. Barthélemy Saint-Hilaire. Paris : Ladrange, 1839-1844. </name>
       </source>
-      <see-also relationship="ade">
+      <redivision>
          <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.fra.1844.saint-hilaire:semantic-refs-realigned</IRI>
          <name>Realignment of Categories, Aristotle, French translation by J. Barthélemy Saint-Hilaire</name>
-         <location href="ar.cat.fra.1844.saint-hilaire.sem.xml" when-accessed="2016-07-13T15:08:34.397-04:00"/>
-      </see-also>
-      <definitions>
-         <work>
-            <IRI>http://dbpedia.org/resource/Categories_(Aristotle)</IRI>
-            <name xml:lang="fra">Aristote, Catégories</name>
-            <name xml:lang="eng">Aristotle, Categories</name>
-         </work>
+         <location href="ar.cat.fra.1844.saint-hilaire.ref-logical-after-1949.xml" accessed-when="2016-07-13T15:08:34.397-04:00"/>
+      </redivision>
+      <adjustments>
+         <normalization which="no hyphens"/>
+      </adjustments>
+      <vocabulary-key>
+         <algorithm xml:id="xslt2">
+            <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
+            <name>Stylesheet to create a TAN file.</name>
+            <location href="../../applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl" accessed-when="2018-08-05T00:05:17.879-04:00"/>
+         </algorithm>
          <div-type xml:id="ch">
             <IRI>http://dbpedia.org/resource/Chapter_(books)</IRI>
             <name>chapter</name>
@@ -58,21 +66,18 @@
             <IRI>tag:kalvesmaki.com,2014:self</IRI>
             <name xml:lang="eng">Joel Kalvesmaki</name>
          </person>
-         <algorithm xml:id="xslt1"><IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI><name>Stylesheet to populate a TAN-A-div file from collections.</name><desc>Stylesheet at: ../do%20things/convert/convert%20TAN%202017%20to%20TAN%202018.xsl</desc></algorithm>
          <role xml:id="editor">
             <IRI>http://schema.org/editor</IRI>
             <name xml:lang="eng">Editor</name>
          </role>
          <role xml:id="stylesheet1" which="stylesheet"/>
-         <relationship which="resegmented copy" xml:id="ade"/>
-      </definitions>
-      <alter>
-         <normalization which="no hyphens"/>
-      </alter>
+      </vocabulary-key>
+      <file-resp who="kalvesmaki"/>
+      <resp who="xslt2" roles="stylesheet1"/>
       <resp roles="editor" who="kalvesmaki"/>
-      <resp who="xslt1" roles="stylesheet1"/>
       <change when="2016-07-10" who="kalvesmaki">Began new file</change>
-      <change who="xslt1" when="2017-11-02T22:52:04.501-04:00">TAN file updated to 2018 schemas.</change>
+      <change who="xslt2" when="2018-08-05T00:05:17.879-04:00">Converted from 2018 to 2019 schemas.</change>
+      <to-do/>
    </head>
    <body xml:lang="fra">
       <div type="ti" n="ti">CATÉGORIES</div>

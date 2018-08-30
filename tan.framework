@@ -4310,13 +4310,13 @@ replace-marked-text-with-string-composite
 									</action>
 									<action>
 										<field name="id">
-											<String>add-key</String>
+											<String>add-vocabulary</String>
 										</field>
 										<field name="name">
-											<String>Add key</String>
+											<String>Add vocabulary</String>
 										</field>
 										<field name="description">
-											<String>Add a key to the &lt;head></String>
+											<String>Add a vocabulary to the &lt;head></String>
 										</field>
 										<field name="largeIconPath">
 											<String></String>
@@ -4340,7 +4340,7 @@ replace-marked-text-with-string-composite
 														<serializableOrderedMap>
 															<entry>
 																<String>actionIDs</String>
-																<String>mark-link-to-key
+																<String>mark-link-to-vocabulary
 process-link-to
 </String>
 															</entry>
@@ -4358,13 +4358,13 @@ process-link-to
 									</action>
 									<action>
 										<field name="id">
-											<String>mark-link-to-key</String>
+											<String>mark-link-to-vocabulary</String>
 										</field>
 										<field name="name">
-											<String>Mark link-to for key</String>
+											<String>Mark link-to for vocabulary</String>
 										</field>
 										<field name="description">
-											<String>Insert a &lt;link-to> before &lt;definitions>, as the first step in creating a &lt;key> to another file.</String>
+											<String>Insert a &lt;link-to> before &lt;adjustments> or &lt;vocabulary-key>, as the first step in creating a &lt;vocabulary> to another file.</String>
 										</field>
 										<field name="largeIconPath">
 											<String></String>
@@ -4388,11 +4388,11 @@ process-link-to
 														<serializableOrderedMap>
 															<entry>
 																<String>fragment</String>
-																<String>&lt;link-to element-name="key" xml:base="${cfdu}/${cfne}">${ask('Link to what key?', relative_url, 'file.tan-key.xml')}&lt;/link-to></String>
+																<String>&lt;link-to element-name="vocabulary" xml:base="${cfdu}/${cfne}">${ask('Link to what vocabulary?', relative_url, 'file.tan-voc.xml')}&lt;/link-to></String>
 															</entry>
 															<entry>
 																<String>insertLocation</String>
-																<String>/*/tan:head/tan:definitions</String>
+																<String>/*/tan:head/(tan:adjustments, tan:vocabulary-key)[1]</String>
 															</entry>
 															<entry>
 																<String>insertPosition</String>
@@ -4476,7 +4476,7 @@ process-link-to
 											<String>Mark link-to for inclusion</String>
 										</field>
 										<field name="description">
-											<String>Insert a &lt;link-to> before &lt;definitions>, as the first step in creating an &lt;inclusion> to another file.</String>
+											<String>Insert a &lt;link-to> before &lt;adjustments> or &lt;vocabulary-key>, as the first step in creating an &lt;inclusion> to another file.</String>
 										</field>
 										<field name="largeIconPath">
 											<String></String>
@@ -4504,7 +4504,7 @@ process-link-to
 															</entry>
 															<entry>
 																<String>insertLocation</String>
-																<String>/*/tan:head/tan:definitions</String>
+																<String>/*/tan:head/(tan:adjustments, tan:vocabulary-key)[1]</String>
 															</entry>
 															<entry>
 																<String>insertPosition</String>
@@ -4679,7 +4679,7 @@ process-link-to
 														</menuItem>
 														<menuItem>
 															<field name="actionID">
-																<String>add-key</String>
+																<String>add-vocabulary</String>
 															</field>
 														</menuItem>
 													</menuEntry-array>
@@ -5013,7 +5013,7 @@ process-link-to
 														</menuItem>
 														<menuItem>
 															<field name="actionID">
-																<String>add-key</String>
+																<String>add-vocabulary</String>
 															</field>
 														</menuItem>
 													</menuEntry-array>
@@ -5521,7 +5521,7 @@ process-link-to
 												</toolbarItem>
 												<toolbarItem>
 													<field name="actionID">
-														<String>add-key</String>
+														<String>add-vocabulary</String>
 													</field>
 												</toolbarItem>
 											</toolbarEntry-array>
