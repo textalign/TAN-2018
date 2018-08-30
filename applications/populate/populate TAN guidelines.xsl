@@ -63,7 +63,7 @@
             <sec n="TAN-T"/>
          </sec>
          <sec n="TAN-class-2">
-            <sec n="TAN-A-div"/>
+            <sec n="TAN-A"/>
             <sec n="TAN-A-tok"/>
             <sec n="TAN-A-lm"/>
          </sec>

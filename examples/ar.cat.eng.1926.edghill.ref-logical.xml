@@ -74,7 +74,7 @@
          </person>
          <algorithm xml:id="xslt1">
             <IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI>
-            <name>Stylesheet to populate a TAN-A-div file from collections.</name>
+            <name>Stylesheet to populate a TAN-A file from collections.</name>
             <location href="../applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl" accessed-when="2018-08-05"/>
          </algorithm>
          <role xml:id="editor">

@@ -90,7 +90,7 @@
          </person>
          <algorithm xml:id="xslt1">
             <IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI>
-            <name>Stylesheet to populate a TAN-A-div file from collections.</name>
+            <name>Stylesheet to populate a TAN-A file from collections.</name>
             <location href="file:/Users/joelk/Dropbox/TAN/TAN-2018/applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"
                       accessed-when="2018-08-05"
                       orig-href="../applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"/>
@@ -196,7 +196,7 @@
          </person>
          <algorithm xml:id="xslt1">
             <IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI>
-            <name>Stylesheet to populate a TAN-A-div file from collections.</name>
+            <name>Stylesheet to populate a TAN-A file from collections.</name>
             <location href="file:/Users/joelk/Dropbox/TAN/TAN-2018/do%20things/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"
                       accessed-when="2018-08-02"
                       orig-href="../do%20things/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"/>
@@ -352,9 +352,9 @@
       <change xmlns="tag:textalign.net,2015:ns" when="2016-07-10" who="kalvesmaki">Began new file</change>
       <change xmlns="tag:textalign.net,2015:ns"
               when="2016-07-14T11:38:29.251-04:00"
-              who="kalvesmaki">Created TAN-T file using TAN-A-div realign
+              who="kalvesmaki">Created TAN-T file using TAN-A realign
          element to transform one source file into the image of another. Backup made at
-         file:/C:/Users/jdkalv/Dropbox/TAN/library/TAN-2018/examples/TAN-A-div/ar.cat.tan-a-div-201607141138292510400.xml.</change>
+         file:/C:/Users/jdkalv/Dropbox/TAN/library/TAN-2018/examples/TAN-A/ar.cat.tan-a-201607141138292510400.xml.</change>
       <change xmlns="tag:textalign.net,2015:ns"
               who="xslt2"
               when="2018-08-05T00:03:20.142-04:00">Converted from 2018 to 2019 schemas.</change>
@@ -706,7 +706,7 @@
          </person>
          <algorithm xml:id="xslt1">
             <IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI>
-            <name>Stylesheet to populate a TAN-A-div file from collections.</name>
+            <name>Stylesheet to populate a TAN-A file from collections.</name>
             <location href="file:/Users/joelk/Dropbox/TAN/TAN-2018/applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"
                       accessed-when="2018-08-05"
                       orig-href="../applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"/>
@@ -814,7 +814,7 @@
          </person>
          <algorithm xml:id="xslt1">
             <IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI>
-            <name>Stylesheet to populate a TAN-A-div file from collections.</name>
+            <name>Stylesheet to populate a TAN-A file from collections.</name>
             <location accessed-when="2018-08-09T11:09:27.084-04:00"
                       href="file:/Users/joelk/Dropbox/TAN/TAN-2018/applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"
                       orig-href="../applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"/>
@@ -947,7 +947,7 @@
          </person>
          <algorithm xml:id="xslt1">
             <IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI>
-            <name>Stylesheet to populate a TAN-A-div file from collections.</name>
+            <name>Stylesheet to populate a TAN-A file from collections.</name>
             <location accessed-when="2018-08-09T11:14:11.796-04:00"
                       href="file:/Users/joelk/Dropbox/TAN/TAN-2018/applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"
                       orig-href="../applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"/>
@@ -1108,7 +1108,7 @@
             </person>
             <algorithm xml:id="xslt1">
             <IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI>
-            <name>Stylesheet to populate a TAN-A-div file from collections.</name>
+            <name>Stylesheet to populate a TAN-A file from collections.</name>
             <location accessed-when="2018-08-09T11:14:15.228-04:00"
                       href="file:/Users/joelk/Dropbox/TAN/TAN-2018/applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"
                       orig-href="../applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"/>
@@ -1190,7 +1190,7 @@
          </person>
          <algorithm xml:id="xslt1">
             <IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI>
-            <name>Stylesheet to populate a TAN-A-div file from collections.</name>
+            <name>Stylesheet to populate a TAN-A file from collections.</name>
             <location accessed-when="2018-08-09T11:14:16.453-04:00"
                       href="file:/Users/joelk/Dropbox/TAN/TAN-2018/applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"
                       orig-href="../applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"/>
@@ -1301,12 +1301,12 @@
       <to-do xmlns="tag:textalign.net,2015:ns"/>
       <comment xmlns="tag:textalign.net,2015:ns" when="2014-10-24" who="park">See p. 39 of source.</comment>
    </doc>
-   <doc href="TAN-A-div/ar.cat.tan-a-div.claims.xml"
-        id="tag:parkj@textalign.net,2015:ar.cat.tan-a-div:claims"
-        root="TAN-A-div">
+   <doc href="TAN-A/ar.cat.tan-a.claims.xml"
+        id="tag:parkj@textalign.net,2015:ar.cat.tan-a:claims"
+        root="TAN-A">
       <name xmlns="tag:textalign.net,2015:ns">Comments and claims on Aristotle's Categories</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="http://textalign.net/release/TAN-2018/examples/TAN-A-div/ar.cat.tan-a-div.claims.xml"/>
+                       href="http://textalign.net/release/TAN-2018/examples/TAN-A/ar.cat.tan-a.claims.xml"/>
       <license xmlns="tag:textalign.net,2015:ns">
             <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
             <name>Creative Commons Attribution 4.0 International License</name>
@@ -1629,12 +1629,12 @@
             <comment when="2018-08-05-04:00" who="park">Finish file. Only the first couple of claims have been filled in.</comment>
         </to-do>
    </doc>
-   <doc href="TAN-A-div/ar.cat.tan-a-div.xml"
-        id="tag:parkj@textalign.net,2015:ar.cat.tan-a-div"
-        root="TAN-A-div">
+   <doc href="TAN-A/ar.cat.tan-a.xml"
+        id="tag:parkj@textalign.net,2015:ar.cat.tan-a"
+        root="TAN-A">
       <name xmlns="tag:textalign.net,2015:ns">Alignment of Aristotle's Categories</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="http://textalign.net/release/TAN-2018/examples/TAN-A-div/ar.cat.tan-a-div.xml"/>
+                       href="http://textalign.net/release/TAN-2018/examples/TAN-A/ar.cat.tan-a.xml"/>
       <license xmlns="tag:textalign.net,2015:ns">
             <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
             <name>Creative Commons Attribution 4.0 International License</name>
@@ -2768,12 +2768,12 @@
             <comment when="2018-08-05-04:00" who="park">Need to finish file.</comment>
         </to-do>
    </doc>
-   <doc href="TAN-A-div/ringoroses.div.1.xml"
+   <doc href="TAN-A/ringoroses.div.1.xml"
         id="tag:parkj@textalign.net,2015:ring01-TAN-A-ring02"
-        root="TAN-A-div">
+        root="TAN-A">
       <name xmlns="tag:textalign.net,2015:ns">div-based alignment of multiple versions of Ring o Roses</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="http://textalign.net/release/TAN-2018/examples/TAN-A-div/ringoroses.div.1.xml"/>
+                       href="http://textalign.net/release/TAN-2018/examples/TAN-A/ringoroses.div.1.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" which="by_4.0" orig-group="">
          <IRI>http://creativecommons.org/licenses/by/4.0/</IRI>
          <IRI>tag:textalign.net,2015:license:by/4.0/</IRI>
@@ -3034,7 +3034,7 @@
             </person>
             <algorithm xml:id="xslt1">
             <IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI>
-            <name>Stylesheet to populate a TAN-A-div file from collections.</name>
+            <name>Stylesheet to populate a TAN-A file from collections.</name>
             <location accessed-when="2018-08-09T11:21:18.078-04:00"
                       href="file:/Users/joelk/Dropbox/TAN/TAN-2018/applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"
                       orig-href="../../applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"/>
@@ -3129,7 +3129,7 @@
             </person>
             <algorithm xml:id="xslt1">
             <IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI>
-            <name>Stylesheet to populate a TAN-A-div file from collections.</name>
+            <name>Stylesheet to populate a TAN-A file from collections.</name>
             <location accessed-when="2018-08-09T13:17:48.557-04:00"
                       href="file:/Users/joelk/Dropbox/TAN/TAN-2018/applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"
                       orig-href="../../applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"/>
@@ -3212,7 +3212,7 @@
             </person>
             <algorithm xml:id="xslt1">
             <IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI>
-            <name>Stylesheet to populate a TAN-A-div file from collections.</name>
+            <name>Stylesheet to populate a TAN-A file from collections.</name>
             <location accessed-when="2018-08-09T13:17:51.918-04:00"
                       href="file:/Users/joelk/Dropbox/TAN/TAN-2018/applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"
                       orig-href="../../applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"/>
@@ -3312,7 +3312,7 @@
             </person>
             <algorithm xml:id="xslt1">
             <IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI>
-            <name>Stylesheet to populate a TAN-A-div file from collections.</name>
+            <name>Stylesheet to populate a TAN-A file from collections.</name>
             <location accessed-when="2018-08-09T13:17:52.897-04:00"
                       href="file:/Users/joelk/Dropbox/TAN/TAN-2018/applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"
                       orig-href="../../applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"/>
@@ -3382,7 +3382,7 @@
          </person>
          <algorithm xml:id="xslt1">
             <IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI>
-            <name>Stylesheet to populate a TAN-A-div file from collections.</name>
+            <name>Stylesheet to populate a TAN-A file from collections.</name>
             <location accessed-when="2018-08-09T11:22:47.928-04:00"
                       href="file:/Users/joelk/Dropbox/TAN/TAN-2018/applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"
                       orig-href="../../../TAN-2018/applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"/>

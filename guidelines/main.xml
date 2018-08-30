@@ -357,6 +357,16 @@
                            relationship="redivision"/></para>
                      </listitem>
                   </itemizedlist></para>
+               <para>TAN-A-div:</para>
+               <para>
+                  <itemizedlist>
+                     <listitem>
+                        <para>Now renamed TAN-A, because this is the most generic form of an
+                           alignment or annotation file. In theory, it could be used to express
+                           TAN-A-tok and TAN-A-lm, but not vice versa.</para>
+                     </listitem>
+                  </itemizedlist>
+               </para>
                <para>TAN-A-lm:</para>
                <para>
                   <itemizedlist>

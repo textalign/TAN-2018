@@ -985,7 +985,7 @@
    <xsl:function name="tan:copy-of-except" as="item()*">
       <!-- Input: any document fragment; sequences of strings specifying names of elements to exclude, names of attributes to exclude, and names of attributes whose parent elements should be excluded; an integer beyond which depth copies should not be made -->
       <!-- Output: the same fragment, altered -->
-      <!-- This function was written primarily to service the merge of TAN-A-div sources, where realigned divs could be extracted from their source documents -->
+      <!-- This function was written primarily to service the merge of TAN-A sources, where realigned divs could be extracted from their source documents -->
       <xsl:param name="doc-fragment" as="item()*"/>
       <xsl:param name="exclude-elements-named" as="xs:string*"/>
       <xsl:param name="exclude-attributes-named" as="xs:string*"/>
@@ -2007,7 +2007,7 @@
             <root>TEI</root>
          </class>
          <class n="2">
-            <root>TAN-A-div</root>
+            <root>TAN-A</root>
             <root>TAN-A-tok</root>
             <root>TAN-A-lm</root>
          </class>

@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="tag:textalign.net,2015:ns"
     xmlns:tan="tag:textalign.net,2015:ns" version="3.0" exclude-result-prefixes="#all">
-    <xsl:import href="../../functions/TAN-A-div-functions.xsl"/>
+    <xsl:import href="../../functions/TAN-A-functions.xsl"/>
     <xsl:import href="../../functions/TAN-extra-functions.xsl"/>
     <xsl:template match="tan:*[@href or tan:location]">
         <xsl:variable name="referenced-doc" select="tan:get-1st-doc(.)"/>

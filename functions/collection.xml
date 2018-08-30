@@ -2,7 +2,7 @@
 <collection stable="true">
    <doc href="catalog.tan-functions.xsl"/>
    <doc href="collection.xml"/>
-   <doc href="TAN-A-div-functions.xsl"/>
+   <doc href="TAN-A-functions.xsl"/>
    <doc href="TAN-A-lm-functions.xsl"/>
    <doc href="TAN-A-tok-functions.xsl"/>
    <doc href="TAN-extra-functions.xsl"/>

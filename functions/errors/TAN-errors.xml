@@ -18,7 +18,7 @@
     </squelch>
     
     <!-- CORE/GENERAL ERRORS -->
-    <group affects-element="TAN-T TEI TAN-A-div TAN-A-tok TAN-A-lm TAN-voc TAN-mor">
+    <group affects-element="TAN-T TEI TAN-A TAN-A-tok TAN-A-lm TAN-voc TAN-mor">
         <warning xml:id="wrn04"><rule>Users should be warned about versions of TAN that are under development.</rule><message>This version of TAN is under development, and is subject to change. Participants in developing the TAN schemas, functions, and guidelines are welcome. See http://textalign.net for details.</message></warning>
         <warning xml:id="wrn06"><rule>Users should be warned about versions of TAN that are semi-stable.</rule><message>This version of TAN is semi-stable. RELAX-NG schemas will be changed only to correct egregious errors. Other files might be edited, but most efforts on improvement will be spent on future versions.</message></warning>
         <warning xml:id="wrn07"><rule>Users should be warned about TAN files whose last change was made by an algorithm.</rule></warning>
@@ -217,7 +217,7 @@
         <error xml:id="rea01"><rule>In a ranged &lt;tok> in a &lt;reassign>, the token referred to by &lt;from> must precede the one referred to by &lt;to>.</rule></error>
     </group>
     
-    <!-- TAN-A-div ERRORS -->
+    <!-- TAN-A ERRORS -->
     <group affects-attribute="object-datatype object-lexical-constraint" affects-element="claim verb">
         <error xml:id="clm01"><rule>Claims involving verbs whose object is constrained must use &lt;object>, not @object.</rule></error>
     </group>
@@ -288,7 +288,7 @@
     <!-- The following errors cover uses of TAN files beyond simple validation -->
     <group type="advanced">
         <error xml:id="adv01"><rule>Token-based assertions of multiple class 2 TAN documents that share the same class 1 source may be compared or collated only if those class 2 documents adopt identical token definitions.</rule></error>
-        <error xml:id="adv02"><rule>Assertions of multiple TAN-A-div documents that share the same class 1 source may be compared or collated only if they suppress, or fail to suppress, the same div types.</rule></error>
+        <error xml:id="adv02"><rule>Assertions of multiple TAN-A documents that share the same class 1 source may be compared or collated only if they suppress, or fail to suppress, the same div types.</rule></error>
         <error xml:id="adv03"><rule>Mismatched sets of statistics may not be merged.</rule></error>
     </group>
 </errors>

@@ -9,7 +9,7 @@
     <!-- Companion stylesheet to convert.xsl -->
     
     <xsl:include href="convert-docx-to-tan-tei.xsl"/>
-    <xsl:include href="convert-docx-to-tan-a-div.xsl"/>
+    <xsl:include href="convert-docx-to-tan-a.xsl"/>
 
     <!-- PASS 1 -->
 
@@ -24,7 +24,7 @@
                     $target-root-element-name"
         />
         <xsl:if test="($intended-target = ('TEI', 'TAN-T') and exists(w:document))
-            or ($intended-target = ('TAN-A-div') and exists(w:comments))">
+            or ($intended-target = ('TAN-A') and exists(w:comments))">
             <xsl:document>
                 <xsl:apply-templates mode="#current"/>
             </xsl:document>
@@ -67,12 +67,12 @@
                         </xsl:choose>
                     </xsl:for-each>
                 </xsl:when>
-                <xsl:when test="$template-root-element-name = 'TAN-A-div'">
+                <xsl:when test="$template-root-element-name = 'TAN-A'">
                     <xsl:message>
                         <xsl:value-of
-                            select="concat(xs:string(count(.//tan:claim)), ' claims in the template have been replaced with ', count($new-content/tan:TAN-A-div/tan:claim), ' new claims')"
+                            select="concat(xs:string(count(.//tan:claim)), ' claims in the template have been replaced with ', count($new-content/tan:TAN-A/tan:claim), ' new claims')"
                         /></xsl:message>
-                    <xsl:copy-of select="$new-content/tan:TAN-A-div/tan:claim"/>
+                    <xsl:copy-of select="$new-content/tan:TAN-A/tan:claim"/>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:message>Rules for infusion have not been defined</xsl:message>

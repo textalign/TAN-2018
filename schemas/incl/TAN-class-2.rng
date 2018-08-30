@@ -215,7 +215,7 @@
     <attribute name="claimant">
       <a:documentation>points to a &lt;person&gt;, &lt;organization&gt;, or &lt;algorithm&gt; who makes a claim. @claimant within &lt;body&gt; indicates the default persons to be credited or blamed for an assertion.</a:documentation>
       <a:documentation>This attribute is taken into account before all other attributes. That is, @claimant is to be interpreted to mean: "@claimant states the following:...." Multiple values of @claimant are interpreted to mean "and", resulting in distribution of the claim (e.g., claimant="x y" becomes "x claims that..." and "y claims that...").</a:documentation>
-      <a:documentation>In a TAN-A-div file, nested @claimants mean that claimant X claims that claimant Y claims that... and so forth.</a:documentation>
+      <a:documentation>In a TAN-A file, nested @claimants mean that claimant X claims that claimant Y claims that... and so forth.</a:documentation>
       <a:documentation>In other class-2 files, a nested @claimant cancels out any inherited @claimants. </a:documentation>
       <a:documentation>This attribute is inheritable. See main.xml#inheritable_attributes</a:documentation>
     </attribute>
@@ -283,7 +283,7 @@
   <define name="tok-ref-item">
     <element name="tok">
       <a:documentation>identifies one or more words or word fragments. Used by class 2 files to make assertions about specific words. </a:documentation>
-      <a:documentation>In TAN-A-div and TAN-A-tok files, &lt;tok&gt; has no linguistic connotations; in TAN-A-lm, it normally does.</a:documentation>
+      <a:documentation>In TAN-A and TAN-A-tok files, &lt;tok&gt; has no linguistic connotations; in TAN-A-lm, it normally does.</a:documentation>
       <a:documentation>&lt;tok&gt;s that are restricted to a single token, or a portion of a single token. This is the normal behavior of &lt;tok&gt;. Multiple values in @src, @ref, and @pos will result in expansion across all values. But multiple values of @chars are taken to refer to the constituent parts of a single &lt;tok&gt; and so no expansion occurs on @chars.</a:documentation>
       <a:documentation>This syntax allows multiple &lt;tok&gt;s to be collapsed into a single one, to save space and perhaps enhance legibility. For example, a &lt;tok&gt; with 2 values for @src, 3 for @ref, 4 for @pos, and 5 for @chars will result in a &lt;tok&gt; that points to 24 tokens, each of which is filtered to the same five characters (by position, not content). Put another way, &lt;tok src="X" ref="a" pos="1"/&gt; and &lt;tok src="X" ref="a" pos="2"/&gt; is always identical to &lt;tok src="X" ref="a" pos="1-2"/&gt;</a:documentation>
       <a:documentation>If you wish to treat multiple word fragments as a single token, use &lt;group&gt;.</a:documentation>

@@ -234,10 +234,10 @@
                      </xsl:when>
                      <xsl:when test="$this-class-number = 2">
                         <!-- Commented out sections below anticipate areas of development; it also points to a very useful application of TAN functions, namely, to create a merger of an number of class 1 documents -->
-                        <!-- Those mergers are quite time consuming for TAN-A-div files with numerous or large source files -->
+                        <!-- Those mergers are quite time consuming for TAN-A files with numerous or large source files -->
                         <!-- We assume from the previous expansion that all source <div>s are in proper hierarchical order -->
                         <!--<xsl:variable name="sources-merged" as="document-node()*">
-                           <xsl:if test="tan:tan-type($tan-doc) = 'TAN-A-div'">
+                           <xsl:if test="tan:tan-type($tan-doc) = 'TAN-A'">
                               <xsl:for-each-group select="$dependencies" group-by="*/@work">
                                  <xsl:copy-of select="tan:merge-expanded-docs(current-group())"/>
                               </xsl:for-each-group>

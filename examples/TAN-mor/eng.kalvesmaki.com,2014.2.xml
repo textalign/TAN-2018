@@ -32,7 +32,7 @@
             <IRI>tag:kalvesmaki.com,2014:self</IRI>
             <name>Joel Kalvesmaki</name>
          </person>
-         <algorithm xml:id="xslt1"><IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI><name>Stylesheet to populate a TAN-A-div file from collections.</name><location accessed-when="2018-08-09T11:22:47.928-04:00" href="../../../TAN-2018/applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"/></algorithm>
+         <algorithm xml:id="xslt1"><IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI><name>Stylesheet to populate a TAN-A file from collections.</name><location accessed-when="2018-08-09T11:22:47.928-04:00" href="../../../TAN-2018/applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"/></algorithm>
          <role xml:id="editor">
             <IRI>http://schema.org/editor</IRI>
             <name>Editor</name>

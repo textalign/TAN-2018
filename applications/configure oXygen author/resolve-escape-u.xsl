@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
     xmlns:xs="http://www.w3.org/2001/XMLSchema" 
     xmlns:tan="tag:textalign.net,2015:ns" version="3.0">
-    <xsl:import href="../../functions/TAN-A-div-functions.xsl"/>
+    <xsl:import href="../../functions/TAN-A-functions.xsl"/>
     <xsl:template match="*">
         <xsl:copy>
             <xsl:copy-of select="@*"/>

@@ -55,7 +55,7 @@
         <IRI>tag:parkj@textalign.net,2015:self</IRI>
         <name>Jenny Park</name>
       </person>
-      <algorithm xml:id="xslt1"><IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI><name>Stylesheet to populate a TAN-A-div file from collections.</name><location accessed-when="2018-08-09T11:14:16.453-04:00" href="../applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"/></algorithm>
+      <algorithm xml:id="xslt1"><IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI><name>Stylesheet to populate a TAN-A file from collections.</name><location accessed-when="2018-08-09T11:14:16.453-04:00" href="../applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"/></algorithm>
       <role xml:id="editor">
         <IRI>http://schema.org/editor</IRI>
         <name xml:lang="eng">Editor</name>

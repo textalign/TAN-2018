@@ -7,7 +7,7 @@
     <!-- Input: any TAN file -->
     <!-- Output: the file resolved, except for attributes and elements that would be invalid -->
 
-    <xsl:import href="../../functions/TAN-A-div-functions.xsl"/>
+    <xsl:import href="../../functions/TAN-A-functions.xsl"/>
     <xsl:import href="../../functions/TAN-extra-functions.xsl"/>
     <xsl:import href="../get%20inclusions/core-for-TAN-output.xsl"/>
     <xsl:output indent="no" use-character-maps="tan"/>

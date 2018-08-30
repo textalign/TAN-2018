@@ -81,9 +81,9 @@
       <resp who="xslt2" roles="stylesheet1"/>
       <resp roles="editor" who="kalvesmaki"/>
       <change when="2016-07-10" who="kalvesmaki">Began new file</change>
-      <change when="2016-07-14T11:38:29.251-04:00" who="kalvesmaki">Created TAN-T file using TAN-A-div realign
+      <change when="2016-07-14T11:38:29.251-04:00" who="kalvesmaki">Created TAN-T file using TAN-A realign
          element to transform one source file into the image of another. Backup made at
-         file:/C:/Users/jdkalv/Dropbox/TAN/library/TAN-2018/examples/TAN-A-div/ar.cat.tan-a-div-201607141138292510400.xml.</change>
+         file:/C:/Users/jdkalv/Dropbox/TAN/library/TAN-2018/examples/TAN-A/ar.cat.tan-a-201607141138292510400.xml.</change>
       <change who="xslt2" when="2018-08-05T00:03:20.142-04:00">Converted from 2018 to 2019 schemas.</change>
       <to-do/>
    </head>

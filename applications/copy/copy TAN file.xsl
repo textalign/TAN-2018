@@ -7,7 +7,7 @@
     <!-- Input: any TAN file; a copy location -->
     <!-- Output: the file copied to the target location, resolving all relative @hrefs -->
 
-    <!--<xsl:import href="../../functions/TAN-A-div-functions.xsl"/>-->
+    <!--<xsl:import href="../../functions/TAN-A-functions.xsl"/>-->
     <xsl:import href="../get%20inclusions/convert.xsl"/>
     <xsl:output indent="no" use-character-maps="tan"/>
     

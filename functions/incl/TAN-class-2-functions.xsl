@@ -254,7 +254,7 @@
             (tan:src, ancestor::tan:adjustments/(self::*, tan:where)/tan:src,
             (parent::tan:object, parent::tan:subject, parent::tan:locus)/tan:src,
             (parent::tan:group, parent::tan:tok)/parent::*/tan:src),
-            (root()/tan:TAN-A-div/tan:head/tan:vocabulary-key/tan:group[tan:work/@src = $these-work-refs]/tan:work/@src)"
+            (root()/tan:TAN-A/tan:head/tan:vocabulary-key/tan:group[tan:work/@src = $these-work-refs]/tan:work/@src)"
       />
       <xsl:variable name="these-div-refs" as="element()*">
          <xsl:for-each select="$these-src-refs">

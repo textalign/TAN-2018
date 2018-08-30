@@ -92,7 +92,7 @@ claimant-ref =
     
     ## This attribute is taken into account before all other attributes. That is, @claimant is to be interpreted to mean: "@claimant states the following:...." Multiple values of @claimant are interpreted to mean "and", resulting in distribution of the claim (e.g., claimant="x y" becomes "x claims that..." and "y claims that...").
     
-    ## In a TAN-A-div file, nested @claimants mean that claimant X claims that claimant Y claims that... and so forth.
+    ## In a TAN-A file, nested @claimants mean that claimant X claims that claimant Y claims that... and so forth.
     
     ## In other class-2 files, a nested @claimant cancels out any inherited @claimants. 
     
@@ -126,7 +126,7 @@ tok-ref-item =
     
     ## identifies one or more words or word fragments. Used by class 2 files to make assertions about specific words. 
     
-    ## In TAN-A-div and TAN-A-tok files, <tok> has no linguistic connotations; in TAN-A-lm, it normally does.
+    ## In TAN-A and TAN-A-tok files, <tok> has no linguistic connotations; in TAN-A-lm, it normally does.
     
     ## <tok>s that are restricted to a single token, or a portion of a single token. This is the normal behavior of <tok>. Multiple values in @src, @ref, and @pos will result in expansion across all values. But multiple values of @chars are taken to refer to the constituent parts of a single <tok> and so no expansion occurs on @chars.
     

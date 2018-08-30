@@ -244,7 +244,7 @@
    <xsl:template match="tei:teiHeader" mode="#all" priority="-4">
       <xsl:copy-of select="."/>
    </xsl:template>
-   <xsl:template match="tei:div[not(tei:div)]/tei:*"
+   <xsl:template match="tei:div[not(tei:div)]/tei:*" priority="1"
       mode="resolve-numerals core-expansion-terse-attributes">
       <xsl:copy-of select="."/>
    </xsl:template>
