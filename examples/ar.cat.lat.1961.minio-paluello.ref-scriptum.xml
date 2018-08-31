@@ -30,8 +30,6 @@
             <name>Categories, Aristotle, Greek text by Minio-Paluello</name>
             <location href="ar.cat.grc.1949.minio-paluello-sem.xml" accessed-when="2016-07-09T23:54:42.291-04:00"/>
         </see-also>
-    <adjustments>
-    </adjustments>
       <vocabulary-key>
          <algorithm xml:id="xslt2">
             <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
