@@ -24,7 +24,7 @@
                 select="concat('\s', $element-or-attribute-name, '=&quot;[^&quot;]+&quot;|&lt;/?', $element-or-attribute-name, '(/?>|\s+[^&gt;]*>)')"/>
             <xsl:variable name="text-emphasized" select="analyze-string($text, $text-to-emphasize)"/>
             <xsl:variable name="this-example-uri" select="base-uri(current-group()[1])"/>
-            <!-- In the following, static base uri works, only because it is, like the guidelines inclusions, two levels deeper than the TAN-2018 directory -->
+            <!-- In the following, static base uri works, only because it is, like the guidelines inclusions, two levels deeper than the TAN-2019 directory -->
             <xsl:variable name="this-example-relative-url" select="tan:uri-relative-to($this-example-uri, static-base-uri())"/>
             <!--<xsl:variable name="example-file-name" select="replace($this-example-uri,'.+/([^/]+)$','$1')"/>-->
             <!--<xsl:variable name="example-uri-old" select="'../../examples/' || $example-file-name"/>-->

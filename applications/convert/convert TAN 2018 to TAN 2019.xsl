@@ -27,6 +27,14 @@
             <xsl:apply-templates select="node() | @*" mode="#current"/>
         </xsl:copy>
     </xsl:template>
+    
+    <xsl:template match="processing-instruction()" priority="1" mode="input-pass-1">
+        <xsl:processing-instruction name="{name(.)}" select="replace(., 'TAN-2018', 'TAN-2019')"/>
+    </xsl:template>
+    <xsl:template match="/comment()" mode="input-pass-1">
+        <xsl:comment select="replace(., 'TAN-2018', 'TAN-2019')"/>
+    </xsl:template>
+    
     <xsl:template match="text()[not(matches(., '\S'))]" mode="input-pass-1">
         <xsl:param name="indent-offset" tunnel="yes" as="xs:integer?"/>
         <xsl:choose>

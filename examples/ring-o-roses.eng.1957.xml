@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../schemas/TAN-TEI.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="../schemas/TAN-TEI.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<!--<?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-TEI.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-TEI.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
+<!--<?xml-model href="http://textalign.net/release/TAN-2019/schemas/TAN-TEI.rnc" type="application/relax-ng-compact-syntax"?>
+<?xml-model href="http://textalign.net/release/TAN-2019/schemas/TAN-TEI.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
 <TEI xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:tan="tag:textalign.net,2015:ns" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns="http://www.tei-c.org/ns/1.0" TAN-version="2019" id="tag:parkj@textalign.net,2015:ring04">
   <teiHeader>
     <fileDesc>
@@ -23,7 +23,7 @@
   <head xmlns="tag:textalign.net,2015:ns">
     <name>TAN transcription of 1790 version of Ring around the Rosie reported by Newell in
       1883</name>
-    <master-location href="http://textalign.net/release/TAN-2018/examples/ring-o-roses.eng.1957.xml"/>
+    <master-location href="http://textalign.net/release/TAN-2019/examples/ring-o-roses.eng.1957.xml"/>
     <license licensor="park">
       <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
       <name>This data file is licensed under a Creative Commons Attribution 4.0 International

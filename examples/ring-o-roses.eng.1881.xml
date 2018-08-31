@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../schemas/TAN-T.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="../schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<!--<?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-T.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
+<!--<?xml-model href="http://textalign.net/release/TAN-2019/schemas/TAN-T.rnc" type="application/relax-ng-compact-syntax"?>
+<?xml-model href="http://textalign.net/release/TAN-2019/schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
 <TAN-T xmlns="tag:textalign.net,2015:ns" TAN-version="2019" id="tag:parkj@textalign.net,2015:ring01">
     <head>
         <name>TAN transcription of Ring a Ring o' Roses</name>
-        <master-location href="http://textalign.net/release/TAN-2018/examples/ring-o-roses.eng.1881.xml"/>
+        <master-location href="http://textalign.net/release/TAN-2019/examples/ring-o-roses.eng.1881.xml"/>
         <license which="by_4.0" licensor="park"/>
         <work>
             <IRI>http://dbpedia.org/resource/Ring_a_Ring_o%27_Roses</IRI>

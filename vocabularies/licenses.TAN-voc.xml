@@ -5,7 +5,7 @@
    <head>
       <name>TAN keywords for types of rights</name>
       <desc>This file depends largely upon the vocabulary of Creative Commons</desc>
-      <master-location href="http://textalign.net/release/TAN-2018/TAN-voc/rights.TAN-voc.xml"/>
+      <master-location href="http://textalign.net/release/TAN-2019/TAN-voc/rights.TAN-voc.xml"/>
       <license licensor="kalvesmaki" which="by 4.0"/>
       <vocabulary-key>
          <algorithm xml:id="xslt2">

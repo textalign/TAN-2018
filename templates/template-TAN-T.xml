@@ -7,8 +7,8 @@ as the context -->
 <!-- It is common practice to include processing instructions for both local and web-based versions of the schemas, with one pair commented out -->
 <?xml-model href="../schemas/TAN-T.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="../schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<!--<?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-T.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
+<!--<?xml-model href="http://textalign.net/release/TAN-2019/schemas/TAN-T.rnc" type="application/relax-ng-compact-syntax"?>
+<?xml-model href="http://textalign.net/release/TAN-2019/schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
 <!-- Manually edit: @id -->
 <TAN-T xmlns="tag:textalign.net,2015:ns" TAN-version="2019" id="tag:example@gmail.com,2010:transcription-begun-{substring(replace(string(current-dateTime()),'\D',''),1, 14)}">
    <head>

@@ -6,7 +6,7 @@
         <name>TAN keywords for verbs</name>
         <desc>This file has been created ad hoc to some basic terms for verbs involved in the
             creation and editing of TAN files.</desc>
-        <master-location href="http://textalign.net/release/TAN-2018/TAN-voc/verbs.TAN-voc.xml"/>
+        <master-location href="http://textalign.net/release/TAN-2019/TAN-voc/verbs.TAN-voc.xml"/>
         <license licensor="kalvesmaki">
             <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
             <name>Creative Commons Attribution 4.0 International License</name>

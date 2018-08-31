@@ -5,7 +5,7 @@
     <head>
         <name>TAN keywords for types of bitext reuse</name>
         <desc>List of standardized terms used for types of bitext reuse.</desc>
-        <master-location href="http://textalign.net/release/TAN-2018/TAN-voc/reuse-types.TAN-voc.xml"/>
+        <master-location href="http://textalign.net/release/TAN-2019/TAN-voc/reuse-types.TAN-voc.xml"/>
         <license licensor="kalvesmaki">
             <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
             <name>Creative Commons Attribution 4.0 International License</name>

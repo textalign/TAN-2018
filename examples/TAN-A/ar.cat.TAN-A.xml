@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../../schemas/TAN-A.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="../../schemas/TAN-A.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<!--<?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-A.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-A.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
+<!--<?xml-model href="http://textalign.net/release/TAN-2019/schemas/TAN-A.rnc" type="application/relax-ng-compact-syntax"?>
+<?xml-model href="http://textalign.net/release/TAN-2019/schemas/TAN-A.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
 <TAN-A xmlns="tag:textalign.net,2015:ns" TAN-version="2019" id="tag:parkj@textalign.net,2015:ar.cat.tan-a">
     <head>
         <name>Alignment of Aristotle's Categories</name>
-        <master-location href="http://textalign.net/release/TAN-2018/examples/TAN-A/ar.cat.tan-a.xml"/>
+        <master-location href="http://textalign.net/release/TAN-2019/examples/TAN-A/ar.cat.tan-a.xml"/>
         <license licensor="park">
             <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
             <name>Creative Commons Attribution 4.0 International License</name>
