@@ -197,13 +197,22 @@
                $this-redivision-doc-resolved
             else
                tan:resolve-doc($target-1st-da)"/>
+      <xsl:variable name="target-doc-work" select="$target-doc-resolved/*/tan:head/tan:work"/>
+      <xsl:variable name="target-doc-work-vocab"
+         select="tan:attribute-vocabulary($target-doc-work/@which)"/>
+      <xsl:variable name="target-doc-source" select="$target-doc-resolved/*/tan:head/tan:source"/>
+      <xsl:variable name="target-doc-source-vocab"
+         select="tan:attribute-vocabulary($target-doc-source/@which)"/>
+      <xsl:variable name="this-doc-work" select="/*/tan:head/tan:work"/>
+      <xsl:variable name="this-doc-work-vocab" select="tan:attribute-vocabulary($this-doc-work/@which)"/>
+      <xsl:variable name="this-doc-source" select="/*/tan:head/tan:source"/>
+      <xsl:variable name="this-doc-source-vocab" select="tan:attribute-vocabulary($this-doc-source/@which)"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
-         <xsl:if
-            test="not(/*/tan:head/tan:source/tan:IRI = $target-doc-resolved/*/tan:head/tan:source/tan:IRI)">
+         <xsl:if test="not(($target-doc-source, $target-doc-source-vocab)//tan:IRI = ($this-doc-source, $this-doc-source-vocab)/tan:IRI)">
             <xsl:copy-of select="tan:error('cl101')"/>
          </xsl:if>
-         <xsl:if test="not(/*/tan:head/tan:work/tan:IRI = $target-doc-resolved/*/tan:head/tan:work/tan:IRI)">
+         <xsl:if test="not(($target-doc-work, $target-doc-work-vocab)//tan:IRI = ($this-doc-work, $this-doc-work-vocab)/tan:IRI)">
             <xsl:copy-of select="tan:error('cl102')"/>
          </xsl:if>
          <xsl:if
@@ -227,9 +236,14 @@
                $this-model-doc-resolved
             else
                tan:resolve-doc($target-1st-da)"/>
+      <xsl:variable name="target-doc-work" select="$target-doc-resolved/*/tan:head/tan:work"/>
+      <xsl:variable name="target-doc-work-vocab"
+         select="tan:attribute-vocabulary($target-doc-work/@which)"/>
+      <xsl:variable name="this-doc-work" select="/*/tan:head/tan:work"/>
+      <xsl:variable name="this-doc-work-vocab" select="tan:attribute-vocabulary($this-doc-work/@which)"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
-         <xsl:if test="not(/*/tan:head/tan:work/tan:IRI = $target-doc-resolved/*/tan:head/tan:work/tan:IRI)">
+         <xsl:if test="not(($target-doc-work, $target-doc-work-vocab)//tan:IRI = ($this-doc-work, $this-doc-work-vocab)/tan:IRI)">
             <xsl:copy-of select="tan:error('cl102')"/>
          </xsl:if>
          <xsl:variable name="other-models"

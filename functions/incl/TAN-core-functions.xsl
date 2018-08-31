@@ -2454,7 +2454,7 @@
                   <xsl:variable name="this-local-head-vocab"
                      select="$relevant-head-vocabulary-items[tan:name = $this-val]"/>
                   <xsl:variable name="this-resolved-head-vocab"
-                     select="$relevant-resolved-vocabulary-items/*[tan:name = $this-val]"/>
+                     select="$relevant-resolved-vocabulary-items[*[tan:name = $this-val]]"/>
                   <xsl:variable name="this-new-extra-vocab"
                      select="$relevant-new-extra-vocabulary-items[tan:name = $this-val]"/>
                   <xsl:variable name="this-new-standard-vocab"
@@ -2464,7 +2464,13 @@
                         <xsl:copy-of select="$this-local-head-vocab"/>
                      </local>
                   </xsl:if>
-                  <xsl:copy-of select="$this-resolved-head-vocab"/>
+                  <xsl:for-each select="$this-resolved-head-vocab">
+                     <xsl:copy>
+                        <xsl:copy-of select="@*"/>
+                        <xsl:copy-of select="* except *[tan:name]"/>
+                        <xsl:copy-of select="*[tan:name = $this-val]"/>
+                     </xsl:copy>
+                  </xsl:for-each>
                   <xsl:copy-of
                      select="tan:report-tan-voc-items(($this-new-extra-vocab, $this-new-standard-vocab))"/>
                   <xsl:if
