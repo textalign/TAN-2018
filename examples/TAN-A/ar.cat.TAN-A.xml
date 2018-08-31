@@ -1,0 +1,1126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../schemas/TAN-A.rnc" type="application/relax-ng-compact-syntax"?>
+<?xml-model href="../../schemas/TAN-A.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<!--<?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-A.rnc" type="application/relax-ng-compact-syntax"?>
+<?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN-A.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
+<TAN-A xmlns="tag:textalign.net,2015:ns" TAN-version="2019" id="tag:parkj@textalign.net,2015:ar.cat.tan-a">
+    <head>
+        <name>Alignment of Aristotle's Categories</name>
+        <master-location href="http://textalign.net/release/TAN-2018/examples/TAN-A/ar.cat.tan-a.xml"/>
+        <license licensor="park">
+            <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
+            <name>Creative Commons Attribution 4.0 International License</name>
+            <desc>This data file is licensed under a Creative Commons Attribution 4.0 International
+                License. The license is granted independent of rights and licenses associated with
+                the source. </desc>
+        </license>
+        <ambiguous-letter-numerals-are-roman>false</ambiguous-letter-numerals-are-roman>
+        <source xml:id="grc">
+            <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:semantic-refs</IRI>
+            <name>Categories, Aristotle, Greek text by Minio-Paluello</name>
+            <location href="../ar.cat.grc.1949.minio-paluello.ref-logical.xml" accessed-when="2016-07-08T15:17:28.037-04:00"/>
+        </source>
+        <source xml:id="fra">
+            <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.fra.1844.saint-hilaire:semantic-refs</IRI>
+            <name>Categories, Aristotle, French translation by J. Barthélemy Saint-Hilaire</name>
+            <location href="../ar.cat.fra.1844.saint-hilaire.ref-logical.xml" accessed-when="2016-07-11T13:44:25.487-04:00"/>
+        </source>
+        <source xml:id="eng">
+            <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.eng.1926.edghill:semantic-refs</IRI>
+            <name>Categories, Aristotle, English translation by E. M. Edghill</name>
+            <location href="../ar.cat.eng.1926.edghill.ref-logical.xml" accessed-when="2016-07-08T15:18:25.573-04:00"/>
+        </source>
+        <adjustments src="*">
+            <equate n="ti title"/>
+            <equate n="pr praef pref preface"/>
+        </adjustments>
+        <adjustments src="fra">
+            <skip div-type="sec"/>
+            <rename ref="1 1-3" new="1 1 1-3"/>
+            <rename ref="3 1-3" new="3 1 1-3"/>
+            <rename ref="4 1-3" new="4 1 1-3"/>
+            <rename ref="5 1-4" new="5 1 1-4"/>
+            <rename ref="5 7-9" new="5 2 3-5"/>
+            <rename ref="5 10" new="5 3 1"/>
+            <rename ref="5 11" new="5 3 2"/>
+            <rename ref="5 14" new="5 4 8"/>
+            <rename ref="5 15" new="5 5"/>
+            <rename ref="5 19" new="5 7 4"/>
+            <rename ref="5 20" new="5 8"/>
+            <rename ref="5 22" new="5 9 3"/>
+            <rename ref="5 24-26" new="5 9 6-8"/>
+            <rename ref="6 1-4" new="6 1 1-4"/>
+            <rename ref="6 6" new="6 1 5 3"/>
+            <rename ref="6 7-9" new="6 1 6-8"/>
+            <rename ref="6 10-12" new="6 2 1 1-3"/>
+            <rename ref="6 13" new="6 2 2"/>
+            <rename ref="6 15" new="6 2 6"/>
+            <rename ref="6 16" new="6 2 7"/>
+            <rename ref="6 17" new="6 3"/>
+            <rename ref="6 18" new="6 4 1"/>
+            <rename ref="6 19" new="6 4 1"/>
+            <rename ref="6 21" new="6 4 4"/>
+            <rename ref="6 22" new="6 4 5"/>
+            <rename ref="6 25" new="6 5"/>
+            <rename ref="6 26" new="6 6"/>
+            <rename ref="7 1" new="7 1 1 1"/>
+            <rename ref="7 4" new="7 1 4"/>
+            <rename ref="7 5-8" new="7 2 1-4"/>
+            <rename ref="7 9" new="7 3 1"/>
+            <rename ref="7 10" new="7 3 2"/>
+            <rename ref="7 12" new="7 3 6"/>
+            <rename ref="7 14" new="7 3 9"/>
+            <rename ref="7 15" new="7 3 10"/>
+            <rename ref="7 18" new="7 4 4"/>
+            <rename ref="7 21" new="7 4 10"/>
+            <rename ref="7 23" new="7 5 5 1"/>
+            <rename ref="7 24" new="7 5 5 2"/>
+            <rename ref="7 25" new="7 5 6"/>
+            <rename ref="7 27-29" new="7 5 9-11"/>
+            <rename ref="8 1" new="8 1 1 1"/>
+            <rename ref="8 2" new="8 1 1 2"/>
+            <rename ref="8 3" new="8 1 2"/>
+            <rename ref="8 6" new="8 1 7"/>
+            <rename ref="8 7" new="8 2"/>
+            <rename ref="8 8-10" new="8 3 1-3"/>
+            <rename ref="8 15" new="8 4 3"/>
+            <rename ref="8 16" new="8 4 4"/>
+            <rename ref="8 17" new="8 5 1"/>
+            <rename ref="8 18-22" new="8 5 1-5"/>
+            <rename ref="8 23" new="8 6 1"/>
+            <rename ref="8 24" new="8 6 2"/>
+            <rename ref="8 31" new="9 3 1"/>
+            <rename ref="8 33" new="9 3 5"/>
+            <rename ref="9 1" new="9 5 1 1"/>
+            <rename ref="9 3" new="9 5 2"/>
+            <rename ref="9 4" new="9 7 1 1"/>
+            <rename ref="9 5" new="9 7 1 2"/>
+            <rename ref="9 6" new="9 7 2"/>
+            <rename ref="9 7" new="9 7 3 1"/>
+            <rename ref="10 1" new="9 7 3 2"/>
+            <rename ref="10 2" new="10 1 1"/>
+            <rename ref="10 3" new="10 1 2"/>
+            <rename ref="10 4" new="10 2 1"/>
+            <rename ref="10 6" new="10 3 3 1"/>
+            <rename ref="10 7" new="10 3 3 2"/>
+            <rename ref="10 8" new="10 3 4"/>
+            <rename ref="10 10" new="10 3 7"/>
+            <rename ref="10 11" new="10 4 1"/>
+            <rename ref="10 12" new="10 4 2"/>
+            <rename ref="10 14-18" new="10 4 5-9"/>
+            <rename ref="10 20" new="10 5 5"/>
+            <rename ref="10 21-24" new="10 6 1-4"/>
+            <rename ref="10 26" new="10 6 5 4"/>
+            <rename ref="11 3" new="11 1 3"/>
+            <rename ref="11 4" new="11 1 4"/>
+            <rename ref="11 5" new="11 2 1"/>
+            <rename ref="11 6" new="11 2 2"/>
+            <rename ref="12 1" new="12 1 1 1"/>
+            <rename ref="12 2" new="12 1 1 2"/>
+            <rename ref="12 4" new="12 1 2"/>
+            <rename ref="12 5" new="12 1 3"/>
+            <rename ref="12 6" new="12 2 1"/>
+            <rename ref="12 8" new="12 2 4"/>
+            <rename ref="13 1" new="13 1 1"/>
+            <rename ref="13 2" new="13 1 2"/>
+            <rename ref="13 5" new="13 1 6"/>
+            <rename ref="14 1" new="14 1 1"/>
+            <rename ref="14 3" new="14 1 2 3"/>
+            <rename ref="14 6" new="14 2"/>
+            <rename ref="14 7" new="14 2"/>
+            <rename ref="15 1-6" new="15 1 1 1-6"/>
+            <rename ref="15 9" new="15 1 2"/>
+            <rename ref="15 10" new="15 1 3"/>
+            
+            <reassign>
+                <tok ref="5 5" pos="1-27"/>
+                <to ref="5 1 5"/>
+            </reassign>
+            <reassign>
+                <tok ref="5 5">
+                    <from val="Ceci"/>
+                    <to pos="4" val="corps"/>
+                </tok>
+                <to ref="5 1 6"/>
+            </reassign>
+            <reassign>
+                <tok ref="5 5">
+                    <from val="Il"/>
+                    <to val="exister"/>
+                </tok>
+                <to ref="5 1 7"/>
+            </reassign>
+            <reassign>
+                <tok ref="5 6">
+                    <from pos="1"/>
+                    <to val="première"/>
+                </tok>
+                <to ref="5 2 1"/>
+            </reassign>
+            <reassign>
+                <tok ref="5 6">
+                    <from val="Si"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="5 2 1"/>
+            </reassign>
+            <reassign>
+                <tok ref="5 12">
+                    <from pos="1"/>
+                    <to val="sujet"/>
+                </tok>
+                <to ref="5 4 1"/>
+            </reassign>
+            <reassign>
+                <tok ref="5 12">
+                    <from val="Ainsi"/>
+                    <to val="sujet" pos="3"/>
+                </tok>
+                <to ref="5 4 2"/>
+            </reassign>
+            <reassign>
+                <tok ref="5 12">
+                    <from val="Quant"/>
+                    <to val="homme"/>
+                </tok>
+                <to ref="5 4 3"/>
+            </reassign>
+            <reassign>
+                <tok ref="5 12">
+                    <from val="J"/>
+                    <to val="bien"/>
+                </tok>
+                <to ref="5 4 4"/>
+            </reassign>
+            <reassign>
+                <tok ref="5 12">
+                    <from val="Ainsi" pos="last"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="5 4 5"/>
+            </reassign>
+            <reassign>
+                <tok ref="5 13">
+                    <from pos="1"/>
+                    <to val="homme" pos="2"/>
+                </tok>
+                <to ref="5 4 6"/>
+            </reassign>
+            <reassign>
+                <tok ref="5 13">
+                    <from val="La"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="5 4 7"/>
+            </reassign>
+            <reassign>
+                <tok ref="5 16">
+                    <from pos="1"/>
+                    <to val="réel"/>
+                </tok>
+                <to ref="5 6 1"/>
+            </reassign>
+            <reassign>
+                <tok ref="5 16">
+                    <from val="Pour"/>
+                    <to val="numérique"/>
+                </tok>
+                <to ref="5 6 2"/>
+            </reassign>
+            <reassign>
+                <tok ref="5 16">
+                    <from val="Quant"/>
+                    <to val="animal"/>
+                </tok>
+                <to ref="5 6 3 1"/>
+            </reassign>
+            <reassign>
+                <tok ref="5 16">
+                    <from val="ceci"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="5 6 3 2"/>
+            </reassign>
+            <reassign>
+                <tok ref="5 17">
+                    <from pos="1"/>
+                    <to val="blanc"/>
+                </tok>
+                <to ref="5 6 3 3"/>
+            </reassign>
+            <reassign>
+                <tok ref="5 17">
+                    <from pos="3" val="le"/>
+                    <to val="manière"/>
+                </tok>
+                <to ref="5 6 3 4"/>
+            </reassign>
+            <reassign>
+                <tok ref="5 17">
+                    <from val="Cependant"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="5 6 4"/>
+            </reassign>
+            <reassign>
+                <tok ref="5 18">
+                    <from pos="1"/>
+                    <to val="contraires"/>
+                </tok>
+                <to ref="5 7 1"/>
+            </reassign>
+            <reassign>
+                <tok ref="5 18">
+                    <from val="En"/>
+                    <to val="première"/>
+                </tok>
+                <to ref="5 7 2"/>
+            </reassign>
+            <reassign>
+                <tok ref="5 18">
+                    <from val="le" pos="2"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="5 7 3"/>
+            </reassign>
+
+
+
+
+            <reassign>
+                <tok ref="5 21">
+                    <from pos="1"/>
+                    <to val="contraires"/>
+                </tok>
+                <to ref="5 9 1"/>
+            </reassign>
+            <reassign>
+                <tok ref="5 21">
+                    <from val="Pour" pos="2"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="5 9 2"/>
+            </reassign>
+            <reassign>
+                <tok ref="5 23">
+                    <from pos="1"/>
+                    <to val="pensée"/>
+                </tok>
+                <to ref="5 9 4"/>
+            </reassign>
+            <reassign>
+                <tok ref="5 23">
+                    <from val="Ainsi" pos="last"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="5 9 5"/>
+            </reassign>
+            <reassign>
+                <tok ref="6 5">
+                    <from pos="1"/>
+                    <to val="continue"/>
+                </tok>
+                <to ref="6 1 5 1"/>
+            </reassign>
+            <reassign>
+                <tok ref="6 5">
+                    <from val="car"/>
+                    <to val="point"/>
+                </tok>
+                <to ref="6 1 5 2"/>
+            </reassign>
+            <reassign>
+                <tok ref="6 14">
+                    <from pos="1"/>
+                    <to val="position"/>
+                </tok>
+                <to ref="6 2 3"/>
+            </reassign>
+            <reassign>
+                <tok ref="6 14">
+                    <from val="On"/>
+                    <to val="trois"/>
+                </tok>
+                <to ref="6 2 4"/>
+            </reassign>
+            <reassign>
+                <tok ref="6 14">
+                    <from val="De" pos="2"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="6 2 5"/>
+            </reassign>
+            <reassign>
+                <tok ref="6 20">
+                    <from pos="1"/>
+                    <to val="grand"/>
+                </tok>
+                <to ref="6 4 2"/>
+            </reassign>
+            <reassign>
+                <tok ref="6 20">
+                    <from val="De"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="6 4 3"/>
+            </reassign>
+            <reassign>
+                <tok ref="6 23">
+                    <from pos="1"/>
+                    <to val="mêmes"/>
+                </tok>
+                <to ref="6 4 6"/>
+            </reassign>
+            <reassign>
+                <tok ref="6 23">
+                    <from val="En"/>
+                    <to val="contraires" pos="last-1"/>
+                </tok>
+                <to ref="6 4 7"/>
+            </reassign>
+            <reassign>
+                <tok ref="6 23">
+                    <from val="Il"/>
+                    <to val="même" pos="last-1"/>
+                </tok>
+                <to ref="6 4 8"/>
+            </reassign>
+            <reassign>
+                <tok ref="6 23">
+                    <from val="Donc"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="6 4 9"/>
+            </reassign>
+            <reassign>
+                <tok ref="6 24">
+                    <from pos="1"/>
+                    <to val="monde"/>
+                </tok>
+                <to ref="6 4 10"/>
+            </reassign>
+            <reassign>
+                <tok ref="6 24">
+                    <from val="C" pos="2"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="6 4 11"/>
+            </reassign>
+            <reassign>
+                <tok ref="7 2">
+                    <from pos="1"/>
+                    <to val="chose" pos="4"/>
+                </tok>
+                <to ref="7 1 1 2"/>
+            </reassign>
+            <reassign>
+                <tok ref="7 2">
+                    <from val="et"/>
+                    <to val="genre"/>
+                </tok>
+                <to ref="7 1 1 3"/>
+            </reassign>
+            <reassign>
+                <tok ref="7 2">
+                    <from val="Voici"/>
+                    <to val="reste"/>
+                </tok>
+                <to ref="7 1 2"/>
+            </reassign>
+            <reassign>
+                <tok ref="7 2">
+                    <from val="Ainsi"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="7 1 3 1"/>
+            </reassign>
+            <reassign>
+                <tok ref="7 3">
+                    <from pos="1"/>
+                    <to val="mêmes"/>
+                </tok>
+                <to ref="7 1 3 1"/>
+            </reassign>
+            <reassign>
+                <tok ref="7 3">
+                    <from val="Ainsi"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="7 1 3 2"/>
+            </reassign>
+            <reassign>
+                <tok ref="7 11">
+                    <from pos="1"/>
+                    <to val="gouvernail"/>
+                </tok>
+                <to ref="7 3 3"/>
+            </reassign>
+            <reassign>
+                <tok ref="7 11">
+                    <from val="Mais"/>
+                    <to val="gouvernail" pos="last"/>
+                </tok>
+                <to ref="7 3 4"/>
+            </reassign>
+            <reassign>
+                <tok ref="7 11">
+                    <from val="et"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="7 3 5"/>
+            </reassign>
+            <reassign>
+                <tok ref="7 13">
+                    <from pos="1"/>
+                    <to val="disparaît"/>
+                </tok>
+                <to ref="7 3 7"/>
+            </reassign>
+            <reassign>
+                <tok ref="7 13">
+                    <from val="J"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="7 3 8"/>
+            </reassign>
+            <reassign>
+                <tok ref="7 16">
+                    <from pos="1"/>
+                    <to val="nouveau"/>
+                </tok>
+                <to ref="7 3 11"/>
+            </reassign>
+            <reassign>
+                <tok ref="7 16">
+                    <from val="Avec"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="7 3 12"/>
+            </reassign>
+            <reassign>
+                <tok ref="7 17">
+                    <from pos="1"/>
+                    <to val="nature"/>
+                </tok>
+                <to ref="7 4 1"/>
+            </reassign>
+            <reassign>
+                <tok ref="7 17">
+                    <from val="et"/>
+                    <to val="reste"/>
+                </tok>
+                <to ref="7 4 2"/>
+            </reassign>
+            <reassign>
+                <tok ref="7 17">
+                    <from val="Il"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="7 4 3"/>
+            </reassign>
+            <reassign>
+                <tok ref="7 19">
+                    <from pos="1"/>
+                    <to val="encore"/>
+                </tok>
+                <to ref="7 4 5"/>
+            </reassign>
+            <reassign>
+                <tok ref="7 19">
+                    <from val="J"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="7 4 6"/>
+            </reassign>
+            <reassign>
+                <tok ref="7 20">
+                    <from pos="1"/>
+                    <to val="sensible"/>
+                </tok>
+                <to ref="7 4 7"/>
+            </reassign>
+            <reassign>
+                <tok ref="7 20">
+                    <from val="En"/>
+                    <to val="sensation" pos="6"/>
+                </tok>
+                <to ref="7 4 8"/>
+            </reassign>
+            <reassign>
+                <tok ref="7 20">
+                    <from val="La"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="7 4 9"/>
+            </reassign>
+            <reassign>
+                <tok ref="7 22">
+                    <from pos="1"/>
+                    <to val="secondes"/>
+                </tok>
+                <to ref="7 5 1"/>
+            </reassign>
+            <reassign>
+                <tok ref="7 22">
+                    <from val="Il" pos="1"/>
+                    <to val="un" pos="6"/>
+                </tok>
+                <to ref="7 5 2"/>
+            </reassign>
+            <reassign>
+                <tok ref="7 22">
+                    <from val="Il" pos="2"/>
+                    <to val="un" pos="7"/>
+                </tok>
+                <to ref="7 5 3"/>
+            </reassign>
+            <reassign>
+                <tok ref="7 22">
+                    <from val="Il" pos="3"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="7 5 4"/>
+            </reassign>
+            <reassign>
+                <tok ref="7 26">
+                    <from pos="1"/>
+                    <to val="applique"/>
+                </tok>
+                <to ref="7 5 7"/>
+            </reassign>
+            <reassign>
+                <tok ref="7 26">
+                    <from val="Ceci"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="7 5 8"/>
+            </reassign>
+            <reassign>
+                <tok ref="8 4">
+                    <from pos="1"/>
+                    <to val="changeant"/>
+                </tok>
+                <to ref="8 1 3"/>
+            </reassign>
+            <reassign>
+                <tok ref="8 4">
+                    <from val="Les"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="8 1 4"/>
+            </reassign>
+            <reassign>
+                <tok ref="8 5">
+                    <from pos="1"/>
+                    <to val="science"/>
+                </tok>
+                <to ref="8 1 5"/>
+            </reassign>
+            <reassign>
+                <tok ref="8 5">
+                    <from val="Ainsi"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="8 1 6"/>
+            </reassign>
+            <reassign>
+                <tok ref="8 11">
+                    <from pos="1"/>
+                    <to val="affection"/>
+                </tok>
+                <to ref="8 3 4"/>
+            </reassign>
+            <reassign>
+                <tok ref="8 11">
+                    <from val="Il"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="8 3 5"/>
+            </reassign>
+            <reassign>
+                <tok ref="8 12">
+                    <from pos="1"/>
+                    <to val="elles" pos="4"/>
+                </tok>
+                <to ref="8 3 6"/>
+            </reassign>
+            <reassign>
+                <tok ref="8 12">
+                    <from val="Toutes" pos="2"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="8 3 7"/>
+            </reassign>
+            <reassign>
+                <tok ref="8 13">
+                    <from pos="1"/>
+                    <to val="affections"/>
+                </tok>
+                <to ref="8 3 8"/>
+            </reassign>
+            <reassign>
+                <tok ref="8 13">
+                    <from val="tout"/>
+                    <to val="colérique"/>
+                </tok>
+                <to ref="8 3 9"/>
+            </reassign>
+            <reassign>
+                <tok ref="8 13">
+                    <from val="On"/>
+                    <to val="eux"/>
+                </tok>
+                <to ref="8 3 10"/>
+            </reassign>
+            <reassign>
+                <tok ref="8 13">
+                    <from val="Mais"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="8 3 11"/>
+            </reassign>
+            <reassign>
+                <tok ref="8 14">
+                    <from pos="1"/>
+                    <to val="courbe" pos="2"/>
+                </tok>
+                <to ref="8 4 1"/>
+            </reassign>
+            <reassign>
+                <tok ref="8 14">
+                    <from val="et" pos="last"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="8 4 2"/>
+            </reassign>
+            <reassign>
+                <tok ref="8 25">
+                    <from pos="1"/>
+                    <to val="également"/>
+                </tok>
+                <to ref="8 6 3"/>
+            </reassign>
+            <reassign>
+                <tok ref="8 25">
+                    <from val="et"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="8 6 4"/>
+            </reassign>
+            <reassign>
+                <tok ref="8 26">
+                    <from pos="1"/>
+                    <to val="autre" pos="2"/>
+                </tok>
+                <to ref="9 1 1"/>
+            </reassign>
+            <reassign>
+                <tok ref="8 26">
+                    <from val="et" pos="last"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="9 1 2 1"/>
+            </reassign>
+            <reassign>
+                <tok ref="8 27">
+                    <from pos="1"/>
+                    <to val="qualitatifs"/>
+                </tok>
+                <to ref="9 1 2 2"/>
+            </reassign>
+            <reassign>
+                <tok ref="8 27">
+                    <from val="Mais"/>
+                    <to val="morales"/>
+                </tok>
+                <to ref="9 1 2 3"/>
+            </reassign>
+            <reassign>
+                <tok ref="8 27">
+                    <from val="Ces"/>
+                    <to val="morales" pos="2"/>
+                </tok>
+                <to ref="9 1 3"/>
+            </reassign>
+            <reassign>
+                <tok ref="8 27">
+                    <from val="Donc"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="9 1 4"/>
+            </reassign>
+            <reassign>
+                <tok ref="8 28">
+                    <from pos="1"/>
+                    <to val="cercle" pos="5"/>
+                </tok>
+                <to ref="9 1 5"/>
+            </reassign>
+            <reassign>
+                <tok ref="8 28">
+                    <from val="En" pos="last"/>
+                    <to val="autre" pos="4"/>
+                </tok>
+                <to ref="9 1 6"/>
+            </reassign>
+            <reassign>
+                <tok ref="8 28">
+                    <from val="Donc"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="9 1 7"/>
+            </reassign>
+            <reassign>
+                <tok ref="8 30">
+                    <from pos="1"/>
+                    <to val="manière"/>
+                </tok>
+                <to ref="9 2 1"/>
+            </reassign>
+            <reassign>
+                <tok ref="8 30">
+                    <from val="donc"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="9 2 2"/>
+            </reassign>
+            <reassign>
+                <tok ref="8 32">
+                    <from pos="1"/>
+                    <to val="chose" pos="2"/>
+                </tok>
+                <to ref="9 3 2"/>
+            </reassign>
+            <reassign>
+                <tok ref="8 32">
+                    <from val="Mais"/>
+                    <to val="relation" pos="2"/>
+                </tok>
+                <to ref="9 3 3"/>
+            </reassign>
+            <reassign>
+                <tok ref="8 32">
+                    <from val="Nous"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="9 3 4"/>
+            </reassign>
+            <reassign>
+                <tok ref="9 2">
+                    <from pos="1"/>
+                    <to val="chagrin"/>
+                </tok>
+                <to ref="9 5 1 2"/>
+            </reassign>
+            <reassign>
+                <tok ref="9 2">
+                    <from val="ainsi"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="9 5 1 3"/>
+            </reassign>
+            <reassign>
+                <tok ref="10 5">
+                    <from pos="1"/>
+                    <to val="noir" pos="2"/>
+                </tok>
+                <to ref="10 3 1"/>
+            </reassign>
+            <reassign>
+                <tok ref="10 5">
+                    <from val="Et"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="10 3 2"/>
+            </reassign>
+            <reassign>
+                <tok ref="10 9">
+                    <from pos="1"/>
+                    <to val="mauvaises"/>
+                </tok>
+                <to ref="10 3 5"/>
+            </reassign>
+            <reassign>
+                <tok ref="10 9">
+                    <from val="Aussi"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="10 3 6"/>
+            </reassign>
+            <reassign>
+                <tok ref="10 13">
+                    <from pos="1"/>
+                    <to val="privation" pos="4"/>
+                </tok>
+                <to ref="10 4 3"/>
+            </reassign>
+            <reassign>
+                <tok ref="10 13">
+                    <from val="Si"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="10 4 4"/>
+            </reassign>
+            <reassign>
+                <tok ref="10 19">
+                    <from pos="1"/>
+                    <to val="contraires"/>
+                </tok>
+                <to ref="10 5 1"/>
+            </reassign>
+            <reassign>
+                <tok ref="10 19">
+                    <from val="D"/>
+                    <to val="indifféremment"/>
+                </tok>
+                <to ref="10 5 2"/>
+            </reassign>
+            <reassign>
+                <tok ref="10 19">
+                    <from val="On" pos="2"/>
+                    <to val="deux" pos="5"/>
+                </tok>
+                <to ref="10 5 3"/>
+            </reassign>
+            <reassign>
+                <tok ref="10 19">
+                    <from val="Concluons"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="10 5 4"/>
+            </reassign>
+            <reassign>
+                <tok ref="10 25">
+                    <from pos="1"/>
+                    <to val="vraie"/>
+                </tok>
+                <to ref="10 6 5 1"/>
+            </reassign>
+            <reassign>
+                <tok ref="10 25">
+                    <from val="Soit"/>
+                    <to val="pas" pos="3"/>
+                </tok>
+                <to ref="10 6 5 2"/>
+            </reassign>
+            <reassign>
+                <tok ref="10 25">
+                    <from val="s" pos="last"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="10 6 5 3"/>
+            </reassign>
+            <reassign>
+                <tok ref="11 2">
+                    <from pos="1"/>
+                    <to val="bien" pos="2"/>
+                </tok>
+                <to ref="11 1 1"/>
+            </reassign>
+            <reassign>
+                <tok ref="11 2">
+                    <from val="Ceci"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="11 1 2"/>
+            </reassign>
+            <reassign>
+                <tok ref="12 3">
+                    <from pos="1"/>
+                    <to val="existence"/>
+                </tok>
+                <to ref="12 1 1 3"/>
+            </reassign>
+            <reassign>
+                <tok ref="12 3">
+                    <from val="Ainsi"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="12 1 1 4"/>
+            </reassign>
+            <reassign>
+                <tok ref="12 7">
+                    <from pos="1"/>
+                    <to val="première"/>
+                </tok>
+                <to ref="12 2 2"/>
+            </reassign>
+            <reassign>
+                <tok ref="12 7">
+                    <from val="Or"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="12 2 3"/>
+            </reassign>
+            <reassign>
+                <tok ref="13 3">
+                    <from pos="1"/>
+                    <to val="nature"/>
+                </tok>
+                <to ref="13 1 3"/>
+            </reassign>
+            <reassign>
+                <tok ref="13 3">
+                    <from val="Placées"/>
+                    <to val="aquatique" pos="4"/>
+                </tok>
+                <to ref="13 1 4"/>
+            </reassign>
+            <reassign>
+                <tok ref="13 3">
+                    <from val="On"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="13 1 5 1"/>
+            </reassign>
+            <reassign>
+                <tok ref="13 4">
+                    <from pos="1"/>
+                    <to val="espèces"/>
+                </tok>
+                <to ref="13 1 5 2"/>
+            </reassign>
+            <reassign>
+                <tok ref="13 4">
+                    <from val="car"/>
+                    <to val="existence"/>
+                </tok>
+                <to ref="13 1 5 3"/>
+            </reassign>
+            <reassign>
+                <tok ref="13 4">
+                    <from val="Par"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="13 1 5 4"/>
+            </reassign>
+            <reassign>
+                <tok ref="14 2">
+                    <from pos="1"/>
+                    <to val="eux"/>
+                </tok>
+                <to ref="14 1 2 1"/>
+            </reassign>
+            <reassign>
+                <tok ref="14 2">
+                    <from val="la"/>
+                    <to val="reste"/>
+                </tok>
+                <to ref="14 1 2 2"/>
+            </reassign>
+            <reassign>
+                <tok ref="14 4">
+                    <from pos="1"/>
+                    <to val="juste"/>
+                </tok>
+                <to ref="14 1 3 1"/>
+            </reassign>
+            <reassign>
+                <tok ref="14 4">
+                    <from val="Dans"/>
+                    <to val="affecter"/>
+                </tok>
+                <to ref="14 1 3 2"/>
+            </reassign>
+            <reassign>
+                <tok ref="14 4">
+                    <from val="Il"/>
+                    <to val="autres" pos="2"/>
+                </tok>
+                <to ref="14 1 3 3"/>
+            </reassign>
+            <reassign>
+                <tok ref="14 4">
+                    <from val="Si"/>
+                    <to val="mouvements" pos="2"/>
+                </tok>
+                <to ref="14 1 3 4"/>
+            </reassign>
+            <reassign>
+                <tok ref="14 4">
+                    <from val="or"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="14 1 3 5"/>
+            </reassign>
+            <reassign>
+                <tok ref="14 5">
+                    <from pos="1"/>
+                    <to val="etc"/>
+                </tok>
+                <to ref="14 1 4"/>
+            </reassign>
+            <reassign>
+                <tok ref="14 5">
+                    <from val="Ainsi"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="14 1 5"/>
+            </reassign>
+            <reassign>
+                <tok ref="15 7">
+                    <from pos="1"/>
+                    <to val="vin" pos="2"/>
+                </tok>
+                <to ref="15 1 1 7"/>
+            </reassign>
+            <reassign>
+                <tok ref="15 7">
+                    <from val="Et"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="15 1 1 8"/>
+            </reassign>
+            <reassign>
+                <tok ref="15 8">
+                    <from pos="1"/>
+                    <to val="propriété"/>
+                </tok>
+                <to ref="15 1 1 9"/>
+            </reassign>
+            <reassign>
+                <tok ref="15 8">
+                    <from val="car"/>
+                    <to pos="last"/>
+                </tok>
+                <to ref="15 1 1 10"/>
+            </reassign>
+        </adjustments>
+        
+        <vocabulary-key>
+            <algorithm xml:id="xslt2">
+                <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
+                <name>Stylesheet to create a TAN file.</name>
+                <location href="../../applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl" accessed-when="2018-08-05T00:55:47.739-04:00"/>
+            </algorithm>
+            <person xml:id="park">
+                <IRI>tag:parkj@textalign.net,2015:self</IRI>
+                <name xml:lang="eng">Jenny Park</name>
+            </person>
+            <role xml:id="creator">
+                <IRI>http://schema.org/creator</IRI>
+                <name xml:lang="eng">creator</name>
+            </role>
+            <role xml:id="stylesheet1" which="stylesheet"/>
+            <verb which="is about" xml:id="is-about"/>
+            <topic xml:id="predication">
+                <IRI>tag:parkj@textalign.net,2015:topic:predication</IRI>
+                <name>predication</name>
+                <desc>The act of asserting something about a grammatical subject.</desc>
+            </topic>
+        </vocabulary-key>
+        <file-resp who="park"/>
+        <resp who="xslt2" roles="stylesheet1"/>
+        <resp who="park" roles="creator"/>
+        <change when="2016-07-07" who="park">Started file</change>
+        <change who="xslt2" when="2018-08-05T00:55:47.739-04:00">Converted from 2018 to 2019 schemas.</change>
+        <to-do>
+            <comment when="2018-08-05-04:00" who="park">Need to finish file.</comment>
+        </to-do>
+    </head>
+    <body claimant="xslt2">
+        <claim verb="is-about" object="predication">
+            <subject work="grc" ref="1 1"/>
+        </claim>
+    </body>
+</TAN-A>

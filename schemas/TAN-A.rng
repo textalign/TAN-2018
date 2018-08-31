@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar ns="tag:textalign.net,2015:ns" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:local="tag:textalign.net,2015:ns" xmlns="http://relaxng.org/ns/structure/1.0">
+  <include href="incl/TAN-class-2.rng">
+    <start>
+      <element name="TAN-A">
+        <a:documentation>specifies that the file is a div-based TAN alignment file. Root element.</a:documentation>
+        <ref name="TAN-root"/>
+      </element>
+    </start>
+    <define name="source-list">
+      <a:documentation>TAN-A files must have one or more sources</a:documentation>
+      <oneOrMore>
+        <ref name="source-item"/>
+      </oneOrMore>
+    </define>
+    <define name="voc-key-for-non-class-2">
+      <ref name="voc-key-for-claims"/>
+    </define>
+    <define name="tok-sources-ref-opt">
+      <empty/>
+    </define>
+    <define name="tok-cert-opt">
+      <empty/>
+    </define>
+    <define name="body-content-non-class-2">
+      <a:documentation>Redefining TAN-body-core not only defines what is in the body of a TAN-A but also excludes groups from it.</a:documentation>
+      <optional>
+        <ref name="subject-ref"/>
+      </optional>
+      <optional>
+        <ref name="object-ref"/>
+      </optional>
+      <optional>
+        <ref name="verb-ref"/>
+      </optional>
+      <zeroOrMore>
+        <ref name="claim"/>
+      </zeroOrMore>
+    </define>
+  </include>
+  <define name="work-ref">
+    <attribute name="work">
+      <a:documentation>refers to a work by means of a source ID as a proxy. The attribute will be treated as indicating all sources that share the same work as the one mentioned.</a:documentation>
+      <a:documentation>If you wish to avoid making a claim applying to all other versions of a work, use @src instead.</a:documentation>
+    </attribute>
+  </define>
+  <!-- claims -->
+  <define name="voc-key-for-claims">
+    <interleave>
+      <zeroOrMore>
+        <ref name="voc-key-for-work"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="voc-key-for-place"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="voc-key-for-unit"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="voc-key-for-div-type"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="voc-key-for-mode"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="voc-key-for-vers"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="voc-key-for-scri"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="voc-key-for-topic"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="voc-key-for-verb"/>
+      </zeroOrMore>
+    </interleave>
+  </define>
+  <define name="voc-key-for-mode">
+    <element name="modal">
+      <a:documentation>contains an IRI + name pattern identifying a modal or adverb that qualifies the verb of an assertion.</a:documentation>
+      <a:documentation>See main.xml#vocabulary-modal for standard vocabulary.</a:documentation>
+      <ref name="entity-nondigital-id"/>
+    </element>
+  </define>
+  <define name="voc-key-for-place">
+    <element name="place">
+      <a:documentation>contains an IRI + name pattern identifying a spatial location, usually somewhere on earth</a:documentation>
+      <ref name="entity-nondigital-id"/>
+    </element>
+  </define>
+  <define name="voc-key-for-scri">
+    <element name="scriptum">
+      <a:documentation>contains an IRI + name pattern identifying a text-bearing object.</a:documentation>
+      <ref name="entity-nondigital-id"/>
+    </element>
+  </define>
+  <define name="voc-key-for-topic">
+    <element name="topic">
+      <a:documentation>declares one or more topics, to be used in conjunction with @topic under &lt;align&gt; to associate alignments with specific topics instead of verbatim parallels.  </a:documentation>
+      <ref name="entity-nondigital-id"/>
+    </element>
+  </define>
+  <define name="voc-key-for-unit">
+    <element name="unit">
+      <a:documentation>contains an IRI + name pattern identifying a unit type (e.g., millimeters, seconds, Euros), to be used in conjunction with &lt;object&gt; to specify the meaning of a value</a:documentation>
+      <ref name="entity-nondigital-id"/>
+    </element>
+  </define>
+  <define name="voc-key-for-verb">
+    <element name="verb">
+      <a:documentation>contains an IRI + name pattern identifying a property, relationship, action, or something else that is used to say something about something. </a:documentation>
+      <a:documentation>The preferred term "verb" is equivalent to RDF "predicate." The latter term is avoided as misleading, since in ordinary usage the term "predicate" implies everything in a sentence that is not the subject.</a:documentation>
+      <ref name="entity-nondigital-constrained"/>
+    </element>
+  </define>
+  <define name="voc-key-for-vers">
+    <element name="version">
+      <a:documentation>identifies the version of a work. Applicable to sources that contain multiple versions, e.g., original text and facing translations. Like &lt;work&gt;, &lt;version&gt; points to a conceptual entity, not a physical one.</a:documentation>
+      <a:documentation>In the context of a class 1 file, the entity identified by &lt;version&gt; is assumed to be a version of the entity defined in &lt;work&gt;. In TAN-c files, however, no relationship is assumed between &lt;version&gt; and any putative work, unless explicitly stated in that file. </a:documentation>
+      <a:documentation>Very few work-versions have their own URN names. It is advisable to assign a tag URN or a UUID. If you have used an IRI for &lt;work&gt; that you are entitled to modify, you may wish to add a suffix that will name the version. If you need to specify exactly where on a text-bearing object a version appears, &lt;desc&gt; or &lt;comment&gt; should be used.</a:documentation>
+      <a:documentation>For more, see main.xml#conceptual_works</a:documentation>
+      <ref name="entity-nondigital-id"/>
+    </element>
+  </define>
+  <define name="voc-key-for-work">
+    <element name="work">
+      <a:documentation>identifies a creative textual work, understood conceptually, not physically (e.g., Homer's Iliad, not a particular version or copy of it).</a:documentation>
+      <a:documentation>The term "work" is only loosely defined in TAN. Any text that has enough unity to be referred to in ordinary conversation as a single entity may be identified as a work. A work may be composed of other works, be a part of other works, or even overlap with other works. E.g., the Lord's Prayer, the Gospel of Luke, the Tetravengelion, the New Testament, and the Bible are all valid works, despite the complex relationship between each of them.</a:documentation>
+      <a:documentation>This element takes the IRI + name pattern. For more, see main.xml#conceptual_works</a:documentation>
+      <ref name="entity-nondigital-id"/>
+    </element>
+  </define>
+  <define name="claim">
+    <element name="claim">
+      <a:documentation>makes one or more claims.</a:documentation>
+      <choice>
+        <ref name="inclusion"/>
+        <group>
+          <optional>
+            <ref name="ed-stamp"/>
+          </optional>
+          <optional>
+            <ref name="cert-claim"/>
+          </optional>
+          <optional>
+            <ref name="claimant-data"/>
+          </optional>
+          <optional>
+            <ref name="period-ref"/>
+          </optional>
+          <optional>
+            <ref name="modal-ref"/>
+          </optional>
+          <optional>
+            <ref name="verb-ref"/>
+          </optional>
+          <optional>
+            <ref name="place-ref"/>
+          </optional>
+          <interleave>
+            <optional>
+              <ref name="subject"/>
+            </optional>
+            <optional>
+              <ref name="object"/>
+            </optional>
+            <optional>
+              <ref name="locus"/>
+            </optional>
+          </interleave>
+        </group>
+      </choice>
+    </element>
+  </define>
+  <define name="subject">
+    <choice>
+      <ref name="subject-ref"/>
+      <oneOrMore>
+        <ref name="complex-subject"/>
+      </oneOrMore>
+    </choice>
+  </define>
+  <define name="subject-ref">
+    <attribute name="subject">
+      <a:documentation>points to one or more ID refs of entities defined in &lt;head&gt; that serve as the grammatical subject of a claim. @subject within &lt;body&gt; indicates the default subject(s) for &lt;claim&gt;s. </a:documentation>
+      <a:documentation> Multiple values of @subject are interpreted to mean "and", resulting in distribution of the claim (e.g., subject="x y" becomes "x [verby]..." and "y [verb]...").</a:documentation>
+    </attribute>
+  </define>
+  <define name="complex-subject">
+    <element name="subject">
+      <a:documentation>points to text references that act as the subject of the claim.</a:documentation>
+      <a:documentation> Multiple values of &lt;subject&gt; are interpreted to mean "and", resulting in distribution of the claim (e.g., subject="x y" becomes "x [verby]..." and "y [verb]...").</a:documentation>
+      <optional>
+        <ref name="ed-stamp"/>
+      </optional>
+      <ref name="textual-reference"/>
+    </element>
+  </define>
+  <define name="modal-ref">
+    <attribute name="adverb">
+      <a:documentation>names a &lt;modal&gt; that qualifies the claim.</a:documentation>
+      <a:documentation> Multiple values of @adverb are interpreted to mean "and" with intersection. No distribution takes place (e.g., adverb="x y" means "[subject] x &amp; y [verby]...", not "[subject] x [verb]..." and "[subject] y [verb]...").</a:documentation>
+    </attribute>
+  </define>
+  <define name="verb-ref">
+    <attribute name="verb">
+      <a:documentation>points to one or more &lt;verb&gt;s that serve to assert something of the @subject.</a:documentation>
+      <a:documentation>The preferred term "verb" is equivalent to RDF "predicate." The latter term is avoided as being misleading -- most who use TAN will understand "predicate," grammatically speaking, to refer to everything in a sentence that is not the subject.</a:documentation>
+      <a:documentation> Multiple values of @verb are interpreted to mean "and", resulting in distribution of the claim (e.g., verb="x y" becomes "[subject] x ..." and "[subject] y...").</a:documentation>
+    </attribute>
+  </define>
+  <define name="place-ref">
+    <attribute name="where">
+      <a:documentation>restricts the &lt;claim&gt; to a specific &lt;place&gt;.
+ Multiple values of @where are interpreted to mean "or" with union. No distribution takes place (e.g., where="x y" means "[subject] x or y [verby]...", not "[subject] x [verb]..." and "[subject] y [verb]...").</a:documentation>
+    </attribute>
+  </define>
+  <define name="object">
+    <choice>
+      <ref name="object-ref"/>
+      <oneOrMore>
+        <ref name="complex-object"/>
+      </oneOrMore>
+    </choice>
+  </define>
+  <define name="object-ref">
+    <attribute name="object">
+      <a:documentation>takes one or more ID refs of entities defined in &lt;head&gt; that serve as the grammatical object of a claim. For example, if you wish to say that work A is a commentary on work B, then the object would have the ID ref for work B. If you wish to make more complex assertions, use &lt;object&gt;.</a:documentation>
+      <a:documentation> Multiple values of @object are interpreted to mean "and", resulting in distribution of the claim (e.g., object="x y" becomes "[subject] [verb] x" and "[subject] [verb] y...").</a:documentation>
+      <a:documentation>In RDF, the concept of object (the third element of a triple) is required. In TAN-c, it is not required, since some &lt;verb&gt;s may be intransitive (e.g., "Charlie slept.").</a:documentation>
+    </attribute>
+  </define>
+  <define name="complex-object">
+    <choice>
+      <ref name="object-element"/>
+      <oneOrMore>
+        <ref name="claim"/>
+      </oneOrMore>
+    </choice>
+  </define>
+  <define name="object-element">
+    <element name="object">
+      <a:documentation>is similar to @object, but for complex content, mainly concepts that do not lend themselves to the IRI + name pattern, particularly languages and units or passages of text.</a:documentation>
+      <optional>
+        <ref name="ed-stamp"/>
+      </optional>
+      <choice>
+        <ref name="nontextual-reference"/>
+        <ref name="textual-reference"/>
+      </choice>
+    </element>
+  </define>
+  <define name="nontextual-reference">
+    <optional>
+      <choice>
+        <ref name="lang-of-content"/>
+        <ref name="units"/>
+      </choice>
+    </optional>
+    <text/>
+  </define>
+  <define name="textual-reference">
+    <choice>
+      <ref name="simple-textual-reference"/>
+      <ref name="complex-textual-reference-set"/>
+    </choice>
+  </define>
+  <define name="simple-textual-reference">
+    <choice>
+      <ref name="sources-ref"/>
+      <ref name="work-ref"/>
+    </choice>
+    <ref name="pointer-to-div-range"/>
+  </define>
+  <define name="complex-textual-reference-set">
+    <choice>
+      <ref name="sources-ref"/>
+      <ref name="work-ref"/>
+    </choice>
+    <oneOrMore>
+      <ref name="complex-text-ref"/>
+    </oneOrMore>
+  </define>
+  <define name="complex-text-ref">
+    <choice>
+      <ref name="div-ref-range"/>
+      <ref name="tok-ref"/>
+    </choice>
+  </define>
+  <define name="units">
+    <attribute name="units">
+      <a:documentation>points to the ID ref of a &lt;unit&gt;, defining the type of units.</a:documentation>
+    </attribute>
+  </define>
+  <define name="locus">
+    <oneOrMore>
+      <element name="locus">
+        <a:documentation>restricts a claim to a particular location within a scriptum or work.</a:documentation>
+        <a:documentation>This element functions much like &lt;place&gt;, but the geography is textual rather than spatial.</a:documentation>
+        <optional>
+          <ref name="ed-stamp"/>
+        </optional>
+        <ref name="textual-reference"/>
+      </element>
+    </oneOrMore>
+  </define>
+</grammar>
