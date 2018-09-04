@@ -66,7 +66,7 @@
       <xsl:choose>
          <xsl:when
             test="not(exists($template-url-resolved)) or string-length($template-url-resolved) lt 1">
-            <xsl:message>No template url has been provided.</xsl:message>
+            <xsl:message>No template doc because no template url has been provided.</xsl:message>
          </xsl:when>
          <xsl:when test="$template-extension = 'docx'">
             <xsl:copy-of select="tan:open-docx($template-url-resolved)"/>

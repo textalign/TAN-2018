@@ -17,8 +17,9 @@
     <xsl:param name="stylesheet-iri"
         select="'tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019'"/>
     <xsl:param name="stylesheet-url" select="static-base-uri()"/>
+    <xsl:param name="stylesheet-name" select="'Converter from TAN 2018 to TAN 2019'"/>
     <xsl:param name="change-message" select="'Converted from 2018 to 2019 schemas.'"/>
-    
+
     <!-- INPUT -->
 
     <xsl:param name="input-items" as="item()*" select="/"/>
@@ -27,19 +28,19 @@
         <xsl:apply-templates select="/" mode="test-input"/>
     </xsl:variable>
 
-    <xsl:template match="node() | @*" mode="input-pass-1 credit-stylesheet test-input">
+    <xsl:template match="node() | @*" mode="input-pass-1 test-input">
         <xsl:copy>
             <xsl:apply-templates select="node() | @*" mode="#current"/>
         </xsl:copy>
     </xsl:template>
-    
+
     <xsl:template match="processing-instruction()" priority="1" mode="input-pass-1 test-input">
         <xsl:processing-instruction name="{name(.)}" select="replace(., 'TAN-2018', 'TAN-2019')"/>
     </xsl:template>
     <xsl:template match="/comment()" mode="input-pass-1 test-input">
         <xsl:comment select="replace(., 'TAN-2018', 'TAN-2019')"/>
     </xsl:template>
-    
+
     <xsl:template match="text()[not(matches(., '\S'))]" mode="input-pass-1 test-input">
         <xsl:param name="indent-offset" tunnel="yes" as="xs:integer?"/>
         <xsl:choose>
@@ -50,9 +51,10 @@
                         if (exists(following-sibling::*)) then
                             0
                         else
-                            -1"
+                            -1"/>
+                <xsl:value-of
+                    select="$most-common-indentations[$this-anc-count + $indent-offset + $last-text-node-offset]"
                 />
-                <xsl:value-of select="$most-common-indentations[$this-anc-count + $indent-offset + $last-text-node-offset]"/>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:value-of select="."/>
@@ -87,7 +89,7 @@
     <xsl:template match="@TAN-version" mode="input-pass-1 test-input">
         <xsl:attribute name="TAN-version">2019</xsl:attribute>
     </xsl:template>
-    
+
     <xsl:template match="@when-accessed" mode="input-pass-1 test-input">
         <xsl:attribute name="accessed-when">
             <xsl:value-of select="."/>
@@ -131,15 +133,19 @@
             <to-do-list/>
         </head-map>
     </xsl:variable>
-    
+
 
 
     <xsl:template match="tan:head" mode="input-pass-1 test-input">
         <xsl:variable name="part-1-terminus" select="*[name() = $head-map/*[1]/*][last()]"/>
-        <xsl:variable name="part-2-terminus" select="*[name() = $head-map/*[position() le 2]/*][last()]"/>
-        <xsl:variable name="part-3-terminus" select="*[name() = $head-map/*[position() le 3]/*][last()]"/>
-        <xsl:variable name="part-4-terminus" select="*[name() = $head-map/*[position() le 4]/*][last()]"/>
-        <xsl:variable name="part-5-terminus" select="*[name() = $head-map/*[position() le 5]/*][last()]"/>
+        <xsl:variable name="part-2-terminus"
+            select="*[name() = $head-map/*[position() le 2]/*][last()]"/>
+        <xsl:variable name="part-3-terminus"
+            select="*[name() = $head-map/*[position() le 3]/*][last()]"/>
+        <xsl:variable name="part-4-terminus"
+            select="*[name() = $head-map/*[position() le 4]/*][last()]"/>
+        <xsl:variable name="part-5-terminus"
+            select="*[name() = $head-map/*[position() le 5]/*][last()]"/>
         <xsl:variable name="part-6-terminus" select="tan:resp[last()]"/>
         <xsl:variable name="part-7-terminus" select="tan:change[last()]"/>
         <xsl:copy>
@@ -159,7 +165,8 @@
                     <xsl:with-param name="indent-offset" select="-1" tunnel="yes"/>
                 </xsl:apply-templates>
             </xsl:for-each>
-            <xsl:for-each select="following-sibling::tan:body/(tan:for-lang, tan:tok-starts-with, tan:tok-is)">
+            <xsl:for-each
+                select="following-sibling::tan:body/(tan:for-lang, tan:tok-starts-with, tan:tok-is)">
                 <xsl:value-of select="$most-common-indentations[2]"/>
                 <xsl:copy-of select="."/>
             </xsl:for-each>
@@ -194,7 +201,7 @@
             />
         </xsl:copy>
     </xsl:template>
-    
+
     <xsl:template match="tan:license" mode="input-pass-1 test-input">
         <xsl:copy>
             <xsl:copy-of select="@*"/>
@@ -204,14 +211,15 @@
             <xsl:apply-templates mode="#current"/>
         </xsl:copy>
     </xsl:template>
-    
-    <xsl:template match="tan:licensor | text()[following-sibling::node()[1]/self::tan:licensor]" mode="input-pass-1 test-input" priority="1"/>
-    
+
+    <xsl:template match="tan:licensor | text()[following-sibling::node()[1]/self::tan:licensor]"
+        mode="input-pass-1 test-input" priority="1"/>
+
     <xsl:template match="tan:ambiguous-letter-numerals-are-roman" mode="input-pass-1 test-input">
         <xsl:variable name="is-true" select="xs:boolean(.)"/>
         <numerals priority="{if ($is-true) then 'roman' else 'letters'}"/>
     </xsl:template>
-    
+
     <xsl:template match="tan:key" mode="input-pass-1 test-input">
         <vocabulary>
             <xsl:apply-templates select="@* | node()" mode="#current"/>
@@ -220,14 +228,8 @@
 
     <xsl:template match="tan:see-also" mode="input-pass-1 test-input">
         <xsl:variable name="this-relationship" select="tan:attribute-vocabulary(@relationship)"/>
-        <!--<xsl:variable name="this-relationship-glossary-entry"
-            select="
-                if (exists($this-relationship/tan:IRI)) then
-                    $this-relationship
-                else
-                    tan:glossary($this-relationship)"/>-->
-        <xsl:variable name="this-relationship-glossary-entry" select="tan:attribute-vocabulary(@relationship)"
-        />
+        <xsl:variable name="this-relationship-glossary-entry"
+            select="tan:attribute-vocabulary(@relationship)"/>
         <xsl:choose>
             <xsl:when test="$this-relationship-glossary-entry//tan:name = 'model'">
                 <model>
@@ -276,11 +278,13 @@
     <xsl:template match="tan:definitions" mode="input-pass-1 test-input">
         <vocabulary-key>
             <xsl:apply-templates select="@*" mode="#current"/>
+            <!-- Note, we can discard any vocabulary items whose @xml:id and @which values are identical -->
             <xsl:apply-templates
                 select="
                     node() except
                     (tan:relationship[(tan:name, @which, tan:attribute-vocabulary(@relationship)//tan:name) = ('model', 'redivision', 'class 2', 'old version', 'new version')],
                     (tan:work, tan:version)[ancestor::tei:TEI or ancestor::tan:TAN-T],
+                    *[@xml:id = @which],
                     tan:token-definition, tan:ambiguous-letter-numerals-are-roman)/(self::node(), preceding-sibling::node()[1]/self::text())"
                 mode="#current"/>
         </vocabulary-key>
@@ -290,8 +294,10 @@
         <xsl:variable name="url-check" select="tan:parse-urls(text())"/>
         <xsl:variable name="urls-valid" as="xs:string*">
             <xsl:for-each select="$url-check/tan:url">
-                <xsl:variable name="this-url-with-ad-hoc-fixes" select="replace(., 'do( |%20)things','applications')"/>
-                <xsl:variable name="this-url-resolved" select="resolve-uri($this-url-with-ad-hoc-fixes, $doc-uri)"/>
+                <xsl:variable name="this-url-with-ad-hoc-fixes"
+                    select="replace(., 'do( |%20)things', 'applications')"/>
+                <xsl:variable name="this-url-resolved"
+                    select="resolve-uri($this-url-with-ad-hoc-fixes, $doc-uri)"/>
                 <xsl:if test="doc-available($this-url-resolved)">
                     <xsl:value-of select="$this-url-with-ad-hoc-fixes"/>
                 </xsl:if>
@@ -308,28 +314,24 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
-    
+
     <xsl:template match="tan:resp[1]" mode="input-pass-1">
-        <xsl:variable name="this-primary-agent"
-            select="..//(tan:person, tan:organization)[tan:IRI[starts-with(., concat('tag:', $doc-namespace))]]"
-        />
-        <xsl:variable name="this-fallback-agent" select="$doc-history/tan:change[last()]/@who"/>
-        <file-resp who="{($this-primary-agent, $this-fallback-agent)[1]}"/>
+        <file-resp who=""/>
         <xsl:value-of select="$most-common-indentations[2]"/>
         <xsl:copy-of select="."/>
     </xsl:template>
-    
+
     <xsl:template match="*:body" mode="input-pass-1">
         <xsl:copy>
             <xsl:apply-templates select="@*" mode="#current"/>
             <xsl:apply-templates
                 select="
-                node() except
-                (tan:for-lang, tan:tok-is, tan:tok-starts-with)/(self::node(), preceding-sibling::node()[1]/self::text())"
+                    node() except
+                    (tan:for-lang, tan:tok-is, tan:tok-starts-with)/(self::node(), preceding-sibling::node()[1]/self::text())"
                 mode="#current"/>
         </xsl:copy>
     </xsl:template>
-    
+
     <xsl:template match="@in-progress" mode="input-pass-1"/>
 
     <xsl:template match="@val" mode="input-pass-1">
@@ -345,11 +347,34 @@
         </xsl:choose>
     </xsl:template>
 
+    <xsl:variable name="pass-1-resolved" select="tan:resolve-doc($input-pass-1)"/>
+    <xsl:variable name="pass-1-agent-vocabulary"
+        select="tan:vocabulary(('person', 'organization'), false(), (), $pass-1-resolved/*/tan:head)"/>
+    <xsl:variable name="pass-1-likely-primary-agents"
+        select="$pass-1-agent-vocabulary/*[tan:IRI[starts-with(., concat('tag:', $doc-namespace))]]"/>
+    <xsl:variable name="pass-1-primary-agent-ids"
+        select="
+        for $i in $pass-1-likely-primary-agents
+        return
+        if (exists($i/tan:id)) then
+        $i/tan:id[1]
+        else
+        replace($i/tan:name[1], '\s', '_')"/>
+    <xsl:template match="tan:file-resp" mode="input-pass-2">
+        <xsl:copy>
+            <xsl:copy-of select="@*"/>
+            <xsl:if test="exists($pass-1-primary-agent-ids)">
+                <xsl:attribute name="who" select="string-join($pass-1-primary-agent-ids, ' ')"/>
+            </xsl:if>
+        </xsl:copy>
+    </xsl:template>
+    
     <!-- TEMPLATE -->
 
-    <xsl:param name="template-infused-with-revised-input" select="$input-pass-1"/>
+    <xsl:param name="template-infused-with-revised-input" select="$input-pass-2"/>
 
     <xsl:template match="/" mode="revise-infused-template">
+        <xsl:message>revise infused template</xsl:message>
         <xsl:document>
             <xsl:for-each select="node()">
                 <xsl:text>&#xa;</xsl:text>
@@ -357,7 +382,7 @@
             </xsl:for-each>
         </xsl:document>
     </xsl:template>
-    
+
     <xsl:template match="@xml:base" mode="credit-stylesheet"/>
 
     <!-- OUTPUT -->
@@ -373,8 +398,9 @@
         </diagnostics>-\->
         <!-\-<xsl:copy-of select="$test-input"/>-\->
         <!-\-<xsl:copy-of select="tan:get-doc-history($orig-self)"/>-\->
-        <xsl:copy-of select="$doc-history"/>
+        <!-\-<xsl:copy-of select="$doc-history"/>-\->
         <!-\-<xsl:copy-of select="$input-pass-1"/>-\->
+        <xsl:copy-of select="$input-pass-2"/>
         <!-\-<xsl:copy-of select="$infused-template-credited"/>-\->
     </xsl:template>-->
 

@@ -9,6 +9,9 @@
    <!-- If the output is a TAN file, the stylesheet should be credited/blamed. That is done primarily through an IRI assigned to the stylesheet -->
    <xsl:param name="stylesheet-iri" as="xs:string" required="yes"/>
    
+   <!-- What is the name of the stylesheet? This value, along with $stylesheet-iri, will be used to populate the IRI + name pattern when the stylesheet is credited -->
+   <xsl:param name="stylesheet-name" as="xs:string" required="no"/>
+   
    <!-- This parameter needs to be redefined at the master stylesheet level, otherwise this parameters file uri will be returned -->
    <xsl:param name="stylesheet-url" as="xs:string" required="yes"/>
    

@@ -10,6 +10,12 @@
    <xsl:param name="change-message" as="xs:string*" required="yes"/>-->
    <xsl:import href="../../parameters/output-parameters.xsl"/>
 
+   <xsl:template match="node() | @*" mode="credit-stylesheet">
+      <xsl:copy>
+         <xsl:apply-templates select="node() | @*" mode="#current"/>
+      </xsl:copy>
+   </xsl:template>
+   
    <xsl:template match="/tan:* | /tei:TEI" mode="credit-stylesheet">
       <xsl:variable name="this-base-uri" select="tan:base-uri(.)"/>
       <xsl:variable name="vocabulary-for-this-stylesheet"
@@ -39,7 +45,9 @@
                   <xsl:value-of select="$stylesheet-iri"/>
                </IRI>
                <xsl:value-of select="$most-common-indentations[4]"/>
-               <name>Stylesheet to create a TAN file.</name>
+               <name>
+                  <xsl:value-of select="($stylesheet-name, 'Stylesheet to create a TAN file.')[1]"/>
+               </name>
                <xsl:value-of select="$most-common-indentations[4]"/>
                <location href="{tan:uri-relative-to($stylesheet-url, string($this-base-uri))}"
                   accessed-when="{current-dateTime()}"/>
