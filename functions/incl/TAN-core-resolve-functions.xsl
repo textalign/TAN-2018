@@ -72,9 +72,11 @@
                      for $i in current-group()
                      return
                         name($i)"/>
-               <xsl:copy-of
-                  select="tan:resolve-inclusion-element-loop($this-inclusion-element, $these-elements-names-to-fetch, $this-doc/*/@id, $this-doc/*/@xml:base, 1)"
-               />
+               <xsl:if test="exists($this-inclusion-element)">
+                  <xsl:copy-of
+                     select="tan:resolve-inclusion-element-loop($this-inclusion-element, $these-elements-names-to-fetch, $this-doc/*/@id, $this-doc/*/@xml:base, 1)"
+                  />
+               </xsl:if>
             </xsl:for-each-group>
          </xsl:variable>
          <!-- substep: replace parts of the doc with the full/revised elements, keeping @q -->
@@ -331,10 +333,18 @@
       <xsl:variable name="new-href" select="resolve-uri(@href, xs:string($this-base-uri))"/>
       <xsl:copy>
          <xsl:copy-of select="@* except @href"/>
-         <xsl:attribute name="href" select="$new-href"/>
-         <xsl:if test="not($new-href = @href) and $leave-breadcrumbs">
-            <xsl:attribute name="orig-href" select="@href"/>
-         </xsl:if>
+         <xsl:choose>
+            <xsl:when test="string-length($this-base-uri) gt 1">
+               <xsl:attribute name="href" select="$new-href"/>
+               <xsl:if test="not($new-href = @href) and $leave-breadcrumbs">
+                  <xsl:attribute name="orig-href" select="@href"/>
+               </xsl:if>
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:message select="'No base uri detected for ', tan:shallow-copy(.)"/>
+            </xsl:otherwise>
+         </xsl:choose>
+         <xsl:apply-templates mode="#current"/>
       </xsl:copy>
    </xsl:template>
 
@@ -392,6 +402,11 @@
       <xsl:param name="doc-urls-already-processed" as="xs:string*"/>
       <xsl:param name="loop-counter" as="xs:integer"/>
       <xsl:variable name="this-inclusion-doc" select="tan:get-1st-doc($inclusion-element)"/>
+      <xsl:variable name="this-inclusion-doc-stamped">
+         <xsl:apply-templates select="$this-inclusion-doc" mode="resolve-href">
+            <xsl:with-param name="leave-breadcrumbs" select="false()" tunnel="yes"/>
+         </xsl:apply-templates>
+      </xsl:variable>
       <xsl:variable name="this-inclusion-doc-uri" select="tan:base-uri($this-inclusion-doc)"/>
       <!-- we focus upon head @include and not body @include because we are interested in vocabulary items that might need to be resolved -->
       <xsl:variable name="this-inclusion-head-elements-with-attr-include"
@@ -414,6 +429,9 @@
             </xsl:when>
             <xsl:when test="$this-inclusion-doc/tan:error">
                <xsl:copy-of select="$this-inclusion-doc/tan:error"/>
+            </xsl:when>
+            <xsl:when test="not(($this-inclusion-doc, $this-inclusion-extra-vocabulary)/*/@TAN-version = $TAN-version)">
+               <xsl:copy-of select="tan:error('inc06')"/>
             </xsl:when>
             <xsl:when
                test="
@@ -480,13 +498,14 @@
                
                <!-- Third, get the vocabulary for the substitutes, provided they are not inclusions -->
                <xsl:variable name="this-inclusion-doc-with-inclusions-resolved" as="document-node()">
-                  <xsl:apply-templates select="$this-inclusion-doc" mode="apply-resolved-inclusions">
+                  <xsl:apply-templates select="$this-inclusion-doc-stamped" mode="apply-resolved-inclusions">
                      <xsl:with-param name="resolved-inclusions" select="$nested-inclusions-resolved"
                         tunnel="yes"/>
                   </xsl:apply-templates>
                </xsl:variable>
+               <xsl:variable name="this-inclusion-docs-nonincluded-elements-of-interest" select="$this-inclusion-doc-with-inclusions-resolved//*[name() = $names-of-elements-of-interest][not(@include)]"/>
                <xsl:variable name="vocabulary-items-of-interest" as="element()*"
-                  select="tan:element-vocabulary($this-inclusion-doc-with-inclusions-resolved//*[name() = $names-of-elements-of-interest][not(@include)])"/>
+                  select="tan:element-vocabulary($this-inclusion-docs-nonincluded-elements-of-interest)"/>
                <xsl:copy-of select="tan:consolidate-elements($vocabulary-items-of-interest)"/>
                
             </xsl:otherwise>

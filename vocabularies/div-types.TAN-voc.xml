@@ -311,7 +311,7 @@
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:half-line_(verse)</IRI>
-                <name>half-line (verse)</name>
+                <name>half line (verse)</name>
                 <desc>Understood to be a semantic division, not a physical line break, for which see
                     line (physical)</desc>
             </item>

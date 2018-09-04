@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<serialized version="20.0" xml:space="preserve">
+<serialized version="20.1" xml:space="preserve">
 	<serializableOrderedMap>
 		<entry>
 			<String>document.types</String>
@@ -31,7 +31,7 @@
 											<String>authorExtensionDescriptor/actionDescriptors</String>
 										</field>
 										<field name="index">
-											<Integer>80</Integer>
+											<Integer>81</Integer>
 										</field>
 										<field name="value">
 											<action>
@@ -101,7 +101,7 @@
 											<String>authorExtensionDescriptor/actionDescriptors</String>
 										</field>
 										<field name="index">
-											<Integer>81</Integer>
+											<Integer>82</Integer>
 										</field>
 										<field name="value">
 											<action>
@@ -165,7 +165,7 @@ process-link-to
 											<String>authorExtensionDescriptor/actionDescriptors</String>
 										</field>
 										<field name="index">
-											<Integer>82</Integer>
+											<Integer>83</Integer>
 										</field>
 										<field name="value">
 											<action>
@@ -235,7 +235,7 @@ process-link-to
 											<String>authorExtensionDescriptor/actionDescriptors</String>
 										</field>
 										<field name="index">
-											<Integer>83</Integer>
+											<Integer>84</Integer>
 										</field>
 										<field name="value">
 											<action>
@@ -305,7 +305,7 @@ process-link-to
 											<String>authorExtensionDescriptor/actionDescriptors</String>
 										</field>
 										<field name="index">
-											<Integer>84</Integer>
+											<Integer>85</Integer>
 										</field>
 										<field name="value">
 											<action>
@@ -369,7 +369,7 @@ process-link-to
 											<String>authorExtensionDescriptor/actionDescriptors</String>
 										</field>
 										<field name="index">
-											<Integer>85</Integer>
+											<Integer>86</Integer>
 										</field>
 										<field name="value">
 											<action>
@@ -559,24 +559,7 @@ process-link-to
 											<String>authorExtensionDescriptor/additionalToolbarsDescriptors</String>
 										</field>
 										<field name="index">
-											<Integer>0</Integer>
-										</field>
-										<field name="value">
-											<null/>
-										</field>
-										<field name="patchHandling">
-											<String>removeIndex</String>
-										</field>
-										<field name="anchor">
-											<null/>
-										</field>
-									</poPatch>
-									<poPatch>
-										<field name="fieldPath">
-											<String>authorExtensionDescriptor/additionalToolbarsDescriptors</String>
-										</field>
-										<field name="index">
-											<Integer>0</Integer>
+											<Integer>2</Integer>
 										</field>
 										<field name="value">
 											<toolbar>
@@ -635,23 +618,6 @@ process-link-to
 											<String>doctypeRules</String>
 										</field>
 										<field name="index">
-											<Integer>2</Integer>
-										</field>
-										<field name="value">
-											<null/>
-										</field>
-										<field name="patchHandling">
-											<String>removeIndex</String>
-										</field>
-										<field name="anchor">
-											<null/>
-										</field>
-									</poPatch>
-									<poPatch>
-										<field name="fieldPath">
-											<String>doctypeRules</String>
-										</field>
-										<field name="index">
 											<Integer>1</Integer>
 										</field>
 										<field name="value">
@@ -659,65 +625,6 @@ process-link-to
 										</field>
 										<field name="patchHandling">
 											<String>removeIndex</String>
-										</field>
-										<field name="anchor">
-											<null/>
-										</field>
-									</poPatch>
-									<poPatch>
-										<field name="fieldPath">
-											<String>doctypeRules</String>
-										</field>
-										<field name="index">
-											<Integer>0</Integer>
-										</field>
-										<field name="value">
-											<null/>
-										</field>
-										<field name="patchHandling">
-											<String>removeIndex</String>
-										</field>
-										<field name="anchor">
-											<null/>
-										</field>
-									</poPatch>
-									<poPatch>
-										<field name="fieldPath">
-											<String>doctypeRules</String>
-										</field>
-										<field name="index">
-											<Integer>0</Integer>
-										</field>
-										<field name="value">
-											<documentTypeRule>
-												<field name="namespace">
-													<String>tag:textalign.net?2015:ns</String>
-												</field>
-												<field name="rootElem">
-													<String>TAN-T</String>
-												</field>
-												<field name="fileName">
-													<String>*</String>
-												</field>
-												<field name="publicID">
-													<String>*</String>
-												</field>
-												<field name="javaRuleClass">
-													<String></String>
-												</field>
-												<field name="attributeLocalName">
-													<String>*</String>
-												</field>
-												<field name="attributeNamespace">
-													<String>*</String>
-												</field>
-												<field name="attributeValue">
-													<String>*</String>
-												</field>
-											</documentTypeRule>
-										</field>
-										<field name="patchHandling">
-											<String>addIndex</String>
 										</field>
 										<field name="anchor">
 											<null/>
@@ -754,7 +661,49 @@ process-link-to
 													<String>*</String>
 												</field>
 												<field name="attributeValue">
-													<String>2018</String>
+													<String>2019</String>
+												</field>
+											</documentTypeRule>
+										</field>
+										<field name="patchHandling">
+											<String>addIndex</String>
+										</field>
+										<field name="anchor">
+											<null/>
+										</field>
+									</poPatch>
+									<poPatch>
+										<field name="fieldPath">
+											<String>doctypeRules</String>
+										</field>
+										<field name="index">
+											<Integer>2</Integer>
+										</field>
+										<field name="value">
+											<documentTypeRule>
+												<field name="namespace">
+													<String>tag:textalign.net?2015:ns</String>
+												</field>
+												<field name="rootElem">
+													<String>TAN-T</String>
+												</field>
+												<field name="fileName">
+													<String>*</String>
+												</field>
+												<field name="publicID">
+													<String>*</String>
+												</field>
+												<field name="javaRuleClass">
+													<String></String>
+												</field>
+												<field name="attributeLocalName">
+													<String>TAN-version</String>
+												</field>
+												<field name="attributeNamespace">
+													<String>*</String>
+												</field>
+												<field name="attributeValue">
+													<String>2019</String>
 												</field>
 											</documentTypeRule>
 										</field>
@@ -2628,13 +2577,13 @@ go-to-prev-leaf-div</String>
 									</action>
 									<action>
 										<field name="id">
-											<String>go-to-next-leaf-div</String>
+											<String>go-to-next-leaf-element</String>
 										</field>
 										<field name="name">
-											<String>Go to next leaf div</String>
+											<String>Go to next leaf</String>
 										</field>
 										<field name="description">
-											<String>Move caret to the beginning of the next leaf div</String>
+											<String>Move caret to the beginning of the next leaf element</String>
 										</field>
 										<field name="largeIconPath">
 											<String>${framework}/applications/configure%20oXygen%20author/img/next-leaf.png</String>
@@ -2662,7 +2611,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>xpathLocation</String>
-																<String>following::tan:div[not(tan:div)][1]</String>
+																<String>following::*[not(*)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -2712,7 +2661,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>xpathLocation</String>
-																<String>preceding::tan:div[not(tan:div)][1]</String>
+																<String>preceding::*:div[not(*:div)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -3704,13 +3653,13 @@ go-to-prev-leaf-div</String>
 									</action>
 									<action>
 										<field name="id">
-											<String>go-to-prev-leaf-div-start</String>
+											<String>go-to-prev-leaf-start</String>
 										</field>
 										<field name="name">
-											<String>Go to prev leaf div</String>
+											<String>Go to prev leaf</String>
 										</field>
 										<field name="description">
-											<String>Move caret to the start of the previous leaf div</String>
+											<String>Move caret to the start of the previous leaf element</String>
 										</field>
 										<field name="largeIconPath">
 											<String>${framework}/applications/configure%20oXygen%20author/img/prev-leaf.png</String>
@@ -3738,7 +3687,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>xpathLocation</String>
-																<String>preceding::tan:div[not(tan:div)][1]</String>
+																<String>preceding::*[not(*)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -5091,13 +5040,13 @@ replace-marked-text-with-string-composite
 									</action>
 									<action>
 										<field name="id">
-											<String>add-key</String>
+											<String>add-vocabulary</String>
 										</field>
 										<field name="name">
-											<String>Add key</String>
+											<String>Add vocabulary</String>
 										</field>
 										<field name="description">
-											<String>Add a key to the &lt;head></String>
+											<String>Add a vocabulary to the &lt;head></String>
 										</field>
 										<field name="largeIconPath">
 											<String></String>
@@ -5121,7 +5070,7 @@ replace-marked-text-with-string-composite
 														<serializableOrderedMap>
 															<entry>
 																<String>actionIDs</String>
-																<String>mark-link-to-key
+																<String>mark-link-to-vocabulary
 process-link-to
 </String>
 															</entry>
@@ -5139,13 +5088,13 @@ process-link-to
 									</action>
 									<action>
 										<field name="id">
-											<String>mark-link-to-key</String>
+											<String>mark-link-to-vocabulary</String>
 										</field>
 										<field name="name">
-											<String>Mark link-to for key</String>
+											<String>Mark link-to for vocabulary</String>
 										</field>
 										<field name="description">
-											<String>Insert a &lt;link-to> before &lt;definitions>, as the first step in creating a &lt;key> to another file.</String>
+											<String>Insert a &lt;link-to> before &lt;adjustments> or &lt;vocabulary-key>, as the first step in creating a &lt;vocabulary> to another file.</String>
 										</field>
 										<field name="largeIconPath">
 											<String></String>
@@ -5169,11 +5118,11 @@ process-link-to
 														<serializableOrderedMap>
 															<entry>
 																<String>fragment</String>
-																<String>&lt;link-to element-name="key" xml:base="${cfdu}/${cfne}">${ask('Link to what key?', relative_url, 'file.tan-key.xml')}&lt;/link-to></String>
+																<String>&lt;link-to element-name="vocabulary" xml:base="${cfdu}/${cfne}">${ask('Link to what vocabulary?', relative_url, 'file.tan-voc.xml')}&lt;/link-to></String>
 															</entry>
 															<entry>
 																<String>insertLocation</String>
-																<String>/*/tan:head/tan:definitions</String>
+																<String>/*/tan:head/(tan:adjustments, tan:vocabulary-key)[1]</String>
 															</entry>
 															<entry>
 																<String>insertPosition</String>
@@ -5257,7 +5206,7 @@ process-link-to
 											<String>Mark link-to for inclusion</String>
 										</field>
 										<field name="description">
-											<String>Insert a &lt;link-to> before &lt;definitions>, as the first step in creating an &lt;inclusion> to another file.</String>
+											<String>Insert a &lt;link-to> before &lt;adjustments> or &lt;vocabulary-key>, as the first step in creating an &lt;inclusion> to another file.</String>
 										</field>
 										<field name="largeIconPath">
 											<String></String>
@@ -5285,7 +5234,7 @@ process-link-to
 															</entry>
 															<entry>
 																<String>insertLocation</String>
-																<String>/*/tan:head/tan:definitions</String>
+																<String>/*/tan:head/(tan:adjustments, tan:vocabulary-key)[1]</String>
 															</entry>
 															<entry>
 																<String>insertPosition</String>
@@ -5343,6 +5292,56 @@ process-link-to
 													</field>
 													<field name="operationID">
 														<String>ro.sync.ecss.extensions.commons.operations.ExecuteMultipleActionsOperation</String>
+													</field>
+												</actionMode>
+											</actionMode-array>
+										</field>
+										<field name="enabledInReadOnlyContext">
+											<Boolean>false</Boolean>
+										</field>
+									</action>
+									<action>
+										<field name="id">
+											<String>go-to-next-leaf-div</String>
+										</field>
+										<field name="name">
+											<String>Go to next leaf div</String>
+										</field>
+										<field name="description">
+											<String>Move caret to the beginning of the next leaf div</String>
+										</field>
+										<field name="largeIconPath">
+											<String></String>
+										</field>
+										<field name="smallIconPath">
+											<String></String>
+										</field>
+										<field name="accessKey">
+											<String></String>
+										</field>
+										<field name="accelerator">
+											<null/>
+										</field>
+										<field name="actionModes">
+											<actionMode-array>
+												<actionMode>
+													<field name="xpathCondition">
+														<String></String>
+													</field>
+													<field name="argValues">
+														<serializableOrderedMap>
+															<entry>
+																<String>position</String>
+																<String>Inside, at the beginning</String>
+															</entry>
+															<entry>
+																<String>xpathLocation</String>
+																<String>following::*:div[not(*:div)][1]</String>
+															</entry>
+														</serializableOrderedMap>
+													</field>
+													<field name="operationID">
+														<String>ro.sync.ecss.extensions.commons.operations.MoveCaretOperation</String>
 													</field>
 												</actionMode>
 											</actionMode-array>
@@ -5410,7 +5409,7 @@ process-link-to
 														</menuItem>
 														<menuItem>
 															<field name="actionID">
-																<String>add-key</String>
+																<String>add-vocabulary</String>
 															</field>
 														</menuItem>
 													</menuEntry-array>
@@ -5461,12 +5460,12 @@ process-link-to
 													<menuEntry-array>
 														<menuItem>
 															<field name="actionID">
-																<String>go-to-prev-leaf-div-start</String>
+																<String>go-to-prev-leaf-start</String>
 															</field>
 														</menuItem>
 														<menuItem>
 															<field name="actionID">
-																<String>go-to-next-leaf-div</String>
+																<String>go-to-next-leaf-element</String>
 															</field>
 														</menuItem>
 														<menuItem>
@@ -5744,7 +5743,7 @@ process-link-to
 														</menuItem>
 														<menuItem>
 															<field name="actionID">
-																<String>add-key</String>
+																<String>add-vocabulary</String>
 															</field>
 														</menuItem>
 													</menuEntry-array>
@@ -5795,12 +5794,12 @@ process-link-to
 													<menuEntry-array>
 														<menuItem>
 															<field name="actionID">
-																<String>go-to-prev-leaf-div-start</String>
+																<String>go-to-prev-leaf-start</String>
 															</field>
 														</menuItem>
 														<menuItem>
 															<field name="actionID">
-																<String>go-to-next-leaf-div</String>
+																<String>go-to-next-leaf-element</String>
 															</field>
 														</menuItem>
 														<menuItem>
@@ -6252,7 +6251,7 @@ process-link-to
 												</toolbarItem>
 												<toolbarItem>
 													<field name="actionID">
-														<String>add-key</String>
+														<String>add-vocabulary</String>
 													</field>
 												</toolbarItem>
 											</toolbarEntry-array>
@@ -6275,12 +6274,12 @@ process-link-to
 											<toolbarEntry-array>
 												<toolbarItem>
 													<field name="actionID">
-														<String>go-to-prev-leaf-div-start</String>
+														<String>go-to-prev-leaf-start</String>
 													</field>
 												</toolbarItem>
 												<toolbarItem>
 													<field name="actionID">
-														<String>go-to-next-leaf-div</String>
+														<String>go-to-next-leaf-element</String>
 													</field>
 												</toolbarItem>
 												<toolbarItem>
@@ -6400,13 +6399,13 @@ process-link-to
 									<String></String>
 								</field>
 								<field name="attributeLocalName">
-									<String>*</String>
+									<String>TAN-version</String>
 								</field>
 								<field name="attributeNamespace">
 									<String>*</String>
 								</field>
 								<field name="attributeValue">
-									<String>*</String>
+									<String>2019</String>
 								</field>
 							</documentTypeRule>
 							<documentTypeRule>
@@ -6433,32 +6432,6 @@ process-link-to
 								</field>
 								<field name="attributeValue">
 									<String>*</String>
-								</field>
-							</documentTypeRule>
-							<documentTypeRule>
-								<field name="namespace">
-									<String>*</String>
-								</field>
-								<field name="rootElem">
-									<String>*</String>
-								</field>
-								<field name="fileName">
-									<String>*</String>
-								</field>
-								<field name="publicID">
-									<String>*</String>
-								</field>
-								<field name="javaRuleClass">
-									<String></String>
-								</field>
-								<field name="attributeLocalName">
-									<String>TAN-version</String>
-								</field>
-								<field name="attributeNamespace">
-									<String>*</String>
-								</field>
-								<field name="attributeValue">
-									<String>2018</String>
 								</field>
 							</documentTypeRule>
 						</documentTypeRule-array>

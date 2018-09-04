@@ -303,8 +303,14 @@
                $TAN-vocabularies/tan:TAN-voc/tan:body//tan:item[tan:IRI = $this-relationship-IRIs]
             else
                ()"/>
+      <xsl:variable name="target-1st-da" select="tan:get-1st-doc(.)"/>
       <xsl:variable name="target-1st-da-resolved" as="document-node()?">
          <xsl:choose>
+            <xsl:when test="($this-name = ('inclusion', 'vocabulary')) and not($target-1st-da/*/@TAN-version = $TAN-version)">
+               <xsl:document>
+                  <xsl:copy-of select="tan:error('inc06')"/>
+               </xsl:document>
+            </xsl:when>
             <xsl:when test="self::tan:inclusion and $this-doc-id = $doc-id">
                <xsl:copy-of select="$inclusions-resolved[position() = $this-pos]"/>
             </xsl:when>
@@ -318,7 +324,7 @@
                <xsl:copy-of select="$see-alsos-resolved[position() = $this-pos]"/>
             </xsl:when>
             <xsl:otherwise>
-               <xsl:copy-of select="tan:resolve-doc(tan:get-1st-doc(.))"/>
+               <xsl:copy-of select="tan:resolve-doc($target-1st-da)"/>
             </xsl:otherwise>
          </xsl:choose>
       </xsl:variable>
@@ -815,7 +821,7 @@
       <xsl:apply-templates select="." mode="check-referred-doc"/>
    </xsl:template>
    
-   <xsl:template match="tan:name" mode="core-expansion-terse">
+   <xsl:template match="tan:name" mode="core-expansion-terse expand-standard-tan-voc">
       <!-- parameters below specifically for TAN-voc files -->
       <xsl:param name="reserved-vocabulary-items" as="element()*"/>
       <xsl:param name="is-reserved" as="xs:boolean?" tunnel="yes"/>

@@ -79,8 +79,9 @@
         <error xml:id="inc03"><rule>Inclusions may not be circular.</rule></error>
         <fatal xml:id="inc04"><rule>Inclusions are integral parts of any TAN file. Access to at least one copy is absolutely mandatory.</rule></fatal>
     </group>
-    <group affects-element="inclusion vocabulary">
+    <group affects-element="inclusion vocabulary" affects-attribute="TAN-version">
         <fatal xml:id="inc05"><rule>The vocabulary of a file may not include it.</rule></fatal>
+        <error xml:id="inc06"><rule>Inclusions and vocabularies must match the @TAN-version of the host document.</rule></error>
     </group>
     <group affects-element="location inclusion see-also source vocabulary redivision model predecessor successor">
         <error xml:id="loc01"><rule>Every element with a &lt;location> should have at least one document available.</rule></error>

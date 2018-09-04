@@ -19,7 +19,7 @@
 
    <!-- GLOBAL VARIABLES AND PARAMETERS -->
 
-   <xsl:variable name="doc-history" select="tan:get-doc-history($self-resolved)"/>
+   <xsl:variable name="doc-history" select="tan:get-doc-history($orig-self)"/>
    <xsl:variable name="doc-filename" select="replace($doc-uri, '.*/([^/]+)$', '$1')"/>
 
    <xsl:variable name="most-common-indentations" as="xs:string*">
@@ -1046,6 +1046,153 @@
          <xsl:with-param name="extra-vocabularies" select="$extra-vocabularies" tunnel="yes"/>
       </xsl:apply-templates>
    </xsl:function>
+   
+   <xsl:variable name="orig-self-validated-new" as="document-node()">
+      <xsl:apply-templates select="$orig-self" mode="imitate-validation-new"/>
+   </xsl:variable>
+   <xsl:template match="*" mode="imitate-validation-new">
+      <xsl:variable name="these-q-refs"
+         select="
+            for $i in ancestor-or-self::*
+            return
+               (generate-id($i))"
+      />
+      <!--<xsl:variable name="this-q-ref" select="generate-id(.)"/>-->
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:for-each select="$these-q-refs">
+            <q><xsl:value-of select="."/></q>
+         </xsl:for-each>
+         <test01a>
+            <xsl:copy-of select="tan:get-via-q-ref-new($these-q-refs, $self-expanded[1])"/>
+         </test01a>
+         <xsl:apply-templates mode="#current"/>
+         <!--<xsl:apply-templates mode="#current">
+            <xsl:with-param name="inherited-q-refs" select="$inherited-q-refs, $this-q-ref"/>
+         </xsl:apply-templates>-->
+      </xsl:copy>
+   </xsl:template>
+   <xsl:function name="tan:get-via-q-ref-new" as="element()*">
+      <!-- Input: values of @q that identify elements in a document; a document with @q marking the originally generated id for the element -->
+      <!-- Output: the element (if any) that corresponds to the chain of @qs -->
+      <xsl:param name="q-values" as="xs:string+"/>
+      <xsl:param name="breadcrumbed-document" as="document-node()?"/>
+      <xsl:apply-templates select="$breadcrumbed-document" mode="get-q-new">
+         <xsl:with-param name="q-chain" select="$q-values"/>
+      </xsl:apply-templates>
+   </xsl:function>
+   <xsl:template match="comment() | processing-instruction() | text()"
+      mode="get-q-new"/>
+   <xsl:template match="document-node()" mode="get-q-new">
+      <xsl:param name="q-chain" as="xs:string+"/>
+      <xsl:apply-templates mode="#current">
+         <xsl:with-param name="q-chain" select="$q-chain"/>
+      </xsl:apply-templates>
+   </xsl:template>
+   <xsl:template match="*" mode="get-q-new">
+      <xsl:param name="q-chain" as="xs:string+"/>
+      <xsl:if test="(@q = $q-chain[1])">
+         <xsl:choose>
+            <xsl:when test="count($q-chain) = 1">
+               <xsl:sequence select="."/>
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:apply-templates mode="#current">
+                  <xsl:with-param name="q-chain" select="$q-chain[position() gt 1]"/>
+               </xsl:apply-templates>
+            </xsl:otherwise>
+         </xsl:choose>
+      </xsl:if>
+   </xsl:template>
+   
+   <xsl:variable name="orig-self-validated" as="document-node()">
+      <xsl:apply-templates select="$orig-self" mode="imitate-validation"/>
+   </xsl:variable>
+   <xsl:template match="*" mode="imitate-validation">
+      <!-- new stuff -->
+      <xsl:variable name="these-q-refs"
+         select="
+            for $i in ancestor-or-self::*
+            return
+               (generate-id($i))"
+      />
+      <!--<xsl:variable name="this-checked-for-errors"
+         select="tan:get-via-q-ref-new($these-q-refs, $self-expanded[1])"/>-->
+      
+      <!-- This template imitates the process of validation, for testing on efficiency, etc. -->
+      <xsl:variable name="this-q-ref" select="generate-id(.)"/>
+      <xsl:variable name="this-name" select="name(.)"/>
+      <xsl:variable name="this-checked-for-errors"
+         select="tan:get-via-q-ref($this-q-ref, $self-expanded[1])"/>
+      <xsl:variable name="has-include-or-which-attr" select="exists(@include) or exists(@which)"/>
+      <xsl:variable name="relevant-fatalities"
+         select="
+            if ($has-include-or-which-attr = true()) then
+               $this-checked-for-errors//tan:fatal[not(@xml:id = $errors-to-squelch)]
+            else
+               $this-checked-for-errors/(self::*, tan:range)/(self::*, *[@attr])/tan:fatal[not(@xml:id = $errors-to-squelch)]"/>
+      <xsl:variable name="relevant-errors"
+         select="
+            if ($has-include-or-which-attr = true()) then
+               $this-checked-for-errors//tan:error[not(@xml:id = $errors-to-squelch)]
+            else
+               $this-checked-for-errors/(self::*, tan:range)/(self::*, *[@attr])/tan:error[not(@xml:id = $errors-to-squelch)]"/>
+      <xsl:variable name="relevant-warnings"
+         select="
+            if ($has-include-or-which-attr = true()) then
+               $this-checked-for-errors//tan:warning[not(@xml:id = $errors-to-squelch)]
+            else
+               $this-checked-for-errors/(self::*, tan:range)/(self::*, *[@attr])/tan:warning[not(@xml:id = $errors-to-squelch)]"/>
+      <xsl:variable name="relevant-info"
+         select="
+            if ($has-include-or-which-attr = true()) then
+               $this-checked-for-errors//tan:info
+            else
+               $this-checked-for-errors/(self::*, tan:range)/(self::*, *[@attr])/tan:info"/>
+      <xsl:variable name="help-offered"
+         select="
+            if ($has-include-or-which-attr = true()) then
+               $this-checked-for-errors//tan:help
+            else
+               $this-checked-for-errors/(self::*, tan:range)/(self::*, *[@attr])/tan:help"/>
+
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:if test="exists($relevant-fatalities)">
+            <sch>
+               <value-of select="tan:error-report($relevant-fatalities)"/>
+            </sch>
+         </xsl:if>
+         <xsl:if test="exists($relevant-errors)">
+            <sch>
+               <value-of select="tan:error-report($relevant-errors)"/>
+            </sch>
+         </xsl:if>
+         <xsl:if test="exists($relevant-warnings)">
+            <sch>
+               <value-of select="tan:error-report($relevant-warnings)"/>
+            </sch>
+         </xsl:if>
+         <xsl:if test="exists($relevant-info)">
+            <sch>
+               <value-of select="$relevant-info/tan:message"/>
+            </sch>
+         </xsl:if>
+         <xsl:if test="exists($help-offered)">
+            <sch>
+               <value-of select="$help-offered/tan:message"/>
+            </sch>
+         </xsl:if>
+         <xsl:if test="not(exists($this-checked-for-errors))">
+            <sch><value-of select="$this-q-ref"/> doesn't match; other @q values of <value-of
+                  select="$this-name"/>: <value-of
+                  select="string-join($self-expanded//*[name() = $this-name]/@q, ', ')"/></sch>
+         </xsl:if>
+
+         <xsl:apply-templates mode="#current"/>
+      </xsl:copy>
+
+   </xsl:template>
 
    <!-- Functions: TAN-T(EI) -->
 

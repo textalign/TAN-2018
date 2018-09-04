@@ -48,7 +48,7 @@
             <token-definition pattern="[\w&#xad;​&#x200d;]+"/>
             <name>letters</name>
             <name>letters only</name>
-            <name>general word-characters only</name>
+            <name>general word characters only</name>
             <name>general ignore punctuation</name>
             <name>gwo</name>
             <desc>General tokenization pattern for any language, words only. Non-letters such as
@@ -84,7 +84,7 @@
         <item>
             <token-definition pattern="[\w&#xad;​&#x200d;]+|[^\w&#xad;​&#x200d;\s]"/>
             <name>letters and punctuation</name>
-            <name>general non-space characters</name>
+            <name>general non space characters</name>
             <name>general include punctuation</name>
             <desc>General tokenization pattern for any language, treating not only series of letters
                 as word tokens but also individual non-letter characters (e.g., punctuation).</desc>

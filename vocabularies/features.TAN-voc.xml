@@ -8509,9 +8509,9 @@
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:feature:voice-middlepassive</IRI>
-                <name>middle-passive</name>
+                <name>middle passive</name>
                 <name>mediopassive</name>
-                <name>medio-passive</name>
+                <name>medio passive</name>
                 <desc>Classical Greek verbal form that ambiguously weds middle and passive, the
                     union of http://purl.org/olia/olia.owl#MiddleVoice and
                     http://purl.org/olia/olia.owl#PassiveVoice </desc>

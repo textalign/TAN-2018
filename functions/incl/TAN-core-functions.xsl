@@ -248,7 +248,7 @@
    <!-- inclusions -->
    <xsl:variable name="inclusions-1st-da" select="tan:get-1st-doc(/*/tan:head/tan:inclusion)"/>
    <xsl:variable name="inclusions-resolved"
-      select="tan:resolve-doc($inclusions-1st-da, false(), 'incl', /*/tan:head/tan:inclusion/@xml:id)"
+      select="tan:resolve-doc($inclusions-1st-da[*/@TAN-version = $TAN-version], false(), 'incl', /*/tan:head/tan:inclusion/@xml:id)"
       as="document-node()*"/>
 
    <!-- vocabularies -->
@@ -262,13 +262,14 @@
    <xsl:variable name="TAN-vocabularies" as="document-node()*">
       <xsl:apply-templates select="$TAN-vocabulary-files" mode="expand-standard-tan-voc">
          <xsl:with-param name="leave-breadcrumbs" tunnel="yes" select="false()"/>
+         <xsl:with-param name="is-reserved" select="true()" tunnel="yes"/>
       </xsl:apply-templates>
    </xsl:variable>
 
    <!-- In the next variable, the tan:key[tan:location] is an ad hoc measure to help get files converted from 2018 to 2019 -->
    <xsl:variable name="vocabularies-1st-da"
       select="tan:get-1st-doc($head/(tan:vocabulary, tan:key[tan:location]))"/>
-   <xsl:variable name="vocabularies-resolved" select="tan:resolve-doc($vocabularies-1st-da)"/>
+   <xsl:variable name="vocabularies-resolved" select="tan:resolve-doc($vocabularies-1st-da[*/@TAN-version = $TAN-version])"/>
    <xsl:variable name="vocabularies-expanded" select="tan:expand-doc($vocabularies-resolved)"/>
    <xsl:variable name="all-vocabularies" select="($vocabularies-expanded, $TAN-vocabularies)"
       as="document-node()*"/>
@@ -2118,7 +2119,7 @@
                />
             </xsl:when>
             <xsl:otherwise>
-               <xsl:message select="'No head exists', tan:shallow-copy($this-doc)"/>
+               <xsl:message select="'No head exists', tan:shallow-copy($this-doc/*)"/>
             </xsl:otherwise>
          </xsl:choose>
          
@@ -2404,7 +2405,7 @@
             if ($reference-external-vocabularies = false()) then
                ()
             else
-               tan:resolve-doc(tan:get-1st-doc($local-head/tan:vocabulary), false())"/>
+               tan:resolve-doc(tan:get-1st-doc($local-head/tan:vocabulary)[*/@TAN-version = $TAN-version], false())"/>
       <!-- We allow a TAN-voc file to refer to its own vocabulary -->
       <xsl:variable name="relevant-new-extra-vocabulary-items"
          select="

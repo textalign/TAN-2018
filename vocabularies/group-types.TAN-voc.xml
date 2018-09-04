@@ -47,7 +47,7 @@
     <body affects-element="group-type">
         <item>
             <IRI>tag:textalign.net,2015:group-type:group-type:requires-attribute-n</IRI>
-            <name>attr-n</name>
+            <name>attr n</name>
             <name>attribute n</name>
             <name>tan lm</name>
             <desc>The group contains items that define groups relevant only in the context of @n</desc>
@@ -151,7 +151,7 @@
             <item>
                 <IRI>tag:textalign.net,2015:group-type:div:scriptum</IRI>
                 <name>scriptum</name>
-                <name>scriptum-based</name>
+                <name>scriptum based</name>
                 <name>object</name>
                 <name>physical</name>
                 <name>material</name>

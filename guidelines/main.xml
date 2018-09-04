@@ -192,7 +192,7 @@
                            attended to in terse expansion.</para>
                      </listitem>
                   <listitem>
-                     <para>New errors introduced: wrn07, wrn08, inc05, tan21</para>
+                     <para>New errors introduced: wrn07, wrn08, inc05, tan21, inc06</para>
                   </listitem>
                      <listitem>
                         <para>Deleted errors: tan13 (an &lt;alias> should be able to combine
