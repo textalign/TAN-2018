@@ -16,11 +16,20 @@
       <xsl:param name="leave-breadcrumbs" as="xs:boolean"/>
       <xsl:copy-of select="tan:resolve-doc($TAN-documents, $leave-breadcrumbs, (), ())"/>
    </xsl:function>
+   <xsl:function name="tan:resolve-doc" as="document-node()*">
+      <!-- four-parameter version of the fuller one, below -->
+      <xsl:param name="TAN-documents" as="document-node()*"/>
+      <xsl:param name="leave-breadcrumbs" as="xs:boolean"/>
+      <xsl:param name="add-attr-to-root-element-named-what" as="xs:string?"/>
+      <xsl:param name="add-what-val-to-new-root-attribute" as="xs:string*"/>
+      <xsl:copy-of select="tan:resolve-doc($TAN-documents, $leave-breadcrumbs, (), (), true())"/>
+   </xsl:function>
    
    <xsl:function name="tan:resolve-doc" as="document-node()*">
       <!-- Input: any TAN documents; 
-         boolean indicating whether documents should be breadcrumbed or not; 
-         optional name of an attribute and a sequence of strings to stamp in each document's root element to mark each document; 
+         a boolean indicating whether documents should be breadcrumbed or not; 
+         optional name of an attribute and a sequence of strings to stamp in each document's root element to mark each document;
+         a boolean indicating whether vocabulary should be resolved
          -->
       <!-- Output: that document resolved -->
       <!-- Resolving involves the following steps:
@@ -28,12 +37,15 @@
          - resolve arabic numbers
          - resolve <inclusion>s
          - insert <inclusion>-derived substitutes
-         - ensure every @which and attribute with idref values has a corresponding vocabulary item, marking those that don't
+         - imprint vocabulary (standard and extended) within the <head>
+         - ensure every @which and attribute with idref values has a corresponding vocabulary item, marking <error>s within those that don't
       -->
+      <!-- Because vocabulary resolution can be time-consuming, and because this function will be used upon sources of class-2 documents (where validation of the vocabulary is not paramount), it may be skipped -->
       <xsl:param name="TAN-documents" as="document-node()*"/>
       <xsl:param name="leave-breadcrumbs" as="xs:boolean"/>
       <xsl:param name="add-attr-to-root-element-named-what" as="xs:string?"/>
       <xsl:param name="add-what-val-to-new-root-attribute" as="xs:string*"/>
+      <xsl:param name="resolve-vocabulary" as="xs:boolean"/>
       <xsl:for-each select="$TAN-documents">
          <xsl:variable name="this-doc" select="."/>
          <xsl:variable name="this-doc-no" select="position()"/>
@@ -74,7 +86,7 @@
                         name($i)"/>
                <xsl:if test="exists($this-inclusion-element)">
                   <xsl:copy-of
-                     select="tan:resolve-inclusion-element-loop($this-inclusion-element, $these-elements-names-to-fetch, $this-doc/*/@id, $this-doc/*/@xml:base, 1)"
+                     select="tan:resolve-inclusion-element-loop($this-inclusion-element, $these-elements-names-to-fetch, $this-doc/*/@id, $this-doc/*/@xml:base, $resolve-vocabulary, 1)"
                   />
                </xsl:if>
             </xsl:for-each-group>
@@ -98,29 +110,32 @@
          <!-- Step: add to each <vocabulary> the particular vocabulary items from the previous step; for TAN vocabulary, insert a new <vocabulary> populated with vocabulary items -->
          <!-- for the step above, also stamp <resolved> as the first child of the root element, and copy the error messages due to bad idrefs or @which values to the host element -->
          <xsl:variable name="doc-with-complete-vocabulary" as="document-node()">
-            <xsl:apply-templates select="$doc-with-inclusions-resolved"
-               mode="resolve-vocabulary-references">
-               <xsl:with-param name="vocabulary-analysis"
-                  select="$this-vocabulary-consolidated" tunnel="yes"/>
-            </xsl:apply-templates>
+            <xsl:choose>
+               <xsl:when test="$resolve-vocabulary = true()">
+                  <xsl:apply-templates select="$doc-with-inclusions-resolved"
+                     mode="resolve-vocabulary-references">
+                     <xsl:with-param name="vocabulary-analysis"
+                        select="$this-vocabulary-consolidated" tunnel="yes"/>
+                  </xsl:apply-templates>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:sequence select="$doc-with-inclusions-resolved"/>
+               </xsl:otherwise>
+            </xsl:choose>
          </xsl:variable>
          
          
          <!-- diagnostics, results -->
          <!--<xsl:document>
             <diagnostics>
-               <!-\-<xsl:copy-of select="$elements-with-attr-include"/>-\->
-               <xsl:copy-of select="$doc-with-inclusions-resolved"/>
-               <!-\-<test21a><xsl:copy-of select="$doc-with-inclusions-resolved/*/tan:head/tan:work"/></test21a>-\->
-               <!-\-<test21b><xsl:copy-of select="tan:element-vocabulary($doc-with-inclusions-resolved/*/tan:head/tan:work)"/></test21b>-\->
-               <test27a><xsl:copy-of select="$elements-still-to-be-checked"/></test27a>
-               <test24a><xsl:copy-of select="$this-vocabulary-raw"/></test24a>
-               <!-\-<test24b><xsl:copy-of select="$this-vocabulary-consolidated"/></test24b>-\->
+               <!-\-<xsl:copy-of select="$elements-still-to-be-checked"/>-\->
+               <!-\-<xsl:copy-of select="$this-vocabulary-raw"/>-\->
+               <xsl:copy-of select="$this-vocabulary-consolidated"/>
             </diagnostics>
          </xsl:document>-->
          <!--<xsl:copy-of select="$doc-stamped"/>-->
          <!--<xsl:copy-of select="$doc-with-n-and-ref-converted"/>-->
-         <!--<xsl:copy-of select="$doc-with-includes-resolved"/>-->
+         <!--<xsl:copy-of select="$doc-with-inclusions-resolved"/>-->
          <xsl:copy-of select="$doc-with-complete-vocabulary"/>
       </xsl:for-each>
    </xsl:function>
@@ -359,6 +374,7 @@
       />
       <xsl:copy>
          <xsl:copy-of select="@*"/>
+         <resolved>numerals</resolved>
          <xsl:apply-templates mode="#current">
             <xsl:with-param name="ambig-is-roman" select="$ambig-is-roman" tunnel="yes"/>
          </xsl:apply-templates>
@@ -393,13 +409,14 @@
    </xsl:template>
    
    <xsl:function name="tan:resolve-inclusion-element-loop" as="element()?">
-      <!-- Input: any inclusion element; names of elements that are of interest; ids and urls of documents already processed; loop counter -->
+      <!-- Input: any inclusion element; names of elements that are of interest; ids and urls of documents already processed; boolean indicating whether vocabulary should be resolved; loop counter -->
       <!-- Output: the <inclusion> with last children newly inserted: <error>, <inclusion>, <substitutes>, <tan-vocabulary>, <vocabulary>, <local> -->
       <!-- We assume the <location> in the input <inclusion> already has had its @href resolved -->
       <xsl:param name="inclusion-element" as="element()"/>
       <xsl:param name="names-of-elements-of-interest" as="xs:string*"/>
       <xsl:param name="doc-ids-already-processed" as="xs:string*"/>
       <xsl:param name="doc-urls-already-processed" as="xs:string*"/>
+      <xsl:param name="resolve-vocabulary" as="xs:boolean"/>
       <xsl:param name="loop-counter" as="xs:integer"/>
       <xsl:variable name="this-inclusion-doc" select="tan:get-1st-doc($inclusion-element)"/>
       <xsl:variable name="this-inclusion-doc-stamped">
@@ -461,7 +478,7 @@
                         return
                         name($i))"/>
                      <xsl:copy-of
-                        select="tan:resolve-inclusion-element-loop($this-inclusion-element, $these-elements-names-to-fetch, ($doc-ids-already-processed, $this-inclusion-doc/*/@id), ($doc-urls-already-processed, $this-inclusion-doc-uri), $loop-counter + 1)"
+                        select="tan:resolve-inclusion-element-loop($this-inclusion-element, $these-elements-names-to-fetch, ($doc-ids-already-processed, $this-inclusion-doc/*/@id), ($doc-urls-already-processed, $this-inclusion-doc-uri), $resolve-vocabulary, $loop-counter + 1)"
                      />
                   </xsl:for-each-group>
                </xsl:variable>
@@ -506,7 +523,9 @@
                <xsl:variable name="this-inclusion-docs-nonincluded-elements-of-interest" select="$this-inclusion-doc-with-inclusions-resolved//*[name() = $names-of-elements-of-interest][not(@include)]"/>
                <xsl:variable name="vocabulary-items-of-interest" as="element()*"
                   select="tan:element-vocabulary($this-inclusion-docs-nonincluded-elements-of-interest)"/>
-               <xsl:copy-of select="tan:consolidate-elements($vocabulary-items-of-interest)"/>
+               <xsl:if test="$resolve-vocabulary = true()">
+                  <xsl:copy-of select="tan:consolidate-elements($vocabulary-items-of-interest)"/>
+               </xsl:if>
                
             </xsl:otherwise>
          </xsl:choose>
@@ -520,7 +539,7 @@
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <!-- The next element signifies that the file has been resolved, and to interpret it, one need no longer access any vocabulary, whether standard or special -->
-         <resolved/>
+         <resolved>vocabulary</resolved>
          <xsl:apply-templates mode="#current"/>
       </xsl:copy>
    </xsl:template>

@@ -19,15 +19,15 @@
 
    <!-- redivisions -->
    <xsl:variable name="redivisions-1st-da" select="tan:get-1st-doc($head/tan:redivision)"/>
-   <xsl:variable name="redivisions-resolved" select="tan:resolve-doc($redivisions-1st-da)"/>
+   <xsl:variable name="redivisions-resolved" select="tan:resolve-doc($redivisions-1st-da, false(), 'redivision', (), ($validation-phase = 'verbose'))"/>
    
    <!-- models -->
-   <xsl:variable name="models-1st-da" select="tan:get-1st-doc($head/tan:model)"/>
-   <xsl:variable name="models-resolved" select="tan:resolve-doc($models-1st-da)"/>
+   <xsl:variable name="model-1st-da" select="tan:get-1st-doc($head/tan:model[1])"/>
+   <xsl:variable name="model-resolved" select="tan:resolve-doc($model-1st-da, false(), 'model', (), ($validation-phase = 'verbose'))"/>
    
    <!-- annotations -->
    <xsl:variable name="annotations-1st-da" select="tan:get-1st-doc($head/tan:annotation)"/>
-   <xsl:variable name="annotations-resolved" select="tan:resolve-doc($annotations-1st-da)"/>
+   <xsl:variable name="annotations-resolved" select="tan:resolve-doc($annotations-1st-da, false(), 'annotation', (), ($validation-phase = 'verbose'))"/>
    
    
 
@@ -228,7 +228,7 @@
    
    <xsl:template match="tan:model" mode="core-expansion-terse">
       <xsl:variable name="these-iris" select="tan:IRI"/>
-      <xsl:variable name="this-model-doc-resolved" select="$models-resolved[*/@id = $these-iris]"/>
+      <xsl:variable name="this-model-doc-resolved" select="$model-resolved[*/@id = $these-iris]"/>
       <xsl:variable name="target-1st-da" select="tan:get-1st-doc(.)"/>
       <xsl:variable name="target-doc-resolved"
          select="
@@ -1071,7 +1071,7 @@
       <xsl:variable name="these-redivisions" as="document-node()*">
          <xsl:for-each select="$redivisions">
             <xsl:variable name="these-iris" select="tan:IRI"/>
-            <xsl:variable name="this-see-also-doc" select="$see-alsos-resolved[*/@id = $these-iris]"/>
+            <xsl:variable name="this-see-also-doc" select="$redivisions-resolved[*/@id = $these-iris]"/>
             <xsl:sequence
                select="
                   if (exists($this-see-also-doc)) then
@@ -1181,22 +1181,22 @@
       <!-- Evaluate the model (only one model is allowed) -->
       <!--<xsl:variable name="see-also-model"
          select="(tan:head/tan:see-also[tan:vocabulary-key-item(tan:relationship)/tan:name = 'model'])[1]"/>-->
-      <xsl:variable name="see-also-model"
+      <xsl:variable name="this-model"
          select="(tan:head/tan:see-also[tan:element-vocabulary(.)//tan:name = 'model'])[1]"/>
       <xsl:variable name="model-already-resolved"
-         select="$see-alsos-resolved[*/@id = $see-also-model/tan:IRI]"/>
+         select="$model-resolved[*/@id = $this-model/tan:IRI]"/>
       <xsl:variable name="this-model-resolved"
          select="
             if (exists($model-already-resolved)) then
                $model-already-resolved
             else
-               tan:resolve-doc(tan:get-1st-doc($see-also-model))"
+               tan:resolve-doc(tan:get-1st-doc($this-model))"
          as="document-node()?"/>
       <xsl:variable name="this-model-expanded"
          select="tan:expand-doc($this-model-resolved, 'terse')"/>
       <xsl:variable name="self-and-model-merged"
          select="
-            if (exists($see-also-model)) then
+            if (exists($this-model)) then
                tan:merge-expanded-docs((root(), $this-model-expanded))
             else
                ()"/>

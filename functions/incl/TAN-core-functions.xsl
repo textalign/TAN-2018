@@ -279,19 +279,12 @@
    <xsl:variable name="sources-must-be-adjusted"
       select="exists($head/tan:adjustments/(tan:equate, tan:rename, tan:reassign, tan:skip))"/>
    <xsl:variable name="sources-resolved" as="document-node()*"
-      select="tan:resolve-doc($sources-1st-da, $sources-must-be-adjusted, 'src', $source-ids)"/>
+      select="tan:resolve-doc($sources-1st-da, $sources-must-be-adjusted, 'src', $source-ids, ($validation-phase = 'verbose'))"/>
 
-   <!-- see-also, context -->
-   <xsl:variable name="see-alsos-1st-da" select="tan:get-1st-doc($head/tan:see-also)"/>
-   <xsl:variable name="see-alsos-resolved" select="tan:resolve-doc($see-alsos-1st-da)"/>
-
-   <!-- predecessors -->
-   <xsl:variable name="predecessors-1st-da" select="tan:get-1st-doc($head/tan:predecessor)"/>
-   <xsl:variable name="predecessors-resolved" select="tan:resolve-doc($predecessors-1st-da)"/>
-
-   <!-- successors -->
-   <xsl:variable name="successors-1st-da" select="tan:get-1st-doc($head/tan:successor)"/>
-   <xsl:variable name="successors-resolved" select="tan:resolve-doc($successors-1st-da)"/>
+   <!-- morphologies -->
+   <xsl:variable name="morphologies-1st-da"
+      select="tan:get-1st-doc($head/tan:vocabulary-key/tan:morphology)"/>
+   <xsl:variable name="morphologies-resolved" select="tan:resolve-doc($morphologies-1st-da, false(), 'morphology', $head/tan:vocabulary-key/tan:morphology/@xml:id, ($validation-phase = 'verbose'))"/>
 
    <!-- token definitions -->
    <xsl:variable name="token-definitions-reserved" select="$TAN-vocabularies//tan:token-definition"/>
@@ -302,12 +295,6 @@
    <xsl:variable name="token-definition-nonspace"
       select="$token-definitions-reserved[../tan:name = 'nonspace']"/>
    <xsl:variable name="token-definition-default" select="$token-definitions-reserved[1]"/>
-
-   <!-- morphologies -->
-   <xsl:variable name="morphologies-1st-da"
-      select="tan:get-1st-doc($head/tan:vocabulary-key/tan:morphology)"/>
-   <xsl:variable name="morphologies-resolved" select="tan:resolve-doc($morphologies-1st-da)"/>
-
 
 
    <!-- CORE FUNCTIONS -->
@@ -2293,7 +2280,13 @@
       <xsl:variable name="pass-1" as="element()*">
          <xsl:for-each-group select="$attributes" group-by="tan:base-uri(.)">
             <xsl:variable name="this-base-uri" select="current-grouping-key()"/>
+            <xsl:if test="$diagnostics">
+               <xsl:message select="current-grouping-key(), count(current-group())"/>
+            </xsl:if>
             <xsl:for-each-group select="current-group()" group-by="name(..)">
+               <xsl:if test="$diagnostics">
+                  <xsl:message select="current-grouping-key(), count(current-group())"/>
+               </xsl:if>
                <xsl:variable name="this-host-element-name" select="current-grouping-key()"/>
                <xsl:variable name="this-local-head" select="current-group()[1]/root()/*/tan:head"/>
                <xsl:variable name="this-chosen-head"

@@ -17,7 +17,7 @@
       <!-- Because class 2 files are expanded hand-in-glove with the class 1 files they depend upon, expansion is necessarily synchronized. The original class-2 document is the first document of the result, and the expanded class-1 files follow. -->
       <xsl:param name="tan-doc-and-dependencies" as="document-node()*"/>
       <xsl:param name="target-phase" as="xs:string"/>
-      <xsl:variable name="diagnostics" as="xs:boolean" select="false()"/>
+      <xsl:variable name="diagnostics" as="xs:boolean" select="true()"/>
       <xsl:if test="$diagnostics">
          <xsl:message>Diagnostics turned on for tan:expand-doc()</xsl:message>
          <xsl:message select="$target-phase"/>
@@ -131,10 +131,10 @@
                   </xsl:variable>
                   <xsl:choose>
                      <xsl:when test="$diagnostics">
-                        <xsl:document>
+                        <!--<xsl:document>
                            <xsl:copy-of select="$adjustments-part-1"/>
-                        </xsl:document>
-                        <!--<xsl:copy-of select="$core-expansion-pass-2, $these-dependencies-resolved"/>-->
+                        </xsl:document>-->
+                        <xsl:copy-of select="$core-expansion-pass-2, $these-dependencies-resolved"/>
                         <!--<xsl:copy-of select="$core-expansion-pass-2, $dependencies-pass-1"/>-->
                         <!--<xsl:copy-of select="$core-expansion-pass-2, $dependencies-pass-2"/>-->
                      </xsl:when>
@@ -142,7 +142,6 @@
                         <xsl:copy-of select="$class-2-expansion, $dependencies-pass-3"/>
                      </xsl:otherwise>
                   </xsl:choose>
-                  <xsl:if test="$diagnostics"> </xsl:if>
                </xsl:when>
                <xsl:otherwise>
                   <!-- diagnostics, results -->
@@ -319,9 +318,6 @@
             </xsl:when>
             <xsl:when test="self::tan:source and $this-doc-id = $doc-id">
                <xsl:copy-of select="$sources-resolved[position() = $this-pos]"/>
-            </xsl:when>
-            <xsl:when test="self::tan:see-also and $this-doc-id = $doc-id">
-               <xsl:copy-of select="$see-alsos-resolved[position() = $this-pos]"/>
             </xsl:when>
             <xsl:otherwise>
                <xsl:copy-of select="tan:resolve-doc($target-1st-da)"/>
