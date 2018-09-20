@@ -5,12 +5,9 @@
    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    id="core-tests">
    <title>Core Schematron tests for all TAN files.</title>
+   <xsl:param name="is-validation" select="true()"/>
    <!-- This empty rule prevents checking TEI's <text>, which is always shallowly skipped in validation. -->
    <rule context="*:text"/>
-   <!--<rule context="/*">
-      <!-\- for testing -\->
-      <report test="true()" role="warning"><value-of select="$validation-phase"/></report>
-   </rule>-->
    <rule context="*">
       <let name="this-q-ref" value="generate-id(.)"/>
       <let name="this-name" value="name(.)"/>

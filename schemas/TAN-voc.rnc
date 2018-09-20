@@ -6,8 +6,8 @@ start =
     ## specifies that the TAN file contains vocabulary—things given IRIs + names + descriptions, or token definitions. Root element.
     element TAN-voc { TAN-root }
     source-list = empty
-    body-attributes-non-core = element-scope?
-    group-attributes = type?, element-scope?
+    body-attributes-non-core = element-scope?, attribute-scope?
+    group-attributes-non-core = element-scope?, attribute-scope?
     body-content-non-class-3 = body-group* & body-item* 
     body-item = TAN-voc-item
 }
@@ -24,3 +24,17 @@ TAN-voc-item =
              | entity-nondigital-with-constraints-content
              | entity-tok-def)))
     }
+attribute-scope =
+    
+    ## names one or more TAN attributes that an item applies to.
+    
+    ## This attribute is non-cumulatively inheritable. An element will be affected only by the nearest value and not any other values rootward.
+    
+    ## Currently this attribute may have scope over only @n.
+    attribute affects-attribute { "n" }
+element-scope =
+    
+    ## names one or more TAN elements that an item applies to.
+    
+    ## This attribute is non-cumulatively inheritable. An element will be affected only by its nearest value and not any other values rootward.
+    attribute affects-element { text }

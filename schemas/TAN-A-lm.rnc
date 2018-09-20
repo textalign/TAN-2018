@@ -1,23 +1,21 @@
 default namespace = "tag:textalign.net,2015:ns"
 
 include "incl/TAN-class-2.rnc" {
-start =
-    
-    ## specifies that the file is a TAN file containing lexico-morphology data about a text. Root element.
-    element TAN-A-lm { TAN-root }
-    
+    start =
+        
+        ## specifies that the file is a TAN file containing lexico-morphology data about a text. Root element.
+        element TAN-A-lm { TAN-root }
     decl-non-class-2 = lang-outside*, (tok-start-indicator* & tok-is-indicator*)
     source-content = entity-digital-nontan-no-id
     # Either one source with no language specifications, or a language specification with zero or more sources
     source-list = source-item*
     # TAN-A-lm files must each have at least one lexicon and one TAN-mor
-    voc-key-for-non-class-2 =
-        voc-key-for-lexi+
-        & voc-key-for-morph+
+    voc-key-for-non-class-2 = voc-key-for-lexi+ & voc-key-for-morph+
     
     ## Because TAN-A-lm files depend on only one source, no id references to sources are needed
     sources-ref = empty
     id-option = empty
+    group-attributes-non-core = lexicon-attr?, grammar-attr?
     body-attributes-non-core = lexicon-attr, grammar-attr
     body-item = TAN-A-lm-item
 }
@@ -41,50 +39,48 @@ grammar-attr =
     
     ## This attribute is inheritable. See main.xml#inheritable_attributes
     attribute morphology { text }
-
 tok-start-indicator =
-
+    
     ## specifies an opening string that characterizes the @val of <tok>s in the file.
-element tok-starts-with { text }
-
+    element tok-starts-with { text }
 tok-is-indicator =
-
+    
     ## specifies the exact values of every @val of <tok>s in the file.
-element tok-is { text }
-
+    element tok-is { text }
 TAN-A-lm-item =
     
     ## contains a one or more assertions about the lexical or morphological properties of one or more tokens.
     
-    ## Claims within an <ana> are distributive. That is, every combination of <l> and <m> within an <lm> is asserted of every <tok>.
+    ## Claims within an <ana> are distributive. That is, every combination of <l> and <m> within an <lm> is claimed to be true for every <tok>.
     element ana {
         (ed-stamp?, inclusion)
         | (certainty-stamp?,
+           lexicon-attr?,
+           grammar-attr?,
            claimant-data?,
            group-ref?,
            attr-tok-pop?,
-           (comment*
-            & (lm-tok-ref+,
-               
-               ## contains lexical or morphological data.
-               
-                   ## Claims within an <lm> are distributive. That is, every <l> is asserted against every <m> within an <lm> is asserted of every <tok>.
-
-               element lm {
-                   certainty-stamp?,
-                   (comment*
-                    & ((lexeme+, morph*) | (lexeme*, morph+)))
-               }+)))
+           (comment* & (lm-tok-ref+, lm-group+)))
     }
-    attr-tok-pop = 
-## specifies the quantity of tokens that are the subject of the <ana>.. This attribute is useful for language-specific TAN-A-lm files, where the total number of tokens that formed the set might be lost. It is also usefor calculating the relative probability of token to lm combinations.
-attribute tok-pop { xsd:integer }
-
+lm-group =
+    
+    ## groups lexical or morphological data.
+    
+    ## Components within <lm> combine with each other and with all sibling <tok>s. That is, every <l> is asserted against every <m> within an <lm> is asserted of every <tok>.
+    element lm {
+        certainty-stamp?,
+        lexicon-attr?,
+        grammar-attr?,
+        (comment*
+         & ((lexeme+, morph*) | (lexeme*, morph+)))
+    }
+attr-tok-pop =
+    
+    ## specifies the quantity of tokens that are the subject of the <ana>.. This attribute is useful for language-specific TAN-A-lm files, where the total number of tokens that formed the set might be lost. It is also usefor calculating the relative probability of token to lm combinations.
+    attribute tok-pop { xsd:integer }
 lm-tok-ref = tok-ref | abstract-tok-ref
 # an abstract token reference states that the data holds true for this particular token no matter where it is found, either in the source (if there is one) or the language (if there is no source)
-abstract-tok-ref = element tok {
-    certainty-stamp?, token-value-ref
-}
+abstract-tok-ref = element tok { certainty-stamp?, token-value-ref }
 lexeme =
     
     ## names a lexeme, by points to the main word entry in the lexicon defined by the element's inherited value of @lexicon. This element should not be used to point to roots, only to lexical headwords. 

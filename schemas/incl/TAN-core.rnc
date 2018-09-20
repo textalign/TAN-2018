@@ -34,6 +34,10 @@ div-range-ref =
     xsd:string {
         pattern = "(\w+([^\w\-]\w+)*)(((\s*-\s*)|(\s*,\s+))(\w+([^\w\-]\w+)*))*|.*\?\?\?.*"
     }
+div-type-ref =
+    
+    ## is used by class-2 files to point to one or more <div-type>s in class-1 files or by class-1 files to point to div types. Permits multiple values separated by spaces.
+    attribute div-type { text }
 ed-agent =
     
     ## refers to one or more <agent>s who have edited (added or modified) an element or its content.
@@ -52,12 +56,6 @@ ed-time =
     
     ## This attribute is inheritable. See main.xml#inheritable_attributes
     attribute ed-when { xsd:dateTime | xsd:date }
-element-scope =
-    
-    ## names one or more TAN elements that an item applies to.
-    
-    ## This attribute is non-cumulatively inheritable. An element will be affected only by its values of @affects-element and not those of its ancestors.
-    attribute affects-element { text }
 error-flag =
     
     ## indicates the level of error that should be flagged to any algorithm that uses the parent element . Similar to Schematron's @role, but under a different name, to avoid confusion with TAN @roles.
@@ -211,9 +209,9 @@ action-simple-condition = action-condition-attributes
 action-condition-attributes = empty
 action-complex-condition =
     
-    ## identifies a condition that must be true for the following actions to be evaluated.
+    ## identifies a condition that permits the following adjustment actions to be performed.
     
-    ## The condition must be true for at least one value in every attribute.
+    ## The condition must be true for each attribute, for at least one value in that attribute.
     element where { ed-stamp?, action-condition-attributes }+
 checksum =
     
@@ -358,21 +356,9 @@ TAN-head =
 file-name = entity-digital-tan-self-content
 # HEAD: general declarations
 declaration-list = declaration-core & declaration-non-core
-declaration-core = nonsource-license+ & decl-numerals?
+declaration-core = decl-nonsource-license+ & decl-numerals?
 declaration-non-core = empty
-decl-numerals =
-    
-    ## specifies how nonarabic numerals should be interpreted.
-    
-    ## E.g., 'c' would be interpreted as 3 if @priority = 'letters' and 100 if 'roman'.
-    
-    ## If element is not present, the value is assumed to be 'roman'.
-    element numerals {
-        attribute priority {
-            xsd:string { pattern = "roman|letters" }
-        }
-    }
-nonsource-license =
+decl-nonsource-license =
     
     ## states the license under which the data is distributed and the rights associated with it, EXCLUSIVE of any rights attached to the source.
     
@@ -383,6 +369,16 @@ nonsource-license =
         ed-stamp?,
         (inclusion
          | (licensor, (comment* & entity-nondigital-content)))
+    }
+decl-numerals =
+    ## specifies how nonarabic numerals should be interpreted.
+    
+    ## E.g., 'c' would be interpreted as 3 if @priority = 'letters' and 100 if 'roman'.
+    
+    ## If element is not present, the value is assumed to be 'roman'.
+    element numerals {
+        ## specifies whether roman numerals should have interpretive priority over letter numerals. For example, should "c" be interpreted as 3 or 100? Default is roman.
+        attribute priority { text }
     }
 # HEAD: links to other networked files
 networked-files = networked-files-core & networked-files-non-core
@@ -511,7 +507,9 @@ body-group =
         (inclusion
          | (group-attributes, (body-group | body-item)+))
     }
-group-attributes = type?, n?
+group-attributes = group-attributes-core, group-attributes-non-core
+group-attributes-core = type?, n?
+group-attributes-non-core = empty
 # items are defined by the master schemas
 body-item = empty
 # TAIL

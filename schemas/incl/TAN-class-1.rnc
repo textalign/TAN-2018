@@ -10,7 +10,7 @@ include "TAN-core.rnc" {
     body-content-non-core = body-content-class-1 & body-content-non-class-1
 }
 # HEAD: general declarations
-decl-class-1 = decl-work & decl-vers? & decl-tok-def*
+decl-class-1 = decl-work & decl-vers? & decl-tok-def* & decl-n-alias?
 decl-non-class-1 = empty
 decl-work =
     
@@ -30,6 +30,10 @@ decl-vers =
     
     ## For more, see main.xml#conceptual_works
     element version { entity-nondigital-no-id }
+decl-n-alias =
+    
+    ## specifies whether aliases for n should be applied selectively. This element makes validating a file more efficient.
+    element n-alias { div-type-ref }
 # HEAD: other files
 redivision-item =
     
@@ -79,7 +83,7 @@ func-replace =
                func-param-flags?)))
     }
 # HEAD: abbreviations
-voc-key-for-class-1 = voc-key-for-div-type+
+voc-key-for-class-1 = voc-key-for-div-type*
 voc-key-for-non-class-1 = empty
 # BODY
 body-content-class-1 = empty

@@ -36,6 +36,8 @@ adjust-rename =
     ## provisionally reassigns values of @n's in class 1 sources, or their calculated ref value, to another value.
     
     ## Values of @n will be renamed before attempting to rename references. Only the first renaming match will be applied.
+    
+    ## If a div is renamed such that it needs to be moved elsewhere in the hierarchy, and it matches the reference of another div, the text nodes will be fused, with the newly moved divs placed at the end.
     element rename {
         ed-stamp?,
         (inclusion | (simple-rename | complex-rename))
@@ -108,10 +110,6 @@ source-ref =
     ## refers to the ID of only one <source>
     attribute src { xsd:NCName }
 # div references
-div-type-ref =
-    
-    ## is used by class-2 files to point to one or more <div-type>s in class-1 files. Permits multiple values separated by spaces.
-    attribute div-type { text }
 div-ref-range =
     
     ## refers to one or more <div>s.
