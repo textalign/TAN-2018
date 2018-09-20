@@ -24,13 +24,16 @@ The system vocabulary referencing has been streamlined and simplified.
 * Implication: attributes like @who may take a mixture of idrefs and names. But if you invoke any names, be sure to replace word spaces with hyphens or underscores, otherwise a single value will be parsed as if multiple ones.
 * The new global variable $elements-supported-by-TAN-vocabulary-files specifies in what areas TAN standard vocabulary has been supplied. But now under /vocabularies there is the subdirectory /extra, which includes supplementary vocabularies that might be useful for communities of practice.
 * &lt;vocabulary> may take @which, but only if it points to the items within the standard TAN-voc file vocabularies.TAN-voc.xml. 
+* Standard TAN-voc files now have all &lt;name> values normalized, to expedite validation.
 
 Files are now resolved differently. 
 
 * The goal is to return a file that can be interpreted without needed to reference any vocabularies (including standard TAN ones) or inclusions. (But nothing is done with the &lt;source>s of class 2 files, or other linked files such as &lt;redivision>, &lt;successor>, etc.)
 * In resolving a file a sharp distinction is made between (1) elements involved in inclusions and (2) those that aren't. All inclusions are resolved recursively and returned to their host including file as a set of &lt;inclusion>s that carry children errors, vocabulary items, and substitutions. All these are applied to the appropriate elements (1) in the including file, and then the rest (2) are resolved. This means that inclusion now brings back not just specific elements, but the vocabulary upon which it depends. It also means that the system of idrefs in included files are now in play. Under the previous system, if you used &lt;resp @include="incl1"> you would have to have also invoked @include for &lt;role> and &lt;person>. It also means that reference errors are now reported in the resolved file directly. Previously these were attended to in terse expansion.
-
 * Another important change in file resolution is in numbering schemes. Changes have been made to the way class 1 files are resolved with regard to values of @n (see below), to help reconcile synonyms. This means that when a class 1 file is resolved, its vocabulary must be resolved before values of @n can be normalized. This technique provides great flexibility to creators of class 1 files. But it complicates class 2 files. TAN-A-lm files are not affected much, because the only files that use @ref (and therefore depend upon the normalized values of @n) are those that have a single source. Such source-specific TAN-A-lm files should follow the vocabulary used by the source. A similar principle holds for TAN-A-tok files. They should follow the aliases of @n adopted by their sources. The same principle, then, should hold true for TAN-A files, which can potentially have many sources and therefore great complexity. To clarify the meaning of @ref in &lt;div-ref src="&#x2a;" ref="ep"/>, one would need to go to every source, resolve it, resolve its vocabulary, and look for aliases for @n, then report back to the class 2 file, and perhaps force the &lt;div-ref> to be broken up according to each source. Such resolution, and therefore validation, would prove to be quite costly. In the 2018 schema, every @ref in a class 2 file was resolved independent of what the sources were doing. But now, those sources must be taken into account. Therefore in class 2 files, resolution/normalization of numerals does not take place during the resolution process, and is reserved for the expansion process.
+* Resolution of numbers now happens at the end of the chain of events in tan:resolve-doc(), because it depends upon what vocabulary has been incorporated..
+
+Expansion has been streamlined, to avoid summoning global or in-scope variables that do not matter. XSLT operations ignore such unused variables, but Schematron validation seems not to. Thoroughly revised the way a hierarchy is reset in the course of expanding the sources of a class 2 file, using @reset to mark elements that need to be moved and @has-been-reset to mark those that have. Resetting has been moved from class 2 functions to class 1 functions.
 
 New errors introduced: wrn07, wrn08, inc05, tan21, inc06, whi05, voc06
 
@@ -42,11 +45,13 @@ New elements: &lt;predecessor> and &lt;successor>, to indicate how files have be
 
 New attributes: @claim-when
 
-New functions: tan:last-change-agent(), tan:trim-long-text(), tan:catalogs(), tan:chop-string() (2 parameters), tan:collate-sequences(), tan:collate-pair-of-sequences(), tan:catalog-uris(), tan:collection(), tan:unique-char(), tan:most-common-item-count(), tan:vertical-stops() (to support tan:diff()), tan:nested-phrase-loop() (supports tan:chop-string()), tan:primary-agent(); tan:revise-href(); tan:lm-data(); tan:takes-idrefs(); tan:target-element-names(); tan:consolidate-resolved-vocab-items(); tan:element-vocabulary(); tan:attribute-vocabulary(); tan:vocabulary()
+New functions: tan:last-change-agent(), tan:trim-long-text(), tan:catalogs(), tan:chop-string() (2 parameters), tan:collate-sequences(), tan:collate-pair-of-sequences(), tan:catalog-uris(), tan:collection(), tan:unique-char(), tan:most-common-item-count(), tan:vertical-stops() (to support tan:diff()), tan:nested-phrase-loop() (supports tan:chop-string()), tan:primary-agent(); tan:revise-href(); tan:lm-data(); tan:takes-idrefs(); tan:target-element-names(); tan:consolidate-resolved-vocab-items(); tan:element-vocabulary(); tan:attribute-vocabulary(); tan:vocabulary(), tan:get-and-resolve-dependency()
 
-Deleted functions: tan:glossary() (replaced by new tan:vocabulary()), tan:definition() (replaced by new tan:vocabulary()).
+Deleted functions: tan:glossary() (replaced by new tan:vocabulary()), tan:definition() (replaced by new tan:vocabulary()), tan:evaluate-morphological-test(), tan:resolve-idref()
 
-New global variables: $shy (same as $dhy), $doc-catalog-uris, $doc-catalogs, $local-catalog, $relationships-reserved, $relationship-model, $relationship-resegmented-copy, $break-marker-regex, $loop-tolerance, $elements-supported-by-TAN-vocabulary-files
+Moved tan:element-fingerprint() from extra functions to main functions
+
+New global variables: $shy (same as $dhy), $doc-catalog-uris, $doc-catalogs, $local-catalog, $relationships-reserved, $relationship-model, $relationship-resegmented-copy, $break-marker-regex, $loop-tolerance, $elements-supported-by-TAN-vocabulary-files, $is-validation
 
 $help-trigger moved to the validation parameters file, to allow easier manipulation of its value.
 
@@ -96,6 +101,8 @@ Now renamed TAN-A, because this is the most generic form of an alignment or anno
 
 New @tok-pop. (Need to write error rules.)
 
+&lt;ana> and &lt;lm> may now take @lexicon, @grammar
+
 Deleted error tlm01 since morphological files may be language-specific and credit their sources.
 
 New element: &lt;tok-starts-with>, &lt;tok-is> (meant to optimize a process that might require working with thousands of TAN-A-lm files)
@@ -109,6 +116,8 @@ New element: &lt;tok-starts-with>, &lt;tok-is> (meant to optimize a process that
 New name TAN-voc
 
 @which in a TAN-voc file may point to its own vocabulary
+
+@affects-attribute introduced, to permit synonymity within values of @n
 
 New errors introduced: tky05
 
@@ -142,7 +151,9 @@ tan:lang-catalog()
 
 ## Extra variables
 
-$internet-availableAdvanced / recommended best practices
+$internet-available
+
+## Advanced / recommended best practices
 
 Class 1 filenames should terminate in something that expresses the principal type of reference system (logical or scriptum-based) followed by a string indicating whether the reference system is native to the scriptum or if it follows some other reference system. Example: ar.cat.fra.1844.saint-hilaire.ref-logical-native.xml indicates that the logical (i.e., non-scriptum-based) reference system is native to the French edition. But ar.cat.fra.1844.saint-hilaire.ref-logical-after-grc.xml indicates that the transcription has been divided and labeled following the Greek archetype.
 
@@ -171,3 +182,4 @@ Support editing TAN-A-lm
 ## Applications
 
 Create TAN-A-tok, perhaps with options for IBM Model, but more importantly with contextual data (esp. lexicomorphology).
+
