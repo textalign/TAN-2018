@@ -37,8 +37,11 @@
                </xsl:for-each>
             </xsl:variable>
             <xsl:copy-of
-               select="tan:error('tky03', concat('try: ', string-join($this-fix/@affects-element, ', ')), $this-fix, 'copy-attributes')"
+               select="tan:error('voc03', concat('try: ', string-join($this-fix/@affects-element, ', ')), $this-fix, 'copy-attributes')"
             />
+         </xsl:if>
+         <xsl:if test="($this-val = 'vocabulary') and not(tan:doc-namespace(root(.)) = $TAN-namespace)">
+            <xsl:copy-of select="tan:error('voc06')"/>
          </xsl:if>
          <xsl:apply-templates mode="#current"/>
       </xsl:copy>
@@ -87,10 +90,10 @@
                   <xsl:value-of select="$TAN-namespace"/>
                </IRI>
             </xsl:variable>
-            <xsl:copy-of select="tan:error('tky04', (), $this-fix, 'prepend-content')"/>
+            <xsl:copy-of select="tan:error('voc04', (), $this-fix, 'prepend-content')"/>
          </xsl:if>
          <xsl:if test="not(every $i in $these-affects-elements satisfies $i = 'verb') and (exists(@object-datatype) or exists(@object-lexical-constraint))">
-            <xsl:copy-of select="tan:error('tky05')"/>
+            <xsl:copy-of select="tan:error('voc05')"/>
          </xsl:if>
          <xsl:apply-templates mode="#current">
             <xsl:with-param name="reserved-vocabulary-items" select="$reserved-vocabulary-items"/>
@@ -105,7 +108,7 @@
    <xsl:template match="tan:body" mode="core-expansion-normal">
       <xsl:variable name="duplicate-names" as="element()*">
          <xsl:for-each-group select=".//tan:name"
-            group-by="(ancestor::tan:*[tan:affects-element])[last()]/tan:affects-element">
+            group-by="ancestor::tan:*[tan:affects-element][1]/tan:affects-element">
             <xsl:for-each-group select="current-group()" group-by=".">
                <xsl:if test="count(current-group()) gt 1">
                   <xsl:copy-of select="current-group()"/>
@@ -125,7 +128,7 @@
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:if test=". = $duplicate-names">
-            <xsl:copy-of select="tan:error('tky02')"/>
+            <xsl:copy-of select="tan:error('voc02')"/>
          </xsl:if>
          <xsl:apply-templates mode="#current"/>
       </xsl:copy>

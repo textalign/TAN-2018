@@ -24,18 +24,13 @@
    <!-- EXPANDING -->
 
    <!-- TERSE EXPANSION -->
+   <!-- core -->
 
    <xsl:template match="tan:source | tan:morphology[not(@attr)]" mode="core-expansion-terse">
       <!-- dependencies must be evaluated at the terse stage -->
       <xsl:apply-templates select="." mode="check-referred-doc"/>
    </xsl:template>
-   <xsl:template match="tan:source[not(@xml:id)]" mode="core-expansion-terse">
-      <xsl:copy>
-         <xsl:copy-of select="@*"/>
-         <xsl:attribute name="xml:id" select="count(preceding-sibling::tan:source) + 1"/>
-         <xsl:apply-templates mode="#current"/>
-      </xsl:copy>
-   </xsl:template>
+
    <xsl:template match="tan:rename" mode="core-expansion-terse">
       <xsl:variable name="these-refs" select="tan:ref, tan:range/tan:ref"/>
       <xsl:variable name="these-news" select="tan:new, tan:range/tan:new"/>
@@ -53,11 +48,22 @@
    </xsl:template>
    <xsl:template match="tan:tok[not(tan:from)] | tan:tok/tan:from | tan:tok/tan:to"
       mode="core-expansion-terse">
-      <xsl:param name="this-tan-type" tunnel="yes"/>
+      <xsl:param name="is-tan-a-lm" tunnel="yes"/>
+      <xsl:param name="is-for-lang" tunnel="yes"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
-         <xsl:if test="$this-tan-type = 'TAN-A-lm'">
-            <src>1</src>
+         <!-- The <tok> in a TAN-A-lm file needs to have a <src> added if it is source-specific, and a <result> added if it is not -->
+         <xsl:if test="$is-tan-a-lm">
+            <xsl:choose>
+               <xsl:when test="$is-for-lang">
+                  <result>
+                     <xsl:value-of select="@val, @rgx"/>
+                  </result>
+               </xsl:when>
+               <xsl:otherwise>
+                  <src>1</src>
+               </xsl:otherwise>
+            </xsl:choose>
          </xsl:if>
          <xsl:if test="not(exists(@pos))">
             <pos attr="">1</pos>
@@ -69,147 +75,14 @@
       </xsl:copy>
    </xsl:template>
 
-   <!-- next several items below slated to be moved to TAN-class-1-functions.xsl, but kept here to be able to look at comparable functions in different windows -->
-   <xsl:template match="tan:body" mode="reset-hierarchy">
-      <!--<xsl:param name="test" tunnel="yes" select="false()"/>-->
-      <xsl:variable name="these-misfits" as="element()*">
-         <xsl:apply-templates select="tan:div" mode="only-misfit-divs"/>
-      </xsl:variable>
-      <xsl:choose>
-         <xsl:when test="exists($these-misfits)">
-            <xsl:variable name="these-misfit-divs-and-anchors" as="element()*">
-               <xsl:apply-templates select="tan:div" mode="only-misfit-divs-and-anchors">
-                  <xsl:with-param name="misfits" select="$these-misfits" tunnel="yes"/>
-               </xsl:apply-templates>
-            </xsl:variable>
-            <xsl:variable name="these-misfits-and-anchors-qs" select="$these-misfit-divs-and-anchors/@q"/>
-            <xsl:variable name="these-misfit-divs-and-anchors-placed-in-hierarchy" as="element()*">
-               <xsl:apply-templates select="$these-misfit-divs-and-anchors"
-                  mode="reconstruct-div-hierarchy"/>
-            </xsl:variable>
-            <xsl:variable name="these-divs-without-misfits">
-               <xsl:apply-templates mode="divs-excluding-what-qs">
-                  <xsl:with-param name="qs-to-exclude" select="$these-misfits/@q" tunnel="yes"/>
-               </xsl:apply-templates>
-            </xsl:variable>
-            <xsl:variable name="this-body-before-synthesis" as="element()">
-               <body>
-                  <xsl:copy-of select="@*"/>
-                  <xsl:copy-of select="node() except tan:div"/>
-                  <xsl:copy-of select="$these-divs-without-misfits"/>
-                  <xsl:copy-of select="$these-misfit-divs-and-anchors-placed-in-hierarchy"/>
-               </body>
-            </xsl:variable>
-            <!-- diagnostics, results -->
-            <!--<test0><xsl:copy-of select="$these-misfits"/></test0>-->
-            <!--<test1><xsl:copy-of select="$these-misfit-divs-and-anchors"/></test1>-->
-            <!--<test2><xsl:copy-of select="$these-divs-without-misfits"/></test2>-->
-            <!--<test3><xsl:copy-of select="$these-misfit-divs-and-anchors-placed-in-hierarchy"/></test3>-->
-            <!--<xsl:copy-of select="$this-body-before-synthesis"/>-->
-            <xsl:copy-of
-               select="tan:merge-divs($this-body-before-synthesis, false(), 'q', true())"
-            />
-         </xsl:when>
-         <xsl:otherwise>
-            <xsl:copy-of select="."/>
-         </xsl:otherwise>
-      </xsl:choose>
-   </xsl:template>
-   
-   <xsl:template match="tan:div" mode="only-misfit-divs">
-      <xsl:variable name="parental-refs" select="../tan:ref/text()"/>
-      <xsl:variable name="stated-parental-refs"
-         select="
-            for $i in tan:ref
-            return
-               string-join($i/tan:n[position() lt last()], $separator-hierarchy)"/>
-      <xsl:choose>
-         <!-- ignore 1st-level <div>s that are children of <body> -->
-         <xsl:when
-            test="
-               string-length($parental-refs[1]) lt 1 and (some $i in $stated-parental-refs
-                  satisfies string-length($i) lt 1)">
-            <xsl:apply-templates select="tan:div" mode="#current"/>
-         </xsl:when>
-         <xsl:when
-            test="
-               some $i in $stated-parental-refs
-                  satisfies not($i = $parental-refs)">
-            <xsl:copy>
-               <xsl:copy-of select="@*"/>
-               <xsl:apply-templates mode="#current"/>
-            </xsl:copy>
-         </xsl:when>
-         <xsl:otherwise>
-            <xsl:apply-templates select="tan:div" mode="#current"/>
-         </xsl:otherwise>
-      </xsl:choose>
-   </xsl:template>
-   <xsl:template match="tan:div" mode="only-misfit-divs-and-anchors">
-      <xsl:param name="misfits" tunnel="yes" as="element()*"/>
-      <xsl:if
-         test="tan:ref/text() = $misfits/tan:ref/text()">
-         <xsl:copy>
-            <xsl:copy-of select="@*"/>
-            <xsl:apply-templates mode="no-misfit-divs-or-anchors">
-               <xsl:with-param name="misfits" select="$misfits" tunnel="yes"/>
-            </xsl:apply-templates>
-         </xsl:copy>
-      </xsl:if>
-      <!-- we keep applying templates on the content, even if its is a misfit or anchor, so as to fetch any descendant misfits -->
-      <xsl:apply-templates select="tan:div" mode="#current"/>
-   </xsl:template>
-   <xsl:template match="tan:div" mode="no-misfit-divs-or-anchors">
-      <xsl:param name="misfits" tunnel="yes" as="element()*"/>
-      <xsl:if
-         test="not(tan:ref/text() = $misfits/tan:ref/text())">
-         <xsl:copy>
-            <xsl:copy-of select="@*"/>
-            <xsl:apply-templates mode="#current"/>
-         </xsl:copy>
-      </xsl:if>
-   </xsl:template>
-
-   <xsl:template match="tan:div" mode="reconstruct-div-hierarchy">
-      <xsl:param name="depth-so-far" as="xs:integer" select="1"/>
-      <xsl:choose>
-         <xsl:when test="count(tan:ref[1]/tan:n) le $depth-so-far">
-            <xsl:copy-of select="."/>
-         </xsl:when>
-         <xsl:otherwise>
-            <xsl:variable name="these-ns" select="tan:ref[1]/tan:n[position() le $depth-so-far]"/>
-            <div>
-               <ref><xsl:value-of select="string-join($these-ns, $separator-hierarchy)"/>
-                  <xsl:copy-of select="$these-ns"/></ref>
-               <xsl:apply-templates select="." mode="#current">
-                  <xsl:with-param name="depth-so-far" select="$depth-so-far + 1"/>
-               </xsl:apply-templates>
-            </div>
-         </xsl:otherwise>
-      </xsl:choose>
-   </xsl:template>
-   
-   <xsl:template match="tan:div" mode="divs-excluding-what-qs">
-      <xsl:param name="qs-to-exclude" tunnel="yes"/>
-      <xsl:variable name="exclude-this" select="exists(@q) and (@q = $qs-to-exclude)"/>
-      <xsl:choose>
-         <xsl:when test="(count($qs-to-exclude) lt 1)">
-            <xsl:copy-of select="."/>
-         </xsl:when>
-         <xsl:when test="$exclude-this"/>
-         <xsl:otherwise>
-            <xsl:copy>
-               <xsl:copy-of select="@*"/>
-               <xsl:apply-templates mode="#current"/>
-            </xsl:copy>
-         </xsl:otherwise>
-      </xsl:choose>
-   </xsl:template>
+   <!-- class 2 -->
 
    <xsl:template
-      match="tan:object[(tan:src, tan:work)] | tan:subject[(tan:src, tan:work)] | tan:tok[@ref] | tan:from | tan:tok/tan:to | tan:div-ref | tan:adjustments/tan:*"
+      match="tan:object[(tan:src, tan:work)] | tan:subject[(tan:src, tan:work)] | tan:tok[@ref] | tan:from |
+      tan:tok/tan:to | tan:div-ref | tan:skip | tan:rename | tan:equate | tan:reassign"
       mode="class-2-expansion-terse">
       <xsl:param name="dependencies" as="document-node()*" tunnel="yes"/>
+      <xsl:variable name="diagnostics" select="false()"/>
       <xsl:variable name="is-adjustments-action" select="exists(ancestor::tan:adjustments)"/>
       <xsl:variable name="dependency-actions"
          select="
@@ -218,34 +91,38 @@
             else
                ()"/>
       <xsl:variable name="this-element" select="."/>
+      <xsl:variable name="this-element-name" select="name(.)"/>
+      <xsl:variable name="this-parent-name" select="name(..)"/>
       <xsl:variable name="this-val" select="tan:val"/>
       <xsl:variable name="this-rgx" select="(tan:rgx, '.+')[1]"/>
       <xsl:variable name="unprocessed-skips-renames-and-reassigns" as="element()*">
-         <xsl:for-each
-            select="self::tan:skip/tan:src, self::tan:rename/tan:src, self::tan:reassign/tan:src">
-            <xsl:variable name="this-src" select="text()"/>
-            <xsl:for-each
-               select="$this-element/(tan:div-type, tan:n, tan:ref, tan:range/(tan:n, tan:ref), tan:tok/tan:ref)">
-               <xsl:variable name="this-item-text" select="text()"/>
-               <xsl:variable name="this-item-name" select="name(.)"/>
-               <xsl:variable name="matching-actions"
-                  select="
-                     $dependency-actions[ancestor::tan:TAN-T/@src = $this-src][parent::tan:n/tan:orig-n = $this-item-text
-                     or tan:div-type = $this-element/tan:div-type
-                     or parent::tan:ref/tan:orig-ref/text() = $this-item-text
-                     or self::tan:reassign]"/>
-               <xsl:if test="not(exists($matching-actions))">
-                  <missing>
-                     <src>
-                        <xsl:copy-of select="$this-src"/>
-                     </src>
-                     <xsl:element name="{$this-item-name}">
-                        <xsl:value-of select="$this-item-text"/>
-                     </xsl:element>
-                  </missing>
-               </xsl:if>
+         <xsl:if test="$is-adjustments-action">
+            <xsl:for-each select="ancestor::tan:adjustments/tan:src">
+               <xsl:variable name="this-src" select="text()"/>
+               <xsl:for-each
+                  select="$this-element/(tan:div-type, tan:n, tan:ref, tan:range/(tan:n, tan:ref), tan:tok/tan:ref)">
+                  <xsl:variable name="this-item-text" select="text()"/>
+                  <xsl:variable name="this-item-name" select="name(.)"/>
+                  <xsl:variable name="matching-actions"
+                     select="
+                        $dependency-actions[root()/*/@src = $this-src]
+                        [(name(.), name(..)) = ($this-element-name, $this-parent-name)
+                        or parent::tan:n/tan:orig-n = $this-item-text
+                        or tan:div-type = $this-element/tan:div-type
+                        or parent::tan:ref/tan:orig-ref/text() = $this-item-text]"/>
+                  <xsl:if test="not(exists($matching-actions))">
+                     <missing>
+                        <src>
+                           <xsl:copy-of select="$this-src"/>
+                        </src>
+                        <xsl:element name="{$this-item-name}">
+                           <xsl:value-of select="$this-item-text"/>
+                        </xsl:element>
+                     </missing>
+                  </xsl:if>
+               </xsl:for-each>
             </xsl:for-each>
-         </xsl:for-each>
+         </xsl:if>
       </xsl:variable>
       <xsl:variable name="these-work-refs" select="tan:work, (parent::tan:object, parent::tan:subject, parent::tan:locus)/tan:work,
          (parent::tan:group, parent::tan:tok)/parent::*/tan:work"/>
@@ -530,6 +407,10 @@
             </xsl:variable>
             <xsl:choose>
                <xsl:when test="exists($unprocessed-skips-renames-and-reassigns/tan:n)">
+                  <xsl:if test="$diagnostics">
+                     <xsl:message select="'dependency actions:', $dependency-actions"/>
+                     <xsl:message select="'unprocessed skips renames and reassigns:', $unprocessed-skips-renames-and-reassigns"/>
+                  </xsl:if>
                   <xsl:copy-of select="tan:error('cl215', string-join($this-message, '; '))"/>
                </xsl:when>
                <xsl:when test="exists($unprocessed-skips-renames-and-reassigns/tan:div-type)">

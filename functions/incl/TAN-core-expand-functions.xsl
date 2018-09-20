@@ -17,16 +17,16 @@
       <!-- Because class 2 files are expanded hand-in-glove with the class 1 files they depend upon, expansion is necessarily synchronized. The original class-2 document is the first document of the result, and the expanded class-1 files follow. -->
       <xsl:param name="tan-doc-and-dependencies" as="document-node()*"/>
       <xsl:param name="target-phase" as="xs:string"/>
-      <xsl:variable name="diagnostics" as="xs:boolean" select="true()"/>
-      <xsl:if test="$diagnostics">
-         <xsl:message>Diagnostics turned on for tan:expand-doc()</xsl:message>
-         <xsl:message select="$target-phase"/>
-      </xsl:if>
+      <xsl:variable name="diagnostics" as="xs:boolean" select="false()"/>
       <xsl:variable name="tan-doc" select="$tan-doc-and-dependencies[1]"/>
       <xsl:variable name="dependencies" select="$tan-doc-and-dependencies[position() gt 1]"/>
       <xsl:variable name="this-id" select="$tan-doc/*/@id"/>
       <xsl:variable name="this-class-number" select="tan:class-number($tan-doc)"/>
+      <xsl:variable name="this-tan-type" select="tan:tan-type($tan-doc)"/>
       <xsl:variable name="expansion-so-far" select="$tan-doc/*/tan:expanded"/>
+      <xsl:if test="$diagnostics">
+         <xsl:message select="'Expanding ', $target-phase, ' on doc id ', string($this-id)"></xsl:message>
+      </xsl:if>
       <xsl:choose>
          <!-- Don't try to do anything if the input document itself is empty -->
          <xsl:when test="not(exists($tan-doc-and-dependencies/*))"/>
@@ -38,6 +38,9 @@
          <xsl:when test="name($tan-doc/*) = 'collection'">
             <xsl:apply-templates select="$tan-doc" mode="catalog-expansion-terse"/>
          </xsl:when>
+         <!--<xsl:when test="$diagnostics">
+            <xsl:copy-of select="$tan-doc-and-dependencies"/>
+         </xsl:when>-->
 
          <!-- terse expansion -->
          <xsl:when test="$target-phase = 'terse'">
@@ -46,39 +49,19 @@
                <xsl:apply-templates select="$tan-doc" mode="core-expansion-terse-attributes"/>
             </xsl:variable>
             <xsl:variable name="these-dependencies-resolved" as="document-node()*">
+               <!-- Get all files upon which the host file depends, namely <source>s and <morphology>s -->
                <xsl:choose>
-                  <!-- Only class 2 files have dependencies -->
+                  <!-- Only class 2 files have dependencies; if they have already been feed in, keep 'em -->
                   <xsl:when test="(count($dependencies) gt 0) or ($this-class-number = (1, 3))">
                      <xsl:sequence select="$dependencies"/>
                   </xsl:when>
                   <!-- Class 2 files absolutely must come with the source class 1 files upon which they depend. This variable ensures we have them. -->
-                  <!--<xsl:when test="$doc-id = $this-id">
+                  <xsl:when test="$doc-id = $this-id">
                      <xsl:sequence select="$sources-resolved, $morphologies-resolved"/>
-                  </xsl:when>-->
+                  </xsl:when>
                   <xsl:otherwise>
-                     <!-- First, get <source>s -->
-                     <xsl:choose>
-                        <xsl:when test="$doc-id = $this-id">
-                           <!-- If the document being process is $self, then don't try to get new sources; use the ones that already exist -->
-                           <xsl:sequence select="$sources-resolved"/>
-                        </xsl:when>
-                        <xsl:otherwise>
-                           <xsl:variable name="sources-must-be-adjusted"
-                              select="exists($core-expansion-pass-1/*/tan:head/tan:adjustments/(tan:equate, tan:rename, tan:reassign))"/>
-                           <xsl:variable name="these-sources-1st-da"
-                              select="tan:get-1st-doc($core-expansion-pass-1/*/tan:head/tan:source)"/>
-                           <xsl:sequence
-                              select="tan:resolve-doc($these-sources-1st-da, $sources-must-be-adjusted, 'src', $core-expansion-pass-1/*/tan:head/tan:source/@xml:id)"
-                           />
-                        </xsl:otherwise>
-                     </xsl:choose>
-                     <!-- Second get other dependencies that aren't <source>s -->
-                     <!-- TAN-A-lm files need morphologies -->
-                     <xsl:variable name="these-morphologies-1st-da"
-                        select="tan:get-1st-doc($core-expansion-pass-1/tan:TAN-A-lm/tan:head/tan:vocabulary-key/tan:morphology)"/>
-                     <xsl:sequence
-                        select="tan:resolve-doc($these-morphologies-1st-da, true(), 'morphology', $core-expansion-pass-1/*/tan:head/tan:vocabulary-key/tan:morphology/@xml:id)"
-                     />
+                     <xsl:copy-of select="tan:get-and-resolve-dependency($core-expansion-pass-1/(tan:TAN-A, tan:TAN-A-lm, tan:TAN-A-tok)/tan:head/tan:source)"/>
+                     <xsl:copy-of select="tan:get-and-resolve-dependency($core-expansion-pass-1/tan:TAN-A-lm/tan:head/tan:vocabulary-key/tan:morphology)"/>
                   </xsl:otherwise>
                </xsl:choose>
             </xsl:variable>
@@ -89,39 +72,81 @@
                </xsl:apply-templates>
             </xsl:variable>
             <xsl:choose>
+               
                <!-- terse expansion class 2 -->
                <xsl:when test="$this-class-number = 2">
+                  
+                  <xsl:variable name="these-refs" select="$core-expansion-pass-2//tan:ref"/>
                   <xsl:variable name="adjustments-part-1"
                      select="$core-expansion-pass-2/*/tan:head/tan:adjustments/(tan:skip, tan:rename, tan:equate)"/>
                   <xsl:variable name="adjustments-part-2"
-                     select="$core-expansion-pass-2/*/(tan:head/tan:adjustments/tan:reassign, tan:body/tan:claim)"/>
+                     select="$core-expansion-pass-2/*/tan:head/tan:adjustments/tan:reassign"/>
+                  <xsl:variable name="token-elements"
+                     select="$core-expansion-pass-2/*/tan:body//tan:tok"/>
+                  <xsl:variable name="these-token-definitions"
+                     select="$core-expansion-pass-2/*/tan:head/tan:token-definition"/>
+                  
+                  <!-- First make any adjustments and set up each <div> with all permutations of <ref> -->
+                  <!-- The first pass of source expansion processes the first three parts of the <adjustments>: <skip>, <rename>, <equate> -->
+                  <!-- It also sets up <n> and <ref> elements in dependency <div>s that are essential for later references -->
                   <xsl:variable name="dependencies-pass-1" as="document-node()*">
-                     <xsl:apply-templates select="$these-dependencies-resolved"
-                        mode="dependency-expansion-terse">
-                        <!-- The first pass of source expansion processes the first three parts of the <adjustments>: <skip>, <rename>, <equate> -->
-                        <!-- It also sets up <n> and <ref> elements in dependency <div>s that are essential for later references -->
-                        <xsl:with-param name="class-2-doc" select="$core-expansion-pass-2"
-                           tunnel="yes"/>
-                     </xsl:apply-templates>
+                     <xsl:choose>
+                        <xsl:when test="exists($these-refs)">
+                           <xsl:apply-templates select="$these-dependencies-resolved"
+                              mode="dependency-expansion-terse">
+                              <xsl:with-param name="class-2-doc" select="$core-expansion-pass-2"
+                                 tunnel="yes"/>
+                           </xsl:apply-templates>
+                        </xsl:when>
+                        <xsl:otherwise>
+                           <xsl:sequence select="$these-dependencies-resolved"/>
+                        </xsl:otherwise>
+                     </xsl:choose>
                   </xsl:variable>
+                  
+                  <xsl:variable name="pass-1-dependency-divs-to-reset"
+                     select="
+                        for $i in $dependencies-pass-1
+                        return
+                           key('divs-to-reset', '', $i)"
+                  />
+                  
+                  <!-- If the first adjustments created actions that threw the hierarchy of sources out of whack, then reset the hierarchy before proceeding -->
                   <xsl:variable name="dependencies-pass-2" as="document-node()*">
                      <xsl:choose>
-                        <xsl:when test="exists($adjustments-part-1)">
+                        <xsl:when test="exists($pass-1-dependency-divs-to-reset)">
                            <xsl:apply-templates select="$dependencies-pass-1" mode="reset-hierarchy"
-                           />
+                           >
+                              <xsl:with-param name="divs-to-reset" select="$pass-1-dependency-divs-to-reset" tunnel="yes"/>
+                           </xsl:apply-templates>
                         </xsl:when>
                         <xsl:otherwise>
                            <xsl:sequence select="$dependencies-pass-1"/>
                         </xsl:otherwise>
                      </xsl:choose>
                   </xsl:variable>
+                  
+                  <!-- Now tokenize those parts of the sources that have token references -->
                   <xsl:variable name="dependencies-pass-3" as="document-node()*">
-                     <xsl:apply-templates select="$dependencies-pass-2"
-                        mode="dependencies-tokenized-selectively">
-                        <xsl:with-param name="class-2-doc" select="$core-expansion-pass-2"
-                           tunnel="yes"/>
-                     </xsl:apply-templates>
+                     <xsl:choose>
+                        <xsl:when test="exists($adjustments-part-2) or exists($token-elements)">
+                           <xsl:apply-templates select="$dependencies-pass-2"
+                              mode="dependencies-tokenized-selectively">
+                              <xsl:with-param name="tok-elements" select="$token-elements"
+                                 tunnel="yes"/>
+                              <xsl:with-param name="adjustment-reassigns"
+                                 select="$adjustments-part-2" tunnel="yes"/>
+                              <xsl:with-param name="token-definition"
+                                 select="$these-token-definitions" tunnel="yes"/>
+                           </xsl:apply-templates>
+                        </xsl:when>
+                        <xsl:otherwise>
+                           <xsl:sequence select="$dependencies-pass-2"/>
+                        </xsl:otherwise>
+                     </xsl:choose>
                   </xsl:variable>
+                  
+                  <!-- Now check the dependent class 2 document to see if there were any errors -->
                   <xsl:variable name="class-2-expansion" as="document-node()?">
                      <xsl:apply-templates select="$core-expansion-pass-2"
                         mode="class-2-expansion-terse">
@@ -129,14 +154,29 @@
                            tunnel="yes"/>
                      </xsl:apply-templates>
                   </xsl:variable>
+                  
                   <xsl:choose>
                      <xsl:when test="$diagnostics">
                         <!--<xsl:document>
-                           <xsl:copy-of select="$adjustments-part-1"/>
+                           <!-\-<xsl:copy-of select="$adjustments-part-1"/>-\->
+                           <test09a>
+                              <!-\-<xsl:copy-of select="$pass-1-dependency-divs-to-reset/root()/*/@src"/>-\->
+                              <xsl:copy-of select="$pass-1-dependency-divs-to-reset"/>
+                           </test09a>
                         </xsl:document>-->
-                        <xsl:copy-of select="$core-expansion-pass-2, $these-dependencies-resolved"/>
+                        <!--<xsl:copy-of select="$core-expansion-pass-1"/>-->
+                        <!--<xsl:copy-of select="$core-expansion-pass-2, $these-dependencies-resolved"/>-->
                         <!--<xsl:copy-of select="$core-expansion-pass-2, $dependencies-pass-1"/>-->
                         <!--<xsl:copy-of select="$core-expansion-pass-2, $dependencies-pass-2"/>-->
+                        <xsl:copy-of select="$core-expansion-pass-2, $dependencies-pass-3"/>
+                        <!--<xsl:copy-of select="$class-2-expansion, $dependencies-pass-3"/>-->
+                     </xsl:when>
+                     <xsl:when test="$this-tan-type = 'TAN-A-lm'">
+                        <xsl:apply-templates select="$class-2-expansion" mode="tan-a-lm-expansion-terse">
+                           <xsl:with-param name="dependencies" select="$dependencies-pass-3"
+                              tunnel="yes"/>
+                        </xsl:apply-templates>
+                        <xsl:copy-of select="$dependencies-pass-3"/>
                      </xsl:when>
                      <xsl:otherwise>
                         <xsl:copy-of select="$class-2-expansion, $dependencies-pass-3"/>
@@ -284,6 +324,10 @@
       </xsl:choose>
    </xsl:function>
 
+   <xsl:template match="tan:inclusion/*" mode="check-referred-doc">
+      <!-- ignore anything deeper than inclusion -->
+      <xsl:copy-of select="."/>
+   </xsl:template>
    <xsl:template
       match="tan:inclusion | tan:vocabulary | tan:source | tan:see-also | tan:morphology | tan:redivision | tan:model | tan:successor | tan:predecessor"
       mode="check-referred-doc">
@@ -302,8 +346,12 @@
                $TAN-vocabularies/tan:TAN-voc/tan:body//tan:item[tan:IRI = $this-relationship-IRIs]
             else
                ()"/>
-      <xsl:variable name="target-1st-da" select="tan:get-1st-doc(.)"/>
-      <xsl:variable name="target-1st-da-resolved" as="document-node()?">
+      <xsl:variable name="this-voc-expansion" select="tan:element-vocabulary(.)/tan:item"/>
+      <xsl:variable name="this-element-expanded"
+         select="(.[exists(tan:location)], $this-voc-expansion, $empty-element)[1]"
+      />
+      <xsl:variable name="target-1st-da" select="tan:get-1st-doc($this-element-expanded)"/>
+      <xsl:variable name="target-resolved" as="document-node()?">
          <xsl:choose>
             <xsl:when test="($this-name = ('inclusion', 'vocabulary')) and not($target-1st-da/*/@TAN-version = $TAN-version)">
                <xsl:document>
@@ -320,24 +368,28 @@
                <xsl:copy-of select="$sources-resolved[position() = $this-pos]"/>
             </xsl:when>
             <xsl:otherwise>
-               <xsl:copy-of select="tan:resolve-doc($target-1st-da)"/>
+               <xsl:copy-of select="tan:resolve-doc($target-1st-da, false(), (), (), false())"/>
             </xsl:otherwise>
          </xsl:choose>
       </xsl:variable>
-      <xsl:variable name="target-class" select="tan:class-number($target-1st-da-resolved)"/>
+      <xsl:if test="$target-resolved/tan:warning">
+         <xsl:message select="tan:shallow-copy(..)"></xsl:message>
+         <xsl:message select="'warning at ', ."></xsl:message>
+      </xsl:if>
+      <xsl:variable name="target-class" select="tan:class-number($target-resolved)"/>
       <xsl:variable name="target-is-faulty"
          select="
-            deep-equal($target-1st-da-resolved, $empty-doc)
-            or $target-1st-da-resolved/(tan:error, tan:warning, tan:fatal, tan:help)"/>
-      <xsl:variable name="target-to-do-list" select="$target-1st-da-resolved/*/tan:head/tan:to-do"/>
+            deep-equal($target-resolved, $empty-doc)
+            or $target-resolved/(tan:error, tan:warning, tan:fatal, tan:help)"/>
+      <xsl:variable name="target-to-do-list" select="$target-resolved/*/tan:head/tan:to-do"/>
       <!--<xsl:variable name="target-new-versions"
          select="$target-1st-da-resolved/*/tan:head/tan:see-also[tan:vocabulary-key-item(tan:relationship) = 'new version']"/>-->
       <xsl:variable name="target-new-versions"
-         select="$target-1st-da-resolved/*/tan:head/tan:successor"/>
-      <xsl:variable name="target-hist" select="tan:get-doc-history($target-1st-da-resolved)"/>
-      <xsl:variable name="target-id" select="$target-1st-da-resolved/*/@id"/>
+         select="$target-resolved/*/tan:head/tan:successor"/>
+      <xsl:variable name="target-hist" select="tan:get-doc-history($target-resolved)"/>
+      <xsl:variable name="target-id" select="$target-resolved/*/@id"/>
       <xsl:variable name="target-last-change-agent"
-         select="tan:last-change-agent($target-1st-da-resolved)"/>
+         select="tan:last-change-agent($target-resolved)"/>
       <!-- We change TEI to TAN-T, just so that TEI and TAN-T files can be treated as copies of each other -->
       <xsl:variable name="prov-root-name" select="replace(name(root(.)/*), '^TEI$', 'TAN-T')"/>
       <xsl:variable name="target-accessed"
@@ -345,14 +397,14 @@
       <xsl:variable name="target-updates"
          select="$target-hist/*[number(@when-sort) gt $target-accessed]"/>
       <xsl:variable name="duplicate-vocab-item-names" as="element()*">
-         <xsl:for-each-group select="$vocabularies-1st-da/tan:TAN-voc/tan:body//tan:item"
-            group-by="tokenize(tan:normalize-text((ancestor-or-self::*/@affects-element)[last()]), ' ')">
+         <xsl:for-each-group select="$vocabularies-resolved/tan:TAN-voc/tan:body//tan:item"
+            group-by="tokenize(tan:normalize-text(ancestor-or-self::*[@affects-element][1]/@affects-element), ' ')">
             <xsl:variable name="this-element-name" select="current-grouping-key()"/>
             <xsl:for-each-group select="current-group()" group-by="tan:name">
                <xsl:if
                   test="
                      count(current-group()) gt 1 and (some $i in current-group()
-                        satisfies root($i)/*/@id = $target-1st-da-resolved/*/@id)">
+                        satisfies root($i)/*/@id = $target-resolved/*/@id)">
                   <duplicate affects-element="{$this-element-name}" name="{current-grouping-key()}"
                   />
                </xsl:if>
@@ -360,14 +412,14 @@
          </xsl:for-each-group>
       </xsl:variable>
       <xsl:variable name="duplicate-vocab-item-IRIs" as="element()*">
-         <xsl:for-each-group select="$vocabularies-1st-da/tan:TAN-voc/tan:body//tan:item"
+         <xsl:for-each-group select="$vocabularies-resolved/tan:TAN-voc/tan:body//tan:item"
             group-by="tan:IRI">
             <xsl:if
                test="
                   count(current-group()) gt 1 and (some $i in current-group()
-                     satisfies root($i)/*/@id = $target-1st-da-resolved/*/@id)">
+                     satisfies root($i)/*/@id = $target-resolved/*/@id)">
                <duplicate
-                  affects-element="{distinct-values(for $i in current-group() return tokenize(tan:normalize-text(($i/ancestor-or-self::*/@affects-element)[1]),' '))}"
+                  affects-element="{distinct-values(for $i in current-group() return tokenize(tan:normalize-text($i/ancestor-or-self::*[@affects-element][1]/@affects-element),' '))}"
                   iri="{current-grouping-key()}"/>
             </xsl:if>
          </xsl:for-each-group>
@@ -375,37 +427,40 @@
 
       <xsl:copy>
          <xsl:copy-of select="@*"/>
+         <xsl:if test="($this-name = 'source') and ($this-class = 2) and not(exists(@xml:id))">
+            <xsl:attribute name="xml:id" select="count(preceding-sibling::tan:source) + 1"/>
+         </xsl:if>
          <xsl:if
             test="
                $this-TAN-reserved-relationships//ancestor::tan:group/tan:name = 'TAN files'
                and $target-class = 0">
             <xsl:copy-of
-               select="tan:error('see01', concat('root element name: ', name($target-1st-da-resolved/*)))"
+               select="tan:error('see01', concat('root element name: ', name($target-resolved/*)))"
             />
          </xsl:if>
          <xsl:if
             test="
                $this-TAN-reserved-relationships//ancestor::tan:group/tan:name = 'copies'
-               and not(replace(name($target-1st-da-resolved/*), '^TEI$', 'TAN-T') = $prov-root-name)">
+               and not(replace(name($target-resolved/*), '^TEI$', 'TAN-T') = $prov-root-name)">
             <xsl:copy-of
-               select="tan:error('see03', concat('root element name: ', name($target-1st-da-resolved/*)))"
+               select="tan:error('see03', concat('root element name: ', name($target-resolved/*)))"
             />
          </xsl:if>
          <xsl:if
             test="
                $this-TAN-reserved-relationships/tan:name = 'different work version' and
                not($prov-root-name = 'TAN-T'
-               and $head/tan:work/tan:IRI = $target-1st-da-resolved/(tei:TEI, tan:TAN-T)/tan:head/tan:work/tan:IRI)">
+               and $head/tan:work/tan:IRI = $target-resolved/(tei:TEI, tan:TAN-T)/tan:head/tan:work/tan:IRI)">
             <xsl:copy-of select="tan:error('see04')"/>
          </xsl:if>
-         <xsl:copy-of select="$target-1st-da-resolved/tan:error"/>
+         <xsl:copy-of select="$target-resolved/tan:error"/>
          <xsl:if test="exists(tan:location) and not($target-id = tan:IRI) and $target-class gt 0">
             <xsl:copy-of
                select="tan:error('loc02', concat('ID of see-also file: ', $target-id), $target-id, 'replace-text')"
             />
          </xsl:if>
          <xsl:if
-            test="($doc-id = $target-1st-da-resolved/*/@id) and not(self::tan:see-also and $this-TAN-reserved-relationships/tan:name = ('new version', 'old version'))">
+            test="($doc-id = $target-resolved/*/@id) and not(self::tan:see-also and $this-TAN-reserved-relationships/tan:name = ('new version', 'old version'))">
             <xsl:copy-of select="tan:error('loc03')"/>
          </xsl:if>
          <xsl:if test="exists($target-to-do-list/*)">
@@ -509,7 +564,7 @@
          </xsl:apply-templates>
       </xsl:copy>
    </xsl:template>
-   <xsl:template match="tan:IRI" mode="check-referred-doc">
+   <xsl:template match="tan:IRI" priority="1" mode="check-referred-doc">
       <xsl:param name="target-id" as="xs:string?"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
@@ -528,28 +583,6 @@
    <!-- EXPANSION FOR ALL TAN FILES -->
    
    <!-- CORE EXPANSION TERSE -->
-
-   <!-- Aug 2018: need to get rid of the following -->
-   <xsl:function name="tan:resolve-idref" as="xs:string*">
-      <!-- Input: any strings -->
-      <!-- Output: if a string refers to the id value of an <alias>, the references to that alias, otherwise the string itself -->
-      <xsl:param name="ref-vals" as="xs:string*"/>
-      <xsl:param name="aliases-expanded" as="element()*"/>
-      <xsl:for-each select="$ref-vals">
-         <xsl:variable name="this-val" select="."/>
-         <xsl:variable name="this-alias" select="$aliases-expanded[(@xml:id, @id) = $this-val]"/>
-         <xsl:choose>
-            <xsl:when test="exists($this-alias)">
-               <xsl:for-each select="$this-alias/tan:idref">
-                  <xsl:value-of select="."/>
-               </xsl:for-each>
-            </xsl:when>
-            <xsl:otherwise>
-               <xsl:value-of select="."/>
-            </xsl:otherwise>
-         </xsl:choose>
-      </xsl:for-each>
-   </xsl:function>
 
    <xsl:template match="tei:teiHeader | tan:inclusion" mode="core-expansion-terse-attributes">
       <xsl:copy-of select="."/>
@@ -735,7 +768,8 @@
             />
          </xsl:if>
          <xsl:apply-templates mode="#current">
-            <xsl:with-param name="this-tan-type" select="name(.)" tunnel="yes"/>
+            <xsl:with-param name="is-tan-a-lm" select="(name(.) = 'TAN-A-lm')" tunnel="yes"/>
+            <xsl:with-param name="is-for-lang" select="exists(tan:head/tan:for-lang)" tunnel="yes"/>
          </xsl:apply-templates>
       </xsl:copy>
    </xsl:template>
@@ -817,7 +851,7 @@
       <xsl:apply-templates select="." mode="check-referred-doc"/>
    </xsl:template>
    
-   <xsl:template match="tan:name" mode="core-expansion-terse expand-standard-tan-voc">
+   <xsl:template match="tan:name" mode="core-expansion-terse">
       <!-- parameters below specifically for TAN-voc files -->
       <xsl:param name="reserved-vocabulary-items" as="element()*"/>
       <xsl:param name="is-reserved" as="xs:boolean?" tunnel="yes"/>
@@ -827,7 +861,10 @@
          <xsl:copy-of select="@*"/>
          <xsl:if
             test="($reserved-vocabulary-items/tan:name = ($this-name, $this-name-norm)) and ($is-reserved = false())">
-            <xsl:copy-of select="tan:error('tky01')"/>
+            <xsl:copy-of select="tan:error('voc01')"/>
+         </xsl:if>
+         <xsl:if test="$is-reserved and not($this-name = $this-name-norm)">
+            <xsl:copy-of select="tan:error('voc07', concat('replace with ', $this-name-norm), $this-name-norm, 'replace-text')"/>
          </xsl:if>
          <xsl:apply-templates mode="#current"/>
       </xsl:copy>
@@ -888,12 +925,12 @@
       <!--<xsl:variable name="who-vocab" select="tan:glossary(('person', 'organization'), $these-whos), preceding-sibling::tan:vocabulary-key/*[(@xml:id, @id) = $these-whos]"/>-->
       <xsl:variable name="who-vocab" select="tan:element-vocabulary(.)"/>
       <xsl:variable name="key-agent"
-         select="$who-vocab/*[tan:IRI[starts-with(., concat('tag:', $doc-namespace))]]"/>
+         select="$who-vocab/*[tan:IRI[starts-with(., $doc-namespace)]]"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:if test="not(exists($key-agent))">
             <xsl:copy-of
-               select="tan:error('tan01', concat('Need a person, organization, or algorithm with an IRI that begins tag:', $doc-namespace))"
+               select="tan:error('tan01', concat('Need a person, organization, or algorithm with an IRI that begins ', $doc-namespace))"
             />
          </xsl:if>
          <xsl:apply-templates mode="#current"/>

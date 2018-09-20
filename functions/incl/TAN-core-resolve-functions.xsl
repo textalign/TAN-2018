@@ -25,6 +25,34 @@
       <xsl:copy-of select="tan:resolve-doc($TAN-documents, $leave-breadcrumbs, (), (), true())"/>
    </xsl:function>
    
+   <xsl:function name="tan:get-and-resolve-dependency" as="document-node()*">
+      <!-- Input: elements pointing to a dependency, e.g., <source>, <morphology>, <vocabulary> -->
+      <!-- Output: documents, if available, minimally resolved -->
+      <!-- This function was written principally to expedite the processing of class-2 sources -->
+      <xsl:param name="TAN-elements" as="element()*"/>
+      <xsl:for-each select="$TAN-elements">
+         <xsl:variable name="this-element-expanded"
+            select="
+               if (exists(tan:location)) then
+                  .
+               else
+                  tan:element-vocabulary(.)/tan:item"
+         />
+         <xsl:variable name="this-element-name" select="name(.)"/>
+         <!-- It is so customary to abbreviate "source" as "src" that we make the transition now. -->
+         <xsl:variable name="this-name-norm" select="replace($this-element-name, 'source', 'src')"/>
+         <xsl:variable name="this-id" select="@xml:id"/>
+         <xsl:variable name="this-first-doc" select="tan:get-1st-doc($this-element-expanded)"/>
+         <xsl:variable name="this-source-must-be-adjusted" select="($this-element-name = 'source') and 
+            exists(following-sibling::tan:adjustments[(self::*, tan:where)/@src[tokenize(., ' ') = ($this-id, '*')]]/(tan:equate, tan:rename, tan:reassign, tan:skip))"/>
+         <xsl:variable name="leave-breadcrumbs" select="$this-source-must-be-adjusted"/>
+         <xsl:variable name="resolve-vocabulary" select="$this-element-name = 'morphology'"/>
+         <xsl:copy-of
+            select="tan:resolve-doc($this-first-doc, $leave-breadcrumbs, $this-name-norm, $this-element-expanded/(@xml:id, tan:id)[1], $resolve-vocabulary)"
+         />
+      </xsl:for-each>
+   </xsl:function>
+   
    <xsl:function name="tan:resolve-doc" as="document-node()*">
       <!-- Input: any TAN documents; 
          a boolean indicating whether documents should be breadcrumbed or not; 
@@ -46,6 +74,10 @@
       <xsl:param name="add-attr-to-root-element-named-what" as="xs:string?"/>
       <xsl:param name="add-what-val-to-new-root-attribute" as="xs:string*"/>
       <xsl:param name="resolve-vocabulary" as="xs:boolean"/>
+      <xsl:variable name="diagnostics" select="false()"/>
+      <xsl:if test="$diagnostics">
+         <xsl:message select="'diagnostics on for tan:resolve-doc()'"/>
+      </xsl:if>
       <xsl:for-each select="$TAN-documents">
          <xsl:variable name="this-doc" select="."/>
          <xsl:variable name="this-doc-no" select="position()"/>
@@ -53,7 +85,7 @@
             select="$add-what-val-to-new-root-attribute[$this-doc-no]"/>
          
          
-         <!-- Step: first stamp: stamp the document root element, resolve @hrefs, resolve <alias>, normalize <name> -->
+         <!-- Step: first stamp: stamp the document root element, resolve @hrefs, resolve <alias>, normalize <name>, replace <vocabulary @which> -->
          <xsl:variable name="doc-stamped" as="document-node()">
             <xsl:apply-templates select="." mode="first-stamp">
                <xsl:with-param name="leave-breadcrumbs" select="$leave-breadcrumbs" tunnel="yes"/>
@@ -64,21 +96,16 @@
             </xsl:apply-templates>
          </xsl:variable>
          
-         <!-- Step: convert numerals to Arabic -->
-         <xsl:variable name="doc-with-n-and-ref-converted" as="document-node()">
-            <xsl:apply-templates select="$doc-stamped" mode="resolve-numerals"/>
-         </xsl:variable>
-         
          <!-- Step: if inclusion takes place, replace select <inclusion>s and every <ELEMENT @include> -->
          <!-- substep: insert relevant content into <inclusion>s, e.g., <substitutes> -->
          <xsl:variable name="elements-with-attr-include"
-            select="$doc-with-n-and-ref-converted//*[@include]"/>
+            select="$doc-stamped//*[@include]"/>
          <xsl:variable name="these-inclusions-resolved" as="element()*">
             <xsl:for-each-group select="$elements-with-attr-include"
                group-by="tokenize(@include, ' ')">
                <xsl:variable name="this-include-idref" select="current-grouping-key()"/>
                <xsl:variable name="this-inclusion-element"
-                  select="$doc-with-n-and-ref-converted/*/tan:head/tan:inclusion[@xml:id = $this-include-idref]"/>
+                  select="$doc-stamped/*/tan:head/tan:inclusion[@xml:id = $this-include-idref]"/>
                <xsl:variable name="these-elements-names-to-fetch"
                   select="
                      for $i in current-group()
@@ -93,55 +120,64 @@
          </xsl:variable>
          <!-- substep: replace parts of the doc with the full/revised elements, keeping @q -->
          <xsl:variable name="doc-with-inclusions-resolved" as="document-node()">
-            <xsl:apply-templates select="$doc-with-n-and-ref-converted"
+            <xsl:apply-templates select="$doc-stamped"
                mode="apply-resolved-inclusions">
                <xsl:with-param name="resolved-inclusions" tunnel="yes"
                   select="$these-inclusions-resolved"/>
             </xsl:apply-templates>
          </xsl:variable>
          
-         
-         <!-- Step: ensure every @which and idref point to a full vocabulary item -->
-         <xsl:variable name="elements-still-to-be-checked" select="$doc-with-inclusions-resolved//*[not(ancestor-or-self::*/@include) and not(ancestor-or-self::tan:inclusion)]"/>
-         <xsl:variable name="this-vocabulary-raw"
-            select="tan:element-vocabulary($elements-still-to-be-checked)"/>
-         <xsl:variable name="this-vocabulary-consolidated" select="tan:consolidate-elements($this-vocabulary-raw[not(self::tan:error)]), $this-vocabulary-raw/self::tan:error"/>
-
-         <!-- Step: add to each <vocabulary> the particular vocabulary items from the previous step; for TAN vocabulary, insert a new <vocabulary> populated with vocabulary items -->
-         <!-- for the step above, also stamp <resolved> as the first child of the root element, and copy the error messages due to bad idrefs or @which values to the host element -->
-         <xsl:variable name="doc-with-complete-vocabulary" as="document-node()">
+         <!-- step: resolve vocabulary -->
+         <xsl:variable name="doc-with-vocabulary-resolved" as="document-node()">
             <xsl:choose>
-               <xsl:when test="$resolve-vocabulary = true()">
-                  <xsl:apply-templates select="$doc-with-inclusions-resolved"
-                     mode="resolve-vocabulary-references">
-                     <xsl:with-param name="vocabulary-analysis"
-                        select="$this-vocabulary-consolidated" tunnel="yes"/>
-                  </xsl:apply-templates>
+               <xsl:when test="$resolve-vocabulary = false()">
+                  <xsl:copy-of select="$doc-with-inclusions-resolved"/>
                </xsl:when>
                <xsl:otherwise>
-                  <xsl:sequence select="$doc-with-inclusions-resolved"/>
+                  <!-- Step: ensure every @which and idref point to a full vocabulary item -->
+                  <xsl:variable name="elements-still-to-be-checked"
+                     select="$doc-with-inclusions-resolved//*[not(ancestor-or-self::*/@include) and not(ancestor-or-self::tan:inclusion)]"/>
+                  <xsl:variable name="this-vocabulary-raw"
+                     select="tan:element-vocabulary($elements-still-to-be-checked)"/>
+                  <!--<xsl:variable name="this-vocabulary-raw" select="tan:vocabulary('n', true(), (), $doc-with-inclusions-resolved/*/tan:head)"/>-->
+                  <xsl:variable name="this-vocabulary-consolidated"
+                     select="tan:consolidate-resolved-vocab-items($this-vocabulary-raw[not(self::tan:error)]), $this-vocabulary-raw/self::tan:error"/>
+                  <xsl:variable name="this-n-vocabulary" select="tan:vocabulary('n', true(), (), $doc-with-inclusions-resolved/*/tan:head)"/>
+
+                  <!-- Step: add to each <vocabulary> the particular vocabulary items from the previous step; for TAN vocabulary, insert a new <vocabulary> populated with vocabulary items -->
+                  <!-- for the step above, also stamp <resolved> as the first child of the root element, and copy the error messages due to bad idrefs or @which values to the host element -->
+                  <xsl:variable name="doc-with-complete-vocabulary" as="document-node()">
+                     <xsl:apply-templates select="$doc-with-inclusions-resolved"
+                        mode="resolve-vocabulary-references">
+                        <xsl:with-param name="vocabulary-analysis"
+                           select="$this-vocabulary-consolidated" tunnel="yes"/>
+                        <xsl:with-param name="n-vocabulary" select="$this-n-vocabulary" tunnel="yes"/>
+                     </xsl:apply-templates>
+                  </xsl:variable>
+                  <xsl:if test="$diagnostics">
+                     <xsl:message select="'resolving: ', tan:shallow-copy($this-doc/*)"/>
+                     <xsl:message
+                        select="'elements with @include: ', count($elements-with-attr-include)"/>
+                     <xsl:message
+                        select="'non-@include elements to be checked: ', count($elements-still-to-be-checked)"/>
+                     <xsl:message select="'vocabulary raw: ', $this-vocabulary-raw"/>
+                  </xsl:if>
+                  <xsl:copy-of select="$doc-with-complete-vocabulary"/>
                </xsl:otherwise>
             </xsl:choose>
          </xsl:variable>
          
+         <!-- Step: convert numerals to Arabic -->
+         <xsl:variable name="doc-with-n-and-ref-converted" as="document-node()">
+            <xsl:apply-templates select="$doc-with-vocabulary-resolved" mode="resolve-numerals"/>
+         </xsl:variable>
          
-         <!-- diagnostics, results -->
-         <!--<xsl:document>
-            <diagnostics>
-               <!-\-<xsl:copy-of select="$elements-still-to-be-checked"/>-\->
-               <!-\-<xsl:copy-of select="$this-vocabulary-raw"/>-\->
-               <xsl:copy-of select="$this-vocabulary-consolidated"/>
-            </diagnostics>
-         </xsl:document>-->
-         <!--<xsl:copy-of select="$doc-stamped"/>-->
-         <!--<xsl:copy-of select="$doc-with-n-and-ref-converted"/>-->
-         <!--<xsl:copy-of select="$doc-with-inclusions-resolved"/>-->
-         <xsl:copy-of select="$doc-with-complete-vocabulary"/>
+         <xsl:copy-of select="$doc-with-n-and-ref-converted"/>
       </xsl:for-each>
    </xsl:function>
 
    <!-- Step: stamp documents -->
-   <xsl:template match="/*" mode="first-stamp expand-standard-tan-voc resolve-href">
+   <xsl:template match="/*" mode="first-stamp expand-standard-tan-voc resolve-href resolve-inclusion">
       <!-- The first-stamp mode ensures that when a document is handed over to a variable, the original document URI is not lost. It also provides (1) the breadcrumbing service, so that errors occurring downstream, in an inclusion or TAN-voc file can be diagnosed; (2) the option for @src to be imprinted on the root element, so that a class 1 TAN file can be tethered to a class 2 file that uses it as a source; (3) the conversion of @href to an absolute URI, resolved against the document's base.-->
       <xsl:param name="leave-breadcrumbs" as="xs:boolean" tunnel="yes"/>
       <xsl:param name="stamp-root-element-with-attr-name" as="xs:string?" tunnel="yes"/>
@@ -200,18 +236,12 @@
          </xsl:choose>
       </xsl:copy>
    </xsl:template>
-   <xsl:template match="tan:item/tan:name | tan:vocabulary-key/*/tan:name" mode="first-stamp">
+   <xsl:template match="tan:item/tan:name | tan:vocabulary-key/*/tan:name" mode="first-stamp resolve-inclusion">
       <xsl:param name="leave-breadcrumbs" as="xs:boolean" tunnel="yes"/>
       <!-- If <name> is a candidate for being referred to by @which, make a clone version of the normalized name immediately after, if its normalized form differs -->
       <xsl:variable name="this-name" select="text()"/>
       <xsl:variable name="this-name-norm" select="tan:normalize-name($this-name)"/>
-      <xsl:copy>
-         <xsl:copy-of select="@*"/>
-         <xsl:if test="$leave-breadcrumbs = true()">
-            <xsl:attribute name="q" select="generate-id(.)"/>
-         </xsl:if>
-         <xsl:apply-templates mode="#current"/>
-      </xsl:copy>
+      <!-- We push normalized values to the top, so the first name is always normalized -->
       <xsl:if test="not($this-name = $this-name-norm)">
          <xsl:copy>
             <xsl:copy-of select="@*"/>
@@ -220,6 +250,29 @@
             <xsl:value-of select="$this-name-norm"/>
          </xsl:copy>
       </xsl:if>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:if test="$leave-breadcrumbs = true()">
+            <xsl:attribute name="q" select="generate-id(.)"/>
+         </xsl:if>
+         <xsl:apply-templates mode="#current"/>
+      </xsl:copy>
+   </xsl:template>
+   <xsl:template match="tan:vocabulary[@which]" mode="first-stamp resolve-inclusion">
+      <xsl:param name="leave-breadcrumbs" as="xs:boolean" tunnel="yes"/>
+      <xsl:variable name="this-which-norm" select="tan:normalize-name(@which)"/>
+      <xsl:variable name="this-item" select="$TAN-vocabularies/tan:TAN-voc/tan:body[@affects-element='vocabulary']/tan:item[tan:name = $this-which-norm]"/>
+      <xsl:copy>
+         <!-- We drop @which because this is a special, immediate substitution -->
+         <xsl:copy-of select="@* except @which"/>
+         <xsl:if test="$leave-breadcrumbs = true()">
+            <xsl:attribute name="q" select="generate-id(.)"/>
+         </xsl:if>
+         <xsl:copy-of select="$this-item/*"/>
+         <xsl:if test="not(exists($this-item))">
+            <xsl:copy-of select="tan:error('whi05')"/>
+         </xsl:if>
+      </xsl:copy>
    </xsl:template>
    <xsl:template match="tan:vocabulary-key" mode="first-stamp">
       <xsl:param name="leave-breadcrumbs" as="xs:boolean" tunnel="yes"/>
@@ -233,7 +286,7 @@
          <xsl:apply-templates mode="#current"/>
       </xsl:copy>
    </xsl:template>
-   <xsl:template match="tan:alias" mode="first-stamp">
+   <xsl:template match="tan:alias" mode="first-stamp resolve-inclusion">
       <xsl:param name="leave-breadcrumbs" as="xs:boolean" tunnel="yes"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
@@ -336,7 +389,7 @@
             </xsl:analyze-string>
         </xsl:processing-instruction>
    </xsl:template>
-   <xsl:template match="*[@href]" mode="resolve-href">
+   <xsl:template match="*[@href]" mode="resolve-href expand-standard-tan-voc">
       <xsl:param name="base-uri" as="xs:anyURI?" tunnel="yes"/>
       <xsl:param name="leave-breadcrumbs" as="xs:boolean" tunnel="yes" select="true()"/>
       <xsl:variable name="this-base-uri"
@@ -372,11 +425,16 @@
             else
                true()"
       />
+      <xsl:variable name="n-alias-items"
+         select="tan:head/tan:vocabulary/tan:item[tan:affects-attribute = 'n']"/>
+      <xsl:variable name="n-alias-constraints" select="tan:head/tan:n-alias"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <resolved>numerals</resolved>
          <xsl:apply-templates mode="#current">
             <xsl:with-param name="ambig-is-roman" select="$ambig-is-roman" tunnel="yes"/>
+            <xsl:with-param name="n-alias-items" select="$n-alias-items" tunnel="yes"/>
+            <xsl:with-param name="n-alias-constraints" select="$n-alias-constraints" tunnel="yes"/>
          </xsl:apply-templates>
       </xsl:copy>
    </xsl:template>
@@ -386,17 +444,53 @@
    </xsl:template>
    <xsl:template match="*[not(@include)]" mode="resolve-numerals">
       <xsl:param name="ambig-is-roman" as="xs:boolean?" tunnel="yes" select="true()"/>
+      <xsl:param name="n-alias-items" as="element()*" tunnel="yes"/>
+      <xsl:param name="n-alias-constraints" as="element()*" tunnel="yes"/>
+      <xsl:variable name="diagnostics" select="false()"/>
       <xsl:variable name="this-element" select="."/>
+      <xsl:variable name="restrict-alias-check-to-what-div-types"
+         select="
+            for $i in $n-alias-constraints
+            return
+               tokenize($i/@div-type, '\s+')"
+      />
+      <xsl:variable name="n-aliases-should-be-checked" as="xs:boolean">
+         <xsl:choose>
+            <xsl:when test="not(exists($n-alias-constraints))">
+               <xsl:value-of select="true()"/>
+            </xsl:when>
+            <xsl:when test="(self::*:div) and (tokenize(@type, '\s+') = $restrict-alias-check-to-what-div-types)">
+               <xsl:value-of select="true()"/>
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:value-of select="false()"/>
+            </xsl:otherwise>
+         </xsl:choose>
+      </xsl:variable>
+      <xsl:variable name="n-aliases-to-pass-on" as="element()*"
+         select="
+            if ($n-aliases-should-be-checked) then
+               $n-alias-items
+            else
+               ()"
+      />
+      <xsl:if test="$diagnostics">
+         <xsl:message select="'diagnostics on for ', tan:shallow-copy($this-element)"/>
+         <xsl:message select="'ambig #s are roman: ', $ambig-is-roman"/>
+         <xsl:message select="'Qty n aliases: ', count($n-alias-items)"/>
+         <xsl:message select="'n alias constraints: ', $n-alias-constraints"/>
+         <xsl:message select="'n aliases should be checked: ', $n-aliases-should-be-checked"/>
+      </xsl:if>
       <xsl:copy>
          <xsl:for-each select="@*">
-            <xsl:variable name="this-name" select="name(.)"/>
+            <xsl:variable name="this-attr-name" select="name(.)"/>
             <xsl:choose>
-               <xsl:when test="$this-name = $attributes-that-take-non-arabic-numerals">
+               <xsl:when test="$this-attr-name = $attributes-that-take-non-arabic-numerals">
                   <xsl:variable name="val-normalized"
-                     select="tan:string-to-numerals(lower-case(.), $ambig-is-roman, false())"/>
-                  <xsl:attribute name="{$this-name}" select="$val-normalized"/>
+                     select="tan:string-to-numerals(lower-case(.), $ambig-is-roman, false(), $n-aliases-to-pass-on)"/>
+                  <xsl:attribute name="{$this-attr-name}" select="$val-normalized"/>
                   <xsl:if test="not(. = $val-normalized)">
-                     <xsl:attribute name="{concat('orig-',$this-name)}" select="."/>
+                     <xsl:attribute name="{concat('orig-',$this-attr-name)}" select="."/>
                   </xsl:if>
                </xsl:when>
                <xsl:otherwise>
@@ -418,9 +512,10 @@
       <xsl:param name="doc-urls-already-processed" as="xs:string*"/>
       <xsl:param name="resolve-vocabulary" as="xs:boolean"/>
       <xsl:param name="loop-counter" as="xs:integer"/>
+      <xsl:variable name="diagnostics" select="false()"/>
       <xsl:variable name="this-inclusion-doc" select="tan:get-1st-doc($inclusion-element)"/>
-      <xsl:variable name="this-inclusion-doc-stamped">
-         <xsl:apply-templates select="$this-inclusion-doc" mode="resolve-href">
+      <xsl:variable name="this-inclusion-doc-lightly-resolved">
+         <xsl:apply-templates select="$this-inclusion-doc" mode="resolve-inclusion">
             <xsl:with-param name="leave-breadcrumbs" select="false()" tunnel="yes"/>
          </xsl:apply-templates>
       </xsl:variable>
@@ -428,8 +523,9 @@
       <!-- we focus upon head @include and not body @include because we are interested in vocabulary items that might need to be resolved -->
       <xsl:variable name="this-inclusion-head-elements-with-attr-include"
          select="$this-inclusion-doc/*/tan:head//*[@include]"/>
+      <!-- In the following variable, make sure to exclude items of interest that are nested in other items of interest -->
       <xsl:variable name="these-elements-of-primary-interest"
-         select="$this-inclusion-doc//*[name() = $names-of-elements-of-interest]"/>
+         select="$this-inclusion-doc//*[name() = $names-of-elements-of-interest][not(name(..) = $names-of-elements-of-interest)]"/>
       <xsl:variable name="this-inclusion-extra-vocabulary"
          select="tan:get-1st-doc($this-inclusion-doc/*/tan:head/tan:vocabulary)"/>
       <xsl:variable name="this-inclusion-extra-vocabulary-resolved"
@@ -463,7 +559,7 @@
             <xsl:otherwise>
                <!-- We are ready to fetch elements from the document being included. -->
                <!-- First (the recursive bit), resolve all next-level <inclusion>s -->
-               <!-- It may not seem intuitive to expand every @include in the head. But it is possible that one of the elements of 
+               <!-- It may seem excessive to expand every @include in the head. But it is possible that one of the elements of 
                   primary interest will have references to vocabulary items that are hidden in <inclusion>s. So we must ferret them out. -->
                <xsl:variable name="nested-inclusions-resolved" as="element()*">
                   <xsl:for-each-group
@@ -486,7 +582,22 @@
                <!-- copy the nested <inclusion>s within the <inclusion> -->
                <xsl:copy-of select="$nested-inclusions-resolved"/>
                
-               <!-- Second, prepare the nonincluded elements that are of interest -->
+               <!-- Second, get the vocabulary for the substitutes, provided they are not inclusions -->
+               <xsl:variable name="this-inclusion-doc-with-inclusions-resolved" as="document-node()">
+                  <xsl:apply-templates select="$this-inclusion-doc-lightly-resolved" mode="apply-resolved-inclusions">
+                     <xsl:with-param name="resolved-inclusions" select="$nested-inclusions-resolved"
+                        tunnel="yes"/>
+                  </xsl:apply-templates>
+               </xsl:variable>
+               <xsl:variable name="this-inclusion-docs-nonincluded-elements-of-interest" select="$this-inclusion-doc-with-inclusions-resolved//*[name() = $names-of-elements-of-interest][not(@include)]"/>
+               <xsl:variable name="vocabulary-items-of-interest" as="element()*"
+                  select="tan:element-vocabulary($this-inclusion-docs-nonincluded-elements-of-interest)"/>
+               <xsl:if test="$resolve-vocabulary = true()">
+                  <xsl:copy-of select="tan:consolidate-resolved-vocab-items($vocabulary-items-of-interest)"/>
+               </xsl:if>
+               
+               
+               <!-- Third, prepare the nonincluded elements that are of interest -->
                <!-- Resolve @href, <alias>, but don't worry about adding @q -->
                <!-- Note, unlike tan:resolve-doc() the stamping occurs not on the entire document but only on elements of interest -->
                <xsl:variable name="substitutes-stamped" as="element()*">
@@ -498,35 +609,36 @@
                <!-- convert numerals to Arabic -->
                <xsl:variable name="ambig-is-roman"
                   select="
-                     if ($this-inclusion-doc/*/tan:head/tan:numerals/@priority = 'letters') then
+                     if ($this-inclusion-doc-lightly-resolved/*/tan:head/tan:numerals/@priority = 'letters') then
                         false()
                      else
                         true()"
                />
+               <xsl:variable name="n-vocabulary"
+                  select="
+                     if ($names-of-elements-of-interest = 'div') then
+                        tan:vocabulary('n', true(), (), $this-inclusion-doc-lightly-resolved/*/tan:head, true())
+                     else
+                        ()"
+               />
+               <xsl:variable name="n-alias-constraints" select="$this-inclusion-doc-lightly-resolved/*/tan:head/tan:n-alias"/>
                <xsl:variable name="substitutes-with-n-and-ref-converted" as="element()*">
                   <xsl:apply-templates select="$substitutes-stamped"
                      mode="resolve-numerals">
                      <xsl:with-param name="ambig-is-roman" select="$ambig-is-roman" tunnel="yes"/>
+                     <xsl:with-param name="n-alias-items" select="$n-vocabulary/tan:item" tunnel="yes"/>
+                     <xsl:with-param name="n-alias-constraints" select="$n-alias-constraints" tunnel="yes"/>
                   </xsl:apply-templates>
                </xsl:variable>
+               <xsl:if test="$diagnostics">
+                  <xsl:message select="'diagnostics on for included doc with root element ', tan:shallow-copy($this-inclusion-doc/*)"/>
+                  <xsl:message select="'ambig #s are roman: ', $ambig-is-roman"/>
+                  <xsl:message select="'n vocabulary: ', $n-vocabulary"/>
+                  <xsl:message select="'n alias constraints: ', $n-alias-constraints"/>
+               </xsl:if>
                <substitutes>
                   <xsl:copy-of select="$substitutes-with-n-and-ref-converted"/>
                </substitutes>
-               
-               <!-- Third, get the vocabulary for the substitutes, provided they are not inclusions -->
-               <xsl:variable name="this-inclusion-doc-with-inclusions-resolved" as="document-node()">
-                  <xsl:apply-templates select="$this-inclusion-doc-stamped" mode="apply-resolved-inclusions">
-                     <xsl:with-param name="resolved-inclusions" select="$nested-inclusions-resolved"
-                        tunnel="yes"/>
-                  </xsl:apply-templates>
-               </xsl:variable>
-               <xsl:variable name="this-inclusion-docs-nonincluded-elements-of-interest" select="$this-inclusion-doc-with-inclusions-resolved//*[name() = $names-of-elements-of-interest][not(@include)]"/>
-               <xsl:variable name="vocabulary-items-of-interest" as="element()*"
-                  select="tan:element-vocabulary($this-inclusion-docs-nonincluded-elements-of-interest)"/>
-               <xsl:if test="$resolve-vocabulary = true()">
-                  <xsl:copy-of select="tan:consolidate-elements($vocabulary-items-of-interest)"/>
-               </xsl:if>
-               
             </xsl:otherwise>
          </xsl:choose>
       </inclusion>
@@ -544,18 +656,26 @@
       </xsl:copy>
    </xsl:template>
 
-   <xsl:template match="tan:inclusion" mode="resolve-vocabulary-references">
-      <xsl:copy-of select="."/>
+   <xsl:template match="tan:inclusion/tan:substitutes/*" mode="resolve-vocabulary-references">
+      <xsl:if test="not(exists(preceding-sibling::*))">
+         <xsl:comment>shallow copy of substitutes; elements should have been substituted already into resolved document</xsl:comment>
+      </xsl:if>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+      </xsl:copy>
    </xsl:template>
 
    <xsl:template match="tan:vocabulary[not(@include)]" mode="resolve-vocabulary-references">
       <xsl:param name="vocabulary-analysis" as="element()*" tunnel="yes"/>
+      <xsl:param name="n-vocabulary" as="element()*" tunnel="yes"/>
       <xsl:variable name="this-iri" select="tan:IRI"/>
       <xsl:variable name="vocabulary-items-used" select="$vocabulary-analysis[tan:IRI = $this-iri]"/>
+      <xsl:variable name="this-n-vocabulary" select="$n-vocabulary[tan:IRI = $this-iri]"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:apply-templates mode="#current"/>
-         <xsl:copy-of select="$vocabulary-items-used/tan:item"/>
+         <xsl:copy-of select="tan:consolidate-resolved-vocab-items(($vocabulary-items-used/tan:item, $this-n-vocabulary/tan:item))"/>
+         <!--<xsl:copy-of select="tan:distinct-items(($vocabulary-items-used/tan:item, $this-n-vocabulary/tan:item))"/>-->
       </xsl:copy>
    </xsl:template>
    
@@ -643,14 +763,119 @@
       <xsl:variable name="these-include-idrefs" select="tokenize(@include, '\s+')"/>
       <xsl:variable name="matching-substitutes"
          select="$resolved-inclusions[@xml:id = $these-include-idrefs]//tan:substitutes/*[name() = $this-name]"/>
+      <xsl:variable name="this-element" select="."/>
+      <xsl:choose>
+         <xsl:when test="not(exists($matching-substitutes))">
+            <xsl:copy>
+               <xsl:copy-of select="@*"/>
+               <xsl:copy-of select="tan:error('inc02')"/>
+            </xsl:copy>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:for-each select="$matching-substitutes">
+               <xsl:copy>
+                  <xsl:copy-of select="@*"/>
+                  <xsl:copy-of select="$this-element/@*"/>
+                  <xsl:choose>
+                     <xsl:when test="self::tan:adjustments">
+                        <xsl:apply-templates mode="add-q-ref"/>
+                     </xsl:when>
+                     <xsl:otherwise>
+                        <xsl:copy-of select="node()"/>
+                     </xsl:otherwise>
+                  </xsl:choose>
+               </xsl:copy>
+            </xsl:for-each>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:template>
+   
+   <xsl:template match="*" mode="add-q-ref">
       <xsl:copy>
-         <xsl:copy-of select="$matching-substitutes/@*"/>
          <xsl:copy-of select="@*"/>
-         <xsl:if test="not(exists($matching-substitutes))">
-            <xsl:copy-of select="tan:error('inc02')"/>
-         </xsl:if>
-         <xsl:copy-of select="$matching-substitutes/node()"/>
+         <xsl:attribute name="q" select="generate-id(.)"/>
+         <xsl:apply-templates mode="#current"/>
       </xsl:copy>
    </xsl:template>
+   
+   <xsl:function name="tan:consolidate-resolved-vocab-items" as="element()*">
+      <!-- Input: elements that should be consolidated -->
+      <!-- Output: the elements, consolidated -->
+      <!-- This function is written to produce an accurately resolved <head>, and adopts the following assumptions. -->
+      <!-- We assume that the order of the elements may be altered; It is assumed that elements are never interleaved with text or other nodes -->
+      <!-- Elements that are empty and distinct, e.g., <location> should not be consolidated. -->
+      <!-- It is also assumed that elements that share <IRI> values should be consolidated with each other -->
+      <xsl:param name="elements-to-consolidate" as="element()*"/>
+      <xsl:copy-of select="tan:consolidate-resolved-vocab-items-loop($elements-to-consolidate, 1)"/>
+   </xsl:function>
+   
+   <xsl:function name="tan:consolidate-resolved-vocab-items-loop" as="element()*">
+      <xsl:param name="elements-to-consolidate" as="element()*"/>
+      <xsl:param name="loop-counter" as="xs:integer"/>
+      <xsl:choose>
+         <xsl:when test="$loop-counter gt $loop-tolerance">
+            <xsl:message
+               select="concat('Cannot loop more than ', string($loop-tolerance), ' times')"/>
+            <xsl:copy-of select="$elements-to-consolidate"/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:for-each-group select="$elements-to-consolidate" group-by="exists(*)">
+               <xsl:choose>
+                  <xsl:when test="current-grouping-key() = false()">
+                     <!-- If we have elements that have no other elements, then they are either empty, or have text nodes -->
+                     
+                     <xsl:for-each-group select="current-group()"
+                        group-by="exists(text()[matches(., '\S')])">
+                        <xsl:choose>
+                           <xsl:when test="current-grouping-key() = true()">
+                              <!-- elements with text nodes should be consolidated only if their name and text content are identical, and attributes should be ignored -->
+                              <xsl:for-each-group select="current-group()"
+                                 group-by="concat(name(.), '#', string-join(text(), ''))">
+                                 <xsl:element name="{name(current-group()[1])}">
+                                    <xsl:copy-of select="current-group()/@*"/>
+                                    <xsl:value-of select="current-group()[1]"/>
+                                 </xsl:element>
+                              </xsl:for-each-group>
+                           </xsl:when>
+                           <xsl:otherwise>
+                              <!-- empty elements should not be consolidated, but duplicates should be removed -->
+                              <xsl:for-each-group select="current-group()" group-by="name(.)">
+                                 <xsl:variable name="this-element-name"
+                                    select="current-grouping-key()"/>
+                                 <xsl:for-each-group select="current-group()"
+                                    group-by="tan:element-fingerprint(.)">
+                                    <xsl:element name="{$this-element-name}">
+                                       <xsl:copy-of select="current-group()/@*"/>
+                                       <xsl:value-of select="current-group()[1]"/>
+                                    </xsl:element>
+                                 </xsl:for-each-group>
+                              </xsl:for-each-group>
+                           </xsl:otherwise>
+                        </xsl:choose>
+                     </xsl:for-each-group> 
+                     
+                  </xsl:when>
+                  <xsl:otherwise>
+                     <xsl:variable name="this-group-grouped-by-iri" as="element()*"
+                        select="tan:group-elements-by-IRI(current-group())"/>
+                     <xsl:for-each select="$this-group-grouped-by-iri">
+                        <xsl:for-each-group select="*" group-by="name(.)">
+                           <xsl:variable name="this-element-name" select="current-grouping-key()"/>
+                           <xsl:element name="{$this-element-name}">
+                              <xsl:copy-of select="current-group()/@*"/>
+                              <xsl:copy-of
+                                 select="tan:consolidate-resolved-vocab-items-loop(current-group()/*, $loop-counter + 1)"
+                              />
+                           </xsl:element>
+                        </xsl:for-each-group>
+                     </xsl:for-each>
+                  </xsl:otherwise>
+               </xsl:choose>
+            </xsl:for-each-group>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:function>
+   
+   
 
 </xsl:stylesheet>

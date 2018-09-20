@@ -27,13 +27,7 @@
    </xsl:template>
    <xsl:template match="@m-has-how-many-features" mode="evaluate-conditions">
       <xsl:param name="context" tunnel="yes"/>
-      <xsl:variable name="this-val"
-         select="
-            if (. castable as xs:integer) then
-               xs:integer(.)
-            else
-               0"
-      />
+      <xsl:variable name="this-val" select="tan:expand-numerical-sequence(., 999)"/>
       <xsl:attribute name="{name()}">
          <xsl:value-of select="count($context/tan:f) = $this-val"/>
       </xsl:attribute>
@@ -83,141 +77,86 @@
          />
       </xsl:attribute>
    </xsl:template>
-   <!--<xsl:function name="tan:evaluate-morphological-test" as="xs:boolean?">
-      <!-\- Input: a TAN-mor's <where>, <assert>, or <report>; a TAN-A-lm's <m> (within context) -\->
-      <!-\- Output: booleans indicating whether the tests stated in the attributes hold true -\->
-      <!-\- If no relevant condition attributes are present, the function returns false. -\->
-      <xsl:param name="TAN-mor-element-with-condition-attributes" as="element()?"/>
-      <xsl:param name="m-element" as="element()"/>
-      <xsl:variable name="m-matches" select="$TAN-mor-element-with-condition-attributes/@m-matches"/>
-      <xsl:variable name="tok-matches" select="$TAN-mor-element-with-condition-attributes/@tok-matches"/>
-      <xsl:variable name="m-has-features" select="$TAN-mor-element-with-condition-attributes/@m-has-features"/>
-      <xsl:variable name="m-has-how-many-features"
-         select="$TAN-mor-element-with-condition-attributes/@m-has-how-many-features"/>
-      <xsl:variable name="condition-1" as="xs:boolean?">
-         <xsl:if test="exists($m-matches)">
-            <xsl:copy-of select="matches($m-element/text()[1], $m-matches)"/>
-         </xsl:if>
-      </xsl:variable>
-      <xsl:variable name="condition-2" as="xs:boolean?">
-         <xsl:if test="exists($tok-matches)">
-            <xsl:copy-of
-               select="
-                  some $i in $m-element/ancestor::tan:ana//tan:tok/tan:result
-                     satisfies matches($i, tan:escape($tok-matches))"
-            />
-         </xsl:if>
-      </xsl:variable>
-      <xsl:variable name="condition-3" as="xs:boolean?">
-         <xsl:if test="exists($m-has-features)">
-            <xsl:variable name="these-conditions" as="element()*">
-               <xsl:analyze-string select="$m-has-features" regex="(\+ )?\S+">
-                  <xsl:matching-substring>
-                     <xsl:variable name="this-item" select="tokenize(., ' ')"/>
-                     <xsl:element name="{if (count($this-item) gt 1) then 'and' else 'feature'}">
-                        <xsl:value-of select="$this-item[last()]"/>
-                     </xsl:element>
-                  </xsl:matching-substring>
-               </xsl:analyze-string>
-            </xsl:variable>
-            <xsl:variable name="these-conditions-pass-2" as="element()*">
-               <xsl:for-each-group select="$these-conditions" group-starting-with="tan:feature">
-                  <group>
-                     <xsl:for-each select="current-group()">
-                        <feature>
-                           <xsl:value-of select="."/>
-                        </feature>
-                     </xsl:for-each>
-                  </group>
-               </xsl:for-each-group>
-            </xsl:variable>
-            <xsl:copy-of
-               select="
-                  some $i in $these-conditions-pass-2
-                     satisfies
-                     every $j in $i/tan:feature
-                        satisfies
-                        $m-element/tan:f = $j"
-            />
-         </xsl:if>
-      </xsl:variable>
-      <xsl:variable name="condition-4" as="xs:boolean?">
-         <xsl:if test="exists($m-has-how-many-features)">
-            <xsl:copy-of select="count($m-element/tan:f) = xs:integer($m-has-how-many-features)"/>
-         </xsl:if>
-      </xsl:variable>
-      <xsl:variable name="all-conditions"
-         select="$condition-1, $condition-2, $condition-3, $condition-4" as="xs:boolean*"/>
-      <xsl:value-of
-         select="exists($all-conditions) and
-            (every $i in $all-conditions
-               satisfies $i)"
-      />
-   </xsl:function>-->
-
+   
 
    <!-- FILE PROCESSING: EXPANSION -->
 
    <!--  TERSE EXPANSION -->
 
-   <xsl:template match="tan:tok" mode="core-expansion-terse">
+   <xsl:template match="tan:body" mode="core-expansion-terse">
       <xsl:copy>
          <xsl:copy-of select="@*"/>
-         <src>1</src>
-         <xsl:apply-templates mode="#current"/>
-      </xsl:copy>
-   </xsl:template>
-   <xsl:template match="tan:m" mode="core-expansion-terse">
-      <xsl:variable name="this-code" select="tan:help-extracted(text())"/>
-      <xsl:copy>
-         <xsl:copy-of select="@*"/>
-         <xsl:copy-of select="$this-code/@help"/>
-         <xsl:value-of select="$this-code"/>
-         <xsl:for-each select="tokenize(normalize-space($this-code), ' ')">
-            <xsl:variable name="this-val-checked" select="tan:help-extracted(.)"/>
-            <xsl:variable name="this-val" select="$this-val-checked/text()"/>
-            <f n="{position()}">
-               <xsl:copy-of select="$this-val-checked/@help"/>
-               <xsl:value-of
-                  select="
-                     if ($this-val = '-') then
-                        ()
-                     else
-                        lower-case($this-val)"
-               />
-            </f>
-         </xsl:for-each>
-      </xsl:copy>
-   </xsl:template>
-
-   <xsl:template match="tan:ana" mode="class-2-expansion-terse">
-      <xsl:param name="dependencies" tunnel="yes"/>
-      <xsl:variable name="children-pass-1" as="element()">
-         <ana>
-            <xsl:apply-templates mode="#current"/>
-         </ana>
-      </xsl:variable>
-      <xsl:copy>
-         <xsl:copy-of select="@*"/>
-         <xsl:apply-templates select="$children-pass-1/node()" mode="class-2-expansion-terse-pass-2">
-            <xsl:with-param name="dependencies" select="$dependencies" tunnel="yes"/>
-            <xsl:with-param name="morphology-ids" select="ancestor::tan:body/tan:morphology"
+         <xsl:apply-templates mode="#current">
+            <xsl:with-param name="is-for-lang" select="exists(root()/*/tan:head/tan:for-lang)"
                tunnel="yes"/>
          </xsl:apply-templates>
       </xsl:copy>
    </xsl:template>
-
-   <xsl:template match="tan:m" mode="class-2-expansion-terse-pass-2">
+   <xsl:template match="tan:tok" mode="core-expansion-terse">
+      <xsl:param name="is-for-lang" tunnel="yes" as="xs:boolean"/>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:if test="$is-for-lang = false()">
+            <src>1</src>
+         </xsl:if>
+         <xsl:apply-templates mode="#current"/>
+      </xsl:copy>
+   </xsl:template>
+   <xsl:template match="tan:m" mode="core-expansion-terse">
+      <!-- This step breaks down the <m> into constituent <f>s with @n indicating position, and the values normalized (lowercase) -->
+      <xsl:variable name="this-text-norm" select="normalize-space(lower-case(text()))"/>
+      <xsl:variable name="this-code" select="tan:help-extracted($this-text-norm)"/>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:copy-of select="$this-code/@help"/>
+         <xsl:value-of select="$this-code"/>
+         <xsl:for-each select="tokenize($this-text-norm, ' ')">
+            <xsl:variable name="this-val-checked" select="tan:help-extracted(.)"/>
+            <xsl:variable name="this-val" select="$this-val-checked/text()"/>
+            <f n="{position()}">
+               <xsl:copy-of select="$this-val-checked/@help"/>
+               <xsl:choose>
+                  <xsl:when test="$this-val = ('-', '') and exists($this-val-checked/@help)">
+                     <xsl:text> </xsl:text>
+                  </xsl:when>
+                  <xsl:when test="$this-val = ('-', '')"/>
+                  <xsl:otherwise>
+                     <xsl:value-of select="$this-val"/>
+                  </xsl:otherwise>
+               </xsl:choose>
+            </f>
+         </xsl:for-each>
+      </xsl:copy>
+   </xsl:template>
+   
+   <xsl:template match="tan:tan-vocabulary/tan:item[tan:affects-element = 'feature']/tan:id" mode="dependency-expansion-terse">
+      <!-- ids for features are not allowed to be case-sensitive -->
+      <xsl:variable name="this-id-lowercase" select="lower-case(.)"/>
+      <xsl:if test="not(. = $this-id-lowercase)">
+         <xsl:copy>
+            <xsl:copy-of select="@*"/>
+            <xsl:value-of select="$this-id-lowercase"/>
+         </xsl:copy>
+      </xsl:if>
+      <xsl:copy-of select="."/>
+   </xsl:template>
+   
+   <xsl:template match="tan:vocabulary-key/tan:feature[@xml:id][tan:IRI]" mode="dependency-expansion-terse">
+      <!-- We copy @xml:id for an internally defined vocab key feature, to make it easier to match vocab items to feature codes -->
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:apply-templates mode="#current"/>
+         <id>
+            <xsl:value-of select="@xml:id"/>
+         </id>
+      </xsl:copy>
+   </xsl:template>
+   
+   <xsl:template match="tan:m" mode="tan-a-lm-expansion-terse">
       <xsl:param name="dependencies" tunnel="yes"/>
-      <xsl:param name="morphology-ids" tunnel="yes"/>
-      <xsl:variable name="these-morphology-idrefs"
-         select="
-            if (exists(tan:morphology)) then
-               tan:morphology
-            else
-               $morphology-ids"/>
+      <xsl:variable name="morphology-ids" select="ancestor-or-self::*[tan:morphology][1]/tan:morphology"/>
       <xsl:variable name="these-morphologies"
-         select="$dependencies[tan:TAN-mor/@morphology = $these-morphology-idrefs]"/>
+         select="$dependencies[tan:TAN-mor/@morphology = $morphology-ids]"/>
       <xsl:variable name="this-m" select="."/>
       <xsl:variable name="these-codes" select="tan:f"/>
       <xsl:variable name="these-morphology-cat-quantities"
@@ -234,7 +173,6 @@
          select="$relevant-asserts-and-reports/tan:assert[not(tan:conditions-hold(., $this-m))]"/>
       <xsl:variable name="disobeyed-reports"
          select="$relevant-asserts-and-reports/tan:report[tan:conditions-hold(., $this-m)]"/>
-
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:if
@@ -247,71 +185,53 @@
             <xsl:with-param name="error-id" select="'tlm04'"/>
          </xsl:apply-templates>
          <xsl:apply-templates mode="#current">
-            <xsl:with-param name="morphologies" select="$these-morphologies"/>
+            <xsl:with-param name="dependencies" select="$these-morphologies" tunnel="yes"/>
+            <xsl:with-param name="feature-vocabulary" select="$these-morphologies/tan:TAN-mor/tan:head/(tan:vocabulary, tan:tan-vocabulary, tan:vocabulary-key)/(tan:feature, tan:item[tan:affects-element = 'feature'])"/>
          </xsl:apply-templates>
       </xsl:copy>
    </xsl:template>
 
-   <xsl:template match="tan:f[text()]" mode="class-2-expansion-terse-pass-2">
-      <xsl:param name="morphologies" as="document-node()*"/>
-      <xsl:variable name="this-pos" select="xs:integer(@n)"/>
-      <xsl:variable name="those-categories" select="$morphologies/tan:TAN-mor/tan:body/tan:category"/>
-      <xsl:variable name="those-aliases" select="$morphologies/tan:TAN-mor/tan:head/tan:vocabulary-key/tan:alias"/>
-      <xsl:variable name="those-defined-features" select="$morphologies/tan:TAN-mor/tan:head/tan:vocabulary-key/tan:feature"/>
-      <xsl:variable name="this-code-resolved"
-         select="
-            if (exists($those-categories)) then
-               text()
-            else
-               lower-case(tan:resolve-idref(., $those-aliases))"
-      />
+   <xsl:template match="tan:f[text()]" mode="tan-a-lm-expansion-terse">
+      <xsl:param name="dependencies" tunnel="yes" as="document-node()*"/>
+      <xsl:param name="feature-vocabulary"/>
+      <xsl:variable name="this-f" select="."/>
       <xsl:variable name="help-requested" select="exists(@help)"/>
-      <xsl:variable name="those-target-features" as="element()*"
+      <xsl:variable name="this-pos" select="xs:integer(@n)"/>
+      <xsl:variable name="this-category" select="$dependencies/tan:TAN-mor/tan:body/tan:category[$this-pos]"/>
+      <xsl:variable name="this-id-resolved"
          select="
-            if (exists($those-categories)) then
-               $those-categories[$this-pos]/tan:feature
+            if (exists($this-category)) then
+               $this-category/tan:feature[@code = $this-f]/@type
             else
-               $those-defined-features"/>
-      <xsl:variable name="this-feature"
-         select="$those-target-features[(@xml:id, tan:code) = $this-code-resolved]"/>
-      <xsl:variable name="close-features"
-         select="
-            $those-target-features[some $i in $this-code-resolved
-               satisfies matches((tan:code, @xml:id, @id)[1],
-               tan:escape($i))]"/>
+               $this-f"
+      />
+      <xsl:variable name="this-voc-item" select="$feature-vocabulary[tan:id = $this-id-resolved]"/>
+      
       <xsl:copy-of select="."/>
       <!-- these errors are set as following siblings of the errant element because we need to tether it as a child to an element that was in the original. -->
-      <xsl:if test="not(exists($this-feature)) or $help-requested = true()">
+      <xsl:if test="not(exists($this-voc-item)) or $help-requested = true()">
          <xsl:variable name="this-message" as="xs:string*">
-            <xsl:value-of select="concat($this-code-resolved, ' not found; ')"/>
-            <xsl:if test="exists($close-features)">
-               <xsl:value-of
-                  select="
-                     for $i in $close-features
-                     return
-                        concat($i/@code, ' (', $i/tan:name[1], ')')"/>
-               <xsl:text>; </xsl:text>
-            </xsl:if>
-            <xsl:text>all codes: </xsl:text>
+            <xsl:value-of
+               select="
+                  if (not(exists($this-voc-item))) then
+                     concat($this-f, ' not found; try: ')
+                  else
+                     concat($this-f, ' is valid (= ', $this-voc-item/tan:name[1],'); all options: ')"
+            />
             <xsl:choose>
-               <xsl:when test="exists($those-categories)">
-                  <xsl:value-of
-                     select="
-                        for $i in $those-target-features,
-                           $j in ($i/@type, $those-aliases[(@xml:id, @id) = $i/@type]),
-                           $k in
-                           $those-defined-features[@xml:id = $j]
-                        return
-                           concat($i/@code, ' (', $k/tan:name[1], ')')"
-                  />
+               <xsl:when test="exists($this-category)">
+                  <xsl:for-each select="$this-category/tan:feature">
+                     <xsl:variable name="this-id" select="@type"/>
+                     <xsl:value-of
+                        select="concat(@code, ' (', $feature-vocabulary[tan:id = $this-id]/tan:name[1], ') ')"
+                     />
+                  </xsl:for-each>
                </xsl:when>
                <xsl:otherwise>
-                  <xsl:value-of
-                     select="
-                        for $i in $those-target-features
-                        return
-                           concat(string-join(($those-aliases[tan:idref = $i/@xml:id]/(@xml:id, @id), $i/@xml:id), ' '), ' (', $i/tan:name[1], ')')"
-                  />
+                  <xsl:for-each select="$feature-vocabulary">
+                     <xsl:sort select="matches(tan:id[1], tan:escape($this-f))" order="descending"/>
+                     <xsl:value-of select="concat(tan:id[1], ' (', tan:name[1], ') ')"/>
+                  </xsl:for-each>
                </xsl:otherwise>
             </xsl:choose>
          </xsl:variable>

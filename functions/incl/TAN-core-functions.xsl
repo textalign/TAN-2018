@@ -51,13 +51,15 @@
    <!-- CORE GLOBAL VARIABLES -->
 
    <!-- general -->
-   <xsl:variable name="TAN-version" select="'2019'"/>
+   <xsl:variable name="TAN-version" as="xs:string">2019</xsl:variable>
    <xsl:variable name="previous-TAN-versions" select="('1 dev', '2018')"/>
-   <xsl:variable name="regex-characters-not-permitted" select="'[&#xA0;&#x2000;-&#x200a;]'"/>
-   <xsl:variable name="quot" select="'&quot;'"/>
-   <xsl:variable name="apos" select='"&apos;"'/>
-   <xsl:variable name="zwj" select="'&#x200d;'"/>
-   <xsl:variable name="dhy" select="'&#xad;'"/>
+   <xsl:variable name="regex-characters-not-permitted" as="xs:string">[&#xA0;&#x2000;-&#x200a;]</xsl:variable>
+   <xsl:variable name="regex-name-space-characters" as="xs:string">[_-]</xsl:variable>
+   <xsl:variable name="quot" as="xs:string">"</xsl:variable>
+   <xsl:variable name="apos" as="xs:string">'</xsl:variable>
+   <xsl:variable name="zwj" as="xs:string">&#x200d;</xsl:variable>
+   <!-- discretionary hyphens and soft hyphens are synonymous. -->
+   <xsl:variable name="dhy" as="xs:string">&#xad;</xsl:variable>
    <xsl:variable name="shy" select="$dhy"/>
    <xsl:variable name="empty-doc" as="document-node()">
       <xsl:document/>
@@ -107,7 +109,7 @@
    <!-- If one wishes to see if an entire string matches the following patterns defined by these 
         variables, they must appear between the regular expression anchors ^ and $. -->
    <xsl:variable name="roman-numeral-pattern"
-      select="'m{0,4}(cm|cd|d?c{0,3})(xc|xl|l?x{0,3})(ix|iv|v?i{0,3})'"/>
+      select="'m{0,4}(cm|cd|d?c{0,3})(xc|xl|l?x{0,3})(im|ic|il|ix|iv|v?i{0,3})'"/>
    <xsl:variable name="latin-letter-numeral-pattern"
       select="'a+|b+|c+|d+|e+|f+|g+|h+|i+|j+|k+|l+|m+|n+|o+|p+|q+|r+|s+|t+|u+|v+|w+|x+|y+|z+'"/>
    <xsl:variable name="arabic-indic-numeral-pattern" select="'[٠١٢٣٤٥٦٧٨٩]+'"/>
@@ -213,6 +215,7 @@
    <xsl:variable name="self-resolved" select="tan:resolve-doc(/)" as="document-node()"/>
    <!-- More than one document is allowed in self expansions, because class-2 expansions must go hand-in-hand with the expansion of their class-1 dependencies. -->
    <xsl:variable name="self-expanded" select="tan:expand-doc($self-resolved)" as="document-node()+"/>
+   <!--<xsl:variable name="self-expanded" select="$self-resolved" as="document-node()+"/>-->
 
    <xsl:variable name="head" select="$self-resolved/*/tan:head"/>
    <xsl:variable name="body" select="$self-resolved/*/(tan:body, tei:text/tei:body)"/>
@@ -246,15 +249,23 @@
    <xsl:variable name="local-catalog" select="$doc-catalogs[1]"/>
 
    <!-- inclusions -->
-   <xsl:variable name="inclusions-1st-da" select="tan:get-1st-doc(/*/tan:head/tan:inclusion)"/>
    <xsl:variable name="inclusions-resolved"
-      select="tan:resolve-doc($inclusions-1st-da[*/@TAN-version = $TAN-version], false(), 'incl', /*/tan:head/tan:inclusion/@xml:id)"
+      select="tan:get-and-resolve-dependency(/*/tan:head/tan:inclusion)"
       as="document-node()*"/>
 
    <!-- vocabularies -->
    <!-- The following key allows you to quickly find in a TAN-voc file vocabulary <item>s for a particular element or attribute -->
    <xsl:key name="item-via-node-name" match="tan:item"
-      use="tokenize(string-join(((ancestor-or-self::*/@affects-element)[last()], (ancestor-or-self::*/@affects-attribute)[last()]), ' '), '\s+')"/>
+      use="tokenize(string-join((ancestor-or-self::*[@affects-element][1]/@affects-element, ancestor-or-self::*[@affects-attribute][1]/@affects-attribute), ' '), '\s+')"/>
+   <!-- What elements are not covered by TAN files -->
+   <xsl:variable name="elements-supported-by-TAN-vocabulary-files" as="xs:string+"
+      select="
+         ('bitext-relation', 'div-type', 'feature', 'group-type', 'license', 'modal', 'normalization', 
+         'reuse-type', 'role', 'token-definition', 'verb', 'vocabulary')"
+   />
+   <!-- vocabularies: explicit, non-standard -->
+   <xsl:variable name="vocabularies-resolved" select="tan:get-and-resolve-dependency($head/(tan:vocabulary, tan:key[tan:location]))"/>
+   <!-- vocabularies: standard TAN -->
    <xsl:variable name="TAN-vocabulary-files" as="document-node()*"
       select="collection('../../vocabularies/collection.xml')"/>
    <!-- We do not have $TAN-vocabularies-resolved since tan:resolve-doc() depends upon standard vocabularies already prepared independently -->
@@ -265,26 +276,14 @@
          <xsl:with-param name="is-reserved" select="true()" tunnel="yes"/>
       </xsl:apply-templates>
    </xsl:variable>
-
-   <!-- In the next variable, the tan:key[tan:location] is an ad hoc measure to help get files converted from 2018 to 2019 -->
-   <xsl:variable name="vocabularies-1st-da"
-      select="tan:get-1st-doc($head/(tan:vocabulary, tan:key[tan:location]))"/>
-   <xsl:variable name="vocabularies-resolved" select="tan:resolve-doc($vocabularies-1st-da[*/@TAN-version = $TAN-version])"/>
-   <xsl:variable name="vocabularies-expanded" select="tan:expand-doc($vocabularies-resolved)"/>
-   <xsl:variable name="all-vocabularies" select="($vocabularies-expanded, $TAN-vocabularies)"
+   <xsl:variable name="all-vocabularies" select="($vocabularies-resolved, $TAN-vocabularies)"
       as="document-node()*"/>
 
    <!-- sources -->
-   <xsl:variable name="sources-1st-da" select="tan:get-1st-doc($head/tan:source)"/>
-   <xsl:variable name="sources-must-be-adjusted"
-      select="exists($head/tan:adjustments/(tan:equate, tan:rename, tan:reassign, tan:skip))"/>
-   <xsl:variable name="sources-resolved" as="document-node()*"
-      select="tan:resolve-doc($sources-1st-da, $sources-must-be-adjusted, 'src', $source-ids, ($validation-phase = 'verbose'))"/>
+   <xsl:variable name="sources-resolved" select="tan:get-and-resolve-dependency($head/tan:source)"/>
 
    <!-- morphologies -->
-   <xsl:variable name="morphologies-1st-da"
-      select="tan:get-1st-doc($head/tan:vocabulary-key/tan:morphology)"/>
-   <xsl:variable name="morphologies-resolved" select="tan:resolve-doc($morphologies-1st-da, false(), 'morphology', $head/tan:vocabulary-key/tan:morphology/@xml:id, ($validation-phase = 'verbose'))"/>
+   <xsl:variable name="morphologies-resolved" select="tan:get-and-resolve-dependency($head/tan:vocabulary-key/tan:morphology)"/>
 
    <!-- token definitions -->
    <xsl:variable name="token-definitions-reserved" select="$TAN-vocabularies//tan:token-definition"/>
@@ -455,7 +454,7 @@
    <xsl:function name="tan:string-to-numerals" as="xs:string*">
       <!-- one-parameter version of the function below -->
       <xsl:param name="string-to-analyze" as="xs:string?"/>
-      <xsl:copy-of select="tan:string-to-numerals($string-to-analyze, true(), false())"/>
+      <xsl:copy-of select="tan:string-to-numerals($string-to-analyze, true(), false(), ())"/>
    </xsl:function>
    <xsl:function name="tan:string-to-numerals" as="xs:string*">
       <!-- Input: a string thought to contain numerals of some type (e.g., Roman); a boolean indicating whether ambiguous letters should be treated as Roman numerals or letter numerals; a boolean indicating whether only numeral matches should be returned -->
@@ -464,8 +463,9 @@
       <xsl:param name="string-to-analyze" as="xs:string?"/>
       <xsl:param name="ambig-is-roman" as="xs:boolean?"/>
       <xsl:param name="return-only-numerals" as="xs:boolean?"/>
+      <xsl:param name="n-alias-items" as="element()*"/>
       <xsl:variable name="string-analyzed"
-         select="tan:analyze-numbers-in-string($string-to-analyze, $ambig-is-roman)"/>
+         select="tan:analyze-numbers-in-string($string-to-analyze, $ambig-is-roman, $n-alias-items)"/>
       <xsl:choose>
          <xsl:when test="$return-only-numerals">
             <xsl:copy-of select="$string-analyzed/self::tan:tok[@number]"/>
@@ -479,11 +479,12 @@
       <!-- Companion function to the above, this function returns the analysis in element form -->
       <xsl:param name="string-to-analyze" as="xs:string"/>
       <xsl:param name="ambig-is-roman" as="xs:boolean?"/>
+      <xsl:param name="n-alias-items" as="element()*"/>
       <xsl:variable name="string-parsed" as="element()*">
-         <xsl:analyze-string select="$string-to-analyze" regex="\w+">
+         <xsl:analyze-string select="$string-to-analyze" regex="[\w_]+">
             <xsl:matching-substring>
                <tok>
-                  <xsl:value-of select="."/>
+                  <xsl:value-of select="replace(., '_', ' ')"/>
                </tok>
             </xsl:matching-substring>
             <xsl:non-matching-substring>
@@ -495,12 +496,20 @@
       </xsl:variable>
       <xsl:apply-templates select="$string-parsed" mode="string-to-numerals">
          <xsl:with-param name="ambig-is-roman" select="($ambig-is-roman, true())[1]"/>
+         <xsl:with-param name="n-alias-items" select="$n-alias-items"/>
       </xsl:apply-templates>
    </xsl:function>
    <xsl:template match="tan:tok" mode="string-to-numerals">
       <xsl:param name="ambig-is-roman" as="xs:boolean" select="true()"/>
+      <xsl:param name="n-alias-items" as="element()*"/>
+      <xsl:variable name="this-tok" select="."/>
+      <xsl:variable name="these-alias-matches" select="$n-alias-items[tan:name = $this-tok]"/>
       <xsl:copy>
          <xsl:choose>
+            <xsl:when test="exists($these-alias-matches)">
+               <xsl:attribute name="non-number"/>
+               <xsl:value-of select="$these-alias-matches[1]/tan:name[1]"/>
+            </xsl:when>
             <xsl:when test=". castable as xs:integer">
                <xsl:attribute name="number" select="$n-type[2]"/>
                <xsl:attribute name="orig" select="."/>
@@ -1271,60 +1280,46 @@
          </xsl:if>
       </xsl:copy>
    </xsl:template>
-
-   <xsl:function name="tan:consolidate-elements" as="element()*">
-      <!-- Input: elements that should be consolidated -->
-      <!-- Output: the elements, consolidated -->
-      <!-- We assume that the order of the elements may be altered; It is assumed that elements are never interleaved with text or other nodes -->
-      <!-- It is also assumed that elements that share <IRI> values should be consolidated with each other -->
-      <xsl:param name="elements-to-consolidate" as="element()*"/>
-      <xsl:copy-of select="tan:consolidate-elements-loop($elements-to-consolidate, 1)"/>
+   
+   <xsl:function name="tan:element-fingerprint" as="xs:string*">
+      <!-- Input: any elements -->
+      <!-- Output: for each element the string value of its name, its namespace, its attributes, and all descendant nodes -->
+      <!-- This function is useful for determining whether any number of elements are deeply equal -->
+      <!-- The built-in function deep-equal() works for pairs of elements; this looks for a way to evaluate sequences of elements -->
+      <xsl:param name="element" as="element()*"/>
+      <xsl:for-each select="$element">
+         <xsl:variable name="results" as="xs:string*">
+            <xsl:apply-templates select="$element" mode="element-fingerprint"/>
+         </xsl:variable>
+         <xsl:value-of select="string-join($results, '')"/>
+      </xsl:for-each>
    </xsl:function>
-   <xsl:function name="tan:consolidate-elements-loop" as="element()*">
-      <xsl:param name="elements-to-consolidate" as="element()*"/>
-      <xsl:param name="loop-counter" as="xs:integer"/>
-      <xsl:choose>
-         <xsl:when test="$loop-counter gt $loop-tolerance">
-            <xsl:message
-               select="concat('Cannot loop more than ', string($loop-tolerance), ' times')"/>
-            <xsl:copy-of select="$elements-to-consolidate"/>
-         </xsl:when>
-         <xsl:otherwise>
-            <xsl:for-each-group select="$elements-to-consolidate" group-by="exists(*)">
-               <xsl:choose>
-                  <xsl:when test="current-grouping-key() = false()">
-                     <xsl:for-each-group select="current-group()" group-by="name(.)">
-                        <xsl:variable name="this-element-name" select="current-grouping-key()"/>
-                        <xsl:for-each-group select="current-group()" group-by=".">
-                           <xsl:element name="{$this-element-name}">
-                              <xsl:copy-of select="current-group()/@*"/>
-                              <xsl:value-of select="current-grouping-key()"/>
-                           </xsl:element>
-                        </xsl:for-each-group>
-                     </xsl:for-each-group>
-                  </xsl:when>
-                  <xsl:otherwise>
-                     <xsl:variable name="this-group-grouped-by-iri" as="element()*"
-                        select="tan:group-elements-by-IRI(current-group())"/>
-                     <xsl:for-each select="$this-group-grouped-by-iri">
-                        <xsl:for-each-group select="*" group-by="name(.)">
-                           <xsl:variable name="this-element-name" select="current-grouping-key()"/>
-                           <xsl:element name="{$this-element-name}">
-                              <xsl:copy-of select="current-group()/@*"/>
-                              <xsl:copy-of
-                                 select="tan:consolidate-elements-loop(current-group()/*, $loop-counter + 1)"
-                              />
-                           </xsl:element>
-                        </xsl:for-each-group>
-                     </xsl:for-each>
-                  </xsl:otherwise>
-               </xsl:choose>
-            </xsl:for-each-group>
-         </xsl:otherwise>
-      </xsl:choose>
-   </xsl:function>
-
-
+   <xsl:template match="*" mode="element-fingerprint">
+      <xsl:text>e#</xsl:text>
+      <xsl:value-of select="name()"/>
+      <xsl:text>ns#</xsl:text>
+      <xsl:value-of select="namespace-uri()"/>
+      <xsl:text>aa#</xsl:text>
+      <xsl:for-each select="@*">
+         <xsl:sort select="name()"/>
+         <xsl:text>a#</xsl:text>
+         <xsl:value-of select="name()"/>
+         <xsl:text>#</xsl:text>
+         <xsl:value-of select="normalize-space(.)"/>
+         <xsl:text>#</xsl:text>
+      </xsl:for-each>
+      <xsl:apply-templates select="node()" mode="#current"/>
+   </xsl:template>
+   <!-- We presume (perhaps wrongly) that comments and pi's in an element don't matter -->
+   <xsl:template match="comment() | processing-instruction()" mode="element-fingerprint"/>
+   <xsl:template match="text()" mode="element-fingerprint">
+      <xsl:if test="matches(., '\S')">
+         <xsl:text>t#</xsl:text>
+         <xsl:value-of select="normalize-space(.)"/>
+         <xsl:text>#</xsl:text>
+      </xsl:if>
+   </xsl:template>
+   
 
 
    <!-- FUNCTIONS: SEQUENCES, TAN-SPECIFIC (e.g., @ref, @pos, @chars, ...) -->
@@ -2010,8 +2005,8 @@
       <!-- Input: any nodes -->
       <!-- Output: the names of the root elements; if not present, a zero-length string is returned -->
       <xsl:param name="nodes" as="node()*"/>
-      <xsl:for-each select="$nodes">
-         <xsl:copy-of select="name(root()/*[1])"/>
+      <xsl:for-each select="$nodes/root()/*">
+         <xsl:value-of select="name(.)"/>
       </xsl:for-each>
    </xsl:function>
    <xsl:function name="tan:class-number" as="xs:integer*">
@@ -2087,7 +2082,14 @@
       <!-- Input: a TAN-doc -->
       <!-- Output: the namespace of the doc's @id -->
       <xsl:param name="TAN-doc" as="document-node()?"/>
-      <xsl:value-of select="substring-before(substring-after($TAN-doc/*/@id, 'tag:'), ':')"/>
+      <xsl:variable name="this-id" select="$TAN-doc/*/@id"/>
+      <xsl:if test="string-length($this-id) gt 0">
+         <xsl:analyze-string select="$this-id" regex="^tag:[^:]+">
+            <xsl:matching-substring>
+               <xsl:value-of select="."/>
+            </xsl:matching-substring>
+         </xsl:analyze-string>
+      </xsl:if>
    </xsl:function>
 
    <xsl:function name="tan:last-change-agent" as="element()*">
@@ -2121,26 +2123,34 @@
          select="tan:conditions-hold($element-with-condition-attributes, $context-to-evaluate-against, ())"
       />
    </xsl:function>
-   <xsl:function name="tan:conditions-hold" as="xs:boolean*">
-      <!-- Input: a TAN element with attributes that should be checked for their truth value; a context against which the check the values -->
+   <xsl:function name="tan:conditions-hold" as="xs:boolean">
+      <!-- Input: a TAN element with attributes that should be checked for their truth value; a context against which the check the values; an optional sequence of strings indicating the names of elements that should be processed and in what order -->
       <!-- Output: the input elements, with the relevant attributes replaced by a value indicating whether the condition holds -->
+      <!-- If there are no conditions detected, the output is true() -->
       <xsl:param name="element-with-condition-attributes" as="element()?"/>
       <xsl:param name="context-to-evaluate-against" as="item()*"/>
-      <xsl:param name="test-sequence" as="xs:string*"/>
+      <xsl:param name="evaluation-sequence" as="xs:string*"/>
       <xsl:variable name="element-with-condition-attributes-sorted-and-distributed" as="element()*">
          <xsl:for-each select="$element-with-condition-attributes/@*">
-            <xsl:sort select="(index-of($test-sequence, name(.)), 999)[1]"/>
+            <xsl:sort select="(index-of($evaluation-sequence, name(.)), 999)[1]"/>
             <where>
                <xsl:copy-of select="."/>
             </where>
          </xsl:for-each>
       </xsl:variable>
-      <xsl:copy-of
-         select="tan:condition-evaluation-loop($element-with-condition-attributes-sorted-and-distributed, $context-to-evaluate-against)"
-      />
+      <xsl:choose>
+         <xsl:when test="exists($element-with-condition-attributes-sorted-and-distributed)">
+            <xsl:copy-of
+               select="tan:condition-evaluation-loop($element-with-condition-attributes-sorted-and-distributed, $context-to-evaluate-against)"/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:value-of select="true()"/>
+         </xsl:otherwise>
+      </xsl:choose>
    </xsl:function>
-   <xsl:function name="tan:condition-evaluation-loop" as="xs:boolean">
+   <xsl:function name="tan:condition-evaluation-loop" as="xs:boolean?">
       <!-- Companion function to the one above, indicating whether the conditions in the attributes hold -->
+      <!-- It looks for the first true value then exits with a true; failing that, it returns false -->
       <xsl:param name="elements-with-condition-attributes-to-be-evaluated" as="element()*"/>
       <xsl:param name="context-to-evaluate-against" as="item()*"/>
       <xsl:choose>
@@ -2194,7 +2204,7 @@
    <xsl:function name="tan:q-ref" as="xs:string*">
       <!-- Input: any elements -->
       <!-- Output: the q-ref of each element-->
-      <!-- A q-ref is defined as a concatenated string  consisting of, for each ancestor and self, the name plus the number indicating which sibling it is of that type of element. -->
+      <!-- A q-ref is defined as a concatenated string consisting of, for each ancestor and self, the name plus the number indicating which sibling it is of that type of element. -->
       <!-- This function is useful when trying to correlate an unbreadmarked file (an original TAN file) against its breadcrumbed counterpart (e.g., $self-resolved), to check for errors. If any changes in element names, e.g., TEI - > TAN-T, are made during the standard preparation process, those changes are made here as well. -->
       <xsl:param name="elements" as="element()*"/>
       <xsl:for-each select="$elements">
@@ -2278,15 +2288,12 @@
       <xsl:param name="attributes" as="attribute()*"/>
       <xsl:variable name="diagnostics" select="false()"/>
       <xsl:variable name="pass-1" as="element()*">
-         <xsl:for-each-group select="$attributes" group-by="tan:base-uri(.)">
-            <xsl:variable name="this-base-uri" select="current-grouping-key()"/>
+         <xsl:for-each-group select="$attributes[tan:takes-idrefs(.)]" group-by="tan:base-uri(.)">
             <xsl:if test="$diagnostics">
                <xsl:message select="current-grouping-key(), count(current-group())"/>
             </xsl:if>
+            <xsl:variable name="this-base-uri" select="current-grouping-key()"/>
             <xsl:for-each-group select="current-group()" group-by="name(..)">
-               <xsl:if test="$diagnostics">
-                  <xsl:message select="current-grouping-key(), count(current-group())"/>
-               </xsl:if>
                <xsl:variable name="this-host-element-name" select="current-grouping-key()"/>
                <xsl:variable name="this-local-head" select="current-group()[1]/root()/*/tan:head"/>
                <xsl:variable name="this-chosen-head"
@@ -2295,9 +2302,19 @@
                         $this-local-head
                      else
                         $head"/>
+               <xsl:if test="$diagnostics">
+                  <xsl:message select="current-grouping-key(), count(current-group())"/>
+                  <xsl:message select="tan:shallow-copy($this-chosen-head, 2)"></xsl:message>
+               </xsl:if>
                <xsl:for-each-group select="current-group()" group-by="name(.)">
+                  <xsl:if test="$diagnostics">
+                     <xsl:message select="current-grouping-key(), count(current-group())"/>
+                  </xsl:if>
                   <xsl:variable name="this-attribute-name" select="current-grouping-key()"/>
                   <xsl:for-each-group select="current-group()" group-by=".">
+                     <xsl:if test="$diagnostics">
+                        <xsl:message select="current-grouping-key(), count(current-group())"/>
+                     </xsl:if>
                      <xsl:variable name="this-attribute-value" select="current-grouping-key()"/>
                      <xsl:choose>
                         <xsl:when test="$this-attribute-name = 'which'">
@@ -2311,7 +2328,7 @@
                            <xsl:if test="exists($target-element-names)">
                               <xsl:if test="$diagnostics">
                                  <xsl:message
-                                    select="$this-host-element-name, $this-attribute-name, $this-attribute-value, 'targets', $target-element-names, count($target-element-names)"
+                                    select="$this-host-element-name, $this-attribute-name, $this-attribute-value, 'targets these elements: ', string-join($target-element-names, ' ')"
                                  />
                               </xsl:if>
                               <xsl:copy-of
@@ -2340,7 +2357,8 @@
       <xsl:param name="values-are-from-attr-which" as="xs:boolean"/>
       <xsl:param name="values" as="xs:string*"/>
       <xsl:param name="local-head" as="element()"/>
-      <xsl:variable name="reference-external-vocabularies" select="not(exists($local-head/preceding-sibling::tan:resolved))"/>
+      <xsl:variable name="reference-external-vocabularies" select="not(exists($local-head/preceding-sibling::tan:resolved[. = 'vocabulary'])) 
+         or ($target-element-names = 'n')"/>
       <xsl:copy-of select="tan:vocabulary($target-element-names, $values-are-from-attr-which, $values, $local-head, $reference-external-vocabularies)"/>
    </xsl:function>
 
@@ -2356,6 +2374,8 @@
       <xsl:param name="local-head" as="element()"/>
       <xsl:param name="reference-external-vocabularies" as="xs:boolean"/>
       <xsl:variable name="diagnostics" as="xs:boolean" select="false()"/>
+      <xsl:variable name="target-element-names-supported-in-standard-tan-voc"
+         select="$target-element-names[. = $elements-supported-by-TAN-vocabulary-files]"/>
       <xsl:variable name="head-is-resolved" select="exists($local-head/preceding-sibling::tan:resolved)"/>
       <xsl:variable name="values-normalized" as="xs:string*">
          <xsl:choose>
@@ -2410,12 +2430,12 @@
             if ($reference-external-vocabularies = false()) then
                ()
             else
-               $TAN-vocabularies"/>
+               $TAN-vocabularies[tan:TAN-voc/tan:body/@affects-element = $target-element-names-supported-in-standard-tan-voc]"/>
       <xsl:variable name="relevant-new-standard-vocabulary-items"
          select="
             for $i in $standard-vocabularies
             return
-               key('item-via-node-name', $target-element-names, $i)"/>
+               key('item-via-node-name', $target-element-names-supported-in-standard-tan-voc, $i)"/>
 
       <xsl:variable name="picked-vocab-items" as="element()*">
          <xsl:for-each select="distinct-values($values-normalized)">
@@ -2597,9 +2617,10 @@
          </xsl:for-each>
       </xsl:variable>
       <xsl:if test="$diagnostics">
-         <xsl:message select="$target-element-names"/>
-         <xsl:message select="$values-normalized, count($values-normalized)"/>
-         <xsl:message select="$values-are-from-attr-which"/>
+         <xsl:message select="'target element: ', $target-element-names"/>
+         <xsl:message select="'normalized values: ', $values-normalized, count($values-normalized)"/>
+         <xsl:message select="'vals are from @which: ', $values-are-from-attr-which"/>
+         <xsl:message select="'new extra vocabulary items:', $relevant-new-extra-vocabulary-items"/>
       </xsl:if>
       <xsl:copy-of select="tan:distinct-items($picked-vocab-items)"/>
    </xsl:function>
@@ -2677,21 +2698,20 @@
    <xsl:function name="tan:first-loc-available" as="xs:string?">
       <!-- Input: An element that is or contains one or more tan:location elements -->
       <!-- Output: the value of the first tan:location/@href to point to a document available, resolved If no location is available nothing is returned. -->
-      <xsl:param name="element-that-is-location-or-parent-of-locations" as="element()?"/>
+      <xsl:param name="element-with-href-in-self-or-descendants" as="element()?"/>
       <xsl:variable name="pass-1"
-         select="tan:resolve-href($element-that-is-location-or-parent-of-locations)"/>
-      <xsl:value-of select="($pass-1//@href[doc-available(.)])[1]"/>
+         select="tan:resolve-href($element-with-href-in-self-or-descendants)"/>
+      <xsl:value-of select="($element-with-href-in-self-or-descendants//@href[doc-available(.)])[1]"/>
    </xsl:function>
 
    <!-- Step 2: if so, get it -->
    <xsl:function name="tan:get-1st-doc" as="document-node()*">
       <!-- Input: any TAN elements naming files (e.g., <source>, <see-also>, <inclusion>, <vocabulary>; an indication whether some basic errors should be checked if the retrieved file is a TAN document -->
-      <!-- Output: the first document available for each element, plus/or any relevant error messages. -->
+      <!-- Output: the first document available for each element, plus any relevant error messages. -->
       <xsl:param name="TAN-elements" as="element()*"/>
       <xsl:for-each select="$TAN-elements">
          <xsl:variable name="is-master-location" select="exists(self::tan:master-location)"/>
          <xsl:variable name="is-see-also" select="exists(self::tan:see-also)"/>
-         <xsl:variable name="this-element" select="."/>
          <xsl:variable name="this-class" select="tan:class-number(.)"/>
          <xsl:variable name="first-la" select="tan:first-loc-available(.)"/>
          <xsl:variable name="this-id" select="root(.)/*/@id"/>
@@ -2721,13 +2741,15 @@
                      <fix href="{tan:uri-relative-to(., string($this-base-uri))}"/>
                   </xsl:for-each>
                </xsl:variable>
-               <xsl:variable name="this-message" as="xs:string?">
+               <xsl:variable name="this-message-raw" as="xs:string*">
+                  <xsl:value-of select="concat('No doc available found for ', tan:shallow-copy(.))"/>
                   <xsl:if test="exists($possible-hrefs)">
                      <xsl:value-of
-                        select="concat('For @href try: ', string-join($possible-hrefs/@href, ', '))"
+                        select="concat(' For @href try: ', string-join($possible-hrefs/@href, ', '))"
                      />
                   </xsl:if>
                </xsl:variable>
+               <xsl:variable name="this-message" select="string-join($this-message-raw, '')"/>
                <xsl:document>
                   <xsl:choose>
                      <xsl:when test="self::tan:inclusion">

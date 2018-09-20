@@ -104,6 +104,7 @@
     <group affects-attribute="which" affects-element="vocabulary">
         <error xml:id="whi01"><rule>An element's @which must have a value that corresponds to a &lt;name>, either in a standard TAN vocabulary or an associated TAN-voc file, that is marked as applying to that element.</rule></error>
         <error xml:id="whi03"><rule>Any element that takes @which must have vocabulary items defined for that element.</rule></error>
+        <error xml:id="whi05"><rule>A @which in a &lt;vocabulary> may point only to items in the standard TAN file vocabularies.TAN-voc.xml</rule></error>
     </group>
     <group affects-element="vocabulary">
         <fatal xml:id="whi04"><rule>Vocabularies are integral parts of a document. Access to at least one version is absolutely mandatory.</rule></fatal>
@@ -247,17 +248,19 @@
     
     <!-- TAN-voc ERRORS -->
     <group affects-element="name">
-        <error xml:id="tky01"><rule>Names may not duplicate names reserved by standard TAN vocabulary for the affected element.</rule></error>
-        <error xml:id="tky02"><rule>Names may not be duplicates of, case-variants of, or hyphen variants of other names for the same element.</rule></error>
+        <error xml:id="voc01"><rule>Names may not duplicate names reserved by standard TAN vocabulary for the affected element.</rule></error>
+        <error xml:id="voc02"><rule>Names may not be duplicates of, case-variants of, or hyphen variants of other names for the same element.</rule></error>
+        <error xml:id="voc07"><rule>Each &lt;name> in standard TAN vocabulary must already be normalized.</rule></error>
     </group>
     <group affects-attribute="affects-element" affects-element="item group">
-        <error xml:id="tky03"><rule>@affects-element must include only names of TAN elements that accept @which</rule></error>
+        <error xml:id="voc03"><rule>@affects-element must include only names of TAN elements that accept @which</rule></error>
+        <error xml:id="voc06"><rule>@affects-element may take the value "vocabulary" only in official TAN-voc files.</rule></error>
     </group>
     <group affects-element="IRI item">
-        <error xml:id="tky04"><rule>Every item in a reserved TAN-voc must have at least one IRI with a tag URN in the TAN namespace</rule></error>
+        <error xml:id="voc04"><rule>Every item in a reserved TAN-voc must have at least one IRI with a tag URN in the TAN namespace</rule></error>
     </group>
     <group affects-element="item" affects-attribute="object-datatype object-lexical-constraint">
-        <error xml:id="tky05"><rule>An item may take @object-datatype and @object-lexical-constraint only if the governing @affects-element is set to 'verb'</rule></error>
+        <error xml:id="voc05"><rule>An item may take @object-datatype and @object-lexical-constraint only if the governing @affects-element is set to 'verb'</rule></error>
     </group>
     
     <!-- TAN-mor ERRORS -->

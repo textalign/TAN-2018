@@ -22,6 +22,13 @@
    <xsl:variable name="doc-history" select="tan:get-doc-history($orig-self)"/>
    <xsl:variable name="doc-filename" select="replace($doc-uri, '.*/([^/]+)$', '$1')"/>
    
+   <!-- sources -->
+   <!--<xsl:variable name="sources-1st-da" select="tan:get-1st-doc($head/tan:source)"/>
+   <xsl:variable name="sources-must-be-adjusted"
+      select="exists($head/tan:adjustments/(tan:equate, tan:rename, tan:reassign, tan:skip))"/>
+   <xsl:variable name="sources-resolved" as="document-node()*"
+      select="tan:resolve-doc($sources-1st-da, $sources-must-be-adjusted, 'src', $source-ids, ($validation-phase = 'verbose'))"/>-->
+   
    <!-- see-also, context -->
    <xsl:variable name="see-alsos-1st-da" select="tan:get-1st-doc($head/tan:see-also)"/>
    <xsl:variable name="see-alsos-resolved" select="tan:resolve-doc($see-alsos-1st-da, false(), 'see-also', (), ($validation-phase = 'verbose'))"/>
@@ -651,44 +658,6 @@
          <xsl:copy-of select="@*"/>
          <xsl:apply-templates mode="#current"/>
       </xsl:copy>
-   </xsl:template>
-
-   <xsl:function name="tan:element-fingerprint" as="xs:string*">
-      <!-- Input: any elements -->
-      <!-- Output: for each element the string value its name, its namespace, its attributes, and all descendant nodes -->
-      <!-- This function is useful for determining whether two elements are deeply equal, particularly to be used as a key for grouping -->
-      <xsl:param name="element" as="element()*"/>
-      <xsl:for-each select="$element">
-         <xsl:variable name="results" as="xs:string*">
-            <xsl:apply-templates select="$element" mode="element-fingerprint"/>
-         </xsl:variable>
-         <xsl:value-of select="string-join($results, '')"/>
-      </xsl:for-each>
-   </xsl:function>
-   <xsl:template match="*" mode="element-fingerprint">
-      <xsl:text>e#</xsl:text>
-      <xsl:value-of select="name()"/>
-      <xsl:text>ns#</xsl:text>
-      <xsl:value-of select="namespace-uri()"/>
-      <xsl:text>aa#</xsl:text>
-      <xsl:for-each select="@*">
-         <xsl:sort select="name()"/>
-         <xsl:text>a#</xsl:text>
-         <xsl:value-of select="name()"/>
-         <xsl:text>#</xsl:text>
-         <xsl:value-of select="normalize-space(.)"/>
-         <xsl:text>#</xsl:text>
-      </xsl:for-each>
-      <xsl:apply-templates select="node()" mode="#current"/>
-   </xsl:template>
-   <!-- We presume (perhaps wrongly) that comments and pi's in an element don't matter -->
-   <xsl:template match="comment() | processing-instruction()" mode="element-fingerprint"/>
-   <xsl:template match="text()" mode="element-fingerprint">
-      <xsl:if test="matches(., '\S')">
-         <xsl:text>t#</xsl:text>
-         <xsl:value-of select="normalize-space(.)"/>
-         <xsl:text>#</xsl:text>
-      </xsl:if>
    </xsl:template>
 
    <xsl:function name="tan:add-attribute" as="element()*">

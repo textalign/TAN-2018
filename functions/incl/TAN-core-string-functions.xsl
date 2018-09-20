@@ -52,32 +52,28 @@
         <!-- Output: that sequence, with each item's space normalized, and removal of any help requested -->
         <!-- A common form is one where the string is converted to lower-case, and hyphens are replaced by spaces -->
         <!-- A final set of spaces is normalized to a single space, not removed altogether (because the text in every leaf <div> terminates either in a special character or a space character) -->
-        <!-- Special end div characters are not removed in this operation. -->
+        <!-- Special end div characters are not removed in this operation; for that, see tan:normalize-div-text(). -->
         <xsl:param name="text" as="xs:string*"/>
         <xsl:param name="treat-as-name-values" as="xs:boolean"/>
         <xsl:for-each select="$text">
-            <xsl:variable name="results" as="xs:string*">
-                <xsl:analyze-string select="." regex="\s+$">
-                    <xsl:matching-substring>
-                        <xsl:text> </xsl:text>
-                    </xsl:matching-substring>
-                    <xsl:non-matching-substring>
-                        <xsl:variable name="pass-1"
-                            select="
-                                if ($treat-as-name-values = true()) then
-                                    lower-case(replace(., '[_-]', ' '))
-                                else
-                                    ."/>
-                        <xsl:variable name="pass-2" select="replace($pass-1, '\s+(\p{M})', '$1')"/>
-                        <xsl:variable name="pass-3"
-                            select="replace($pass-2, $regex-characters-not-permitted, ' ')"/>
-                        <xsl:value-of
-                            select="normalize-unicode(normalize-space(replace($pass-3, $help-trigger-regex, '')))"
-                        />
-                    </xsl:non-matching-substring>
-                </xsl:analyze-string>
-            </xsl:variable>
-            <xsl:value-of select="string-join($results, '')"/>
+            <!-- replace illegal characters with spaces; if a name, render lowercase and replace specially designated characters with spaces -->
+            <xsl:variable name="prep-pass-1"
+                select="
+                    if ($treat-as-name-values = true()) then
+                        lower-case(replace(., concat($regex-name-space-characters, '|', $regex-characters-not-permitted), ' '))
+                    else
+                        replace(., $regex-characters-not-permitted, ' ')"
+            />
+            <!-- delete the help trigger and ensure proper use of modifying characters -->
+            <xsl:variable name="prep-pass-2"
+                select="
+                    if ($treat-as-name-values = true()) then
+                        replace($prep-pass-1, concat('\p{M}|', $help-trigger-regex), '')
+                    else
+                        replace($prep-pass-1, concat('\s+(\p{M})', $help-trigger-regex), '$1')"
+            />
+            <!-- normalize the results, both for space and for unicode -->
+            <xsl:value-of select="normalize-unicode(normalize-space($prep-pass-2))"/>
         </xsl:for-each>
     </xsl:function>
 
@@ -395,8 +391,6 @@
 
 
 
-    <!-- How many loops should be tolerated in a recursive function before exiting? -->
-    <xsl:param name="loop-tolerance" as="xs:integer" select="550"/>
     <!-- A sequence of doubles, going from 1.0 to 0.00...1 that specify what portion of the length of the text should be checked at each outer loop pass -->
     <xsl:param name="vertical-stops"
         select="
