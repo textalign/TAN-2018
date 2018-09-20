@@ -760,7 +760,24 @@ process-link-to
 											<String>doctypeRules</String>
 										</field>
 										<field name="index">
-											<Integer>1</Integer>
+											<Integer>0</Integer>
+										</field>
+										<field name="value">
+											<null/>
+										</field>
+										<field name="patchHandling">
+											<String>removeIndex</String>
+										</field>
+										<field name="anchor">
+											<null/>
+										</field>
+									</poPatch>
+									<poPatch>
+										<field name="fieldPath">
+											<String>doctypeRules</String>
+										</field>
+										<field name="index">
+											<Integer>0</Integer>
 										</field>
 										<field name="value">
 											<documentTypeRule>
