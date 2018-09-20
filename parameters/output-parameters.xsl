@@ -28,5 +28,5 @@
 
    <!-- Should previously saved intermediate results be fetched, if available? -->
    <xsl:param name="use-saved-intermediate-steps" select="false()" as="xs:boolean"/>
-   
+
 </xsl:stylesheet>
