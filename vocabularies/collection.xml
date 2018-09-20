@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- This is a simple collection file to accelerate access to the core vocabularies (i.e., excluding extra vocabularies) -->
 <collection stable="true">
    <doc href="bitext-relations.TAN-voc.xml"/>
    <doc href="div-types.TAN-voc.xml"/>
@@ -7,9 +8,9 @@
    <doc href="licenses.TAN-voc.xml"/>
    <doc href="modals.TAN-voc.xml"/>
    <doc href="normalizations.TAN-voc.xml"/>
-   <doc href="relationships.TAN-voc.xml"/>
    <doc href="reuse-types.TAN-voc.xml"/>
    <doc href="roles.TAN-voc.xml"/>
    <doc href="token-definitions.TAN-voc.xml"/>
    <doc href="verbs.TAN-voc.xml"/>
+   <doc href="vocabularies.TAN-voc.xml"/>
 </collection>

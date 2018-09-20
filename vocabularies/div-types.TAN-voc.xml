@@ -1,25 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../schemas/TAN-voc.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="../schemas/TAN-voc.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2019" id="tag:textalign.net,2015:tan-key:div-types">
+<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2019" id="tag:textalign.net,2015:tan-voc:div-types">
     <head>
         <name>TAN keywords for types of divisions</name>
         <desc>Definitive list of key terms used for textual divisions.</desc>
-        <master-location href="http://textalign.net/release/TAN-2019/TAN-voc/div-types.TAN-voc.xml"/>
-        <license licensor="kalvesmaki">
-            <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
-            <name>Creative Commons Attribution 4.0 International License</name>
-            <desc>This license is granted independent of rights and licenses associated with the
-                source. </desc>
-        </license>
-        <adjustments>
-        </adjustments>
+        <master-location href="http://textalign.net/release/TAN-2019/vocabularies/div-types.TAN-voc.xml"/>
+        <license licensor="kalvesmaki" which="by 4.0"/>
         <vocabulary-key>
-            <algorithm xml:id="xslt2">
-                <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
-                <name>Stylesheet to create a TAN file.</name>
-                <location href="../../applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl" accessed-when="2018-08-09T07:39:47.431-04:00"/>
-            </algorithm>
             <group-type xml:id="inline-start" which="no new line start"/>
             <group-type xml:id="inline-end" which="no new line end"/>
             <group-type xml:id="line-start" which="new line start"/>
@@ -37,21 +25,11 @@
                 <IRI>tag:textalign.net,2015:agent:kalvesmaki:joel</IRI>
                 <name xml:lang="eng">Joel Kalvesmaki</name>
             </person>
-            <algorithm xml:id="xslt1"><IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI><name>Stylesheet to populate a TAN-A file from collections.</name><location accessed-when="2018-08-09T07:39:47.431-04:00" href="../applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"/></algorithm>
-            <role xml:id="creator">
-                <IRI>http://schema.org/creator</IRI>
-                <name xml:lang="eng">creator</name>
-            </role>
-            <role xml:id="stylesheet1" which="stylesheet"/>
         </vocabulary-key>
-        
         <file-resp who="kalvesmaki"/>
-        <resp who="xslt2" roles="stylesheet1"/>
         <resp roles="creator" who="kalvesmaki"/>
-        <resp who="xslt1" roles="stylesheet1"/>
         <change when="2016-02-02" who="kalvesmaki">Started file</change>
-        <change who="xslt1" when="2017-11-02T23:06:07.636-04:00">TAN file updated to 2018 schemas.</change>
-        <change who="xslt2" when="2018-08-09T07:39:47.431-04:00">Converted from 2018 to 2019 schemas.</change>
+        <change when="2018-09-14" who="kalvesmaki">Revised for 2019; added Quranic div types.</change>
         <to-do/>
     </head>
     <body affects-element="div-type">
@@ -111,6 +89,14 @@
                 <desc>Section of a critical edition, usually at the bottom of the page, indicating
                     parallel textual sources</desc>
             </item>
+            <item group="line-start line-end">
+                <IRI>tag:textalign.net,2015:div-type:āya</IRI>
+                <IRI>http://dbpedia.org/resource/Ayah</IRI>
+                <name>āya</name>
+                <name>aya</name>
+                <name>āyah</name>
+                <name>ayah</name>
+            </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:bibliographic_citation</IRI>
                 <IRI>tag:textalign.net,2015:div-type:equiv:xhtml:cite</IRI>
@@ -124,6 +110,11 @@
                 <IRI>tag:textalign.net,2015:div-type:bibliography</IRI>
                 <IRI>http://dbpedia.org/resource/Bibliography</IRI>
                 <name>bibliography</name>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:div-type:bismillah</IRI>
+                <IRI>http://dbpedia.org/resource/Bismillah</IRI>
+                <name>bismillah</name>
             </item>
             <item group="line-start line-end leading-start leading-end">
                 <IRI>tag:textalign.net,2015:div-type:block_quote</IRI>
@@ -153,7 +144,7 @@
                 <IRI>tag:textalign.net,2015:div-type:equiv:xhtml:caption</IRI>
                 <IRI>http://dbpedia.org/resource/Photo_caption</IRI>
                 <name>caption</name>
-                <name>tei figDesc</name>
+                <name>tei figdesc</name>
                 <name>xhtml caption</name>
             </item>
             <item>
@@ -285,6 +276,7 @@
                 <IRI>tag:textalign.net,2015:div-type:epilogue</IRI>
                 <IRI>http://dbpedia.org/resource/Epilogue</IRI>
                 <name>epilogue</name>
+                <desc>Some may equate this with postscript.</desc>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:explicit</IRI>
@@ -388,6 +380,12 @@
                 <IRI>tag:textalign.net,2015:div-type:index_entry</IRI>
                 <name>index entry</name>
             </item>
+            <item>
+                <IRI>tag:textalign.net,2015:div-type:introduction</IRI>
+                <IRI>http://dbpedia.org/resource/Introduction_(book)</IRI>
+                <name>introduction</name>
+                <desc>Some may equate this type with prologue.</desc>
+            </item>
             <item group="line-start line-end">
                 <IRI>tag:textalign.net,2015:div-type:letter</IRI>
                 <name>letter</name>
@@ -490,16 +488,21 @@
                 <IRI>tag:textalign.net,2015:div-type:postscript</IRI>
                 <IRI>http://dbpedia.org/resource/Postscript</IRI>
                 <name>postscript</name>
+                <desc>Some may equate this with epilogue.</desc>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:preface</IRI>
                 <IRI>http://dbpedia.org/resource/Preface</IRI>
                 <name>preface</name>
+                <desc>Some may equate this with prologue.</desc>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:prologue</IRI>
                 <IRI>http://dbpedia.org/resource/Prologue</IRI>
                 <name>prologue</name>
+                <name>prolegomenon</name>
+                <desc>Some may equate this with introduction.</desc>
+                <desc>Some may equate this with preface.</desc>
             </item>
             <item group="line-start line-end">
                 <IRI>tag:textalign.net,2015:div-type:psalm</IRI>
@@ -611,6 +614,13 @@
             <item group="line-start line-end leading-start leading-end">
                 <IRI>tag:textalign.net,2015:div-type:subsubtitle</IRI>
                 <name>subsubtitle</name>
+            </item>
+            <item group="line-start line-end leading-start leading-end">
+                <IRI>tag:textalign.net,2015:div-type:sūra</IRI>
+                <IRI>http://dbpedia.org/resource/Surah</IRI>
+                <name>sūra</name>
+                <name>sura</name>
+                <name>surah</name>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:syllogism</IRI>

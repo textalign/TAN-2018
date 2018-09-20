@@ -1,25 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../schemas/TAN-voc.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="../schemas/TAN-voc.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2019" id="tag:textalign.net,2015:tan-key:group-types">
+<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2019" id="tag:textalign.net,2015:tan-voc:group-types">
     <head>
         <name>TAN keywords for types of groups</name>
         <desc>Definitive list of key terms used for types of groups.</desc>
-        <master-location href="http://textalign.net/release/TAN-2019/TAN-voc/group-types.TAN-voc.xml"/>
-        <license licensor="kalvesmaki">
-            <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
-            <name>Creative Commons Attribution 4.0 International License</name>
-            <desc>This license is granted independent of rights and licenses associated with the
-                source. </desc>
-        </license>
-        <adjustments>
-        </adjustments>
+        <master-location href="http://textalign.net/release/TAN-2019/vocabularies/group-types.TAN-voc.xml"/>
+        <license licensor="kalvesmaki" which="by 4.0"/>
         <vocabulary-key>
-            <algorithm xml:id="xslt2">
-                <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
-                <name>Stylesheet to create a TAN file.</name>
-                <location href="../../applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl" accessed-when="2018-08-09T07:39:54.017-04:00"/>
-            </algorithm>
             <group-type xml:id="n" which="attr-n"/>
             <group-type xml:id="div" which="div types"/>
             <person xml:id="kalvesmaki">
@@ -27,21 +15,10 @@
                 <IRI>tag:textalign.net,2015:agent:kalvesmaki:joel</IRI>
                 <name xml:lang="eng">Joel Kalvesmaki</name>
             </person>
-            <algorithm xml:id="xslt1"><IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI><name>Stylesheet to populate a TAN-A file from collections.</name><location accessed-when="2018-08-09T07:39:54.017-04:00" href="../applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"/></algorithm>
-            <role xml:id="creator">
-                <IRI>http://schema.org/creator</IRI>
-                <name xml:lang="eng">creator</name>
-            </role>
-            <role xml:id="stylesheet1" which="stylesheet"/>
         </vocabulary-key>
-        
         <file-resp who="kalvesmaki"/>
-        <resp who="xslt2" roles="stylesheet1"/>
         <resp roles="creator" who="kalvesmaki"/>
-        <resp who="xslt1" roles="stylesheet1"/>
         <change when="2016-04-23" who="kalvesmaki">Started file</change>
-        <change who="xslt1" when="2017-11-02T23:06:14.294-04:00">TAN file updated to 2018 schemas.</change>
-        <change who="xslt2" when="2018-08-09T07:39:54.017-04:00">Converted from 2018 to 2019 schemas.</change>
         <to-do/>
     </head>
     <body affects-element="group-type">
