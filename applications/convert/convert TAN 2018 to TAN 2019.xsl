@@ -69,11 +69,13 @@
         <xsl:choose>
             <xsl:when test="name(.) = 'TAN-key'">
                 <TAN-voc>
+                    <xsl:attribute name="xml:base" select="$doc-uri"/>
                     <xsl:apply-templates select="node() | @*" mode="#current"/>
                 </TAN-voc>
             </xsl:when>
             <xsl:when test="name(.) = 'TAN-A-div'">
                 <TAN-A>
+                    <xsl:attribute name="xml:base" select="$doc-uri"/>
                     <xsl:apply-templates select="node() | @*" mode="#current"/>
                 </TAN-A>
             </xsl:when>
@@ -220,6 +222,8 @@
         <numerals priority="{if ($is-true) then 'roman' else 'letters'}"/>
     </xsl:template>
 
+    <xsl:template match="tan:TAN-mor/tan:head/tan:source/@xml:id" mode="input-pass-1"/>
+
     <xsl:template match="tan:key" mode="input-pass-1 test-input">
         <vocabulary>
             <xsl:apply-templates select="@* | node()" mode="#current"/>
@@ -351,15 +355,16 @@
     <xsl:variable name="pass-1-agent-vocabulary"
         select="tan:vocabulary(('person', 'organization'), false(), (), $pass-1-resolved/*/tan:head)"/>
     <xsl:variable name="pass-1-likely-primary-agents"
-        select="$pass-1-agent-vocabulary/*[tan:IRI[starts-with(., concat('tag:', $doc-namespace))]]"/>
+        select="$pass-1-agent-vocabulary/*[tan:IRI[starts-with(., $doc-namespace)]]"/>
     <xsl:variable name="pass-1-primary-agent-ids"
         select="
-        for $i in $pass-1-likely-primary-agents
-        return
-        if (exists($i/tan:id)) then
-        $i/tan:id[1]
-        else
-        replace($i/tan:name[1], '\s', '_')"/>
+            for $i in $pass-1-likely-primary-agents
+            return
+                if (exists($i/tan:id)) then
+                    $i/tan:id[1]
+                else
+                    replace($i/tan:name[1], '\s', '_')"
+    />
     <xsl:template match="tan:file-resp" mode="input-pass-2">
         <xsl:copy>
             <xsl:copy-of select="@*"/>
