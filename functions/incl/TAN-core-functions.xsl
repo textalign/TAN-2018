@@ -508,7 +508,7 @@
          <xsl:choose>
             <xsl:when test="exists($these-alias-matches)">
                <xsl:attribute name="non-number"/>
-               <xsl:value-of select="$these-alias-matches[1]/tan:name[1]"/>
+               <xsl:value-of select="replace($these-alias-matches[1]/tan:name[1], '\s', '_')"/>
             </xsl:when>
             <xsl:when test=". castable as xs:integer">
                <xsl:attribute name="number" select="$n-type[2]"/>
@@ -2697,11 +2697,11 @@
    <!-- Step 1: is it available? -->
    <xsl:function name="tan:first-loc-available" as="xs:string?">
       <!-- Input: An element that is or contains one or more tan:location elements -->
-      <!-- Output: the value of the first tan:location/@href to point to a document available, resolved If no location is available nothing is returned. -->
+      <!-- Output: the value of the first tan:location/@href to point to a document available, resolved. If no location is available nothing is returned. -->
       <xsl:param name="element-with-href-in-self-or-descendants" as="element()?"/>
       <xsl:variable name="pass-1"
          select="tan:resolve-href($element-with-href-in-self-or-descendants)"/>
-      <xsl:value-of select="($element-with-href-in-self-or-descendants//@href[doc-available(.)])[1]"/>
+      <xsl:value-of select="($pass-1//@href[doc-available(.)])[1]"/>
    </xsl:function>
 
    <!-- Step 2: if so, get it -->
