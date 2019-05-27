@@ -27,38 +27,38 @@
                 add other commonly unlabeled div types, and to massage the nomenclature.</comment>
         </to-do>
     </head>
-    <body>
-        <group affects-attribute="n">
-            <item>
-                <IRI>tag:textalign.net,2015:n-alias:unlabeled-divs-1:intro</IRI>
-                <name>intro</name>
-                <name>introduction</name>
-                <name>pr</name>
-                <name>pro</name>
-                <name>pref</name>
-                <name>praef</name>
-                <name>preface</name>
-                <name>prologue</name>
-                <desc>This file adopts the assumption that a given div has only one introductory section, whatever it is called.</desc>
-                <desc>Such an introduction excludes titles and subtitles.</desc>
-            </item>
-            <item>
-                <IRI>tag:textalign.net,2015:n-alias:unlabeled-divs-1:conc</IRI>
-                <name>conc</name>
-                <name>conclusion</name>
-                <name>ep</name>
-                <name>epi</name>
-                <name>epilogue</name>
-                <name>post</name>
-                <name>postscript</name>
-                <name>postface</name>
-                <desc>This file adopts the assumption that a given div has only one concluding section, whatever it is called.</desc>
-            </item>
-            <item>
-                <IRI>tag:textalign.net,2015:n-alias:unlabeled-divs-1:title</IRI>
-                <name>title</name>
-                <name>ti</name>
-            </item>
-        </group>
+    <body affects-attribute="n">
+        <item>
+            <IRI>tag:textalign.net,2015:n-alias:unlabeled-divs-1:intro</IRI>
+            <name>intro</name>
+            <name>introduction</name>
+            <name>pr</name>
+            <name>pro</name>
+            <name>pref</name>
+            <name>praef</name>
+            <name>preface</name>
+            <name>prologue</name>
+            <desc>This file adopts the assumption that a given div has only one introductory
+                section, whatever it is called.</desc>
+            <desc>Such an introduction excludes titles and subtitles.</desc>
+        </item>
+        <item>
+            <IRI>tag:textalign.net,2015:n-alias:unlabeled-divs-1:conc</IRI>
+            <name>conc</name>
+            <name>conclusion</name>
+            <name>ep</name>
+            <name>epi</name>
+            <name>epilogue</name>
+            <name>post</name>
+            <name>postscript</name>
+            <name>postface</name>
+            <desc>This file adopts the assumption that a given div has only one concluding section,
+                whatever it is called.</desc>
+        </item>
+        <item>
+            <IRI>tag:textalign.net,2015:n-alias:unlabeled-divs-1:title</IRI>
+            <name>title</name>
+            <name>ti</name>
+        </item>
     </body>
 </TAN-voc>
