@@ -3,6 +3,8 @@ default namespace = ""
 start =
   element collection {
     attribute stable { xsd:boolean },
+    attribute id { xsd:anyURI }?,
+    attribute metadata-resolved { xsd:boolean }?,
     element doc {
       doc-attributes,
       nondoc-attributes*,

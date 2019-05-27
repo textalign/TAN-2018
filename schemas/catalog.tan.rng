@@ -5,6 +5,11 @@
       <attribute name="stable">
         <data type="boolean"/>
       </attribute>
+      <optional>
+        <attribute name="id">
+          <data type="anyURI"/>
+        </attribute>
+      </optional>
       <oneOrMore>
         <element name="doc">
           <ref name="doc-attributes"/>
