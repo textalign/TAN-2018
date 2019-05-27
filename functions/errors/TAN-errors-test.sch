@@ -4,77 +4,72 @@
     xmlns:sqf="http://www.schematron-quickfix.com/validator/process">
     <xsl:include href="../../functions/incl/TAN-core-functions.xsl"/>
     <xsl:include href="../../functions/TAN-extra-functions.xsl"/>
-    <!-- This file checks for problems in TAN-errors.xml -->
+    <!--<xsl:include href="../../functions/extra/TAN-search-functions.xsl"></xsl:include>-->
     <!--<xsl:param name="validation-phase" select="'terse'"/>-->
     <sch:title>Tests on the TAN error registry</sch:title>
     <sch:ns prefix="tan" uri="tag:textalign.net,2015:ns"/>
     <sch:ns uri="http://www.w3.org/1999/XSL/Transform" prefix="xsl"/>
-    
-    <sch:phase id="missing-and-strays">
+    <!--<sch:phase id="missing-and-strays">
         <sch:active pattern="mark-missing"/>
         <sch:active pattern="mark-strays"/>
-    </sch:phase>
-    <sch:phase id="terse">
+    </sch:phase>-->
+    <!--<sch:phase id="terse">
         <sch:active pattern="checked-in-terse-template"/>
-    </sch:phase>
-    <sch:phase id="normal">
+    </sch:phase>-->
+    <!--<sch:phase id="normal">
         <sch:active pattern="checked-in-normal-template"/>
-    </sch:phase>
-    <sch:phase id="verbose">
+    </sch:phase>-->
+    <!--<sch:phase id="verbose">
         <sch:active pattern="checked-in-verbose-template"/>
-    </sch:phase>
-    <sch:phase id="core">
+    </sch:phase>-->
+    <!--<sch:phase id="core">
         <sch:active pattern="checked-in-core-template"/>
-    </sch:phase>
-    <sch:phase id="class-1">
+    </sch:phase>-->
+    <!--<sch:phase id="class-1">
         <sch:active pattern="checked-in-class-1-template"/>
-    </sch:phase>
-    <sch:phase id="class-2">
+    </sch:phase>-->
+    <!--<sch:phase id="class-2">
         <sch:active pattern="checked-in-class-2-template"/>
-    </sch:phase>
-    <sch:phase id="full-info">
+    </sch:phase>-->
+    <!--<sch:phase id="full-info">
         <sch:active pattern="mark-full-info"/>
         <sch:active pattern="mark-strays"/>
-    </sch:phase>
+    </sch:phase>-->
     <!--<sch:phase id="xslt">
         <sch:active pattern="mark-unsupported-error-calls"/>
     </sch:phase>-->
-    <sch:pattern id="checked-in-terse-template" is-a="identify-phases">
+    <!--<sch:pattern id="checked-in-terse-template" is-a="identify-phases">
         <sch:param name="mode-name" value="'terse'"/>
-    </sch:pattern>
-    <sch:pattern id="checked-in-normal-template" is-a="identify-phases">
+    </sch:pattern>-->
+    <!--<sch:pattern id="checked-in-normal-template" is-a="identify-phases">
         <sch:param name="mode-name" value="'normal'"/>
-    </sch:pattern>
-    <sch:pattern id="checked-in-verbose-template" is-a="identify-phases">
+    </sch:pattern>-->
+    <!--<sch:pattern id="checked-in-verbose-template" is-a="identify-phases">
         <sch:param name="mode-name" value="'verbose'"/>
-    </sch:pattern>
-    <sch:pattern id="checked-in-core-template" is-a="identify-phases">
+    </sch:pattern>-->
+    <!--<sch:pattern id="checked-in-core-template" is-a="identify-phases">
         <sch:param name="mode-name" value="'core'"/>
-    </sch:pattern>
-    <sch:pattern id="checked-in-class-1-template" is-a="identify-phases">
+    </sch:pattern>-->
+    <!--<sch:pattern id="checked-in-class-1-template" is-a="identify-phases">
         <sch:param name="mode-name" value="'class-1'"/>
-    </sch:pattern>
-    <sch:pattern id="checked-in-class-2-template" is-a="identify-phases">
+    </sch:pattern>-->
+    <!--<sch:pattern id="checked-in-class-2-template" is-a="identify-phases">
         <sch:param name="mode-name" value="'class-2'"/>
-    </sch:pattern>
-    <sch:pattern id="mark-full-info" is-a="identify-phases">
+    </sch:pattern>-->
+    <!--<sch:pattern id="mark-full-info" is-a="identify-phases">
         <sch:param name="mode-name" value="''"/>
-    </sch:pattern>
-    <sch:pattern id="mark-missing">
+    </sch:pattern>-->
+    <!--<sch:pattern id="mark-missing">
         <sch:rule context="tan:error | tan:warning | tan:fatal">
             <sch:let name="these-phases" value="tokenize(@phase, ' ')"/>
             <sch:let name="error-id" value="@xml:id"/>
-            <sch:let name="is-advanced" value="parent::tan:group/@type = 'advanced'"/>
             <sch:let name="errors-checked-where" value="tan:errors-checked-where($error-id)"/>
-            <sch:let name="errors-tested-where" value="$error-markers[matches(., $error-id)]"/>
             <sch:report
-                test="not($is-advanced) and not(exists($errors-checked-where))"
+                test="not(exists($errors-checked-where)) and not(parent::tan:group/@type = 'advanced')"
                 >Error <sch:value-of select="$error-id"/> has not yet been implemented.</sch:report>
-            <sch:assert test="$is-advanced or exists($errors-tested-where)">Error <sch:value-of
-                    select="$error-id"/> should be set up in a test file.</sch:assert>
         </sch:rule>
-    </sch:pattern>
-    <sch:pattern id="mark-strays">
+    </sch:pattern>-->
+    <!--<sch:pattern id="mark-strays">
         <sch:let name="supported-error-codes" value="$errors//@xml:id"/>
         <sch:rule context="/*">
             <sch:let name="error-calls"
@@ -91,10 +86,10 @@
                         $i/(ancestor::xsl:template, ancestor::xsl:function, ancestor::xsl:variable)/(@name, @mode)"/>)
             </sch:report>
         </sch:rule>
-    </sch:pattern>
-    <sch:pattern abstract="true" id="identify-phases">
+    </sch:pattern>-->
+    <!--<sch:pattern abstract="true" id="identify-phases">
         <sch:rule context="tan:error | tan:warning | tan:fatal">
-            <!--<sch:let name="these-phases" value="tokenize(@phase, ' ')"/>-->
+            <!-\-<sch:let name="these-phases" value="tokenize(@phase, ' ')"/>-\->
             <sch:let name="error-id" value="@xml:id"/>
             <sch:let name="errors-checked-where" value="tan:errors-checked-where($error-id)"/>
             <sch:let name="invoking-template-function-or-variable"
@@ -112,7 +107,7 @@
                 value="$invoking-template[matches(@mode, $mode-name)]"/>
             <sch:let name="invoking-template-not-of-interest"
                 value="$invoking-template[not(matches(@mode, $mode-name))]"/>
-            <!--<sch:report test="true()"><sch:value-of select="for $i in $invoking-template-function-or-variable return name($i)"/></sch:report>-->
+            <!-\-<sch:report test="true()"><sch:value-of select="for $i in $invoking-template-function-or-variable return name($i)"/></sch:report>-\->
             <sch:report
                 test="exists($invoking-template-of-interest) and string-length($mode-name) gt 0"
                 role="info">Used in templates whose mode name matches '<sch:value-of
@@ -133,5 +128,5 @@
                             tokenize($i/(@name, @mode)[1], ' ')), ', ')"
                 /></sch:report>
         </sch:rule>
-    </sch:pattern>
+    </sch:pattern>-->
 </sch:schema>

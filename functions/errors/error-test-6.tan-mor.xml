@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../../schemas/TAN-mor.rnc" type="application/relax-ng-compact-syntax"?>
+<?xml-model href="../../schemas/TAN-mor.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<!-- wrn04 -->
+<TAN-mor xmlns="tag:textalign.net,2015:ns" id="tag:textalign.net,2015:error-test-6" TAN-version="2019">
+    <head>
+        <name>Error test tan-mor</name>
+        <license which="by_4.0" licensor="person_1"/>
+        <for-lang>eng</for-lang>
+        <!-- inc03 -->
+        <inclusion xml:id="test-3">
+            <IRI>tag:textalign.net,2015:error-test</IRI>
+            <name>test 3</name>
+            <location href="error-test-3.tan-a.xml" accessed-when="2019-02-20"/>
+        </inclusion>
+        <!-- whi02 tan11 wrn03 wrn05 -->
+        <vocabulary>
+            <IRI>tag:textalign.net,9999:error-test-2</IRI>
+            <name>Vocabulary</name>
+            <location href="error-test-2.tan-voc.xml" accessed-when="2019-01-07"/>
+        </vocabulary>
+        <vocabulary-key>
+            <organization include="test-3"/>
+            <organization xml:id="org2">
+                <IRI>tag:textalign.net,2015:test:organization:org2</IRI>
+                <name>a second made-up organization</name>
+            </organization>
+            <feature xml:id="major">
+                <IRI>tag:textalign.net,2015:test:feature:major</IRI>
+                <name>major part of speech</name>
+            </feature>
+            <feature xml:id="a" which="adjective"/>
+            <feature xml:id="number">
+                <IRI>tag:textalign.net,2015:test:feature:number</IRI>
+                <name>number</name>
+            </feature>
+            <feature xml:id="b" which="dual"/>
+        </vocabulary-key>
+        <resp who="person_1" roles="editor"/>
+        <!-- tan01 -->
+        <file-resp who="person_1"/>
+        <change when="2019-01-07" who="person_1"/>
+        <to-do>
+            <comment when="2019-02-20" who="person_1">test comment</comment>
+        </to-do>
+    </head>
+    <body>
+        <rule m-has-how-many-features="2">
+            <report>M should not have only two features</report>
+        </rule>
+        <category type="major">
+            <!-- tmo01 tmo02 -->
+            <feature type="a" code="a"/>
+            <!-- tmo01 tmo02 -->
+            <feature type="a" code="A"/>
+        </category>
+        <category type="number">
+            <!-- tmo01 -->
+            <feature type="a" code="b1"/>
+            <feature type="b" code="b"/>
+        </category>
+    </body>
+</TAN-mor>

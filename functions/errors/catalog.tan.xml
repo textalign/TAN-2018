@@ -1,0 +1,512 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href ="../../schemas/catalog.tan.rnc" type="application/relax-ng-compact-syntax"?>
+<?xml-model href ="../../schemas/catalog.tan.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<collection stable="true">
+   <doc href="error-test-1.tan-t.xml"
+        id="tag:textalign.net,2015:error-test"
+        root="TAN-T">
+      <name xmlns="tag:textalign.net,2015:ns">TAN transcription of Ring a Ring o' Roses</name>
+      <license xmlns="tag:textalign.net,2015:ns" which="by_4.0" licensor="park"/>
+      <work xmlns="tag:textalign.net,2015:ns">
+            <IRI>http://dbpedia.org/resource/Ring_a_Ring_o%27_Roses</IRI>
+            <!-- tan19 -->
+            <IRI>urn:myname:1234567</IRI>
+            <name>"Ring a Ring o' Roses" or "Ring Around the Rosie"</name>
+        </work>
+      <version xmlns="tag:textalign.net,2015:ns">
+            <IRI>http://dbpedia.org/resource/Ring_a_Ring_o%27_Roses-english</IRI>
+            <name>English version of RRoR</name>
+        </version>
+      <inclusion xmlns="tag:textalign.net,2015:ns" xml:id="bad-inc">
+            <IRI>tag:some-iri</IRI>
+            <name>xslt file</name>
+            <location href="file:/C:/Users/jdkalv/Dropbox/TAN/TAN-2019/functions/errors/TAN-core-errors.xsl"
+                   accessed-when="2012-12-20"
+                   orig-href="TAN-core-errors.xsl"/>
+        <error xml:id="inc06">
+            <rule>Inclusions and vocabularies must match the host @TAN-version.</rule>
+         </error>
+      </inclusion>
+      <see-also xmlns="tag:textalign.net,2015:ns" relationship="badidref">
+         <error xml:id="tan05">
+            <rule>Every idref in an attribute must point to a vocabulary item (by @xml:id or name) that is of the appropriate corresponding element.</rule>
+            <message>badidref matches no id</message>
+            <fix type="add-vocabulary-key-item">
+               <relationship xml:id="badidref" which=""/>
+            </fix>
+            <item>
+               <affects-element>relationship</affects-element>
+               <id>badidref</id>
+            </item>
+         </error>
+            <!-- tan10 -->
+            <IRI>tag:textalign.net,2015:bad-name</IRI>
+            <name>Test Vocabulary</name>
+            <location href="file:/C:/Users/jdkalv/Dropbox/TAN/TAN-2019/functions/errors/error-test-2.tan-voc.xml"
+                   accessed-when="2012-12-11"
+                   orig-href="error-test-2.tan-voc.xml"/>
+        </see-also>
+      <see-also xmlns="tag:textalign.net,2015:ns" relationship="">
+            <IRI>tag:textalign.net,2015:a-bad-iri-that-wont-be-flagged-because-it-is-in-see-also</IRI>
+            <name>some random file</name>
+            <!-- wrn01 -->
+            <location href="file:/C:/Users/jdkalv/Dropbox/TAN/TAN-2019/functions/errors/missing-file.xsl"
+                   accessed-when="2012-11-30"
+                   orig-href="missing-file.xsl"/>
+        </see-also>
+      <model xmlns="tag:textalign.net,2015:ns">
+            <!-- tan09 -->
+            <IRI>tag:textalign.net,2015:error-test-2</IRI>
+            <name>Bad model</name>
+            <location href="file:/C:/Users/jdkalv/Dropbox/TAN/TAN-2019/functions/errors/error-test-2.tan-voc.xml"
+                   accessed-when="2019-01-01"
+                   orig-href="error-test-2.tan-voc.xml"/>
+        </model>
+      <vocabulary xmlns="tag:textalign.net,2015:ns">
+            <!-- tan10 -->
+            <IRI>tag:something.com,2014:made-up-iri</IRI>
+            <name>Vocabulary</name>
+            <location href="file:/C:/Users/jdkalv/Dropbox/TAN/TAN-2019/functions/errors/error-test-2.tan-voc.xml"
+                   accessed-when="2012-12-01"
+                   orig-href="error-test-2.tan-voc.xml"/>
+        </vocabulary>
+      <source xmlns="tag:textalign.net,2015:ns">
+            <!-- tan09 tan10 -->
+            <IRI>http://lccn.loc.gov/12032709</IRI>
+            <!-- tan09 tan10 -->
+            <IRI>http://lccn.loc.gov/12032709</IRI>
+            <name>Kate Greenaway, Mother Goose, New York, G. Routledge and sons [1881]</name>
+            <!-- wrn10 -->
+            <location accessed-when="2018-12-12"
+                   href="http://badurl.com/ring-o-roses.eng.1881.xml"/>
+            <!-- self-referential pointing -->
+            <!-- tan17 whe02 -->
+            <location href="file:/C:/Users/jdkalv/Dropbox/TAN/TAN-2019/functions/errors/error-test-1.tan-t.xml"
+                   accessed-when="3030-12-12"
+                   orig-href="error-test-1.tan-t.xml"/>
+        </source>
+      <see-also xmlns="tag:textalign.net,2015:ns"
+                href="file:/C:/Users/jdkalv/Dropbox/TAN/TAN-2019/functions/errors/error-test-1.tan-t.xml"
+                relationship="park"
+                orig-href="">
+         <error xml:id="tan05">
+            <rule>Every idref in an attribute must point to a vocabulary item (by @xml:id or name) that is of the appropriate corresponding element.</rule>
+            <message>park matches no id</message>
+            <fix type="add-vocabulary-key-item">
+               <relationship xml:id="park" which=""/>
+            </fix>
+            <item>
+               <affects-element>relationship</affects-element>
+               <id>park</id>
+            </item>
+         </error>
+      </see-also>
+      <annotation xmlns="tag:textalign.net,2015:ns">
+            <!-- tan09 -->
+            <IRI>tag:textalign.net,2015:error-test-2</IRI>
+            <name>Error test 2</name>
+            <location href="file:/C:/Users/jdkalv/Dropbox/TAN/TAN-2019/functions/errors/error-test-2.tan-voc.xml"
+                   accessed-when="2018-12-29"
+                   orig-href="error-test-2.tan-voc.xml"/>
+        </annotation>
+      <vocabulary xmlns="tag:textalign.net,2015:ns">
+         <fatal xml:id="whi04">
+            <rule>Vocabularies are integral parts of a document. Access to at least one version is absolutely mandatory.</rule>
+         </fatal>
+         <error xml:id="whi05">
+            <rule>A @which in a &lt;vocabulary&gt; may point only to items in the standard TAN file vocabularies.TAN-voc.xml</rule>
+         </error>
+      </vocabulary>
+      <tan-vocabulary xmlns="tag:textalign.net,2015:ns">
+         <IRI>tag:textalign.net,2015:tan-voc:rights</IRI>
+         <name>TAN keywords for types of rights</name>
+         <location accessed-when="2019-01-23-05:00"
+                   href="file:/C:/Users/jdkalv/Dropbox/TAN/TAN-2019/vocabularies/licenses.TAN-voc.xml"/>
+         <item>
+            <affects-element>license</affects-element>
+            <IRI>http://creativecommons.org/licenses/by/4.0/</IRI>
+            <IRI>tag:textalign.net,2015:license:by/4.0/</IRI>
+            <name>by 4.0</name>
+            <name>attribution 4.0 international</name>
+         </item>
+      </tan-vocabulary>
+      <tan-vocabulary xmlns="tag:textalign.net,2015:ns">
+         <IRI>tag:textalign.net,2015:tan-voc:div-types</IRI>
+         <name>TAN keywords for types of divisions</name>
+         <location accessed-when="2019-01-23-05:00"
+                   href="file:/C:/Users/jdkalv/Dropbox/TAN/TAN-2019/vocabularies/div-types.TAN-voc.xml"/>
+         <item group="line-start line-end">
+            <group>logical</group>
+            <affects-element>div-type</affects-element>
+            <IRI>tag:textalign.net,2015:div-type:line:verse</IRI>
+            <IRI>tag:textalign.net,2015:div-type:equiv:tei:l</IRI>
+            <IRI>http://dbpedia.org/resource/Line_(poetry)</IRI>
+            <name>line (verse)</name>
+            <name>line (poetry)</name>
+            <name>tei l</name>
+            <id>line</id>
+            <id type="alias">doubleline</id>
+         </item>
+         <item group="page-start page-end">
+            <group>scriptum</group>
+            <affects-element>div-type</affects-element>
+            <IRI>tag:textalign.net,2015:div-type:page</IRI>
+            <IRI>tag:textalign.net,2015:div-type:equiv:tei:pb</IRI>
+            <IRI>http://dbpedia.org/resource/Page_(paper)</IRI>
+            <name>page</name>
+            <name>tei pb</name>
+            <id>park</id>
+            <id type="alias">doubleline</id>
+         </item>
+      </tan-vocabulary>
+      <tan-vocabulary xmlns="tag:textalign.net,2015:ns">
+         <IRI>tag:textalign.net,2015:tan-voc:roles</IRI>
+         <name>TAN keywords for types of roles</name>
+         <location accessed-when="2019-01-23-05:00"
+                   href="file:/C:/Users/jdkalv/Dropbox/TAN/TAN-2019/vocabularies/roles.TAN-voc.xml"/>
+         <item>
+            <affects-element>role</affects-element>
+            <IRI>http://www.w3.org/1999/xhtml/vocab#stylesheet</IRI>
+            <IRI>tag:textalign.net,2015:role:stylesheet</IRI>
+            <name>stylesheet</name>
+            <id>stylesheet1</id>
+         </item>
+      </tan-vocabulary>
+      <vocabulary-key xmlns="tag:textalign.net,2015:ns">
+            <!-- loc01 -->
+            <algorithm xml:id="xslt2">
+                <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
+                <name norm="">stylesheet to create a tan file.</name>
+            <name>Stylesheet to create a TAN file.</name>
+                <!-- wrn01 -->
+                <location href="file:/C:/Users/jdkalv/Dropbox/TAN/TAN-2019/bad-url/applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl"
+                      accessed-when="2018-08-09T11:14:15.228-04:00"
+                      orig-href="../../bad-url/applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl"/>
+            </algorithm>
+            <div-type xml:id="line" which="line (verse)"/>
+            <!-- tan03 -->
+            <div-type xml:id="park" which="page"/>
+            <alias id="doubleline" idrefs="line park">
+            <idref>line</idref>
+            <idref>park</idref>
+         </alias>
+            <!-- tan14 -->
+            <alias id="loop1" idrefs="loop2">
+            <error xml:id="tan14">
+               <rule>&lt;alias&gt; references must not be circular.</rule>
+            </error>
+         </alias>
+            <!-- tan14 -->
+            <alias id="loop2" idrefs="loop1">
+            <error xml:id="tan14">
+               <rule>&lt;alias&gt; references must not be circular.</rule>
+            </error>
+         </alias>
+            <!-- tan03 -->
+            <person xml:id="park">
+                <IRI>tag:parkj@textalign.net,2015:self</IRI>
+                <name norm="">jenny park</name>
+            <name>Jenny Park</name>
+            </person>
+            <!-- inc02 -->
+            <person include="bad-inc">
+            <error xml:id="inc02">
+               <rule>For any element with @include, at least one element of the same name must be found in target inclusion document.</rule>
+            </error>
+         </person>
+            <!-- loc01 -->
+            <algorithm xml:id="xslt1">
+                <IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI>
+                <name norm="">stylesheet to populate a tan a file from collections.</name>
+            <name>Stylesheet to populate a TAN-A file from collections.</name>
+                <!-- wrn01 -->
+                <location accessed-when="2018-08-09T11:14:15.228-04:00"
+                      href="file:/C:/Users/jdkalv/Dropbox/TAN/TAN-2019/functions/applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"
+                      orig-href="../applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"/>
+            </algorithm>
+            <role xml:id="creator">
+                <IRI>http://schema.org/creator</IRI>
+                <name xml:lang="eng">creator</name>
+            </role>
+            <role xml:id="stylesheet1" which="stylesheet"/>
+            <!-- whe03 -->
+            <period xml:id="lastmonth" from="2018-12-12" to="2018-12-11"/>
+        </vocabulary-key>
+      <file-resp xmlns="tag:textalign.net,2015:ns" who="park park"/>
+      <resp xmlns="tag:textalign.net,2015:ns" who="xslt2" roles="stylesheet1"/>
+      <resp xmlns="tag:textalign.net,2015:ns" roles="creator" who="park"/>
+      <resp xmlns="tag:textalign.net,2015:ns" who="xslt1" roles="stylesheet1"/>
+      <change xmlns="tag:textalign.net,2015:ns" when="2014-08-13" who="park">Started file</change>
+      <change xmlns="tag:textalign.net,2015:ns"
+              who="xslt1"
+              when="2017-11-02T22:15:23.904-04:00">TAN file updated to 2018 schemas.</change>
+      <change xmlns="tag:textalign.net,2015:ns"
+              who="xslt2"
+              when="2018-08-09T11:14:15.228-04:00">Converted from 2018 to 2019 schemas.</change>
+      <to-do xmlns="tag:textalign.net,2015:ns"/>
+   </doc>
+   <doc href="error-test-2.tan-voc.xml"
+        id="tag:textalign.net,2015:error-test-2"
+        root="TAN-voc">
+      <name xmlns="tag:textalign.net,2015:ns">Keywords for Aristotle's Categories</name>
+      <master-location xmlns="tag:textalign.net,2015:ns"
+                       href="file:/C:/Users/jdkalv/Dropbox/TAN/TAN-2019/functions/errors/error-test-1.tan-t.xml"
+                       orig-href="error-test-1.tan-t.xml"/>
+      <license xmlns="tag:textalign.net,2015:ns" licensor="park">
+            <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
+            <name>Creative Commons Attribution 4.0 International License</name>
+            <desc>This data file is licensed under a Creative Commons Attribution 4.0 International
+                License. The license is granted independent of rights and licenses associated with
+                the source. </desc>
+        </license>
+      <inclusion xmlns="tag:textalign.net,2015:ns" xml:id="test-1">
+            <IRI>tag:textalign.net,2015:error-test</IRI>
+            <name>Error test 1</name>
+            <location href="file:/C:/Users/jdkalv/Dropbox/TAN/TAN-2019/functions/errors/error-test-1.tan-t.xml"
+                   accessed-when="2018-12-11"
+                   orig-href="error-test-1.tan-t.xml"/>
+        </inclusion>
+      <successor xmlns="tag:textalign.net,2015:ns">
+            <IRI>tag:textalign.net,2015:error-test</IRI>
+            <name>Error test 1</name>
+            <location href="file:/C:/Users/jdkalv/Dropbox/TAN/TAN-2019/functions/errors/error-test-1.tan-t.xml"
+                   accessed-when="2018-12-29"
+                   orig-href="error-test-1.tan-t.xml"/>
+        </successor>
+      <adjustments xmlns="tag:textalign.net,2015:ns"/>
+      <tan-vocabulary xmlns="tag:textalign.net,2015:ns">
+         <IRI>tag:textalign.net,2015:tan-voc:roles</IRI>
+         <name>TAN keywords for types of roles</name>
+         <location accessed-when="2019-01-23-05:00"
+                   href="file:/C:/Users/jdkalv/Dropbox/TAN/TAN-2019/vocabularies/roles.TAN-voc.xml"/>
+         <item>
+            <affects-element>role</affects-element>
+            <IRI>http://www.w3.org/1999/xhtml/vocab#stylesheet</IRI>
+            <IRI>tag:textalign.net,2015:role:stylesheet</IRI>
+            <name>stylesheet</name>
+            <id>stylesheet1</id>
+         </item>
+      </tan-vocabulary>
+      <vocabulary-key xmlns="tag:textalign.net,2015:ns">
+            <!-- wrn09 (but only if no internet is available) -->
+            <algorithm xml:id="xslt3">
+                <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
+                <name norm="">stylesheet to create a tan file.</name>
+            <name>Stylesheet to create a TAN file.</name>
+                <!-- wrn10 -->
+                <location href="http://textalign.net/applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl"
+                      accessed-when="2018-08-05T00:30:17.756-04:00"/>
+            </algorithm>
+            <person xml:id="park">
+                <IRI>tag:textalign.net,2015:park</IRI>
+                <name xml:lang="eng" norm="">jenny park</name>
+            <name xml:lang="eng">Jenny Park</name>
+            </person>
+            <role xml:id="creator">
+                <IRI>http://schema.org/creator</IRI>
+                <name xml:lang="eng">creator</name>
+            </role>
+            <role xml:id="stylesheet1" which="stylesheet"/>
+        </vocabulary-key>
+      <file-resp xmlns="tag:textalign.net,2015:ns" who="park"/>
+      <resp xmlns="tag:textalign.net,2015:ns" who="xslt3" roles="stylesheet1"/>
+      <resp xmlns="tag:textalign.net,2015:ns" roles="creator" who="park"/>
+      <change xmlns="tag:textalign.net,2015:ns" when="2016-07-07" who="park">Started file</change>
+      <change xmlns="tag:textalign.net,2015:ns"
+              who="xslt3"
+              when="2018-08-05T00:30:17.756-04:00">Converted from 2018 to 2019 schemas.</change>
+      <to-do xmlns="tag:textalign.net,2015:ns">
+            <comment when="2018-12-12" who="park">test comment</comment>
+        </to-do>
+   </doc>
+   <doc href="error-test-3.tan-a.xml"
+        id="tag:textalign.net,2015:error-test"
+        root="TAN-A">
+      <name xmlns="tag:textalign.net,2015:ns">Error test tan-a</name>
+      <master-location xmlns="tag:textalign.net,2015:ns"
+                       href="file:/C:/Users/jdkalv/Dropbox/TAN/TAN-2019/templates/template.docx"
+                       orig-href="../../templates/template.docx"/>
+      <license xmlns="tag:textalign.net,2015:ns" which="4.0" licensor="park">
+         <error xml:id="whi01">
+            <rule>An element's @which must have a value that corresponds to a &lt;name&gt;, either in a standard TAN vocabulary or an associated TAN-voc file, that is marked as applying to that element.</rule>
+            <message>4.0 matches no name</message>
+            <item>
+               <affects-element>license</affects-element>
+               <name>4.0</name>
+            </item>
+         </error>
+         <error xml:id="tan05">
+            <rule>Every idref in an attribute must point to a vocabulary item (by @xml:id or name) that is of the appropriate corresponding element.</rule>
+            <message>park matches no id</message>
+            <fix type="add-vocabulary-key-item">
+               <person xml:id="park" which=""/>
+            </fix>
+            <item>
+               <affects-element>person</affects-element>
+               <affects-element>organization</affects-element>
+               <id>park</id>
+            </item>
+         </error>
+      </license>
+      <numerals xmlns="tag:textalign.net,2015:ns" priority="roman"/>
+      <token-definition xmlns="tag:textalign.net,2015:ns" which="bad-token-def" src="*">
+         <error xml:id="whi01">
+            <rule>An element's @which must have a value that corresponds to a &lt;name&gt;, either in a standard TAN vocabulary or an associated TAN-voc file, that is marked as applying to that element.</rule>
+            <message>bad token def matches no name</message>
+            <item>
+               <affects-element>token-definition</affects-element>
+               <name>bad token def</name>
+            </item>
+         </error>
+      </token-definition>
+      <vocabulary xmlns="tag:textalign.net,2015:ns">
+            <IRI>tag:textalign.net,2015:error-test-2</IRI>
+            <name>Vocabulary</name>
+            <location href="file:/C:/Users/jdkalv/Dropbox/TAN/TAN-2019/functions/errors/error-test-2.tan-voc.xml"
+                   accessed-when="2019-01-07"
+                   orig-href="error-test-2.tan-voc.xml"/>
+        <item affects-element="person">
+            <affects-element>person</affects-element>
+            <IRI>tag:parkj@textalign.net,2015:person-test</IRI>
+            <name>person 1</name>
+         </item>
+      </vocabulary>
+      <source xmlns="tag:textalign.net,2015:ns" xml:id="error1">
+            <IRI>tag:textalign.net,2015:error-test</IRI>
+            <name>error tan-t</name>
+            <location href="file:/C:/Users/jdkalv/Dropbox/TAN/TAN-2019/functions/errors/error-test-1.tan-t.xml"
+                   accessed-when="2019-01-07"
+                   orig-href="error-test-1.tan-t.xml"/>
+        </source>
+      <adjustments xmlns="tag:textalign.net,2015:ns" src="error1">
+            <!-- cl215 -->
+            <rename n="bad" new="good"/>
+        </adjustments>
+      <tan-vocabulary xmlns="tag:textalign.net,2015:ns">
+         <IRI>tag:textalign.net,2015:tan-voc:roles</IRI>
+         <name>TAN keywords for types of roles</name>
+         <location accessed-when="2019-01-23-05:00"
+                   href="file:/C:/Users/jdkalv/Dropbox/TAN/TAN-2019/vocabularies/roles.TAN-voc.xml"/>
+         <item>
+            <affects-element>role</affects-element>
+            <IRI>http://schema.org/editor</IRI>
+            <IRI>tag:textalign.net,2015:role:editor</IRI>
+            <name>editor</name>
+            <name>revisor</name>
+         </item>
+      </tan-vocabulary>
+      <tan-vocabulary xmlns="tag:textalign.net,2015:ns">
+         <IRI>tag:textalign.net,2015:tan-voc:verbs</IRI>
+         <name>TAN keywords for verbs</name>
+         <location accessed-when="2019-01-23-05:00"
+                   href="file:/C:/Users/jdkalv/Dropbox/TAN/TAN-2019/vocabularies/verbs.TAN-voc.xml"/>
+         <item group="near-verbatim">
+            <group>text-subject</group>
+            <group>text-object</group>
+            <affects-element>verb</affects-element>
+            <IRI>tag:textalign.net,2015:verb:quotes</IRI>
+            <name>quotes</name>
+            <desc>The textual subject quotes from the textual object. Relationship may be direct or
+                        indirect. This implies that the subject postdates the object.</desc>
+         </item>
+      </tan-vocabulary>
+      <vocabulary-key xmlns="tag:textalign.net,2015:ns"/>
+      <resp xmlns="tag:textalign.net,2015:ns" who="person_1" roles="editor"/>
+      <file-resp xmlns="tag:textalign.net,2015:ns" who="person_1"/>
+      <change xmlns="tag:textalign.net,2015:ns" when="2019-01-07" who="person_1"/>
+      <to-do xmlns="tag:textalign.net,2015:ns"/>
+   </doc>
+   <!--<doc href="error-test-4.tan-tei.xml"
+        id="tag:textalign.net,2015:error-test-4"
+        root="TEI"
+        xml:lang="eng">
+      <name xmlns="tag:textalign.net,2015:ns">TAN-TEI transcription of Ring a Ring o' Roses</name>
+      <license xmlns="tag:textalign.net,2015:ns" which="by_4.0" licensor="park"/>
+      <work xmlns="tag:textalign.net,2015:ns">
+            <IRI>http://dbpedia.org/resource/Ring_a_Ring_o%27_Roses-bad</IRI>
+            <IRI>tag:example.com,2014:work:ring-bad</IRI>
+            <name>"Ring a Ring o' Roses" or "Ring Around the Rosie"</name>
+        </work>
+      <version xmlns="tag:textalign.net,2015:ns">
+            <IRI>http://dbpedia.org/resource/Ring_a_Ring_o%27_Roses-english-wrong</IRI>
+            <name>English version of RRoR</name>
+        </version>
+      <source xmlns="tag:textalign.net,2015:ns">
+            <!-\- tan10 -\->
+            <IRI>http://lccn.loc.gov/12032709-bad</IRI>
+            <name>Kate Greenaway, Mother Goose, New York, G. Routledge and sons [1881]</name>
+            <location accessed-when="2018-12-12"
+                   href="file:/C:/Users/jdkalv/Dropbox/TAN/TAN-2019/functions/errors/error-test-1.tan-t.xml"
+                   orig-href="error-test-1.tan-t.xml"/>
+        </source>
+      <redivision xmlns="tag:textalign.net,2015:ns">
+            <IRI>tag:textalign.net,2015:error-test</IRI>
+            <name>test 1</name>
+            <location href="file:/C:/Users/jdkalv/Dropbox/TAN/TAN-2019/functions/errors/error-test-1.tan-t.xml"
+                   accessed-when="2019-01-20"
+                   orig-href="error-test-1.tan-t.xml"/>
+        </redivision>
+      <tan-vocabulary xmlns="tag:textalign.net,2015:ns">
+         <IRI>tag:textalign.net,2015:tan-voc:rights</IRI>
+         <name>TAN keywords for types of rights</name>
+         <location accessed-when="2019-01-23-05:00"
+                   href="file:/C:/Users/jdkalv/Dropbox/TAN/TAN-2019/vocabularies/licenses.TAN-voc.xml"/>
+         <item>
+            <affects-element>license</affects-element>
+            <IRI>http://creativecommons.org/licenses/by/4.0/</IRI>
+            <IRI>tag:textalign.net,2015:license:by/4.0/</IRI>
+            <name>by 4.0</name>
+            <name>attribution 4.0 international</name>
+         </item>
+      </tan-vocabulary>
+      <tan-vocabulary xmlns="tag:textalign.net,2015:ns">
+         <IRI>tag:textalign.net,2015:tan-voc:div-types</IRI>
+         <name>TAN keywords for types of divisions</name>
+         <location accessed-when="2019-01-23-05:00"
+                   href="file:/C:/Users/jdkalv/Dropbox/TAN/TAN-2019/vocabularies/div-types.TAN-voc.xml"/>
+         <item group="line-start line-end">
+            <group>logical</group>
+            <affects-element>div-type</affects-element>
+            <IRI>tag:textalign.net,2015:div-type:line:verse</IRI>
+            <IRI>tag:textalign.net,2015:div-type:equiv:tei:l</IRI>
+            <IRI>http://dbpedia.org/resource/Line_(poetry)</IRI>
+            <name>line (verse)</name>
+            <name>line (poetry)</name>
+            <name>tei l</name>
+            <id>line</id>
+         </item>
+         <item>
+            <affects-element>div-type</affects-element>
+            <IRI>tag:textalign.net,2015:div-type:part</IRI>
+            <name>part</name>
+            <desc>A generic division of a larger textual unit. Can be conceptual or physical.</desc>
+         </item>
+      </tan-vocabulary>
+      <tan-vocabulary xmlns="tag:textalign.net,2015:ns">
+         <IRI>tag:textalign.net,2015:tan-voc:roles</IRI>
+         <name>TAN keywords for types of roles</name>
+         <location accessed-when="2019-01-23-05:00"
+                   href="file:/C:/Users/jdkalv/Dropbox/TAN/TAN-2019/vocabularies/roles.TAN-voc.xml"/>
+         <item>
+            <affects-element>role</affects-element>
+            <IRI>http://schema.org/creator</IRI>
+            <IRI>http://purl.org/dc/terms/creator</IRI>
+            <IRI>tag:textalign.net,2015:role:creator</IRI>
+            <name>creator</name>
+         </item>
+      </tan-vocabulary>
+      <vocabulary-key xmlns="tag:textalign.net,2015:ns">
+            <div-type xml:id="line" which="line (verse)"/>
+            <person xml:id="park">
+                <IRI>tag:parkj@textalign.net,2015:self</IRI>
+                <IRI>tag:textalign.net,2015:person:park</IRI>
+                <name norm="">jenny park</name>
+            <name>Jenny Park</name>
+            </person>
+        </vocabulary-key>
+      <file-resp xmlns="tag:textalign.net,2015:ns" who="park"/>
+      <resp xmlns="tag:textalign.net,2015:ns" roles="creator" who="park"/>
+      <change xmlns="tag:textalign.net,2015:ns" when="2014-08-13" who="park">Started file</change>
+      <to-do xmlns="tag:textalign.net,2015:ns"/>
+   </doc>-->
+</collection>

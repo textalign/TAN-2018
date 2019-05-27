@@ -122,6 +122,19 @@
          </message>
       </xsl:element>
    </xsl:template>
+   
+   <xsl:function name="tan:error-codes" as="xs:string*">
+      <!-- Input: a string -->
+      <!-- Output: the error codes found within the string -->
+      <xsl:param name="string-with-error-codes" as="xs:string?"/>
+      <xsl:if test="string-length($string-with-error-codes) gt 0">
+         <xsl:analyze-string select="$string-with-error-codes" regex="\w\w\w\d\d">
+            <xsl:matching-substring>
+               <xsl:value-of select="."/>
+            </xsl:matching-substring>
+         </xsl:analyze-string>
+      </xsl:if>
+   </xsl:function>
 
    <xsl:variable name="help-trigger-regex" select="tan:escape($help-trigger)"/>
    <xsl:function name="tan:help" as="element()">
@@ -174,7 +187,7 @@
             <xsl:if test="exists($this-val-parsed/tan:help)">
                <xsl:attribute name="help"/>
             </xsl:if>
-            <xsl:value-of select="string-join($this-val-parsed/text(), '')"/>
+            <xsl:value-of select="normalize-space(string-join($this-val-parsed/text(), ''))"/>
          </val>
       </xsl:for-each>
    </xsl:function>
