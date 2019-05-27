@@ -1,22 +1,45 @@
 default namespace local = "tag:textalign.net,2015:ns"
 
 include "incl/TAN-class-2.rnc" {
-start =
-    
-    ## specifies that the file is a token-based TAN alignment file. Root element.
-    element TAN-A-tok { TAN-root }
+    start =
+        
+        ## specifies that the file is a token-based TAN alignment file. Root element.
+        element TAN-A-tok { TAN-root }
     
     ## TAN-A-tok files take exactly two sources
-    source-list = source-item, source-item
-    
-    voc-key-for-non-class-2 = voc-key-for-brel+ & voc-key-for-reus+
-    body-attributes-non-core = bitext-relation-attr, reuse-type-attr
-
-    body-item = alignment
+    source-list = link-element-source, link-element-source
+    voc-element-non-class-2 = voc-element-brel+ & voc-element-reus+
+    body-attributes-non-core = ptr-attr-bitext-relation, ptr-attr-reuse-type
+    body-item = element-align
 }
-voc-key-for-brel =
+# ATTRIBUTES
+ptr-attr-bitext-relation =
     
-    ## identifies how the text on one text-bearing object relates to that on another by specifying a relationship, e.g., B is a direct copy of A, B and A descent from a commont parent, etc. See main.xml#tan-a-tok for theoretical background.
+    ## points to one or more <bitext-relation> @xml:id values that qualify the type of relation that holds. Multiple values assume inclusive or (A or B or A and B)
+    
+    ## This attribute is inheritable. See main.xml#inheritable_attributes
+    attribute bitext-relation { text }
+ptr-attr-reuse-type =
+    
+    ## points to one or more <reuse-type> @xml:id values that qualify the type of textual reuse that holds. Multiple values assume inclusive or (A or B or A and B)
+    
+    ## This attribute is inheritable. See main.xml#inheritable_attributes
+    attribute reuse-type { text }
+# ELEMENTS
+element-align =
+    
+    ## declares one or more groups of words that should be aligned with each other. <align> specifies that all the tokens invoked for one source collectively align with the tokens in the other. 
+    element align {
+        inclusion
+        | (certainty-stamp?,
+           ptr-attr-bitext-relation?,
+           ptr-attr-reuse-type?,
+           ptr-attr-group?,
+           (element-comment* & (default-tok-element | element-group-for-tok)+))
+    }
+voc-element-brel =
+    
+    ## identifies how the text of one text-bearing object relates to that of another by specifying a relationship, e.g., B is a direct copy of A, B and A descent from a commont parent, etc. See main.xml#tan-a-tok for theoretical background.
     
     ## In most cases, there will be need for only one of these elements. But multiple values may be helpful for cases where a bitext has a complex history, for example, a textual object that was created over time, and in different phases.
     
@@ -24,39 +47,10 @@ voc-key-for-brel =
     
     ## For examples see main.xml#vocabulary-bitext-relation
     element bitext-relation { entity-nondigital-id }
-voc-key-for-reus =
+voc-element-reus =
     
     ## identifies a category of text reuse (e.g., translation, mistranslation, paraphrase, ridicule). See main.xml#tan-a-tok for theoretical background.
     
     ## For examples see main.xml#vocabulary-reuse-type
     element reuse-type { entity-nondigital-id }
-bitext-relation-attr =
-    
-    ## points to one or more <bitext-relation> @xml:id values that qualify the type of relation that holds. Multiple values assume inclusive or (A or B or A and B)
-    
-    ## This attribute is inheritable. See main.xml#inheritable_attributes
-    attribute bitext-relation { text }
-reuse-type-attr =
-    
-    ## points to one or more <reuse-type> @xml:id values that qualify the type of textual reuse that holds. Multiple values assume inclusive or (A or B or A and B)
-    
-    ## This attribute is inheritable. See main.xml#inheritable_attributes
-    attribute reuse-type { text }
-alignment =
-    
-    ## declares one or more groups of words that should be aligned with each other. <align> specifies that all the tokens invoked for one source collectively align with the tokens in the other. 
-    element align {
-        alignment-inclusion-opt
-        | (alignment-attributes-non-class-2,
-           certainty-stamp,
-           non-class-2-opt,
-           (comment* & alignment-content-non-class-2))
-    }
-non-class-2-opt = group-ref?
-alignment-inclusion-opt = inclusion
-
-## alignments may claim bitext relations and reuse type
-alignment-attributes-non-class-2 = internal-xml-id?, bitext-relation-attr?, reuse-type-attr?
-
-## alignments must contain one or more toks
-alignment-content-non-class-2 = tok-ref+
+# PATTERNS

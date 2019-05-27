@@ -1,67 +1,143 @@
 default namespace local = "tag:textalign.net,2015:ns"
 
 include "incl/TAN-class-2.rnc" {
-start =
-    
-    ## specifies that the file is a div-based TAN alignment file. Root element.
-    element TAN-A { TAN-root }
+    start =
+        
+        ## specifies that the file is a div-based TAN alignment file. Root element.
+        element TAN-A { TAN-root }
     
     ## TAN-A files must have one or more sources
-    source-list = source-item+
-    
-    voc-key-for-non-class-2 = voc-key-for-claims
-    tok-sources-ref-opt = empty
+    source-list = link-element-source+
+    voc-element-non-class-2 = voc-element-tan-a
     tok-cert-opt = empty
     
     ## Redefining TAN-body-core not only defines what is in the body of a TAN-A but also excludes groups from it.
-    body-content-non-class-2 = subject-ref?, object-ref?, verb-ref?, claim*
+    body-content-non-class-2 = ptr-attr-subject?, ptr-attr-object?, ptr-attr-verb?, element-claim*
 }
-work-ref =
+# ATTRIBUTES
+ptr-attr-modal =
+    
+    ## names a <modal> that qualifies the claim.
+    
+    ##  Multiple values of @adverb are interpreted to mean "and" with intersection. No distribution takes place (e.g., adverb="x y" means "[subject] x & y [verby]...", not "[subject] x [verb]..." and "[subject] y [verb]...").
+    attribute adverb { text }
+ptr-attr-object =
+    
+    ## takes one or more ID refs of entities defined in <head> that serve as the grammatical object of a claim. For example, if you wish to say that work A is a commentary on work B, then the object would have the ID ref for work B. If you wish to make more complex assertions, use <object>.
+    
+    ##  Multiple values of @object are interpreted to mean "and", resulting in distribution of the claim (e.g., object="x y" becomes "[subject] [verb] x" and "[subject] [verb] y...").
+    
+    ## In RDF, the concept of object (the third element of a triple) is required. In TAN-c, it is not required, since some <verb>s may be intransitive (e.g., "Charlie slept.").
+    attribute object { text }
+ptr-attr-place =
+    
+    ## restricts the <claim> to a specific <place>.
+    ##  Multiple values of @where are interpreted to mean "or" with union. No distribution takes place (e.g., where="x y" means "[subject] x or y [verby]...", not "[subject] x [verb]..." and "[subject] y [verb]...").
+    attribute where { text }
+ptr-attr-subject =
+    
+    ## points to one or more ID refs of entities defined in <head> that serve as the grammatical subject of a claim. @subject within <body> indicates the default subject(s) for <claim>s. 
+    
+    ##  Multiple values of @subject are interpreted to mean "and", resulting in distribution of the claim (e.g., subject="x y" becomes "x [verby]..." and "y [verb]...").
+    attribute subject { text }
+ptr-attr-units =
+    
+    ## points to the ID ref of a <unit>, defining the type of units.
+    attribute units { text }
+ptr-attr-verb =
+    
+    ## points to one or more <verb>s that serve to assert something of the @subject.
+    
+    ## The preferred term "verb" is equivalent to RDF "predicate." The latter term is avoided as being misleading -- most who use TAN will understand "predicate," grammatically speaking, to refer to everything in a sentence that is not the subject.
+    
+    ##  Multiple values of @verb are interpreted to mean "and", resulting in distribution of the claim (e.g., verb="x y" becomes "[subject] x ..." and "[subject] y...").
+    attribute verb { text }
+ptr-attr-work =
     
     ## refers to a work by means of a source ID as a proxy. The attribute will be treated as indicating all sources that share the same work as the one mentioned.
     
     ## If you wish to avoid making a claim applying to all other versions of a work, use @src instead.
     attribute work { text }
-# claims
-voc-key-for-claims =
-    voc-key-for-work*
-    & voc-key-for-place*
-    & voc-key-for-unit*
-    & voc-key-for-div-type*
-    & voc-key-for-mode*
-    & voc-key-for-vers*
-    & voc-key-for-scri*
-    & voc-key-for-topic*
-    & voc-key-for-verb*
-voc-key-for-mode =
+# ELEMENTS
+element-claim =
+    
+    ## makes one or more claims.
+    element claim {
+        inclusion
+        | (ed-stamp?,
+           certainty-claim?,
+           claimant-attributes?,
+           ptr-attr-period?,
+           ptr-attr-modal?,
+           ptr-attr-verb?,
+           ptr-attr-place?,
+           (subject? & object? & element-locus?))
+    }
+element-locus =
+    
+    ## restricts a claim to a particular location within a scriptum or work, much like the phrase "At passage X, ...."
+    
+    ## This element functions much like <place>, but the geography is textual rather than spatial.
+    element at { ed-stamp?, textual-reference }+
+element-object =
+    
+    ## is similar to @object, but for complex content, mainly concepts that do not lend themselves to the IRI + name pattern, particularly languages and units or passages of text.
+    element object { ed-stamp?, (nontextual-reference | textual-reference) }
+element-subject =
+    
+    ## points to text references that act as the subject of the claim.
+    
+    ## Unlike @subject, which can point to any entity, <subject> is intended exclusively to point to a textual subject.
+    
+    ##  Each <subject> is interpreted as a single entity, with all textual references treated as a single, grouped passage.
+    element subject { ed-stamp?, textual-reference }
+element-tok-for-claim-no-ref =
+    
+    ## points to one or more tokens in a source + ref defined by the parent.    
+    element tok { tok-selector-attributes-many, attr-chars? }
+element-tok-for-claim-with-ref =
+    
+    ## points to one or more tokens in a source defined by the parent.    
+    element tok { attr-ref-many, tok-selector-attributes-many, attr-chars? }
+voc-element-tan-a =
+    voc-element-work*
+    & voc-element-place*
+    & voc-element-unit*
+    & voc-element-div-type*
+    & voc-element-mode*
+    & voc-element-vers*
+    & voc-element-scri*
+    & voc-element-topic*
+    & voc-element-verb*
+voc-element-mode =
     
     ## contains an IRI + name pattern identifying a modal or adverb that qualifies the verb of an assertion.
     
     ## See main.xml#vocabulary-modal for standard vocabulary.
     element modal { entity-nondigital-id }
-voc-key-for-place =
+voc-element-place =
     
     ## contains an IRI + name pattern identifying a spatial location, usually somewhere on earth
     element place { entity-nondigital-id }
-voc-key-for-scri =
+voc-element-scri =
     
     ## contains an IRI + name pattern identifying a text-bearing object.
     element scriptum { entity-nondigital-id }
-voc-key-for-topic =
+voc-element-topic =
     
     ## declares one or more topics, to be used in conjunction with @topic under <align> to associate alignments with specific topics instead of verbatim parallels.  
     element topic { entity-nondigital-id }
-voc-key-for-unit =
+voc-element-unit =
     
     ## contains an IRI + name pattern identifying a unit type (e.g., millimeters, seconds, Euros), to be used in conjunction with <object> to specify the meaning of a value
     element unit { entity-nondigital-id }
-voc-key-for-verb =
+voc-element-verb =
     
     ## contains an IRI + name pattern identifying a property, relationship, action, or something else that is used to say something about something. 
     
-    ## The preferred term "verb" is equivalent to RDF "predicate." The latter term is avoided as misleading, since in ordinary usage the term "predicate" implies everything in a sentence that is not the subject.
+    ## The preferred term "verb" is equivalent to RDF "predicate." The latter term is avoided as misleading, since in ordinary usage the term "predicate" designates both the verb and everything it governs.
     element verb { entity-nondigital-constrained }
-voc-key-for-vers =
+voc-element-vers =
     
     ## identifies the version of a work. Applicable to sources that contain multiple versions, e.g., original text and facing translations. Like <work>, <version> points to a conceptual entity, not a physical one.
     
@@ -71,7 +147,7 @@ voc-key-for-vers =
     
     ## For more, see main.xml#conceptual_works
     element version { entity-nondigital-id }
-voc-key-for-work =
+voc-element-work =
     
     ## identifies a creative textual work, understood conceptually, not physically (e.g., Homer's Iliad, not a particular version or copy of it).
     
@@ -79,79 +155,21 @@ voc-key-for-work =
     
     ## This element takes the IRI + name pattern. For more, see main.xml#conceptual_works
     element work { entity-nondigital-id }
-claim =
-    
-    ## makes one or more claims.
-    element claim {
-        inclusion
-        | (ed-stamp?,
-           cert-claim?,
-           claimant-data?,
-           period-ref?,
-           modal-ref?,
-           verb-ref?,
-           place-ref?,
-           (subject? & object? & locus?))
-    }
-subject = subject-ref | complex-subject+
-subject-ref =
-    
-    ## points to one or more ID refs of entities defined in <head> that serve as the grammatical subject of a claim. @subject within <body> indicates the default subject(s) for <claim>s. 
-    
-    ##  Multiple values of @subject are interpreted to mean "and", resulting in distribution of the claim (e.g., subject="x y" becomes "x [verby]..." and "y [verb]...").
-    attribute subject { text }
-complex-subject =
-    
-    ## points to text references that act as the subject of the claim.
-    
-    ##  Multiple values of <subject> are interpreted to mean "and", resulting in distribution of the claim (e.g., subject="x y" becomes "x [verby]..." and "y [verb]...").
-    element subject { ed-stamp?, textual-reference }
-modal-ref =
-    
-    ## names a <modal> that qualifies the claim.
-    
-    ##  Multiple values of @adverb are interpreted to mean "and" with intersection. No distribution takes place (e.g., adverb="x y" means "[subject] x & y [verby]...", not "[subject] x [verb]..." and "[subject] y [verb]...").
-    attribute adverb { text }
-verb-ref =
-    
-    ## points to one or more <verb>s that serve to assert something of the @subject.
-    
-    ## The preferred term "verb" is equivalent to RDF "predicate." The latter term is avoided as being misleading -- most who use TAN will understand "predicate," grammatically speaking, to refer to everything in a sentence that is not the subject.
-    
-    ##  Multiple values of @verb are interpreted to mean "and", resulting in distribution of the claim (e.g., verb="x y" becomes "[subject] x ..." and "[subject] y...").
-    attribute verb { text }
-place-ref =
-    
-    ## restricts the <claim> to a specific <place>.
-    ##  Multiple values of @where are interpreted to mean "or" with union. No distribution takes place (e.g., where="x y" means "[subject] x or y [verby]...", not "[subject] x [verb]..." and "[subject] y [verb]...").
-    attribute where { text }
-object = object-ref | complex-object+
-object-ref =
-    
-    ## takes one or more ID refs of entities defined in <head> that serve as the grammatical object of a claim. For example, if you wish to say that work A is a commentary on work B, then the object would have the ID ref for work B. If you wish to make more complex assertions, use <object>.
-    
-    ##  Multiple values of @object are interpreted to mean "and", resulting in distribution of the claim (e.g., object="x y" becomes "[subject] [verb] x" and "[subject] [verb] y...").
-    
-    ## In RDF, the concept of object (the third element of a triple) is required. In TAN-c, it is not required, since some <verb>s may be intransitive (e.g., "Charlie slept.").
-    attribute object { text }
-complex-object = object-element | claim+
-object-element =
-    
-    ## is similar to @object, but for complex content, mainly concepts that do not lend themselves to the IRI + name pattern, particularly languages and units or passages of text.
-    element object { ed-stamp?, (nontextual-reference | textual-reference) }
-nontextual-reference = (lang-of-content | units)?, text
-textual-reference = simple-textual-reference | complex-textual-reference-set
-
-simple-textual-reference = (sources-ref | work-ref), pointer-to-div-range
-complex-textual-reference-set = (sources-ref | work-ref), complex-text-ref+
-complex-text-ref = div-ref-range | tok-ref
-units =
-    
-    ## points to the ID ref of a <unit>, defining the type of units.
-    attribute units { text }
-locus =
-
-## restricts a claim to a particular location within a scriptum or work.
-
-## This element functions much like <place>, but the geography is textual rather than spatial.
-element locus { ed-stamp?, textual-reference }+
+# PATTERNS
+subject = ptr-attr-subject | element-subject+
+object = ptr-attr-object | complex-object+
+complex-object = element-object | element-claim+
+nontextual-reference = (attr-lang-xml | ptr-attr-units)?, text
+textual-reference =
+    multi-source-whole-div-textual-reference | single-source-partial-div-textual-reference
+# If a textual reference points merely to <div>s then all one need is @src/@work plus @ref
+multi-source-whole-div-textual-reference = (ptr-attr-src-many | ptr-attr-work), attr-ref-many
+# If a textual reference points to parts of divs, i.e., tokens and token-defined passages, then it is source-specific (@src not @work). 
+single-source-partial-div-textual-reference =
+    ptr-attr-src-one, (single-div-partial-textual-reference | multi-div-partial-textual-reference)
+# If a partial textual reference is a subset of a <div> then @ref, pointing to a single <div>, should be in the parent element
+single-div-partial-textual-reference =
+    attr-ref-one, (element-tok-for-claim-no-ref | text-passage-selector-no-ref)+
+# If a partial textual reference is a spans <div>s then @ref should be in the children elements
+multi-div-partial-textual-reference =
+    (element-tok-for-claim-with-ref | text-passage-selector-with-ref)+

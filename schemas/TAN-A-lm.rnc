@@ -5,106 +5,109 @@ include "incl/TAN-class-2.rnc" {
         
         ## specifies that the file is a TAN file containing lexico-morphology data about a text. Root element.
         element TAN-A-lm { TAN-root }
-    decl-non-class-2 = lang-outside*, (tok-start-indicator* & tok-is-indicator*)
+    decl-non-class-2 = element-for-lang*, (element-tok-starts-with* & element-tok-is*)
     source-content = entity-digital-nontan-no-id
     # Either one source with no language specifications, or a language specification with zero or more sources
-    source-list = source-item*
+    source-list = link-element-source*
+    tok-sources-ref-opt = empty
     # TAN-A-lm files must each have at least one lexicon and one TAN-mor
-    voc-key-for-non-class-2 = voc-key-for-lexi+ & voc-key-for-morph+
-    
-    ## Because TAN-A-lm files depend on only one source, no id references to sources are needed
-    sources-ref = empty
-    id-option = empty
-    group-attributes-non-core = lexicon-attr?, grammar-attr?
-    body-attributes-non-core = lexicon-attr, grammar-attr
-    body-item = TAN-A-lm-item
+    voc-element-non-class-2 = voc-element-lexicon+ & voc-element-morphology+
+    # Because TAN-A-lm files depend on only one source, no id references to sources are needed
+    token-definition-attributes = empty
+    group-attributes-non-core = ptr-attr-lexicon?, ptr-attr-morphology?
+    body-attributes-non-core = ptr-attr-lexicon, ptr-attr-morphology
+    body-item = element-ana
+    default-tok-element = element-tok-standard | element-tok-abstract
 }
-voc-key-for-morph =
+# ATTRIBUTES
+attr-def-ref =
     
-    ## identifies a <TAN-mor> file that defines the parts of speech for a language, the codes for those parts, and the rules for combining them
-    element morphology { entity-digital-tan-id }
-voc-key-for-lexi =
+    ## identifies which definition is meant. This attribute is essential in cases where a lexicon has multiple entries for lexemes that are orthographically indistinguishable. 
     
-    ## names a lexicographical authority. This element is optional, because the lexical informat could be based upon the knowledge of the <agent>s who wrote the data.
-    element lexicon { entity-digital-tan-id | entity-nondigital-id }
-lexicon-attr =
+    ## Because there is no TAN format for lexicons, the value in this attribute will not be validated.
+    attribute def-ref { text }
+ptr-attr-lexicon =
     
     ## points to one or more <lexicon> or <agent> IDs
     
     ## This attribute is inheritable. See main.xml#inheritable_attributes
     attribute lexicon { text }
-grammar-attr =
+attr-tok-pop =
+    
+    ## specifies the quantity of tokens that are the subject of the <ana>.. This attribute is useful for language-specific TAN-A-lm files, where the total number of tokens that formed the set might be lost. It is also usefor calculating the relative probability of token to lm combinations.
+    attribute tok-pop { xsd:integer }
+ptr-attr-morphology =
     
     ## points to one or more <morphology> IDs
     
     ## This attribute is inheritable. See main.xml#inheritable_attributes
     attribute morphology { text }
-tok-start-indicator =
-    
-    ## specifies an opening string that characterizes the @val of <tok>s in the file.
-    element tok-starts-with { text }
-tok-is-indicator =
-    
-    ## specifies the exact values of every @val of <tok>s in the file.
-    element tok-is { text }
-TAN-A-lm-item =
+# ELEMENTS
+element-ana =
     
     ## contains a one or more assertions about the lexical or morphological properties of one or more tokens.
     
     ## Claims within an <ana> are distributive. That is, every combination of <l> and <m> within an <lm> is claimed to be true for every <tok>.
     element ana {
-        (ed-stamp?, inclusion)
+        inclusion
         | (certainty-stamp?,
-           lexicon-attr?,
-           grammar-attr?,
-           claimant-data?,
-           group-ref?,
+           ptr-attr-lexicon?,
+           ptr-attr-morphology?,
+           claimant-attributes?,
+           ptr-attr-group?,
            attr-tok-pop?,
-           (comment* & (lm-tok-ref+, lm-group+)))
+           (element-comment* & ((default-tok-element | element-group-for-tok )+, element-lm+)))
     }
-lm-group =
-    
-    ## groups lexical or morphological data.
-    
-    ## Components within <lm> combine with each other and with all sibling <tok>s. That is, every <l> is asserted against every <m> within an <lm> is asserted of every <tok>.
-    element lm {
-        certainty-stamp?,
-        lexicon-attr?,
-        grammar-attr?,
-        (comment*
-         & ((lexeme+, morph*) | (lexeme*, morph+)))
-    }
-attr-tok-pop =
-    
-    ## specifies the quantity of tokens that are the subject of the <ana>.. This attribute is useful for language-specific TAN-A-lm files, where the total number of tokens that formed the set might be lost. It is also usefor calculating the relative probability of token to lm combinations.
-    attribute tok-pop { xsd:integer }
-lm-tok-ref = tok-ref | abstract-tok-ref
-# an abstract token reference states that the data holds true for this particular token no matter where it is found, either in the source (if there is one) or the language (if there is no source)
-abstract-tok-ref = element tok { certainty-stamp?, token-value-ref }
-lexeme =
+element-l =
     
     ## names a lexeme, by points to the main word entry in the lexicon defined by the element's inherited value of @lexicon. This element should not be used to point to roots, only to lexical headwords. 
     
     ## In many languages, especially those that are lightly inflected, this word will be identical to the word token itself. In those cases, <l> may be left empty, indicating that the value of <tok> is to be supplied.
     
     ## Because there is no TAN format for lexicons, values in this element will not be validated.
-    element l {
-        lexicon-attr?,
-        
-        ## identifies which definition is meant. This attribute is essential in cases where a lexicon has multiple entries for lexemes that are orthographically indistinguishable. 
-        
-        ## Because there is no TAN format for lexicons, the value in this attribute will not be validated.
-        attribute def-ref { text }?,
+    element l { ptr-attr-lexicon?, attr-def-ref?, certainty-stamp?, text }
+element-lm =
+    
+    ## groups lexical or morphological data.
+    
+    ## Components within <lm> combine with each other and with all sibling <tok>s. That is, every <l> is asserted against every <m> within an <lm> is asserted of every <tok>.
+    element lm {
         certainty-stamp?,
-        text
+        ptr-attr-lexicon?,
+        ptr-attr-morphology?,
+        (element-comment*
+         & ((element-l+, element-m*) | (element-l*, element-m+)))
     }
-morph =
+element-m =
     
     ## carries a morphological code that conforms to the rules or patterns defined in the TAN-mor file upon which the data depends.
     
     ## Codes are space-delimited. If a value of <m> violates the rules established by the TAN-mor file, an error will be generated. For more about how codes are built, and how they function, see main.xml#tan-a-lm.
     element m {
         certainty-stamp?,
-        grammar-attr?,
+        ptr-attr-morphology?,
         xsd:string { pattern = "[^\+\s]+(\s+[^\+\s]+)*" }
     }
+element-tok-abstract =
+    
+    ## points to a token in the abstract, no matter where it is found, either in the source (if there is one) or the language (if there is no source).
+    
+    ## This version of <tok> does not allow regular expressions (@rgx).
+    element tok { certainty-stamp?, attr-val }
+element-tok-is =
+    
+    ## specifies the exact values of every @val of <tok>s in the file.
+    element tok-is { text }
+element-tok-starts-with =
+    
+    ## specifies an opening string that characterizes the @val of <tok>s in the file.
+    element tok-starts-with { text }
+voc-element-lexicon =
+    
+    ## names a lexicographical authority. This element is optional, because the lexical informat could be based upon the knowledge of the <agent>s who wrote the data.
+    element lexicon { entity-digital-tan-id | entity-nondigital-id }
+voc-element-morphology =
+    
+    ## identifies a <TAN-mor> file that defines the parts of speech for a language, the codes for those parts, and the rules for combining them
+    element morphology { entity-digital-tan-id }
+# PATTERNS
