@@ -6,10 +6,10 @@ start =
     ## specifies that the TAN file contains a transcription. Root element.
     element TAN-T { TAN-root }
 body-content-non-class-1 = body-item+
-body-attributes-non-core = lang-of-content
-    body-item = text-div
+body-attributes-non-core = attr-lang-xml
+    body-item = element-div
 }
-text-div =
+element-div =
     
     ## marks a textual unit. Contains other <div>s or text, but not both (no mixed content).
     
@@ -17,5 +17,5 @@ text-div =
     element div {
         ed-stamp?,
         (inclusion
-         | (type, n, lang-of-content?, (text-div+ | text)))
+         | (ptr-attr-type, attr-n, attr-lang-xml?, (element-div+ | text)))
     }

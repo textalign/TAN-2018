@@ -14,13 +14,16 @@
       <optional>
         <ref name="element-scope"/>
       </optional>
-    </define>
-    <define name="group-attributes">
       <optional>
-        <ref name="type"/>
+        <ref name="attribute-scope"/>
       </optional>
+    </define>
+    <define name="group-attributes-non-core">
       <optional>
         <ref name="element-scope"/>
+      </optional>
+      <optional>
+        <ref name="attribute-scope"/>
       </optional>
     </define>
     <define name="body-content-non-class-3">
@@ -34,10 +37,20 @@
       </interleave>
     </define>
     <define name="body-item">
-      <ref name="TAN-voc-item"/>
+      <ref name="element-item"/>
     </define>
   </include>
-  <define name="TAN-voc-item">
+  <!-- ATTRIBUTES -->
+  <define name="attribute-scope">
+    <attribute name="affects-attribute">
+      <a:documentation>names one or more TAN attributes that an item applies to.</a:documentation>
+      <a:documentation>This attribute is non-cumulatively inheritable. An element will be affected only by the nearest value and not any other values rootward.</a:documentation>
+      <a:documentation>Currently this attribute may have scope over only @n.</a:documentation>
+      <value>n</value>
+    </attribute>
+  </define>
+  <!-- ELEMENTS -->
+  <define name="element-item">
     <element name="item">
       <a:documentation>names an item that is being described. The item is assumed to be a species of the type of thing discussed by the TAN element that is affected.</a:documentation>
       <optional>
@@ -50,7 +63,7 @@
             <ref name="element-scope"/>
           </optional>
           <optional>
-            <ref name="group-ref"/>
+            <ref name="ptr-attr-group"/>
           </optional>
           <choice>
             <ref name="entity-digital-tan-other-content"/>
@@ -62,4 +75,11 @@
       </choice>
     </element>
   </define>
+  <define name="element-scope">
+    <attribute name="affects-element">
+      <a:documentation>names one or more TAN elements that an item applies to.</a:documentation>
+      <a:documentation>This attribute is non-cumulatively inheritable. An element will be affected only by its nearest value and not any other values rootward.</a:documentation>
+    </attribute>
+  </define>
 </grammar>
+<!-- PATTERNS -->

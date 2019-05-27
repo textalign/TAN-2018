@@ -10,7 +10,7 @@
     <define name="source-list">
       <a:documentation>Class 3 files allow zero or many sources</a:documentation>
       <zeroOrMore>
-        <ref name="source-item"/>
+        <ref name="link-element-source"/>
       </zeroOrMore>
     </define>
     <define name="source-content">
@@ -22,8 +22,8 @@
     </define>
     <define name="voc-key-non-core">
       <interleave>
-        <ref name="voc-key-for-class-3"/>
-        <ref name="voc-key-for-non-class-3"/>
+        <ref name="voc-element-class-3"/>
+        <ref name="voc-element-non-class-3"/>
       </interleave>
     </define>
     <define name="adjust-non-core">
@@ -39,30 +39,30 @@
       </interleave>
     </define>
   </include>
-  <define name="decl-class-3">
-    <empty/>
-  </define>
-  <define name="decl-non-class-3">
-    <empty/>
-  </define>
   <define name="adjust-class-3">
     <empty/>
   </define>
   <define name="adjust-non-class-3">
     <empty/>
   </define>
-  <define name="voc-key-for-class-3">
-    <zeroOrMore>
-      <ref name="voc-key-for-group-type"/>
-    </zeroOrMore>
-  </define>
-  <define name="voc-key-for-non-class-3">
-    <empty/>
-  </define>
   <define name="body-content-class-3">
     <empty/>
   </define>
   <define name="body-content-non-class-3">
+    <empty/>
+  </define>
+  <define name="decl-class-3">
+    <empty/>
+  </define>
+  <define name="decl-non-class-3">
+    <empty/>
+  </define>
+  <define name="voc-element-class-3">
+    <zeroOrMore>
+      <ref name="voc-element-group-type"/>
+    </zeroOrMore>
+  </define>
+  <define name="voc-element-non-class-3">
     <empty/>
   </define>
 </grammar>

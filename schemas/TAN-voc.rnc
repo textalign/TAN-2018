@@ -9,21 +9,9 @@ start =
     body-attributes-non-core = element-scope?, attribute-scope?
     group-attributes-non-core = element-scope?, attribute-scope?
     body-content-non-class-3 = body-group* & body-item* 
-    body-item = TAN-voc-item
+    body-item = element-item
 }
-TAN-voc-item =
-    
-    ## names an item that is being described. The item is assumed to be a species of the type of thing discussed by the TAN element that is affected.
-    element item {
-        ed-stamp?,
-        (inclusion
-         | (element-scope?,
-            group-ref?,
-            (entity-digital-tan-other-content
-             | entity-nondigital-content
-             | entity-nondigital-with-constraints-content
-             | entity-tok-def)))
-    }
+# ATTRIBUTES
 attribute-scope =
     
     ## names one or more TAN attributes that an item applies to.
@@ -32,9 +20,24 @@ attribute-scope =
     
     ## Currently this attribute may have scope over only @n.
     attribute affects-attribute { "n" }
+# ELEMENTS
+element-item =
+    
+    ## names an item that is being described. The item is assumed to be a species of the type of thing discussed by the TAN element that is affected.
+    element item {
+        ed-stamp?,
+        (inclusion
+         | (element-scope?,
+            ptr-attr-group?,
+            (element-comment* & (entity-digital-tan-other-content
+             | entity-nondigital-content
+             | entity-nondigital-with-constraints-content
+             | entity-tok-def))))
+    }
 element-scope =
     
     ## names one or more TAN elements that an item applies to.
     
     ## This attribute is non-cumulatively inheritable. An element will be affected only by its nearest value and not any other values rootward.
     attribute affects-element { text }
+# PATTERNS
