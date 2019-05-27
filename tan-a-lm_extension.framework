@@ -355,7 +355,7 @@ get-lm-data-prelim
 																	</entry>
 																	<entry>
 																		<String>insertLocation</String>
-																		<String>/*/tan:head/tan:definitions</String>
+																		<String>/*/tan:head/tan:vocabulary-key</String>
 																	</entry>
 																	<entry>
 																		<String>insertPosition</String>
@@ -489,7 +489,7 @@ process-link-to
 																	</entry>
 																	<entry>
 																		<String>insertLocation</String>
-																		<String>/*/tan:head/tan:definitions</String>
+																		<String>/*/tan:head/tan:vocabulary-key</String>
 																	</entry>
 																	<entry>
 																		<String>insertPosition</String>

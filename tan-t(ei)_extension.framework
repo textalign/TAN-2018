@@ -28,6 +28,23 @@
 									</poPatch>
 									<poPatch>
 										<field name="fieldPath">
+											<String>authorExtensionDescriptor/multipleAlternateSelectionEnabled</String>
+										</field>
+										<field name="index">
+											<Integer>-1</Integer>
+										</field>
+										<field name="value">
+											<Boolean>true</Boolean>
+										</field>
+										<field name="patchHandling">
+											<String>set</String>
+										</field>
+										<field name="anchor">
+											<null/>
+										</field>
+									</poPatch>
+									<poPatch>
+										<field name="fieldPath">
 											<String>authorExtensionDescriptor/actionDescriptors</String>
 										</field>
 										<field name="index">
@@ -70,7 +87,7 @@
 																	</entry>
 																	<entry>
 																		<String>insertLocation</String>
-																		<String>/*/tan:head/tan:definitions</String>
+																		<String>/*/*:head/*:vocabulary-key</String>
 																	</entry>
 																	<entry>
 																		<String>insertPosition</String>
@@ -204,7 +221,7 @@ process-link-to
 																	</entry>
 																	<entry>
 																		<String>insertLocation</String>
-																		<String>/*/tan:head/tan:definitions</String>
+																		<String>/*/*:head/*:vocabulary-key</String>
 																	</entry>
 																	<entry>
 																		<String>insertPosition</String>
@@ -274,7 +291,7 @@ process-link-to
 																	</entry>
 																	<entry>
 																		<String>insertLocation</String>
-																		<String>/*/tan:head/tan:definitions</String>
+																		<String>/*/*:head/*:vocabulary-key</String>
 																	</entry>
 																	<entry>
 																		<String>insertPosition</String>
@@ -818,7 +835,7 @@ process-link-to
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]/following::tan:div</String>
+														<String>self::*:div[not(*:div)]/following::*:div</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -865,7 +882,7 @@ step-2-push-last-word</String>
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]/following::tan:div</String>
+														<String>self::*:div[not(*:div)]/following::*:div</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -912,7 +929,7 @@ step-2-push-last-clause</String>
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]/following::tan:div</String>
+														<String>self::*:div[not(*:div)]/following::*:div</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -959,7 +976,7 @@ step-2-push-last-sent</String>
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]/following::tan:div</String>
+														<String>self::*:div[not(*:div)]/following::*:div</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -1194,7 +1211,7 @@ step-2-push-first-char</String>
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]</String>
+														<String>self::*:div[not(*:div)]</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -1212,7 +1229,7 @@ go-to-next-leaf-div</String>
 												</actionMode>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]</String>
+														<String>self::*:div[not(*:div)]</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -1258,7 +1275,7 @@ go-to-next-leaf-div</String>
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]</String>
+														<String>self::*:div[not(*:div)]</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -1276,7 +1293,7 @@ go-to-next-leaf-div</String>
 												</actionMode>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]</String>
+														<String>self::*:div[not(*:div)]</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -1322,7 +1339,7 @@ go-to-next-leaf-div</String>
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]</String>
+														<String>self::*:div[not(*:div)]</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -1340,7 +1357,7 @@ go-to-next-leaf-div</String>
 												</actionMode>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]</String>
+														<String>self::*:div[not(*:div)]</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -1386,7 +1403,7 @@ go-to-next-leaf-div</String>
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]</String>
+														<String>self::*:div[not(*:div)]</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -1404,7 +1421,7 @@ go-to-next-leaf-div</String>
 												</actionMode>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]</String>
+														<String>self::*:div[not(*:div)]</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -1450,7 +1467,7 @@ go-to-next-leaf-div</String>
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]/following::tan:div</String>
+														<String>self::*:div[not(*:div)]/following::*:div</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -1498,7 +1515,7 @@ go-to-prev-leaf-div</String>
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]/following::tan:div</String>
+														<String>self::*:div[not(*:div)]/following::*:div</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -1546,7 +1563,7 @@ go-to-prev-leaf-div</String>
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]/following::tan:div</String>
+														<String>self::*:div[not(*:div)]/following::*:div</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -1594,7 +1611,7 @@ go-to-prev-leaf-div</String>
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]/following::tan:div</String>
+														<String>self::*:div[not(*:div)]/following::*:div</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -1642,7 +1659,7 @@ go-to-prev-leaf-div</String>
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]/preceding::tan:div[not(tan:div)]</String>
+														<String>self::*:div[not(*:div)]/preceding::*:div[not(*:div)]</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -1660,7 +1677,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
-																<String>preceding::tan:div[not(tan:div)][1]</String>
+																<String>preceding::*:div[not(*:div)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -1700,7 +1717,7 @@ go-to-prev-leaf-div</String>
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]/preceding::tan:div[not(tan:div)]</String>
+														<String>self::*:div[not(*:div)]/preceding::*:div[not(*:div)]</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -1718,7 +1735,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
-																<String>preceding::tan:div[not(tan:div)][1]</String>
+																<String>preceding::*:div[not(*:div)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -1758,7 +1775,7 @@ go-to-prev-leaf-div</String>
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]/preceding::tan:div[not(tan:div)]</String>
+														<String>self::*:div[not(*:div)]/preceding::*:div[not(*:div)]</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -1776,7 +1793,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
-																<String>preceding::tan:div[not(tan:div)][1]</String>
+																<String>preceding::*:div[not(*:div)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -1816,7 +1833,7 @@ go-to-prev-leaf-div</String>
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]/preceding::tan:div[not(tan:div)]</String>
+														<String>self::*:div[not(*:div)]/preceding::*:div[not(*:div)]</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -1834,7 +1851,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
-																<String>preceding::tan:div[not(tan:div)][1]</String>
+																<String>preceding::*:div[not(*:div)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -1892,11 +1909,11 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
-																<String>following::tan:div[not(tan:div)][1]</String>
+																<String>following::*:div[not(*:div)][1]</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
-																<String>following::tan:div[not(tan:div)][1]</String>
+																<String>following::*:div[not(*:div)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -1954,11 +1971,11 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
-																<String>following::tan:div[not(tan:div)][1]</String>
+																<String>following::*:div[not(*:div)][1]</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
-																<String>following::tan:div[not(tan:div)][1]</String>
+																<String>following::*:div[not(*:div)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -2016,11 +2033,11 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
-																<String>following::tan:div[not(tan:div)][1]</String>
+																<String>following::*:div[not(*:div)][1]</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
-																<String>following::tan:div[not(tan:div)][1]</String>
+																<String>following::*:div[not(*:div)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -2078,11 +2095,11 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
-																<String>following::tan:div[not(tan:div)][1]</String>
+																<String>following::*:div[not(*:div)][1]</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
-																<String>following::tan:div[not(tan:div)][1]</String>
+																<String>following::*:div[not(*:div)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -2122,7 +2139,7 @@ go-to-prev-leaf-div</String>
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]/preceding::tan:div[not(tan:div)]</String>
+														<String>self::*:div[not(*:div)]/preceding::*:div[not(*:div)]</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -2140,7 +2157,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
-																<String>preceding::tan:div[not(tan:div)][1]</String>
+																<String>preceding::*:div[not(*:div)][1]</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
@@ -2184,7 +2201,7 @@ go-to-prev-leaf-div</String>
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]/preceding::tan:div[not(tan:div)]</String>
+														<String>self::*:div[not(*:div)]/preceding::*:div[not(*:div)]</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -2202,7 +2219,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
-																<String>preceding::tan:div[not(tan:div)][1]</String>
+																<String>preceding::*:div[not(*:div)][1]</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
@@ -2246,7 +2263,7 @@ go-to-prev-leaf-div</String>
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]/preceding::tan:div[not(tan:div)]</String>
+														<String>self::*:div[not(*:div)]/preceding::*:div[not(*:div)]</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -2264,7 +2281,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
-																<String>preceding::tan:div[not(tan:div)][1]</String>
+																<String>preceding::*:div[not(*:div)][1]</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
@@ -2308,7 +2325,7 @@ go-to-prev-leaf-div</String>
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]/preceding::tan:div[not(tan:div)]</String>
+														<String>self::*:div[not(*:div)]/preceding::*:div[not(*:div)]</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -2326,7 +2343,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
-																<String>preceding::tan:div[not(tan:div)][1]</String>
+																<String>preceding::*:div[not(*:div)][1]</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
@@ -2388,11 +2405,11 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
-																<String>preceding::tan:div[not(tan:div)][1]</String>
+																<String>preceding::*:div[not(*:div)][1]</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
-																<String>preceding::tan:div[not(tan:div)][1]</String>
+																<String>preceding::*:div[not(*:div)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -2450,11 +2467,11 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
-																<String>preceding::tan:div[not(tan:div)][1]</String>
+																<String>preceding::*:div[not(*:div)][1]</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
-																<String>preceding::tan:div[not(tan:div)][1]</String>
+																<String>preceding::*:div[not(*:div)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -2512,11 +2529,11 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
-																<String>preceding::tan:div[not(tan:div)][1]</String>
+																<String>preceding::*:div[not(*:div)][1]</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
-																<String>preceding::tan:div[not(tan:div)][1]</String>
+																<String>preceding::*:div[not(*:div)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -2574,11 +2591,11 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
-																<String>preceding::tan:div[not(tan:div)][1]</String>
+																<String>preceding::*:div[not(*:div)][1]</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
-																<String>preceding::tan:div[not(tan:div)][1]</String>
+																<String>preceding::*:div[not(*:div)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -2718,7 +2735,7 @@ go-to-prev-leaf-div</String>
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]/following::tan:div[not(tan:div)]</String>
+														<String>self::*:div[not(*:div)]/following::*:div[not(*:div)]</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -2736,7 +2753,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
-																<String>following::tan:div[not(tan:div)][1]</String>
+																<String>following::*:div[not(*:div)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -2776,7 +2793,7 @@ go-to-prev-leaf-div</String>
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]/following::tan:div[not(tan:div)]</String>
+														<String>self::*:div[not(*:div)]/following::*:div[not(*:div)]</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -2794,7 +2811,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
-																<String>following::tan:div[not(tan:div)][1]</String>
+																<String>following::*:div[not(*:div)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -2834,7 +2851,7 @@ go-to-prev-leaf-div</String>
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]/following::tan:div[not(tan:div)]</String>
+														<String>self::*:div[not(*:div)]/following::*:div[not(*:div)]</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -2852,7 +2869,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
-																<String>following::tan:div[not(tan:div)][1]</String>
+																<String>following::*:div[not(*:div)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -2892,7 +2909,7 @@ go-to-prev-leaf-div</String>
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]/following::tan:div[not(tan:div)]</String>
+														<String>self::*:div[not(*:div)]/following::*:div[not(*:div)]</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -2910,7 +2927,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
-																<String>following::tan:div[not(tan:div)][1]</String>
+																<String>following::*:div[not(*:div)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -2968,11 +2985,11 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
-																<String>preceding::tan:div[not(tan:div)][1]</String>
+																<String>preceding::*:div[not(*:div)][1]</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
-																<String>preceding::tan:div[not(tan:div)][1]</String>
+																<String>preceding::*:div[not(*:div)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -3030,11 +3047,11 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
-																<String>preceding::tan:div[not(tan:div)][1]</String>
+																<String>preceding::*:div[not(*:div)][1]</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
-																<String>preceding::tan:div[not(tan:div)][1]</String>
+																<String>preceding::*:div[not(*:div)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -3092,11 +3109,11 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
-																<String>preceding::tan:div[not(tan:div)][1]</String>
+																<String>preceding::*:div[not(*:div)][1]</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
-																<String>preceding::tan:div[not(tan:div)][1]</String>
+																<String>preceding::*:div[not(*:div)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -3154,11 +3171,11 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
-																<String>preceding::tan:div[not(tan:div)][1]</String>
+																<String>preceding::*:div[not(*:div)][1]</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
-																<String>preceding::tan:div[not(tan:div)][1]</String>
+																<String>preceding::*:div[not(*:div)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -3198,7 +3215,7 @@ go-to-prev-leaf-div</String>
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]/following::tan:div</String>
+														<String>self::*:div[not(*:div)]/following::*:div</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -3216,7 +3233,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
-																<String>following::tan:div[not(tan:div)][1]</String>
+																<String>following::*:div[not(*:div)][1]</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
@@ -3260,7 +3277,7 @@ go-to-prev-leaf-div</String>
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]/following::tan:div</String>
+														<String>self::*:div[not(*:div)]/following::*:div</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -3278,7 +3295,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
-																<String>following::tan:div[not(tan:div)][1]</String>
+																<String>following::*:div[not(*:div)][1]</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
@@ -3322,7 +3339,7 @@ go-to-prev-leaf-div</String>
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]/following::tan:div</String>
+														<String>self::*:div[not(*:div)]/following::*:div</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -3340,7 +3357,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
-																<String>following::tan:div[not(tan:div)][1]</String>
+																<String>following::*:div[not(*:div)][1]</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
@@ -3384,7 +3401,7 @@ go-to-prev-leaf-div</String>
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]/following::tan:div</String>
+														<String>self::*:div[not(*:div)]/following::*:div</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -3402,7 +3419,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
-																<String>following::tan:div[not(tan:div)][1]</String>
+																<String>following::*:div[not(*:div)][1]</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
@@ -3464,11 +3481,11 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
-																<String>following::tan:div[not(tan:div)][1]</String>
+																<String>following::*:div[not(*:div)][1]</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
-																<String>following::tan:div[not(tan:div)][1]</String>
+																<String>following::*:div[not(*:div)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -3526,11 +3543,11 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
-																<String>following::tan:div[not(tan:div)][1]</String>
+																<String>following::*:div[not(*:div)][1]</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
-																<String>following::tan:div[not(tan:div)][1]</String>
+																<String>following::*:div[not(*:div)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -3588,11 +3605,11 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
-																<String>following::tan:div[not(tan:div)][1]</String>
+																<String>following::*:div[not(*:div)][1]</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
-																<String>following::tan:div[not(tan:div)][1]</String>
+																<String>following::*:div[not(*:div)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -3650,11 +3667,11 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
-																<String>following::tan:div[not(tan:div)][1]</String>
+																<String>following::*:div[not(*:div)][1]</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
-																<String>following::tan:div[not(tan:div)][1]</String>
+																<String>following::*:div[not(*:div)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -3844,7 +3861,7 @@ go-to-prev-leaf-div</String>
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]/following::tan:div</String>
+														<String>self::*:div[not(*:div)]/following::*:div</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -3894,7 +3911,7 @@ go-to-prev-leaf-div</String>
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]/preceding::tan:div</String>
+														<String>self::*:div[not(*:div)]/preceding::*:div</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -3970,7 +3987,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
-																<String>following::tan:div[not(tan:div)][1]</String>
+																<String>following::*:div[not(*:div)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -4032,7 +4049,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
-																<String>preceding::tan:div[not(tan:div)][1]</String>
+																<String>preceding::*:div[not(*:div)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -4134,7 +4151,7 @@ go-to-prev-leaf-div</String>
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]/preceding::tan:div</String>
+														<String>self::*:div[not(*:div)]/preceding::*:div</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -4186,7 +4203,7 @@ remove-marked-text
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div[not(tan:div)]/following::tan:div</String>
+														<String>self::*:div[not(*:div)]/following::*:div</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -4235,7 +4252,7 @@ remove-marked-text</String>
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>ancestor-or-self::tan:person or ancestor-or-self::tan:organization or ancestor-or-self::tan:item</String>
+														<String>ancestor-or-self::*:person or ancestor-or-self::*:organization or ancestor-or-self::*:item</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -4249,11 +4266,11 @@ remove-marked-text</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
-																<String>ancestor-or-self::tan:*[name() = ('person','organization','item')]</String>
+																<String>ancestor-or-self::*:*[name() = ('person','organization','item')]</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
-																<String>ancestor-or-self::tan:*[name() = ('person','organization','item')]</String>
+																<String>ancestor-or-self::*:*[name() = ('person','organization','item')]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -4795,7 +4812,7 @@ replace-marked-text-with-string-composite
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>ancestor-or-self::*[@href or tan:location] and not(matches(name(),'location'))</String>
+														<String>ancestor-or-self::*[@href or *:location] and not(matches(name(),'location'))</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -4805,11 +4822,11 @@ replace-marked-text-with-string-composite
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
-																<String>ancestor-or-self::*[@href or tan:location][1]</String>
+																<String>ancestor-or-self::*[@href or *:location][1]</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
-																<String>ancestor-or-self::*[@href or tan:location][1]</String>
+																<String>ancestor-or-self::*[@href or *:location][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -4969,7 +4986,7 @@ replace-marked-text-with-string-composite
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>self::tan:div/preceding::tan:div[not(tan:div)]</String>
+														<String>self::*:div/preceding::*:div[not(*:div)]</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
@@ -4987,11 +5004,11 @@ replace-marked-text-with-string-composite
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
-																<String>preceding::tan:div[not(tan:div)][1]</String>
+																<String>preceding::*:div[not(*:div)][1]</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
-																<String>preceding::tan:div[not(tan:div)][1]</String>
+																<String>preceding::*:div[not(*:div)][1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -5139,7 +5156,7 @@ process-link-to
 															</entry>
 															<entry>
 																<String>insertLocation</String>
-																<String>/*/tan:head/(tan:adjustments, tan:vocabulary-key)[1]</String>
+																<String>/*/*:head/(*:adjustments, *:vocabulary-key)[1]</String>
 															</entry>
 															<entry>
 																<String>insertPosition</String>
@@ -5197,11 +5214,11 @@ process-link-to
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
-																<String>(/*/tan:head//*:link-to)[1]</String>
+																<String>(/*/*:head//*:link-to)[1]</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
-																<String>(/*/tan:head//*:link-to)[1]</String>
+																<String>(/*/*:head//*:link-to)[1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -5251,7 +5268,7 @@ process-link-to
 															</entry>
 															<entry>
 																<String>insertLocation</String>
-																<String>/*/tan:head/(tan:adjustments, tan:vocabulary-key)[1]</String>
+																<String>/*/*:head/(*:adjustments, *:vocabulary-key)[1]</String>
 															</entry>
 															<entry>
 																<String>insertPosition</String>

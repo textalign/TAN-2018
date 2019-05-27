@@ -70,7 +70,7 @@
 																	</entry>
 																	<entry>
 																		<String>insertLocation</String>
-																		<String>/*/tan:head/tan:definitions</String>
+																		<String>/*/tan:head/(tan:adjustments, tan:vocabulary-key)[1]</String>
 																	</entry>
 																	<entry>
 																		<String>insertPosition</String>
@@ -109,7 +109,7 @@
 													<String>add-source</String>
 												</field>
 												<field name="name">
-													<String>Add inclusion</String>
+													<String>Add source</String>
 												</field>
 												<field name="description">
 													<String>Add a &lt;source> to the &lt;head></String>
@@ -152,6 +152,114 @@ process-link-to
 													<Boolean>false</Boolean>
 												</field>
 											</action>
+										</field>
+										<field name="patchHandling">
+											<String>addIndex</String>
+										</field>
+										<field name="anchor">
+											<null/>
+										</field>
+									</poPatch>
+									<poPatch>
+										<field name="fieldPath">
+											<String>authorExtensionDescriptor/menubarDescriptor/menuEntriesDescriptorList/[5]/menuEntriesDescriptorList</String>
+										</field>
+										<field name="index">
+											<Integer>2</Integer>
+										</field>
+										<field name="value">
+											<menuItem>
+												<field name="actionID">
+													<String>add-source</String>
+												</field>
+											</menuItem>
+										</field>
+										<field name="patchHandling">
+											<String>addIndex</String>
+										</field>
+										<field name="anchor">
+											<null/>
+										</field>
+									</poPatch>
+									<poPatch>
+										<field name="fieldPath">
+											<String>authorExtensionDescriptor/popupMenuDescriptor/menuEntriesDescriptorList/[5]/menuEntriesDescriptorList</String>
+										</field>
+										<field name="index">
+											<Integer>2</Integer>
+										</field>
+										<field name="value">
+											<menuItem>
+												<field name="actionID">
+													<String>add-source</String>
+												</field>
+											</menuItem>
+										</field>
+										<field name="patchHandling">
+											<String>addIndex</String>
+										</field>
+										<field name="anchor">
+											<null/>
+										</field>
+									</poPatch>
+									<poPatch>
+										<field name="fieldPath">
+											<String>authorExtensionDescriptor/additionalToolbarsDescriptors</String>
+										</field>
+										<field name="index">
+											<Integer>0</Integer>
+										</field>
+										<field name="value">
+											<null/>
+										</field>
+										<field name="patchHandling">
+											<String>removeIndex</String>
+										</field>
+										<field name="anchor">
+											<null/>
+										</field>
+									</poPatch>
+									<poPatch>
+										<field name="fieldPath">
+											<String>authorExtensionDescriptor/additionalToolbarsDescriptors</String>
+										</field>
+										<field name="index">
+											<Integer>0</Integer>
+										</field>
+										<field name="value">
+											<toolbar>
+												<field name="id">
+													<String>Link</String>
+												</field>
+												<field name="type">
+													<Integer>2</Integer>
+												</field>
+												<field name="largeIconPath">
+													<null/>
+												</field>
+												<field name="smallIconPath">
+													<null/>
+												</field>
+												<field name="toolbarEntriesDescriptorList">
+													<toolbarEntry-array>
+														<toolbarItem>
+															<field name="actionID">
+																<String>add-inclusion</String>
+															</field>
+														</toolbarItem>
+														<toolbarItem>
+															<field name="actionID">
+																<String>add-vocabulary</String>
+															</field>
+														</toolbarItem>
+														<toolbarItem>
+															<field name="actionID">
+																<String>add-source</String>
+															</field>
+														</toolbarItem>
+													</toolbarEntry-array>
+												</field>
+											</toolbar>
 										</field>
 										<field name="patchHandling">
 											<String>addIndex</String>
