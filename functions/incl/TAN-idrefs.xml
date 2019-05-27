@@ -65,10 +65,6 @@
         <idrefs attribute="m-has-features"/>
     </id>
     <id>
-        <element>align</element>
-        <idrefs attribute="alignments"/>
-    </id>
-    <id>
         <element>inclusion</element>
         <idrefs attribute="include"/>
     </id>
@@ -93,12 +89,16 @@
         <idrefs attribute="relationship"/>
     </id>
     <id>
+        <element>algorithm</element>
+        <element>organization</element>
         <element>person</element>
         <element>work</element>
         <element>version</element>
         <element>scriptum</element>
         <element>topic</element>
+        <element>source</element>
         <idrefs attribute="subject"/>
+        <idrefs attribute="object"/>
         <idrefs attribute="claim-basis"/>
     </id>
     <id>
@@ -114,9 +114,8 @@
         <element>div-type</element>
         <idrefs attribute="units"/>
     </id>
-    <!-- Aug 2018: commented out during retesting -->
-    <!--<id cross-file="true">
+    <id cross-file="true">
         <element>div-type</element>
         <idrefs attribute="div-type"/>
-    </id>-->
+    </id>
 </id-idrefs>
