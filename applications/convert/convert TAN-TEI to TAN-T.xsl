@@ -525,7 +525,7 @@
     <xsl:param name="template-infused-with-revised-input" select="$input-pass-2"/>
 
     <!-- Output -->
-    <xsl:param name="output-url-relative-to-input" as="xs:string?"
+    <xsl:param name="output-url-relative-to-actual-input" as="xs:string?"
         select="concat(replace(tan:cfn(/), 'tan-tei', 'tan-t'), '-', $today-iso, '.xml')"/>
 
     <!--<xsl:template match="/" priority="5">

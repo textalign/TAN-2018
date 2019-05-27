@@ -33,11 +33,11 @@
 
     <xsl:param name="TAN-TEI-template-url-relative-to-this-stylesheet" as="xs:string?"
         select="'../../templates/template-TAN-TEI.xml'"/>
-    <xsl:param name="TAN-TEI-template-url-relative-to-input" as="xs:string?"/>
+    <xsl:param name="TAN-TEI-template-url-relative-to-actual-input" as="xs:string?"/>
     <xsl:variable name="TAN-TEI-template-url-resolved"
         select="
-            if (string-length($TAN-TEI-template-url-relative-to-input) gt 0) then
-                resolve-uri($TAN-TEI-template-url-relative-to-input, $doc-uri)
+            if (string-length($TAN-TEI-template-url-relative-to-actual-input) gt 0) then
+                resolve-uri($TAN-TEI-template-url-relative-to-actual-input, $doc-uri)
             else
                 resolve-uri($TAN-TEI-template-url-relative-to-this-stylesheet, static-base-uri())"/>
     <xsl:variable name="TAN-TEI-template" as="document-node()"

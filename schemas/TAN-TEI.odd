@@ -83,7 +83,7 @@
             <rng:group>
               <rng:interleave>
                 <rng:ref name="teiHeader"/>
-                <rng:ref name="TAN-head"/>
+                <rng:ref name="element-head"/>
               </rng:interleave>
               <rng:choice>
                 <rng:group>
@@ -98,7 +98,7 @@
               </rng:choice>
             </rng:group>
             <rng:optional>
-              <rng:ref name="TAN-tail"/>
+              <rng:ref name="element-tail"/>
             </rng:optional>
           </content>
           <attList>
@@ -220,14 +220,14 @@
             </attDef>
           </attList>
         </elementSpec>
-        <classSpec ident="att.global" mode="change" type="atts">
+        <classSpec type="atts" ident="att.global.responsibility" mode="change">
           <attList>
             <attDef mode="add" ident="ed-who" usage="opt">
               <desc>Reference to agent or agents who have edited (added or modified) an element or
                 its content</desc>
               <datatype>
                 <rng:data type="string">
-                  <rng:param name="pattern">\w*</rng:param>
+                  <rng:param name="pattern">.+</rng:param>
                 </rng:data>
               </datatype>
             </attDef>
@@ -243,6 +243,39 @@
             </attDef>
           </attList>
         </classSpec>
+        <classSpec type="atts" ident="att.typed" mode="change">
+          <attList>
+            <attDef ident="type" mode="change">
+              <desc>Attribute may take multiple values, space delimited.</desc>
+              <datatype>
+                <rng:data type="string">
+                  <rng:param name="pattern">.+</rng:param>
+                </rng:data>
+              </datatype>
+            </attDef>
+          </attList>
+        </classSpec>
+        <classSpec type="atts" ident="att.global" mode="change">
+          <attList>
+            <attDef ident="n" mode="change">
+              <desc>@n values must consist of word characters or the underscore. If @n is to be
+                given more than one value, those items must be separated by a space or a comma. A
+                hyphen-minus, - (U+002D, the most common form of hyphen), always has special
+                meaning, specifying a range. This feature is useful for cases where a &lt;div>
+                straddles more than one standard reference number (e.g., a translation of Aristotle
+                that cannot be easily tied to Bekker numbers). If you need to use a hyphen-like
+                character in an @n that does not specify a range, consider ‐ (U+2010 HYPHEN), ‑
+                (U+2011 NON-BREAKING HYPHEN), ‒ (U+2012 FIGURE DASH), – (U+2013 EN DASH), or −
+                (U+2212 MINUS SIGN).</desc>
+              <datatype>
+                <rng:data type="string">
+                  <rng:param name="pattern">[\w\._]+([\- ,]+[\w\._]+)*</rng:param>
+                </rng:data>
+              </datatype>
+            </attDef>
+          </attList>
+        </classSpec>
+        
       </schemaSpec>
     </body>
   </text>
