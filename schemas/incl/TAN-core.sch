@@ -12,7 +12,7 @@
       <let name="this-q-ref" value="generate-id(.)"/>
       <let name="this-name" value="name(.)"/>
       <let name="this-checked-for-errors" value="tan:get-via-q-ref($this-q-ref, $self-expanded[1])"/>
-      <let name="has-include-or-which-attr" value="exists(@include) or exists(@which)"/>
+      <let name="has-include-or-which-attr" value="exists(@include) or exists(@which) or $this-name = 'inclusion'"/>
       <let name="relevant-fatalities"
          value="
             if ($has-include-or-which-attr = true()) then
@@ -43,8 +43,10 @@
                $this-checked-for-errors//tan:help
             else
                $this-checked-for-errors/(self::*, tan:range)/(self::*, *[@attr])/tan:help"/>
+      <let name="relevant-problems"
+         value="($relevant-fatalities, $relevant-errors, $relevant-warnings)"/>
       <let name="relevant-items"
-         value="($relevant-fatalities, $relevant-errors, $relevant-warnings, $relevant-info, $help-offered)"/>
+         value="($relevant-problems, $relevant-info, $help-offered)"/>
       <let name="these-fixes"
          value="($this-checked-for-errors/(self::*, *[@attr])/tan:fix, $relevant-items/tan:fix)"/>
       <let name="self-replacements" value="$these-fixes[@type = 'replace-self']"/>
@@ -63,21 +65,53 @@
       <let name="replacement-attributes" value="$these-fixes[@type = 'replace-attributes']"/>
       <let name="self-deletions" value="$these-fixes[@type = 'delete-self']"/>
       <let name="vocabulary-key-item" value="$these-fixes[@type = 'add-vocabulary-key-item']"/>
+      <let name="link-element" value="$these-fixes[@type = 'add-link-element']"/>
+      
+      <let name="preceding-node" value="preceding-sibling::node()[1]"></let>
+      <let name="preceding-comment"
+         value="($preceding-node/self::comment(), $preceding-node/preceding-sibling::node()[1]/self::comment())[1]"
+      />
+      <let name="these-intended-error-codes" 
+         value="tan:error-codes($preceding-comment)[($internet-available and not(. = ('wrn09', 'wrn10'))) 
+         or (not($internet-available) and not(. = 'wrn11'))]"/>
+      <!-- In diagnostic test files, if the internet is available drop non-internet warnings, and vice-versa -->
+      
+      <let name="intended-codes-missing"
+         value="
+            if ($doc-is-error-test) then
+               $these-intended-error-codes[not(. = $relevant-items/@xml:id)]
+            else
+               ()"
+      />
+      <let name="unexpected-actual-errors"
+         value="
+            if ($doc-is-error-test) then
+               $relevant-problems[not(@xml:id = $these-intended-error-codes)]
+            else
+               ()"
+      />
       
 
-      <report test="exists($relevant-fatalities)" role="fatal"><value-of
+      <report test="exists($relevant-fatalities) and not($doc-is-error-test)" role="fatal"><value-of
             select="tan:error-report($relevant-fatalities)"/></report>
-      <report test="exists($relevant-errors)" sqf:fix="tan-sqf"><value-of
+      <report test="exists($relevant-errors) and not($doc-is-error-test)" sqf:fix="tan-sqf"><value-of
             select="tan:error-report($relevant-errors)"/></report>
-      <report test="exists($relevant-warnings)" role="warning" sqf:fix="tan-sqf"><value-of
+      <report test="exists($relevant-warnings) and not($doc-is-error-test)" role="warning" sqf:fix="tan-sqf"><value-of
             select="tan:error-report($relevant-warnings)"/></report>
-      <report test="exists($relevant-info)" role="info"><value-of
+      <report test="exists($relevant-info) and not($doc-is-error-test)" role="info"><value-of
             select="$relevant-info/tan:message"/></report>
-      <report test="exists($help-offered)" role="warning" sqf:fix="tan-sqf">
+      <report test="exists($help-offered) and not($doc-is-error-test)" role="warning" sqf:fix="tan-sqf">
          <value-of select="$help-offered/tan:message"/>
       </report>
       <assert test="exists($this-checked-for-errors)"><value-of select="$this-q-ref"/> doesn't
          match; other @q values of <value-of select="$this-name"/>: <value-of select="string-join($self-expanded//*[name() = $this-name]/@q, ', ')"/></assert>
+      
+      <report test="$doc-is-error-test and exists($intended-codes-missing)">Expected: 
+         <value-of select="for $i in $intended-codes-missing return concat($i, ' (', tan:error($i)/tan:rule, ')')"/></report>
+      <report test="$doc-is-error-test and exists($unexpected-actual-errors)">Unexpected errors: 
+         <value-of select="for $i in $unexpected-actual-errors return concat($i/@xml:id, ' ', $i/tan:message, ' (', $i/tan:rule, ')')"/></report>
+      
+      <!-- SQFs -->
       <sqf:group id="tan-sqf" use-when="$has-include-or-which-attr = false()">
          <sqf:fix id="replace-self" use-when="exists($self-replacements)">
             <sqf:description>
@@ -245,19 +279,19 @@
 
          <sqf:fix id="replace-first-child" use-when="exists($replacement-children)">
             <sqf:description>
-               <sqf:title>Replace <value-of select="name($replacement-children/*[1])"/> with
-                     <value-of select="tan:xml-to-string($replacement-children/*[1])"/></sqf:title>
+               <sqf:title>Replace <value-of select="name($replacement-children[1]/*[1])"/> with
+                     <value-of select="tan:xml-to-string($replacement-children[1]/*[1])"/></sqf:title>
             </sqf:description>
-            <sqf:replace match="*[name(.) = name($replacement-children/*[1])][1]"
-               select="$replacement-children/*[1]"/>
+            <sqf:replace match="*[name(.) = name($replacement-children[1]/*[1])][1]"
+               select="$replacement-children[1]/*[1]"/>
          </sqf:fix>
          <sqf:fix id="replace-second-child" use-when="exists($replacement-children/*[2])">
             <sqf:description>
-               <sqf:title>Replace <value-of select="name($replacement-children/*[2])"/> with
-                     <value-of select="tan:xml-to-string($replacement-children/*[2])"/></sqf:title>
+               <sqf:title>Replace <value-of select="name($replacement-children[1]/*[2])"/> with
+                     <value-of select="tan:xml-to-string($replacement-children[1]/*[2])"/></sqf:title>
             </sqf:description>
-            <sqf:replace match="*[name(.) = name($replacement-children/*[2])][1]"
-               select="$replacement-children/*[2]"/>
+            <sqf:replace match="*[name(.) = name($replacement-children[1]/*[2])][1]"
+               select="$replacement-children[1]/*[2]"/>
          </sqf:fix>
 
          <sqf:fix id="add-master-location"
@@ -272,7 +306,7 @@
          </sqf:fix>
          
          <sqf:fix id="replace-attributes-1" use-when="exists($replacement-attributes)">
-            <let name="first-attribute" value="$replacement-attributes/@*[1]"></let>
+            <let name="first-attribute" value="$replacement-attributes[1]/@*[1]"></let>
             <sqf:description>
                <sqf:title>Replace attribute <value-of
                   select="tan:xml-to-string($first-attribute)"/> (first instance)</sqf:title>
@@ -319,7 +353,16 @@
                <sqf:title>Add new item to the end of vocabulary-key</sqf:title>
             </sqf:description>
             <sqf:add position="last-child" match="root()/*/tan:head/tan:vocabulary-key">
-               <xsl:copy-of select="$vocabulary-key-item/node()"/>
+               <xsl:copy-of select="tan:copy-indentation($vocabulary-key-item, .)/(node() except node()[1]/self::text())"/>
+            </sqf:add>
+         </sqf:fix>
+         
+         <sqf:fix id="link-element" use-when="exists($link-element)">
+            <sqf:description>
+               <sqf:title>Add new linking element just before vocabulary-key</sqf:title>
+            </sqf:description>
+            <sqf:add position="before" match="root()/*/tan:head/tan:vocabulary-key">
+               <xsl:copy-of select="tan:copy-indentation($link-element, .)/(node() except node()[1]/self::text())"/>
             </sqf:add>
          </sqf:fix>
       </sqf:group>
