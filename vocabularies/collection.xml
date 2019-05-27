@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- This is a simple collection file to accelerate access to the core vocabularies (i.e., excluding extra vocabularies) -->
 <collection stable="true">
    <doc href="bitext-relations.TAN-voc.xml"/>
+   <doc href="catalog.tan.xml"/>
+   <doc href="collection.xml"/>
    <doc href="div-types.TAN-voc.xml"/>
    <doc href="features.TAN-voc.xml"/>
    <doc href="group-types.TAN-voc.xml"/>

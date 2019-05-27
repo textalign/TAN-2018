@@ -8493,6 +8493,11 @@
                     union of http://purl.org/olia/olia.owl#MiddleVoice and
                     http://purl.org/olia/olia.owl#PassiveVoice </desc>
             </item>
+            <item>
+                <IRI>tag:textalign.net,2015:feature:lat:perseus:gerundive</IRI>
+                <name>gerundive</name>
+                <desc>A distinct Latin form that must be distinguished from the gerund.</desc>
+            </item>
         </group>
     </body>
 </TAN-voc>
