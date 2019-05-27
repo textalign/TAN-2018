@@ -6,12 +6,16 @@
    <doc href="TAN-A-lm-functions.xsl"/>
    <doc href="TAN-A-tok-functions.xsl"/>
    <doc href="TAN-extra-functions.xsl"/>
-   <doc href="TAN-voc-functions.xsl"/>
    <doc href="TAN-mor-functions.xsl"/>
    <doc href="TAN-T-functions.xsl"/>
    <doc href="TAN-TEI-functions.xsl"/>
+   <doc href="TAN-voc-functions.xsl"/>
+   <doc href="extra/TAN-A-lm-extra-functions.xsl"/>
    <doc href="extra/TAN-function-functions.xsl"/>
+   <doc href="extra/TAN-language-functions.xsl"/>
    <doc href="extra/TAN-schema-functions.xsl"/>
+   <doc href="extra/TAN-search-functions.xsl"/>
+   <doc href="extra/TAN-search-services.xml"/>
    <doc href="incl/TAN-class-1-functions.xsl"/>
    <doc href="incl/TAN-class-2-functions.xsl"/>
    <doc href="incl/TAN-class-3-functions.xsl"/>
@@ -20,7 +24,6 @@
    <doc href="incl/TAN-core-resolve-functions.xsl"/>
    <doc href="incl/TAN-core-string-functions.xsl"/>
    <doc href="incl/TAN-idrefs.xml"/>
-   <doc href="incl/TAN-parameters.xsl"/>
    <doc href="errors/TAN-core-errors.xsl"/>
    <doc href="errors/TAN-errors.xml"/>
    <doc href="regex/regex-ext-tan-functions.xsl"/>
