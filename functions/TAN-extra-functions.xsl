@@ -20,7 +20,8 @@
    <!-- GLOBAL VARIABLES AND PARAMETERS -->
 
    <xsl:variable name="doc-history" select="tan:get-doc-history($orig-self)"/>
-   <xsl:variable name="doc-filename" select="replace($doc-uri, '.*/([^/]+)$', '$1')"/>
+   <!--<xsl:variable name="doc-filename" select="replace($doc-uri, '.*/([^/]+)$', '$1')"/>-->
+   <xsl:variable name="doc-filename" select="tan:cfne(/)"/>
    
    <!-- sources -->
    <!--<xsl:variable name="sources-1st-da" select="tan:get-1st-doc($head/tan:source)"/>
@@ -115,6 +116,23 @@
    <xsl:variable name="local-TAN-collection" as="document-node()*"
       select="collection(concat(resolve-uri('catalog.tan.xml', $doc-uri), '?on-error=warning'))"/>
    <xsl:variable name="local-TAN-voc-collection" select="$local-TAN-collection[name(*) = 'TAN-voc']"/>
+   
+   <!--<xsl:variable name="applications-collection" as="document-node()*"
+      select="collection(concat('../applications/catalog.xml', '?on-error=ignore'))"/>-->
+   <xsl:variable name="applications-uri-collection"
+      select="uri-collection('../applications/catalog.xml?on-error=ignore')"/>
+   <xsl:variable name="applications-collection" as="document-node()*">
+      <xsl:for-each select="$applications-uri-collection">
+         <xsl:choose>
+            <xsl:when test="doc-available(.)">
+               <xsl:sequence select="doc(.)"/>
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:message select="'applications collection has bad entry for ', ."/>
+            </xsl:otherwise>
+         </xsl:choose>
+      </xsl:for-each>
+   </xsl:variable>
 
    <xsl:variable name="today-iso" select="format-date(current-date(), '[Y0001]-[M01]-[D01]')"/>
 
@@ -214,50 +232,28 @@
          </xsl:if>
       </xsl:for-each>
    </xsl:function>
-
-   <xsl:function name="tan:ordinal" xml:id="f-ordinal" as="xs:string*">
-      <!-- Input: one or more numerals
-        Output: one or more strings with the English form of the ordinal form of the input number
-        E.g., (1, 4, 17)  ->  ('first','fourth','17th'). 
-        -->
-      <xsl:param name="in" as="xs:integer*"/>
-      <xsl:variable name="ordinals"
-         select="
-            ('first',
-            'second',
-            'third',
-            'fourth',
-            'fifth',
-            'sixth',
-            'seventh',
-            'eighth',
-            'ninth',
-            'tenth')"/>
-      <xsl:variable name="ordinal-suffixes"
-         select="
-            ('th',
-            'st',
-            'nd',
-            'rd',
-            'th',
-            'th',
-            'th',
-            'th',
-            'th',
-            'th')"/>
-      <xsl:copy-of
-         select="
-            for $i in $in
-            return
-               if (exists($ordinals[$i]))
-               then
-                  $ordinals[$i]
-               else
-                  if ($i lt 1) then
-                     'none'
-                  else
-                     concat(xs:string($i), $ordinal-suffixes[($i mod 10) + 1])"
-      />
+   
+   <xsl:function name="tan:dec-to-bin" as="xs:string?">
+      <!-- Input: a decimal -->
+      <!-- Output: the number in binary, represented as a string -->
+      <xsl:param name="in" as="xs:integer?"/>
+      <xsl:sequence select="tan:dec-to-n($in, 2)"/>
+   </xsl:function>
+   
+   
+   <xsl:function name="tan:base64-to-dec" as="xs:integer?">
+      <!-- Input: a base64 datum -->
+      <!-- Output: an integer representing the base-10 value of the input -->
+      <xsl:param name="base64" as="xs:base64Binary?"/>
+      <xsl:variable name="base64-string" select="xs:string($base64)"/>
+      <xsl:copy-of select="tan:n-to-dec($base64-string, 64)"/>
+   </xsl:function>
+   
+   <xsl:function name="tan:base64-to-bin" as="xs:string?">
+      <!-- Input: a base64 datum -->
+      <!-- Output: a string representing the datum in binary code -->
+      <xsl:param name="base64" as="xs:base64Binary?"/>
+      <xsl:copy-of select="tan:dec-to-bin(tan:base64-to-dec($base64))"/>
    </xsl:function>
 
    <xsl:function name="tan:counts-to-lasts" xml:id="f-counts-to-lasts" as="xs:integer*">
@@ -275,9 +271,9 @@
       />
    </xsl:function>
 
-   <xsl:function name="tan:counts-to-firsts" xml:id="f-counts-to-firsts" as="xs:integer*">
-      <!-- Input: sequence of numbers representing counts of items.  -->
-      <!-- Output: sequence of numbers representing the first position of each item within the total count.
+   <xsl:function name="tan:lengths-to-positions" as="xs:integer*">
+      <!-- Input: sequence of numbers representing legnths of items.  -->
+      <!-- Output: sequence of numbers representing the first position of each input item, if the sequence concatenated.
       E.g., (4, 12, 0, 7) - > (1, 5, 17, 17)-->
       <xsl:param name="seq" as="xs:integer*"/>
       <xsl:copy-of
@@ -352,10 +348,6 @@
       <!-- Input: any sequence of numbers -->
       <!-- Output: outliers in the sequence, -->
       <xsl:param name="numbers" as="xs:anyAtomicType*"/>
-      <xsl:variable name="diagnostics" select="false()"/>
-      <xsl:if test="$diagnostics">
-         <xsl:message>Diagnostics turned on for tan:outliers()</xsl:message>
-      </xsl:if>
       <xsl:variable name="numbers-sorted" select="tan:number-sort($numbers)" as="xs:anyAtomicType*"/>
       <xsl:variable name="half-point" select="count($numbers) idiv 2"/>
       <xsl:variable name="top-half" select="$numbers-sorted[position() le $half-point]"/>
@@ -370,6 +362,11 @@
       <xsl:variable name="top-outliers" select="$top-half[. lt $top-fence]"/>
       <xsl:variable name="bottom-outliers" select="$bottom-half[. gt $bottom-fence]"/>
 
+      <xsl:variable name="diagnostics-on" select="false()"/>
+      <xsl:if test="$diagnostics-on">
+         <xsl:message select="'diagnostics on for tan:outliers()'"/>
+         <xsl:message select="'numbers sorted: ', $numbers-sorted"/>
+      </xsl:if>
       <xsl:for-each select="$numbers">
          <xsl:variable name="this-number"
             select="
@@ -381,9 +378,6 @@
             <xsl:copy-of select="."/>
          </xsl:if>
       </xsl:for-each>
-      <xsl:if test="$diagnostics">
-         <xsl:message select="$numbers-sorted"/>
-      </xsl:if>
    </xsl:function>
 
    <xsl:function name="tan:no-outliers" as="xs:anyAtomicType*">
@@ -448,7 +442,6 @@
       <!-- Output: A synthesis of the results. If the second parameter is true, the stats are added; if false, the first statistic will be compared to the sum of all subsequent ones. -->
       <xsl:param name="analyzed-stats" as="element()*"/>
       <xsl:param name="add-stats" as="xs:boolean?"/>
-      <xsl:variable name="diagnostics" select="false()"/>
       <xsl:variable name="datum-counts" as="xs:integer*"
          select="
             for $i in $analyzed-stats
@@ -501,10 +494,12 @@
             </xsl:for-each>
          </stats>
       </xsl:variable>
-      <xsl:if test="$diagnostics and count(distinct-values($datum-counts)) gt 1">
-         <xsl:message
-            select="concat('Comparing mismatched sets of sizes ', string-join($analyzed-stats/tan:count, ', '))"
-         />
+      <xsl:variable name="diagnostics-on" select="false()"/>
+      <xsl:if test="$diagnostics-on">
+         <xsl:message select="'diagnostics on for tan:merge-analyzed-stats()'"/>
+         <xsl:message select="'add stats?', $add-stats"/>
+         <xsl:message select="'datum counts:', $datum-counts"/>
+         <xsl:message select="'data diff: ', $data-diff"/>
       </xsl:if>
       <xsl:choose>
          <xsl:when test="$add-stats = true()">
@@ -576,6 +571,84 @@
          </string>
       </xsl:for-each>
    </xsl:function>
+   
+   <xsl:function name="tan:batch-replace-advanced" as="item()*">
+      <!-- Input: a string; a sequence of elements <[ANY NAME] pattern="" [flags=""]>[ANY CONTENT]</[ANY NAME]> -->
+      <!-- Output: a sequence of items, with instances of @pattern replaced by the content of the elements -->
+      <!-- This is a more advanced form of tan:batch-replace(), in that it allows text to be spiked by elements. -->
+      <!-- The function was devised in service of raw text that needed to be converted to TAN-T. Text clearly identifying references can then be turned into elements, and the result can then be changed into a traditional hierarchy. -->
+      <xsl:param name="string" as="xs:string?"/>
+      <xsl:param name="replace-elements" as="element()*"/>
+      <xsl:choose>
+         <xsl:when test="not(exists($replace-elements))">
+            <xsl:value-of select="$string"/>
+         </xsl:when>
+         <xsl:when test="string-length($replace-elements[1]/@pattern) lt 1">
+            <xsl:copy-of
+               select="tan:batch-replace-advanced($string, $replace-elements[position() gt 1])"/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:analyze-string select="$string" regex="{$replace-elements[1]/@pattern}" flags="{$replace-elements[1]/@flags}">
+               <xsl:matching-substring>
+                  <xsl:apply-templates select="$replace-elements[1]/node()" mode="batch-replace-advanced">
+                     <xsl:with-param name="regex-zero" tunnel="yes" select="."/>
+                     <xsl:with-param name="regex-groups" tunnel="yes"
+                        select="
+                           for $i in (1 to 20)
+                           return
+                              regex-group($i)"
+                     />
+                  </xsl:apply-templates>
+               </xsl:matching-substring>
+               <xsl:non-matching-substring>
+                  <!-- Anything that doesn't match should be processed with the next replace element -->
+                  <xsl:copy-of
+                     select="tan:batch-replace-advanced(., $replace-elements[position() gt 1])"/>
+               </xsl:non-matching-substring>
+            </xsl:analyze-string>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:function>
+   <xsl:template match="*" mode="batch-replace-advanced">
+      <xsl:copy>
+         <xsl:apply-templates select="@* | node()" mode="#current"/>
+      </xsl:copy>
+   </xsl:template>
+   <xsl:template match="@*" mode="batch-replace-advanced">
+      <xsl:param name="regex-zero" as="xs:string" tunnel="yes"/>
+      <xsl:param name="regex-groups" as="xs:string*" tunnel="yes"/>
+      <xsl:variable name="new-value" as="xs:string*">
+         <xsl:analyze-string select="." regex="\$(\d+)">
+            <xsl:matching-substring>
+               <xsl:variable name="this-regex-no" select="number(regex-group(1))"/>
+               <xsl:value-of select="$regex-groups[$this-regex-no]"/>
+            </xsl:matching-substring>
+            <xsl:non-matching-substring>
+               <xsl:value-of select="."/>
+            </xsl:non-matching-substring>
+         </xsl:analyze-string>
+      </xsl:variable>
+      <xsl:attribute name="{name(.)}" select="string-join($new-value, '')"/>
+   </xsl:template>
+   <xsl:template match="text()" mode="batch-replace-advanced">
+      <xsl:param name="regex-zero" as="xs:string" tunnel="yes"/>
+      <xsl:param name="regex-groups" as="xs:string*" tunnel="yes"/>
+      <xsl:choose>
+         <!-- omit whitespace text -->
+         <xsl:when test="not(matches(., '\S'))"/>
+         <xsl:otherwise>
+            <xsl:analyze-string select="." regex="\$(\d+)">
+               <xsl:matching-substring>
+                  <xsl:variable name="this-regex-no" select="number(regex-group(1))"/>
+                  <xsl:value-of select="$regex-groups[$this-regex-no]"/>
+               </xsl:matching-substring>
+               <xsl:non-matching-substring>
+                  <xsl:value-of select="."/>
+               </xsl:non-matching-substring>
+            </xsl:analyze-string>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:template>
 
 
    <!-- Functions: booleans -->
@@ -846,6 +919,60 @@
          </xsl:if>
       </xsl:for-each-group>
    </xsl:function>
+   
+   <xsl:function name="tan:integers-to-sequence" as="xs:string?">
+      <!-- Input: any integers -->
+      <!-- Output: a string that compactly expresses those integers -->
+      <!-- Example: (1, 3, 6, 1, 2) - > "1-3, 6" -->
+      <xsl:param name="input-integers" as="xs:integer*"/>
+      <xsl:variable name="input-sorted" as="element()">
+         <sorted>
+            <xsl:for-each select="distinct-values($input-integers)">
+               <xsl:sort/>
+               <n>
+                  <xsl:value-of select="."/>
+               </n>
+            </xsl:for-each>
+         </sorted>
+      </xsl:variable>
+      <xsl:variable name="input-analyzed" as="element()">
+         <xsl:apply-templates select="$input-sorted" mode="integers-to-sequence"/>
+      </xsl:variable>
+      <xsl:variable name="output-atoms" as="xs:string*">
+         <xsl:for-each-group select="$input-analyzed/*" group-starting-with="*[@start]">
+            <xsl:variable name="last-item" select="current-group()[not(@start)][last()]"/>
+            <xsl:choose>
+               <xsl:when test="exists($last-item)">
+                  <xsl:value-of select="concat(current-group()[1], '-', $last-item)"/>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:value-of select="current-group()[1]"/>
+               </xsl:otherwise>
+            </xsl:choose>
+         </xsl:for-each-group> 
+      </xsl:variable>
+      <!--<xsl:message select="$input-analyzed"/>-->
+      <!--<xsl:value-of select="$input-sorted"/>-->
+      <!--<xsl:value-of select="$input-analyzed"/>-->
+      <!--<xsl:value-of select="$output-atoms"/>-->
+      <xsl:value-of select="string-join($output-atoms, ', ')"/>
+   </xsl:function>
+   <xsl:template match="tan:n" mode="integers-to-sequence">
+      <xsl:variable name="preceding-n" select="preceding-sibling::tan:n[1]"/>
+      <xsl:variable name="this-n-val" select="xs:integer(.)"/>
+      <xsl:variable name="preceding-n-val" select="xs:integer($preceding-n)"/>
+      <xsl:copy>
+         <xsl:choose>
+            <xsl:when test="not(exists($preceding-n-val))">
+               <xsl:attribute name="start"/>
+            </xsl:when>
+            <xsl:when test="$this-n-val - $preceding-n-val gt 1">
+               <xsl:attribute name="start"/>
+            </xsl:when>
+         </xsl:choose>
+         <xsl:value-of select="."/>
+      </xsl:copy>
+   </xsl:template>
 
 
    <!-- Functions: accessors and manipulation of uris -->
@@ -869,24 +996,20 @@
       <!-- Input: an item that should have urls resolved; the original url of the item; the target url (the item's destination) -->
       <!-- Output: the item with each @href (including those in processing instructions) and html:*/@src resolved -->
       <xsl:param name="item-to-resolve" as="item()?"/>
-      <xsl:param name="original-url" as="xs:string"/>
-      <xsl:param name="target-url" as="xs:string"/>
-      <xsl:variable name="original-url-resolved" select="resolve-uri($original-url)"/>
-      <xsl:variable name="target-url-resolved" select="resolve-uri($target-url)"/>
-      <xsl:choose>
-         <xsl:when test="not($original-url = $original-url-resolved)">
-            <xsl:message select="'resolve param 2', $original-url, 'before using this function'"/>
-         </xsl:when>
-         <xsl:when test="not($target-url = $target-url-resolved)">
-            <xsl:message select="'resolve param 3', $target-url, 'before using this function'"/>
-         </xsl:when>
-         <xsl:otherwise>
-            <xsl:apply-templates select="$item-to-resolve" mode="revise-hrefs">
-               <xsl:with-param name="original-url" select="$original-url" tunnel="yes"/>
-               <xsl:with-param name="target-url" select="$target-url" tunnel="yes"/>
-            </xsl:apply-templates>
-         </xsl:otherwise>
-      </xsl:choose>
+      <xsl:param name="items-original-url" as="xs:string"/>
+      <xsl:param name="items-destination-url" as="xs:string"/>
+      <xsl:variable name="original-url-resolved" select="resolve-uri($items-original-url)"/>
+      <xsl:variable name="destination-url-resolved" select="resolve-uri($items-destination-url)"/>
+      <xsl:if test="not($items-original-url = $original-url-resolved)">
+         <xsl:message select="'tan:revise-hrefs() warning: param 2 url, ', $items-original-url, ', does not match resolved state: ', $original-url-resolved"/>
+      </xsl:if>
+      <xsl:if test="not($items-destination-url = $destination-url-resolved) and not(not($items-original-url = $original-url-resolved))">
+         <xsl:message select="'tan:revise-hrefs() warning: param 3 url, ', $items-destination-url, ', does not match resolved state: ', $destination-url-resolved"/>
+      </xsl:if>
+      <xsl:apply-templates select="$item-to-resolve" mode="revise-hrefs">
+         <xsl:with-param name="original-url" select="$items-original-url" tunnel="yes"/>
+         <xsl:with-param name="target-url" select="$items-destination-url" tunnel="yes"/>
+      </xsl:apply-templates>
    </xsl:function>
    <xsl:template match="node() | @*" mode="revise-hrefs">
       <xsl:copy>
@@ -1038,19 +1161,12 @@
             return
                (generate-id($i))"
       />
-      <!--<xsl:variable name="this-q-ref" select="generate-id(.)"/>-->
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:for-each select="$these-q-refs">
             <q><xsl:value-of select="."/></q>
          </xsl:for-each>
-         <test01a>
-            <xsl:copy-of select="tan:get-via-q-ref-new($these-q-refs, $self-expanded[1])"/>
-         </test01a>
          <xsl:apply-templates mode="#current"/>
-         <!--<xsl:apply-templates mode="#current">
-            <xsl:with-param name="inherited-q-refs" select="$inherited-q-refs, $this-q-ref"/>
-         </xsl:apply-templates>-->
       </xsl:copy>
    </xsl:template>
    <xsl:function name="tan:get-via-q-ref-new" as="element()*">
@@ -1111,31 +1227,32 @@
             if ($has-include-or-which-attr = true()) then
                $this-checked-for-errors//tan:fatal[not(@xml:id = $errors-to-squelch)]
             else
-               $this-checked-for-errors/(self::*, tan:range)/(self::*, *[@attr])/tan:fatal[not(@xml:id = $errors-to-squelch)]"/>
+               $this-checked-for-errors/(self::*, *[@attr])/tan:fatal[not(@xml:id = $errors-to-squelch)]"/>
       <xsl:variable name="relevant-errors"
          select="
             if ($has-include-or-which-attr = true()) then
                $this-checked-for-errors//tan:error[not(@xml:id = $errors-to-squelch)]
             else
-               $this-checked-for-errors/(self::*, tan:range)/(self::*, *[@attr])/tan:error[not(@xml:id = $errors-to-squelch)]"/>
+               $this-checked-for-errors/(self::*, *[@attr])/tan:error[not(@xml:id = $errors-to-squelch)]"/>
       <xsl:variable name="relevant-warnings"
          select="
             if ($has-include-or-which-attr = true()) then
                $this-checked-for-errors//tan:warning[not(@xml:id = $errors-to-squelch)]
             else
-               $this-checked-for-errors/(self::*, tan:range)/(self::*, *[@attr])/tan:warning[not(@xml:id = $errors-to-squelch)]"/>
+               $this-checked-for-errors/(self::*, *[@attr])/tan:warning[not(@xml:id = $errors-to-squelch)]"
+      />
       <xsl:variable name="relevant-info"
          select="
             if ($has-include-or-which-attr = true()) then
                $this-checked-for-errors//tan:info
             else
-               $this-checked-for-errors/(self::*, tan:range)/(self::*, *[@attr])/tan:info"/>
+               $this-checked-for-errors/(self::*, *[@attr])/tan:info"/>
       <xsl:variable name="help-offered"
          select="
             if ($has-include-or-which-attr = true()) then
                $this-checked-for-errors//tan:help
             else
-               $this-checked-for-errors/(self::*, tan:range)/(self::*, *[@attr])/tan:help"/>
+               $this-checked-for-errors/(self::*, *[@attr])/tan:help"/>
 
       <xsl:copy>
          <xsl:copy-of select="@*"/>
@@ -1174,6 +1291,12 @@
       </xsl:copy>
 
    </xsl:template>
+   
+   <!--<xsl:variable name="error-tests" as="document-node()*"
+      select="doc('errors/error-test-1.tan-t.xml'), doc('errors/error-test-2.tan-voc.xml')"/>-->
+   <xsl:variable name="error-tests" as="document-node()*"
+      select="collection('errors/?select=error-test-*.xml')"/>
+   <xsl:variable name="error-markers" select="$error-tests//comment()[matches(., '\w\w\w\d\d')]"/>
 
    <!-- Functions: TAN-T(EI) -->
 
