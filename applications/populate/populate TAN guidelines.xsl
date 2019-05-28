@@ -25,8 +25,6 @@
    <xsl:include href="../get%20inclusions/tan-vocabularies-to-docbook.xsl"/>
    <xsl:include href="../get%20inclusions/XSLT%20analysis.xsl"/>
 
-   <xsl:param name="indent-value" select="3"/>
-
    <xsl:param name="max-examples" select="4"/>
    <xsl:param name="qty-contextual-siblings" select="1"/>
    <xsl:param name="qty-contextual-children" select="3"/>

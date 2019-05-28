@@ -32,8 +32,12 @@
    <!-- Output: the input in parameter 1, tranformed by the templates in parameter 2, and inserted into parameter 3 at element with content in parameter 4, saved at location parameter 5 -->
    <!-- See other parameters below -->
 
+   <xsl:param name="is-validation" select="false()"/>
+
    <!-- Set up default values if the output is TAN -->
    <xsl:param name="stylesheet-iri" select="'tag:textalign.net,2015:stylesheet:convert'"/>
+   <xsl:param name="stylesheet-name">An unnamed stylesheet</xsl:param>
+   <xsl:param name="stylesheet-url" select="static-base-uri()"/>
    <xsl:param name="change-message" as="xs:string*"
       select="
          concat('Conversion of input at ', $input-base-uri-resolved, ' to ', $template-root-element-name, ' at ', $output-url-resolved)"/>
@@ -49,15 +53,32 @@
 
    <!-- Main parameter: Language data -->
    <xsl:param name="languages-used" select="'grc'"/>
-   <xsl:variable name="lang-catalogs" select="tan:lang-catalog($languages-used)"
+   <xsl:param name="lang-catalogs" select="tan:lang-catalog($languages-used)"
       as="document-node()*"/>
 
 
 
+
    <!-- Main parameter: Template -->
-   <xsl:param name="template-url-relative-to-input" as="xs:string?"/>
-   <xsl:param name="template-url-resolved"
-      select="resolve-uri($template-url-relative-to-input, $input-base-uri-resolved)"/>
+   <xsl:param name="template-url-relative-to-catalyzing-input" as="xs:string?"/>
+   <xsl:param name="template-url-relative-to-actual-input" as="xs:string?"/>
+   <xsl:param name="template-url-relative-to-this-stylesheet" as="xs:string?"/>
+   <xsl:param name="template-url-resolved" as="xs:string?">
+      <xsl:choose>
+         <xsl:when test="string-length($template-url-relative-to-catalyzing-input) gt 0">
+            <xsl:value-of select="resolve-uri($template-url-relative-to-catalyzing-input, $doc-uri)"/>
+         </xsl:when>
+         <xsl:when test="string-length($template-url-relative-to-actual-input) gt 0">
+            <xsl:value-of select="resolve-uri($template-url-relative-to-actual-input, $input-base-uri-resolved)"/>
+         </xsl:when>
+         <xsl:when test="string-length($template-url-relative-to-this-stylesheet) gt 0">
+            <xsl:value-of select="resolve-uri($template-url-relative-to-this-stylesheet, static-base-uri())"/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:message select="'no template url has been supplied'"/>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:param>
 
    <xsl:variable name="template-extension"
       select="replace($template-url-resolved, '.+/([^/]+)$', '$1')"/>
@@ -92,7 +113,41 @@
 
 
 
-
+   <!-- Main parameter: Extra TAN files -->
+   <xsl:param name="extra-tan-catalog-url-relative-to-catalyzing-input" as="xs:string?"/>
+   <xsl:param name="extra-tan-catalog-url-relative-to-actual-input" as="xs:string?"/>
+   <xsl:param name="extra-tan-catalog-url-relative-to-this-stylesheet" as="xs:string?"/>
+   <xsl:param name="extra-tan-catalog-url-relative-to-template" as="xs:string?"/>
+   <xsl:param name="extra-tan-catalog-url-resolved" as="xs:string?">
+      <xsl:choose>
+         <xsl:when test="string-length($extra-tan-catalog-url-relative-to-catalyzing-input) gt 0">
+            <xsl:value-of select="resolve-uri($extra-tan-catalog-url-relative-to-catalyzing-input, $doc-uri)"/>
+         </xsl:when>
+         <xsl:when test="string-length($extra-tan-catalog-url-relative-to-actual-input) gt 0">
+            <xsl:value-of select="resolve-uri($extra-tan-catalog-url-relative-to-actual-input, $input-base-uri-resolved)"/>
+         </xsl:when>
+         <xsl:when test="string-length($extra-tan-catalog-url-relative-to-this-stylesheet) gt 0">
+            <xsl:value-of select="resolve-uri($extra-tan-catalog-url-relative-to-this-stylesheet, static-base-uri())"/>
+         </xsl:when>
+         <xsl:when test="string-length($extra-tan-catalog-url-relative-to-template) gt 0">
+            <xsl:value-of select="resolve-uri($extra-tan-catalog-url-relative-to-template, $template-url-resolved)"/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:message select="'no template url has been supplied'"/>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:param>
+   <xsl:variable name="extra-tan-catalog"
+      select="
+         if (doc-available($extra-tan-catalog-url-resolved)) then
+            doc($extra-tan-catalog-url-resolved)
+         else
+            ()"
+   />
+   <xsl:param name="extra-tan-collection" select="tan:collection($extra-tan-catalog)"/>
+   
+   
+   
    <!-- Main parameter: intermediate steps that should be saved -->
    <xsl:param name="items-to-be-saved" as="document-node()*">
       <xsl:sequence select="$input-pass-1, $input-pass-2, $input-pass-3, $input-pass-4"/>
@@ -101,36 +156,51 @@
 
 
    <!-- Main parameter: Output -->
-   <xsl:param name="output-url-relative-to-input" as="xs:string?" select="''"/>
-   <xsl:param name="output-url-relative-to-template" as="xs:string?" select="''"/>
-
-   <xsl:param name="suffixes-for-multiple-output" as="xs:string*"/>
-   <xsl:param name="output-url-resolved" as="xs:string">
-      <!-- The output is a bit tricky. Sometimes you want it to go where the input is; other times where the template is -->
+   
+   <!-- Where will output be saved? -->
+   <xsl:param name="output-directory-relative-to-catalyzing-input" as="xs:string?"/>
+   <xsl:param name="output-directory-relative-to-actual-input" as="xs:string?"/>
+   <xsl:param name="output-directory-relative-to-template" as="xs:string?"/>
+   <xsl:variable name="output-directory-resolved" as="xs:string">
       <xsl:choose>
-         <xsl:when test="string-length($output-url-relative-to-template) gt 0">
+         <xsl:when test="string-length($output-directory-relative-to-catalyzing-input) gt 0">
             <xsl:value-of
-               select="resolve-uri($output-url-relative-to-template, $template-url-resolved)"/>
+               select="replace(resolve-uri($output-directory-relative-to-catalyzing-input, $doc-uri), '([^/])$', '$1/')"/>
          </xsl:when>
-         <xsl:when test="string-length($output-url-relative-to-input) gt 0">
+         <xsl:when test="string-length($output-directory-relative-to-actual-input) gt 0">
             <xsl:value-of
-               select="resolve-uri($output-url-relative-to-input, $input-base-uri-resolved)"/>
+               select="replace(resolve-uri($output-directory-relative-to-actual-input, $input-base-uri-resolved), '([^/])$', '$1/')"/>
          </xsl:when>
-         <!-- If no explicit output has been provided, use either the input or the template uri, modified with today's date, or the catalyzing document -->
-         <xsl:when test="string-length($input-base-uri) gt 0">
+         <xsl:when test="string-length($output-directory-relative-to-template) gt 0">
             <xsl:value-of
-               select="replace($input-base-uri-resolved, '(\.\w+)$', concat('-', $today-iso, '$1'))"
-            />
+               select="replace(resolve-uri($output-directory-relative-to-template, $template-url-resolved), '([^/])$', '$1/')"/>
          </xsl:when>
-         <xsl:when test="string-length($template-url-resolved) gt 0">
-            <xsl:value-of
-               select="replace($template-url-resolved, '(\.\w+)$', concat('-', $today-iso, '$1'))"/>
+         <xsl:when test="string-length($default-output-directory-resolved) gt 0">
+            <xsl:value-of select="replace($default-output-directory-resolved, '([^/])$', '$1/')"/>
          </xsl:when>
          <xsl:otherwise>
-            <xsl:value-of select="replace($doc-uri, '(\.\w+)$', concat('-', $today-iso, '$1'))"/>
+            <xsl:value-of select="replace($input-base-uri-resolved, '/[^/]+$', '/')"/>
          </xsl:otherwise>
       </xsl:choose>
-   </xsl:param>
+   </xsl:variable>
+   
+   <!-- What will output files be named? -->
+   <xsl:param name="output-filename" as="xs:string?" select="()"/>
+   <xsl:variable name="output-filename-resolved" as="xs:string">
+      <xsl:choose>
+         <xsl:when test="string-length($output-filename) gt 0">
+            <xsl:value-of select="encode-for-uri($output-filename)"/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:value-of select="replace(tan:cfne(/), '(\.\w+)$', concat('-', $today-iso, '$1'))"/>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:variable>
+
+   <xsl:param name="suffixes-for-multiple-output" as="xs:string*"/>
+   <xsl:param name="output-url-resolved" as="xs:string"
+      select="concat($output-directory-resolved, $output-filename-resolved)"/>
+   
    <xsl:variable name="output-suffix-count" select="count($suffixes-for-multiple-output)"/>
 
 
@@ -269,7 +339,7 @@
          <xsl:variable name="pos" select="position()"/>
          <xsl:variable name="this-target-url" select="($output-url-resolved[$pos], $output-url-resolved[1])[1]"/>
          <!-- We revise hrefs before revising the infusion -->
-         <xsl:variable name="item-to-revise" as="item()">
+         <xsl:variable name="item-to-revise" as="item()?">
             <xsl:choose>
                <xsl:when test="string-length($template-url-resolved) gt 0">
                   <xsl:copy-of select="tan:revise-hrefs(., $template-url-resolved, $this-target-url)"/>
@@ -327,6 +397,8 @@
    <xsl:variable name="temp-directory"
       select="replace(resolve-uri($save-intermediate-steps-location-relative-to-initial-input, $doc-uri), '([^/])$', '$1/')"/>
 
+   <xsl:param name="final-output" select="$infused-template-credited"/>
+
    <!-- Generate results -->
 
    <xsl:template match="/">
@@ -337,58 +409,62 @@
          <xsl:apply-templates select="$items-to-be-saved" mode="save-file"/>
       </xsl:if>
       <xsl:message>Attempting to save results.</xsl:message>
-      <xsl:if test="string-length($output-url-resolved) gt 0">
-         <xsl:variable name="output" select="$infused-template-credited"/>
-         <xsl:variable name="distinct-output-base-uris"
-            select="distinct-values($infused-template-credited/*/@xml:base)"/>
-         <xsl:variable name="output-count" as="xs:integer"
-            select="
-               count(if ($template-is-openxml)
-               then
-                  $distinct-output-base-uris
-               else
-                  $output)"/>
-         <xsl:if test="($output-suffix-count gt 1) and not($output-suffix-count = $output-count)">
-            <xsl:message>
-               <xsl:value-of
-                  select="'The number of suffixes (', $output-suffix-count, ') and output documents (', $output-count, ') do not match. Only the first output will be generated.'"
-               />
-            </xsl:message>
-         </xsl:if>
-         <xsl:for-each
-            select="
-               if (($output-suffix-count gt 0) and ($output-suffix-count = $output-count)) then
-                  $suffixes-for-multiple-output
-               else
-                  ''">
-            <xsl:variable name="this-suffix-encoded-for-uri" select="encode-for-uri(.)"/>
-            <xsl:variable name="this-pos" select="position()"/>
+      <xsl:choose>
+         <xsl:when test="string-length($output-url-resolved) gt 0">
+            <xsl:variable name="distinct-output-base-uris"
+               select="distinct-values($infused-template-credited/*/@xml:base)"/>
+            <xsl:variable name="output-count" as="xs:integer"
+               select="
+                  count(if ($template-is-openxml)
+                  then
+                     $distinct-output-base-uris
+                  else
+                     $final-output)"/>
+            <xsl:if test="($output-suffix-count gt 1) and not($output-suffix-count = $output-count)">
+               <xsl:message>
+                  <xsl:value-of
+                     select="'The number of suffixes (', $output-suffix-count, ') and output documents (', $output-count, ') do not match. Only the first output will be generated.'"
+                  />
+               </xsl:message>
+            </xsl:if>
+            <xsl:for-each
+               select="
+                  if (($output-suffix-count gt 0) and ($output-suffix-count = $output-count)) then
+                     $suffixes-for-multiple-output
+                  else
+                     ''">
+               <xsl:variable name="this-suffix-encoded-for-uri" select="encode-for-uri(.)"/>
+               <xsl:variable name="this-pos" select="position()"/>
 
-            <xsl:variable name="this-target-uri"
-               select="replace($output-url-resolved, '(\.[^\.]+)$', concat($this-suffix-encoded-for-uri, '$1'))"/>
-            <xsl:message select="concat('Saving output to ', $this-target-uri)"/>
-            <xsl:choose>
-               <xsl:when
-                  test="($this-target-uri = static-base-uri()) or matches($this-target-uri, '\.xsl$')">
-                  <xsl:message>Attempt has been made to write to a stylesheet URI.</xsl:message>
-               </xsl:when>
-               <xsl:when test="$template-is-openxml">
-                  <xsl:variable name="this-output"
-                     select="$output[*/@xml:base = $distinct-output-base-uris[$this-pos]]"/>
-                  <xsl:call-template name="tan:save-docx">
-                     <xsl:with-param name="docx-parts" select="$this-output"/>
-                     <xsl:with-param name="resolved-uri" select="$this-target-uri"/>
-                  </xsl:call-template>
-               </xsl:when>
-               <xsl:otherwise>
-                  <xsl:variable name="this-output" select="$output[$this-pos]"/>
-                  <xsl:result-document href="{$this-target-uri}">
-                     <xsl:copy-of select="$this-output"/>
-                  </xsl:result-document>
-               </xsl:otherwise>
-            </xsl:choose>
-         </xsl:for-each>
-      </xsl:if>
+               <xsl:variable name="this-target-uri"
+                  select="replace($output-url-resolved, '(\.[^\.]+)$', concat($this-suffix-encoded-for-uri, '$1'))"/>
+               <xsl:message select="concat('Saving output to ', $this-target-uri)"/>
+               <xsl:choose>
+                  <xsl:when
+                     test="($this-target-uri = static-base-uri()) or matches($this-target-uri, '\.xsl$')">
+                     <xsl:message>Attempt has been made to write to a stylesheet URI.</xsl:message>
+                  </xsl:when>
+                  <xsl:when test="$template-is-openxml">
+                     <xsl:variable name="this-output"
+                        select="$final-output[*/@xml:base = $distinct-output-base-uris[$this-pos]]"/>
+                     <xsl:call-template name="tan:save-docx">
+                        <xsl:with-param name="docx-parts" select="$this-output"/>
+                        <xsl:with-param name="resolved-uri" select="$this-target-uri"/>
+                     </xsl:call-template>
+                  </xsl:when>
+                  <xsl:otherwise>
+                     <xsl:variable name="this-output" select="$final-output[$this-pos]"/>
+                     <xsl:result-document href="{$this-target-uri}">
+                        <xsl:copy-of select="$this-output"/>
+                     </xsl:result-document>
+                  </xsl:otherwise>
+               </xsl:choose>
+            </xsl:for-each>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:copy-of select="$final-output"/>
+         </xsl:otherwise>
+      </xsl:choose>
    </xsl:template>
 
 </xsl:stylesheet>

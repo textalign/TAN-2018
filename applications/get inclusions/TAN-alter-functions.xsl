@@ -440,7 +440,7 @@
         <xsl:param name="delay" select="0" as="xs:integer"/>
         <xsl:variable name="this-node" select="."/>
         <xsl:variable name="these-alters"
-            select="$alters[(self::*, tan:where)[tan:conditions-hold(., $this-node, $test-sequence)]]"/>
+            select="$alters[(self::*, tan:where)[tan:conditions-hold(., $this-node, $test-sequence, false())]]"/>
         <xsl:variable name="special-pi" select="processing-instruction()[matches(., 'deep-copy')]"/>
         <xsl:choose>
             <xsl:when test="exists($special-pi)">

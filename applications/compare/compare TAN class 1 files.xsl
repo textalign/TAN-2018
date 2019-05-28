@@ -24,7 +24,7 @@
     <!-- Do you want to isolate the differences to individual characters, or look at the differences word for word? -->
     <xsl:param name="snap-results-to-word" as="xs:boolean" select="true()"/>
 
-    <xsl:param name="comparison-doc-uris-relative-to-input" as="xs:string+">
+    <xsl:param name="comparison-doc-uris-relative-to-actual-input" as="xs:string+">
         <!--<xsl:value-of
             select="'../../pre-TAN/graeco%20arabic%20studies/tan/Arist-Gr_007.tan-t.ref-scriptum-native-by-page.xml'"
         />-->
@@ -37,7 +37,7 @@
     </xsl:param>
     <xsl:variable name="comp-doc-uris-resolved"
         select="
-            for $i in $comparison-doc-uris-relative-to-input
+            for $i in $comparison-doc-uris-relative-to-actual-input
             return
                 resolve-uri($i, $doc-uri)"/>
     <xsl:param name="input-items" as="document-node()*">
@@ -182,7 +182,7 @@
 
     <!-- OUTPUT -->
     <xsl:variable name="output-dir-uri" select="resolve-uri('../../../output/', static-base-uri())"/>
-    <xsl:param name="output-url-relative-to-input" as="xs:string?" select="concat($output-dir-uri, 'html/', tan:cfn(/), '-', $today-iso, '.html')"/>
+    <xsl:param name="output-url-relative-to-actual-input" as="xs:string?" select="concat($output-dir-uri, 'html/', tan:cfn(/), '-', $today-iso, '.html')"/>
 
     <!--<xsl:template match="/" priority="5">
         <!-\-<xsl:copy-of select="$self-resolved"/>-\->

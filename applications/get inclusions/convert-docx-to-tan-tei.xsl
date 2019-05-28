@@ -10,8 +10,11 @@
 
     <xsl:param name="default-div-type-sequence" select="('hom', 'sec', 'sub')"/>
     <xsl:param name="default-div-type-for-centered-p" select="'title'"/>
+    <!-- The next parameter provides an advanced way to replace text with empty <div>s with @level @n and @type, using tan:batch-replace-advanced() -->
+    <xsl:param name="text-to-div-replacements" as="element()*"/>
     <xsl:param name="default-ref-regex" select="'\s*(\d+)\W+(\d+)\W*(\d*)\W*'"/>
     <xsl:param name="docx-is-first-level-hierarchy" as="xs:boolean" select="false()"/>
+    <xsl:param name="ignore-deletions" as="xs:boolean" select="true()"/>
 
     <!-- PASS 1 -->
     <!-- The goal here is a simple, unadorned, plain TAN-TEI body, perhaps retaining anchors in case it is being treated as a source -->
@@ -67,6 +70,8 @@
             </xsl:when>
             <xsl:otherwise>
                 <xsl:apply-templates mode="#current"/>
+                <!-- We assume a hard paragraph return constitutes a nominal space, which we apply here -->
+                <xsl:text> </xsl:text>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
@@ -79,6 +84,12 @@
         <xsl:param name="keep-anchors" tunnel="yes" select="false()"/>
         <xsl:if test="$keep-anchors">
             <xsl:copy-of select="."/>
+        </xsl:if>
+    </xsl:template>
+    
+    <xsl:template match="w:del" mode="input-pass-1">
+        <xsl:if test="$ignore-deletions = false()">
+            <xsl:apply-templates mode="#current"/>
         </xsl:if>
     </xsl:template>
 
@@ -111,33 +122,40 @@
                     $ancestor-level + 1
                 else
                     1"/>
-        <xsl:analyze-string select="." regex="{$default-ref-regex}">
-            <xsl:matching-substring>
-                <xsl:for-each select="$this-level to count($default-div-type-sequence)">
-                    <xsl:variable name="this-pos" select="."/>
-                    <xsl:variable name="this-n" select="regex-group($this-pos)"/>
-                    <xsl:if test="string-length($this-n) gt 0">
-                        <xsl:element name="div" namespace="{$template-namespace}">
-                            <xsl:attribute name="level" select="$this-pos"/>
-                            <xsl:choose>
-                                <xsl:when test="$this-n = ('T', 'Τ')">
-                                    <xsl:attribute name="type" select="'title'"/>
-                                    <xsl:attribute name="n" select="'title'"/>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:attribute name="type"
-                                        select="$default-div-type-sequence[position() = $this-pos]"/>
-                                    <xsl:attribute name="n" select="regex-group($this-pos)"/>
-                                </xsl:otherwise>
-                            </xsl:choose>
-                        </xsl:element>
-                    </xsl:if>
-                </xsl:for-each>
-            </xsl:matching-substring>
-            <xsl:non-matching-substring>
-                <xsl:value-of select="."/>
-            </xsl:non-matching-substring>
-        </xsl:analyze-string>
+        <xsl:choose>
+            <xsl:when test="exists($text-to-div-replacements)">
+                <xsl:copy-of select="tan:batch-replace-advanced(., $text-to-div-replacements)"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:analyze-string select="." regex="{$default-ref-regex}">
+                    <xsl:matching-substring>
+                        <xsl:for-each select="$this-level to count($default-div-type-sequence)">
+                            <xsl:variable name="this-pos" select="."/>
+                            <xsl:variable name="this-n" select="regex-group($this-pos)"/>
+                            <xsl:if test="string-length($this-n) gt 0">
+                                <xsl:element name="div" namespace="{$template-namespace}">
+                                    <xsl:attribute name="level" select="$this-pos"/>
+                                    <xsl:choose>
+                                        <xsl:when test="$this-n = ('T', 'Τ')">
+                                            <xsl:attribute name="type" select="'title'"/>
+                                            <xsl:attribute name="n" select="'title'"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:attribute name="type"
+                                                select="$default-div-type-sequence[position() = $this-pos]"/>
+                                            <xsl:attribute name="n" select="regex-group($this-pos)"/>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:element>
+                            </xsl:if>
+                        </xsl:for-each>
+                    </xsl:matching-substring>
+                    <xsl:non-matching-substring>
+                        <xsl:value-of select="."/>
+                    </xsl:non-matching-substring>
+                </xsl:analyze-string>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
 
     <!-- PASS 3 -->

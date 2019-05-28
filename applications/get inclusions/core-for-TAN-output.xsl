@@ -49,7 +49,7 @@
                   <xsl:value-of select="($stylesheet-name, 'Stylesheet to create a TAN file.')[1]"/>
                </name>
                <xsl:value-of select="$most-common-indentations[4]"/>
-               <location href="{tan:uri-relative-to($stylesheet-url, string($this-base-uri))}"
+               <location href="{tan:uri-relative-to($stylesheet-url, $default-output-directory-resolved)}"
                   accessed-when="{current-dateTime()}"/>
                <xsl:value-of select="$most-common-indentations[3]"/>
             </algorithm>

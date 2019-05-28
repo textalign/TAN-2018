@@ -54,7 +54,7 @@
                         select="distinct-values((*:div/@n, $new-content/*:body/*:div/@n))"/>
                     <xsl:variable name="this-body" select="."/>
                     <xsl:for-each select="$all-ns">
-                        <xsl:sort select="number(.)"/>
+                        <!--<xsl:sort select="number(.)"/>-->
                         <xsl:variable name="this-n" select="."/>
                         <xsl:variable name="this-new-content" select="$new-content/*:body/*:div[@n = $this-n]"/>
                         <xsl:choose>

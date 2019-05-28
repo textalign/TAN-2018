@@ -8,16 +8,16 @@
     <!-- Template: a TAN-T (not TAN-TEI) -->
     <!-- Output: the text content of the input file proportionally divided up as the new content of the template -->
 
-    <!-- If the input is not TAN, then there is no way for the algorithm to figure out what the correct metadata is for the output file. Errors are likely. -->
+    <!-- If the input is not TAN, then there is no way for the algorithm to determine the correct metadata is for the output file. Errors are likely. -->
 
 
     <xsl:import href="../get%20inclusions/convert.xsl"/>
     <xsl:output indent="yes"/>
 
     <!-- PARAMETERS YOU WILL WANT TO CHANGE MOST OFTEN -->
-    <!-- provide the idrefs of div-types you want to delete or preserve, space delimiter -->
+    <!-- provide the idrefs of div-types you want to delete or preserve, space delimited -->
     <xsl:param name="delete-what-input-div-types" select="''" as="xs:string?"/>
-    <!-- If you are going from a logical reference system to a scritum-based one, it's a good idea to leave the following blank -->
+    <!-- If you are going from a logical reference system to a scriptum-based one, it's a good idea to leave the following blank. -->
     <xsl:param name="preserve-what-input-div-types" select="'ti title head'" as="xs:string?"/>
 
     <!-- At what level should the modelling start? To be used if the input already resembles the model on the top level of the hierarchy. Use 1 or less if you are starting afresh. -->
@@ -26,7 +26,7 @@
     <!-- At what level should the modelling stop? -->
     <xsl:param name="stop-modelling-at-what-level" as="xs:integer?" select="4"/>
 
-    <!-- A wrapper is useful when you want to subdivide by hand -->
+    <!-- A wrapper is useful when you want to subdivide by hand. -->
     <xsl:param name="last-level-as-wrapper-only" as="xs:boolean" select="false()"/>
 
     <!-- If you want to customize the way sentences, clauses, and words are defined, use the following variables -->
@@ -42,16 +42,14 @@
     <xsl:param name="do-not-chop-parenthetical-clauses" as="xs:boolean" select="false()"/>
 
     <!-- In this conversion, the model and the template are identical -->
-    <!--<xsl:param name="template-url-relative-to-input" as="xs:string?"
-        select="'../../library-clio/cpg4425/cpg%204425%20lat%201173%20Burgundio.xml'"/>-->
-    <!--<xsl:param name="template-url-relative-to-input" as="xs:string?"
-        select="'../../../library-arithmeticus/aristotle/ar.cat.grc.1949.minio-paluello.ref-scriptum-native.xml'"/>-->
-    <!--<xsl:param name="template-url-relative-to-input" as="xs:string?"
-        select="'../../../library-arithmeticus/aristotle/ar.cat.grc.1949.minio-paluello.ref-logical-native.xml'"/>-->
-    <!--<xsl:param name="template-url-relative-to-input" as="xs:string?"
-        select="'ar.cat.grc.1949.minio-paluello.ref-logical-native.xml'"/>-->
-    <xsl:param name="template-url-relative-to-input" as="xs:string?"
-            select="'ar.cat.grc.1949.minio-paluello.ref-scriptum-native.xml'"/>
+    <xsl:param name="template-url-relative-to-actual-input" as="xs:string?">
+        <!--<xsl:text>../../library-clio/cpg4425/cpg%204425%20lat%201173%20Burgundio.xml</xsl:text>-->
+        <!--<xsl:text>../../../library-arithmeticus/aristotle/ar.cat.grc.1949.minio-paluello.ref-scriptum-native.xml</xsl:text>-->
+        <!--<xsl:text>../../../library-arithmeticus/aristotle/ar.cat.grc.1949.minio-paluello.ref-logical-native.xml</xsl:text>-->
+        <!--<xsl:text>ar.cat.grc.1949.minio-paluello.ref-logical-native.xml</xsl:text>-->
+        <!--<xsl:text>ar.cat.grc.1949.minio-paluello.ref-scriptum-native.xml</xsl:text>-->
+        <xsl:text>../../../../../Google%20Drive/CLIO%20commons/TAN%20library/CLIO/cpg%204425%20lat%201728%20Montfaucon.xml</xsl:text>
+    </xsl:param>
     
     <!-- Do you want to save the output at the directory of the input (true) or at that of the template (false)? -->
     <xsl:param name="save-output-at-input-directory" as="xs:boolean" select="true()"/>
@@ -73,12 +71,13 @@
 
 
     <!-- INPUT -->
-    <xsl:variable name="div-types-to-delete" select="tokenize($delete-what-input-div-types, '\s+')"/>
+    
+    <xsl:variable name="div-types-to-delete" select="tokenize(normalize-space($delete-what-input-div-types), ' ')"/>
     <xsl:variable name="div-types-to-ignore"
-        select="tokenize($preserve-what-input-div-types, '\s+')"/>
+        select="tokenize(normalize-space($preserve-what-input-div-types), ' ')"/>
 
-    <xsl:variable name="input-namespace-prefix" select="tan:namespace($input-namespace)"/>
     <xsl:variable name="input-namespace" select="tan:namespace(/*)"/>
+    <xsl:variable name="input-namespace-prefix" select="tan:namespace($input-namespace)"/>
     <xsl:variable name="input-precheck" as="document-node()?">
         <xsl:choose>
             <xsl:when test="$doc-class = 1">
@@ -105,10 +104,12 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
+
     <xsl:param name="input-items" select="$input-precheck"/>
     <xsl:variable name="input-expanded"
         select="tan:expand-doc(tan:resolve-doc($input-items), 'terse')"/>
     <xsl:param name="input-base-uri" select="base-uri(/)"/>
+
 
     <!-- PASS 1 -->
     <!-- revise the input's header; if some divs should be dropped, do so -->
@@ -132,21 +133,6 @@
             </redivision>
         </xsl:if>
     </xsl:variable>
-    <xsl:variable name="this-relationship" as="element()*">
-        <xsl:if test="not(exists(/*/tan:head/tan:vocabulary-key/tan:relationship[@which = 'model']))">
-            <relationship xml:id="model" which="model"/>
-        </xsl:if>
-        <xsl:if
-            test="($some-text-has-been-cut = false()) and not(exists(/*/tan:head/tan:vocabulary-key/tan:relationship[@which = 'resegmented copy']))">
-            <relationship xml:id="ade" which="resegmented copy"/>
-        </xsl:if>
-    </xsl:variable>
-    <xsl:variable name="input-relationships"
-        select="$self-resolved/*/tan:head/tan:vocabulary-key/tan:relationship"/>
-    <!--<xsl:variable name="input-relationship-model"
-        select="$input-relationships[tan:IRI = $relationship-model/tan:IRI]"/>-->
-    <xsl:variable name="input-relationship-model"
-        select="$input-relationships"/>
 
     <xsl:template match="tei:TEI" mode="input-pass-1">
         <TAN-T>
@@ -158,36 +144,19 @@
     <xsl:template match="*[@href]" mode="input-pass-1">
         <xsl:copy-of select="tan:resolve-href(., false())"/>
     </xsl:template>
-    <!--<xsl:template match="tan:see-also[1]" mode="input-pass-1">
-        <xsl:copy-of select="$new-tan-links"/>
-        <xsl:if test="not(tan:vocabulary-key-item(@relationship)/@which = 'model')">
-            <xsl:copy-of select="tan:resolve-href(., false())"/>
+    <xsl:template match="tan:model" mode="input-pass-1"/>
+    <xsl:template match="tan:redivision" mode="input-pass-1">
+        <xsl:if test="$some-text-has-been-cut = false()">
+            <xsl:copy-of select="."/>
         </xsl:if>
-    </xsl:template>-->
-    <!--<xsl:template match="tan:see-also[position() gt 1]" mode="input-pass-1">
-        <xsl:if test="not(tan:vocabulary-key-item(@relationship)/@which = 'model')">
-            <xsl:copy-of select="tan:resolve-href(., false())"/>
-        </xsl:if>
-    </xsl:template>-->
-    <xsl:template match="tan:see-also" mode="input-pass-1">
-        <xsl:copy-of select="tan:resolve-href(., false())"/>
     </xsl:template>
     <xsl:template match="tan:vocabulary-key" mode="input-pass-1">
-        <xsl:if test="not(exists(../tan:see-also))">
-            <xsl:copy-of select="$new-tan-links"/>
-        </xsl:if>
+        <xsl:copy-of select="$new-tan-links"/>
         <xsl:copy>
             <xsl:copy-of select="@*"/>
             <xsl:copy-of select="$template-doc/tan:TAN-T/tan:head/tan:vocabulary-key/tan:div-type"/>
             <xsl:apply-templates select="node() except tan:div-type" mode="#current"/>
-            <xsl:if test="not(exists(tan:relationship))">
-                <xsl:copy-of select="$this-relationship"/>
-            </xsl:if>
         </xsl:copy>
-    </xsl:template>
-    <xsl:template match="tan:relationship[1]" mode="input-pass-1">
-        <xsl:copy-of select="$this-relationship"/>
-        <xsl:copy-of select="."/>
     </xsl:template>
     <xsl:template match="tei:text" mode="input-pass-1">
         <xsl:apply-templates mode="#current"/>
@@ -508,16 +477,8 @@
     <!-- Remove the skeletal structure of B1, leaving a sequence of text nodes and elements -->
     <!-- Rebuild the hierarchy of B2 via tan:sequence-to-tree() -->
 
-    <xsl:variable name="median-template-search-1"
-        select="$self-resolved/*/tan:head/tan:see-also[@relationship = $input-relationship-model/@xml:id]"/>
-    <xsl:variable name="median-template-search-2"
-        select="$template-resolved/tan:TAN-T/tan:head/tan:see-also[@relationship = $template-relationship-resegmented-copy/@xml:id]"/>
     <xsl:variable name="median-template-doc-resolved" as="document-node()?"
-        select="
-            if ($median-template-search-1/tan:IRI = $median-template-search-2/tan:IRI) then
-                $see-alsos-resolved[*/@id = $median-template-search-1/tan:IRI]
-            else
-                ()"/>
+        select="$redivisions-resolved"/>
     <xsl:variable name="median-template-doc-expanded"
         select="tan:expand-doc($median-template-doc-resolved, 'terse')"/>
     <xsl:variable name="median-template-doc-analyzed"
@@ -801,7 +762,7 @@
             </xsl:when>
             <xsl:otherwise>
                 <xsl:message terminate="yes"
-                    select="concat('Template at URL ', $template-url-relative-to-input, ' is not a TAN-T file')"
+                    select="concat('Template at URL ', $template-url-relative-to-actual-input, ' is not a TAN-T file')"
                 />
             </xsl:otherwise>
         </xsl:choose>
@@ -809,11 +770,7 @@
 
     <xsl:variable name="template-language" select="$template-doc/tan:TAN-T/tan:body/@xml:lang"/>
     <xsl:variable name="template-resolved" select="tan:resolve-doc($template-doc)"/>
-    <xsl:variable name="template-relationships"
-        select="$template-resolved/tan:TAN-T/tan:head/tan:vocabulary-key/tan:relationship"/>
-    <!--<xsl:variable name="template-relationship-resegmented-copy"
-        select="$template-relationships[tan:IRI = $relationship-resegmented-copy/tan:IRI]"/>-->
-    <xsl:variable name="template-relationship-resegmented-copy" select="$template-relationships"/>
+
     <xsl:variable name="template-leaf-div-types"
         select="$template-resolved//tan:div[not(tan:div)]/@type"/>
     <xsl:variable name="majority-leaf-div-type"
@@ -846,48 +803,50 @@
             else
                 $template-url-resolved, '(\.[^\.]+$)', ''), 'ref-[^.]+$', '')"
     />
-    <xsl:param name="output-url-relative-to-input" as="xs:string?"
+    <xsl:param name="output-url-relative-to-actual-input" as="xs:string?"
         select="concat($output-url-prepped, $output-url-infix, '-', $today-iso, '.xml')"/>
 
-    <!--<xsl:template match="/" priority="5">
-        <!-\- diagnostics -\->
+    <xsl:template match="/" priority="5">
+        <!-- diagnostics -->
         <diagnostics>
-            <!-\-<xsl:copy-of select="$self-expanded"/>-\->
-            <!-\-<xsl:copy-of select="$input-precheck"/>-\->
-            <!-\-<xsl:copy-of select="$input-expanded"/>-\->
-            <!-\-<xsl:copy-of select="$input-body-with-unique-ns"/>-\->
+            <!--<xsl:copy-of select="$self-resolved"/>-->
+            <!--<xsl:copy-of select="$validation-phase"/>-->
+            <!--<xsl:copy-of select="$self-expanded"/>-->
+            <xsl:copy-of select="$input-precheck"/>
+            <!--<xsl:copy-of select="$input-expanded"/>-->
+            <!--<xsl:copy-of select="$input-body-with-unique-ns"/>-->
             
-            <!-\-<xsl:copy-of select="$input-body-analyzed"/>-\->
-            <!-\-<xsl:copy-of select="$excepted-and-deleted-elements"/>-\->
-            <!-\-<xsl:copy-of select="$excepted-elements-prepped"/>-\->
+            <!--<xsl:copy-of select="$input-body-analyzed"/>-->
+            <!--<xsl:copy-of select="$excepted-and-deleted-elements"/>-->
+            <!--<xsl:copy-of select="$excepted-elements-prepped"/>-->
             
-            <!-\-<xsl:copy-of select="$median-template-search-1"/>-\->
-            <!-\-<xsl:copy-of select="$median-template-search-2"/>-\->
-            <!-\-<xsl:copy-of select="$median-body-with-grouped-ns"/>-\->
-            <!-\-<xsl:copy-of select="$median-template-doc-resolved"/>-\->
-            <!-\-<xsl:copy-of select="$median-template-doc-expanded"/>-\->
-            <!-\-<xsl:copy-of select="$median-template-doc-analyzed"/>-\->
-            <!-\-<xsl:copy-of select="$input-and-median-merge"/>-\->
-            <!-\-<xsl:copy-of select="$input-and-median-merge-reconstructed"/>-\->
+            <!--<xsl:copy-of select="$median-template-search-1"/>-->
+            <!--<xsl:copy-of select="$median-template-search-2"/>-->
+            <!--<xsl:copy-of select="$median-body-with-grouped-ns"/>-->
+            <!--<xsl:copy-of select="$median-template-doc-resolved"/>-->
+            <!--<xsl:copy-of select="$median-template-doc-expanded"/>-->
+            <!--<xsl:copy-of select="$median-template-doc-analyzed"/>-->
+            <!--<xsl:copy-of select="$input-and-median-merge"/>-->
+            <!--<xsl:copy-of select="$input-and-median-merge-reconstructed"/>-->
 
-            <!-\-<xsl:copy-of select="$input-pass-1"/>-\->
-            <xsl:copy-of select="$input-pass-2"/>
-            <!-\-<xsl:copy-of select="$input-pass-3"/>-\->
-            <!-\-<xsl:copy-of select="tan:analyze-string-length($input-pass-3)"/>-\->
-            <!-\-<xsl:copy-of select="$input-pass-4"/>-\->
-            <!-\-<xsl:copy-of select="tan:diff(string-join($input-body-analyzed//tan:div[@n = '1']/tan:div[@type='p'],''),
-                string-join($input-pass-4//tan:div[@n = '1']/tan:div/tan:div,''), false())"/>-\->
+            <!--<xsl:copy-of select="$input-pass-1"/>-->
+            <!--<xsl:copy-of select="$input-pass-2"/>-->
+            <!--<xsl:copy-of select="$input-pass-3"/>-->
+            <!--<xsl:copy-of select="tan:analyze-string-length($input-pass-3)"/>-->
+            <!--<xsl:copy-of select="$input-pass-4"/>-->
+            <!--<xsl:copy-of select="tan:diff(string-join($input-body-analyzed//tan:div[@n = '1']/tan:div[@type='p'],''),
+                string-join($input-pass-4//tan:div[@n = '1']/tan:div/tan:div,''), false())"/>-->
 
-            <!-\-<xsl:copy-of select="$template-doc"/>-\->
-            <!-\-<xsl:copy-of select="$template-resolved"/>-\->
-            <!-\-<xsl:copy-of select="$template-body-analyzed"/>-\->
-            <!-\-<xsl:copy-of select="$template-div-spikes"/>-\->
+            <!--<xsl:copy-of select="$template-doc"/>-->
+            <!--<xsl:copy-of select="$template-resolved"/>-->
+            <!--<xsl:copy-of select="$template-body-analyzed"/>-->
+            <!--<xsl:copy-of select="$template-div-spikes"/>-->
 
-            <!-\-<xsl:copy-of select="$output-url-resolved"/>-\->
-            <!-\-<xsl:copy-of select="$template-infused-with-revised-input"/>-\->
-            <!-\-<xsl:copy-of select="$infused-template-revised"/>-\->
+            <!--<xsl:copy-of select="$output-url-resolved"/>-->
+            <!--<xsl:copy-of select="$template-infused-with-revised-input"/>-->
+            <!--<xsl:copy-of select="$infused-template-revised"/>-->
 
         </diagnostics>
-    </xsl:template>-->
+    </xsl:template>
 
 </xsl:stylesheet>
