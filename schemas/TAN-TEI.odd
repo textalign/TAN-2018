@@ -115,7 +115,7 @@
               <desc>A TAN version number is required</desc>
               <datatype>
                 <rng:data type="string">
-                  <rng:param name="pattern">2019</rng:param>
+                  <rng:param name="pattern">2020</rng:param>
                 </rng:data>
               </datatype>
             </attDef>
