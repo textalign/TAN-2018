@@ -14,10 +14,13 @@
     <xsl:variable name="stylesheet-url" select="static-base-uri()"/>
     <xsl:variable name="change-message" select="'Converted tan file to html'"/>
     
-    <xsl:param name="validation-phase" select="'verbose'"/>
+    <xsl:param name="validation-phase" select="'terse'"/>
     <xsl:param name="input-items" select="$self-expanded"/>
-    <xsl:param name="template-url-resolved" as="xs:string?" select="resolve-uri('../../templates/template.html', static-base-uri())"/>
-    <xsl:param name="output-url-relative-to-template" as="xs:string?" select="concat('../../../output/html/', tan:cfn(/), '-', $today-iso, '.html')"/>
+    <xsl:param name="default-html-template" as="xs:string" select="resolve-uri('../../templates/template.html', static-base-uri())"/>
+    <xsl:param name="template-url-relative-to-actual-input" select="$default-html-template"/>
+    
+    <xsl:param name="output-directory-relative-to-template" as="xs:string?"
+        select="'../../output/html/'"/>
     
     <xsl:param name="input-pass-4" select="tan:tan-to-html($input-pass-3)" as="item()*"/>
     
