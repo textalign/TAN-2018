@@ -6,6 +6,8 @@
    xmlns:sch="http://purl.oclc.org/dsdl/schematron" xmlns:xhtml="http://www.w3.org/1999/xhtml"
    xmlns:mods="http://www.loc.gov/mods/v3" exclude-result-prefixes="#all" version="2.0">
    <!-- This is a special set of extra functions for processing TAN-A-lm files -->
+   
+   <xsl:variable name="TAN-feature-vocabulary" select="$TAN-vocabularies[tan:TAN-voc/@id = 'tag:textalign.net,2015:tan-voc:features']"/>
 
    <xsl:function name="tan:merge-anas" as="element()?">
       <!-- Input: a set of <ana>s that should be merged; a list of strings to which <tok>s should be restricted -->
@@ -37,8 +39,18 @@
             </xsl:choose>
          </xsl:for-each>
       </xsl:variable>
+      <xsl:variable name="ana-certs"
+         select="
+            for $i in $anas-to-merge
+            return
+               if ($i/@cert) then
+                  number($i/@cert)
+               else
+                  1"
+      />
       <xsl:variable name="lms-itemized" as="element()*">
          <xsl:apply-templates select="$anas-to-merge" mode="itemize-lms">
+            <xsl:with-param name="ana-cert-sum" select="sum($ana-certs)" tunnel="yes"/>
             <xsl:with-param name="context-tok-count" select="sum($ana-tok-counts)"/>
             <xsl:with-param name="tok-val" select="$regard-only-those-toks-that-have-what-vals"/>
          </xsl:apply-templates>
@@ -107,8 +119,9 @@
       <xsl:apply-templates mode="#current"/>
    </xsl:template>
    <xsl:template match="tan:ana" mode="itemize-lms">
+      <xsl:param name="ana-cert-sum" as="xs:double?"/>
       <xsl:param name="context-tok-count" as="xs:integer"/>
-      <xsl:param name="tok-val" as="xs:string+"/>
+      <xsl:param name="tok-val" as="xs:string*"/>
       <xsl:variable name="toks-of-interest" select="tan:tok[@val = $tok-val]"/>
       <xsl:variable name="this-tok-count" as="xs:integer">
          <xsl:choose>
@@ -134,7 +147,6 @@
    </xsl:template>
    <xsl:template match="tan:l" mode="itemize-lms">
       <xsl:param name="ana-cert" as="xs:double" tunnel="yes"/>
-      <xsl:variable name="diagnostics" select="false()"/>
       <!--<xsl:param name="lm-count" as="xs:integer" tunnel="yes"/>-->
       <xsl:variable name="this-l" select="."/>
       <xsl:variable name="this-lm-cert" select="number((../@cert, 1)[1])"/>
@@ -142,13 +154,16 @@
       <!--<xsl:variable name="this-l-pop" select="count(../tan:l)"/>-->
       <xsl:variable name="sibling-ms" select="following-sibling::tan:m"/>
       <!--<xsl:variable name="this-m-pop" select="count($sibling-ms)"/>-->
+      <xsl:variable name="diagnostics-on" select="false()"/>
+      <xsl:if test="$diagnostics-on">
+         <xsl:message select="'diagnostics on, template mode itemize-lms, for: ', ."/>
+         <xsl:message select="'ana certainty: ', $ana-cert"/>
+         <xsl:message select="'lm certainty: ', $this-lm-cert"/>
+         <xsl:message select="'this certainty: ', $this-l-cert"/>
+         <xsl:message select="'these m certainties: ', $sibling-ms/@cert"/>
+      </xsl:if>
       <xsl:for-each select="$sibling-ms">
          <xsl:variable name="this-m-cert" select="number((@cert, 1)[1])"/>
-         <xsl:if test="$diagnostics">
-            <xsl:message select="$ana-cert, $this-lm-cert, $this-l-cert, $this-m-cert"/>
-         </xsl:if>
-         <!--<xsl:variable name="this-itemized-lm-cert"
-                select="($ana-cert * $this-lm-cert * $this-l-cert * $this-l-pop * $this-m-cert * $this-m-pop) div $lm-count"/>-->
          <xsl:variable name="this-itemized-lm-cert"
             select="($ana-cert * $this-lm-cert * $this-l-cert * $this-m-cert)"/>
          <lm>
