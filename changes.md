@@ -45,13 +45,15 @@ New elements: &lt;predecessor> and &lt;successor>, to indicate how files have be
 
 New attributes: @claim-when
 
-New functions: tan:last-change-agent(), tan:trim-long-text(), tan:catalogs(), tan:chop-string() (2 parameters), tan:collate-sequences(), tan:collate-pair-of-sequences(), tan:catalog-uris(), tan:collection(), tan:unique-char(), tan:most-common-item-count(), tan:vertical-stops() (to support tan:diff()), tan:nested-phrase-loop() (supports tan:chop-string()), tan:primary-agent(); tan:revise-href(); tan:lm-data(); tan:takes-idrefs(); tan:target-element-names(); tan:consolidate-resolved-vocab-items(); tan:element-vocabulary(); tan:attribute-vocabulary(); tan:vocabulary(), tan:get-and-resolve-dependency()
+New functions: tan:last-change-agent(), tan:trim-long-text(), tan:catalogs(), tan:chop-string() (2 parameters), tan:collate-sequences(), tan:collate-pair-of-sequences(), tan:catalog-uris(), tan:collection(), tan:unique-char(), tan:most-common-item-count(), tan:vertical-stops() (to support tan:diff()), tan:nested-phrase-loop() (supports tan:chop-string()), tan:primary-agent(); tan:revise-href(); tan:lm-data(); tan:takes-idrefs(); tan:target-element-names(); tan:consolidate-resolved-vocab-items(); tan:element-vocabulary(); tan:attribute-vocabulary(); tan:vocabulary(), tan:get-and-resolve-dependency(), tan:fill(), tan:ordinal() (moved from extra functions), tan:duplicate-values() (alias for tan:duplicate-items(), tan:node-before(), tan:indent-value(), tan:copy-indentation(), tan:url-is-local(), tan:imprint-adjustment-locator (for adjusting class-1 sources of class-2 files)
 
 Deleted functions: tan:glossary() (replaced by new tan:vocabulary()), tan:definition() (replaced by new tan:vocabulary()), tan:evaluate-morphological-test(), tan:resolve-idref()
 
 Moved tan:element-fingerprint() from extra functions to main functions
 
-New global variables: $shy (same as $dhy), $doc-catalog-uris, $doc-catalogs, $local-catalog, $relationships-reserved, $relationship-model, $relationship-resegmented-copy, $break-marker-regex, $loop-tolerance, $elements-supported-by-TAN-vocabulary-files, $is-validation
+New global variables: $shy (same as $dhy), $doc-catalog-uris, $doc-catalogs, $local-catalog, $relationships-reserved, $relationship-model, $relationship-resegmented-copy, $break-marker-regex, $loop-tolerance, $elements-supported-by-TAN-vocabulary-files, $is-validation, $TAN-version-is-under-development, $internet-available, $names-of-attributes-that-take-idrefs, $names-of-attributes-that-may-take-multiple-space-delimited-values, $names-of-attributes-that-permit-keyword-last, $names-of-attributes-that-are-case-indifferent, $names-of-elements-that-describe-text-creators, $names-of-elements-that-describe-text-bearers, $names-of-elements-that-describe-textual-entities, $TEI-namespace, TAN-id-namespace, $doc-is-error-test, $doc-id-namespace, $TAN-vocabularies-vocabulary
+
+Supplied main parameters directory, to hold global parameters most likely to change. Includes parameters for main validation, and those supporting appications.
 
 $help-trigger moved to the validation parameters file, to allow easier manipulation of its value.
 
@@ -70,6 +72,7 @@ Some enhancement of functions:
 * tan:resolve-href() now has a longer version that provides breadcrumbs.
 * tan:diff() greatly revised. If a string is considerably long, a search is first done for sequences of unique words that are shared between the strings, then the pieces between are fed to tan:diff(); if the string is not too long, it follows the normal routine, now converted to a two-loop process easier to diagnose. Snap-to-word has been made more reliable.
 * tan:tokenize-div() (and related templates) adjusted to do a better job taking into account special div-end characters and token counting.
+* tan:tokenize-text(): extended to four parameters, to add either @q or @pos
 * tan:infuse-divs() adjusted to take into account special endings of leaf divs
 * tan:chop-string() now allows a parameter that preserves parenthetical phrases (most suited to chopping into sentences or clauses).
 * tan:shallow-copy() now has a two-parameter version, to allow copying to a specified depth.
@@ -77,7 +80,10 @@ Some enhancement of functions:
 * tan:resolve-doc() now has a 2-parameter version.
 * tan:error() now supports messagnig functions (validation won't do this, but they would be useful for XSLT transformations)
 * tan:strip-duplicates() has been renamed tan:remove-duplicate-siblings() and moved to the extra functions file.
-* tan:resolve-alias() has been simplified. Each &lt;alias> is inserted with &lt;idref> for every terminal value. Nothing is done to check the validity of the references. 
+* tan:resolve-alias() has been simplified. Each &lt;alias> is inserted with &lt;idref> for every terminal value. Nothing is done to check the validity of the references.
+* tan:analyze-sequence(), tan:analyze-ref() revised to be more straightforward, stable.
+* Debugged tan:conditions-hold(), which requires an extra parameter indicating whether the fallback value should be true or false if a condition is not even found.
+* regular expressions submodule now includes tan:n-to-dec() and tan:dec-to-n(), to permit conversions from decimal to base N systems (N = 2 through 16 or 64) or vice versa. 
 
 ## TAN-T(EI)
 
@@ -141,7 +147,7 @@ tan:tree-to-sequence() and tan:sequence-to-tree()
 
 global variables to define the ends of words, clauses, sentences
 
-tan:int-to-aaa(), tan:int-to-grc()
+tan:int-to-aaa(), tan:int-to-grc(), tan:dec-to-bin, tan:base64-to-dec, tan:base64-to-bin, tan:integers-to-sequence()
 
 tan:acronym()
 
@@ -149,9 +155,19 @@ tan:search-morpheus()
 
 tan:lang-catalog()
 
+tan:ordinal() moved to main function set
+
+tan:counts-to-firsts renamed tan:lengths-to-positions()
+
+tan:batch-replace-advanced()
+
 ## Extra variables
 
-$internet-available
+$applications-uri-collection, $applications-collection
+
+$error-tests, $error-markers
+
+$TAN-feature-vocabulary
 
 ## Advanced / recommended best practices
 
