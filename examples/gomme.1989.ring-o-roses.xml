@@ -52,7 +52,7 @@
       <algorithm xml:id="xslt2">
         <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
         <name>Stylesheet to create a TAN file.</name>
-        <location href="../../applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl" accessed-when="2018-08-09T11:09:27.084-04:00"/>
+        <location href="../applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl" accessed-when="2018-08-09T11:09:27.084-04:00"/>
       </algorithm>
       <div-type xml:id="sect">
         <IRI>http://dbpedia.org/resource/Section_(typography)</IRI>

@@ -12,7 +12,6 @@
                 source. </desc>
         </license>
         <token-definition which="letters and punctuation"/>
-        <!--<token-definition pattern="\S+"/>-->
         <source>
             <IRI>tag:parkj@textalign.net,2015:ring01</IRI>
             <name>TAN transcription of Ring a Ring o' Roses</name>
@@ -27,8 +26,6 @@
             <morphology xml:id="penn" ed-when="2015-08-20-04:00" ed-who="park">
                 <IRI>tag:kalvesmaki.com,2014:tan-r-mor:eng:penn</IRI>
                 <name>Penn Treebank tag set</name>
-                <!--<location href="https://raw.githubusercontent.com/Arithmeticus/TAN-lexico-morphology/master/TAN-mor/eng.kalvesmaki.com%2C2014.2.xml" when-accessed="2015-08-20"/>-->
-                <!--<location href="http://textalign.net/release/TAN-2018/examples/TAN-R-mor/eng.kalvesmaki.com,2014.2.xml" when-accessed="2016-01-25"/>-->
                 <location href="../TAN-mor/eng.kalvesmaki.com%2C2014.2.xml" accessed-when="2015-11-03-05:00"/>
             </morphology>
             <lexicon xml:id="english">
@@ -58,7 +55,6 @@
         <to-do/>
     </head>
     <body lexicon="english" morphology="penn" claimant="xslt2">
-        
         <ana>
             <tok ref="1" pos="1 - last-1"/>
             <lm>
@@ -148,7 +144,7 @@
         <ana>
             <tok ref="4" pos="6"/>
             <lm>
-                <m>RP???</m>
+                <m>RP</m>
             </lm>
         </ana>
         <ana>

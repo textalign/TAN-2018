@@ -41,7 +41,7 @@
          <algorithm xml:id="xslt2">
             <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
             <name>Stylesheet to create a TAN file.</name>
-            <location href="../../applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl" accessed-when="2018-08-05T00:03:20.142-04:00"/>
+            <location href="../applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl" accessed-when="2018-08-05T00:03:20.142-04:00"/>
          </algorithm>
          <div-type xml:id="ch">
             <IRI>http://dbpedia.org/resource/Chapter_(books)</IRI>

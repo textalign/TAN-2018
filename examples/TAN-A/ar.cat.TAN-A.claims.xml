@@ -137,10 +137,6 @@
             <alias xml:id="σd" idrefs="σ σc"/>
             <alias xml:id="comm-omnes" idrefs="π δ αd φd οd ηd σd"/>
             
-            <verb xml:id="omits" which="omits"/>
-            <verb xml:id="agrees" which="agrees"/>
-            <verb xml:id="replaces" which="replaces"/>
-            <verb xml:id="quotes" which="quotes"/>
             <verb which="refers or alludes to" xml:id="refers-to"/>
             
             <modal which="possibly" xml:id="perhaps"/>
@@ -163,6 +159,7 @@
         <resp who="duo" roles="creator"/>
         <change when="2016-07-07" who="duo">Started file</change>
         <change who="xslt1" when="2018-08-05T01:05:10.039-04:00">Converted from 2018 to 2019 schemas.</change>
+        <change when="2019-05-03" who="park">Revised claims to match proper nomenclature.</change>
         <to-do>
             <comment when="2018-08-05-04:00" who="park">Finish file. Only the first couple of claims have been filled in.</comment>
         </to-do>
@@ -180,16 +177,16 @@
             Boethus omitted the text, or relied on sources that had omitted it, but that they
             observed that there were manuscripts that had done so.</comment>
         <claim subject="dexippus porphyry">
-            <claim subject="andronicus boethus" adverb="perhaps" verb="omits">
-                <object src="grc">
-                    <tok ref="1 a 2" pos="3-4"/>
-                </object>
+            <claim subject="andronicus boethus" adverb="perhaps" verb="lacks">
+                <at src="grc" ref="1 a 2">
+                    <tok pos="3-4"/>
+                </at>
             </claim>
         </claim>
-        <claim subject="herminus comm-omnes" verb="agrees">
-            <locus src="grc">
-                <tok ref="1 a 2" pos="3-4"/>
-            </locus>
+        <claim subject="herminus comm-omnes" verb="matches">
+            <at src="grc" ref="1 a 2">
+                <tok pos="3-4"/>
+            </at>
         </claim>
         <comment when="2017-03-10" who="park">The next three claims assert that the reading, ἀποδιδῷ
             τις, is attested to by π α φ ο but B transposes the words, and perhaps Boethius does as
@@ -197,22 +194,22 @@
             expect an intelligent reader to supply, e.g., that the claim is not that Boethius's
             translation perhaps transposed the words, but that Boethius was perhaps following one or
             more Greek manuscripts that did.</comment>
-        <claim subject="B" verb="replaces">
-            <locus src="grc">
-                <tok ref="1 a 5" pos="1-2"/>
-            </locus>
+        <claim subject="B" verb="reads">
+            <at src="grc" ref="1 a 5">
+                <tok pos="1-2"/>
+            </at>
             <object>τις ἀποδιδῷ</object>
         </claim>
-        <claim subject="Λ" adverb="perhaps" verb="replaces">
-            <locus src="grc">
-                <tok ref="1 a 5" pos="1-2"/>
-            </locus>
+        <claim subject="Λ" adverb="perhaps" verb="reads">
+            <at src="grc" ref="1 a 5">
+                <tok pos="1-2"/>
+            </at>
             <object>τις ἀποδιδῷ</object>
         </claim>
-        <claim subject="π α φ ο" verb="agrees">
-            <locus src="grc">
-                <tok ref="1 a 5" pos="1-2"/>
-            </locus>
+        <claim subject="π α φ ο" verb="matches">
+            <at src="grc" ref="1 a 5">
+                <tok pos="1-2"/>
+            </at>
         </claim>
         <!-- examples of general claims -->
         <claim verb="refers-to">

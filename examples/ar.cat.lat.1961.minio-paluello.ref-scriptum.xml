@@ -25,16 +25,17 @@
                 editio composita translatio Guillelmi de Moerbeka, lemmata e simplicii commentario
                 decerpta pseudo-Augustini paraphrasis themistiana</name>
         </source>
-        <see-also relationship="alt">
-            <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:semantic-refs</IRI>
-            <name>Categories, Aristotle, Greek text by Minio-Paluello</name>
-            <location href="ar.cat.grc.1949.minio-paluello-sem.xml" accessed-when="2016-07-09T23:54:42.291-04:00"/>
-        </see-also>
+      <see-also relationship="alt">
+         <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:semantic-refs</IRI>
+         <name>Categories, Aristotle, Greek text by Minio-Paluello</name>
+         <location accessed-when="2018-12-11-05:00"
+            href="ar.cat.grc.1949.minio-paluello.ref-logical.xml"/>
+      </see-also>
       <vocabulary-key>
          <algorithm xml:id="xslt2">
             <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
             <name>Stylesheet to create a TAN file.</name>
-            <location href="../../applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl" accessed-when="2018-08-06T15:44:43.225-04:00"/>
+            <location href="../applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl" accessed-when="2018-08-06T15:44:43.225-04:00"/>
       </algorithm>
          <div-type xml:id="p">
             <IRI>http://dbpedia.org/resource/Page_(paper)</IRI>
@@ -63,7 +64,10 @@
             <name xml:lang="eng">Editor</name>
          </role>
          <role xml:id="stylesheet1" which="stylesheet"/>
-         <relationship xml:id="alt" which="different work version"/>
+         <relationship xml:id="alt">
+            <IRI>tag:kalvesmaki.com,2014:relationship:diff-work-version</IRI>
+            <name>different work version</name>
+         </relationship>
       </vocabulary-key>
     
     <file-resp who="kalvesmaki"/>

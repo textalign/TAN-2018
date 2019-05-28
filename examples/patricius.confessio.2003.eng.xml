@@ -156,7 +156,6 @@
             <name>SHA-1</name>
             <value>91D95564ABDF2B2C1B9EEF016CBA51E8179646CC</value>
          </checksum>
-         <location href="confessio_english_temp.xml" accessed-when="2016-09-09"/>
          <location href="http://www.confessio.ie/sites/confessio.ie/files/downloads/confessio_english.xml" accessed-when="2015-01-25"/>
       </source>
       <adjustments>
@@ -169,7 +168,7 @@
          <algorithm xml:id="xslt2">
             <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
             <name>Stylesheet to create a TAN file.</name>
-            <location href="../../applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl" accessed-when="2018-08-09T11:14:11.796-04:00"/>
+            <location href="../applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl" accessed-when="2018-08-09T11:14:11.796-04:00"/>
          </algorithm>
          <div-type xml:id="sect" which="section"/>
          <div-type xml:id="title" which="title"/>

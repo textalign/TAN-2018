@@ -65,8 +65,7 @@
     <body bitext-relation="B-descends-from-A" reuse-type="adaptation" claimant="xslt2">
         <!-- Examples of picking tokens by number -->
         <align>
-            <tok src="ring1881" ref="1" rgx="\u{.latin}"/>
-            <!--<tok src="ring1881" ref="1" pos="1"/>-->
+            <tok src="ring1881" ref="1" pos="1"/>
             <tok src="ring1987" ref="1" pos="1"/>
         </align>
         <align>

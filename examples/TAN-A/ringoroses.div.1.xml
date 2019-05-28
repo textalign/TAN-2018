@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../../schemas/TAN-A.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="../../schemas/TAN-A.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<!--<?xml-model href="../../schemas/TAN-A.rnc" type="application/relax-ng-compact-syntax"?>
+<?xml-model href="../../schemas/TAN-A.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
 <!--<?xml-model href="http://textalign.net/release/TAN-2019/schemas/TAN-A.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="http://textalign.net/release/TAN-2019/schemas/TAN-A.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
 <TAN-A xmlns="tag:textalign.net,2015:ns" TAN-version="2019" id="tag:parkj@textalign.net,2015:ring01-TAN-A-ring02">
@@ -32,7 +32,7 @@
         </source>
         <adjustments src="ger">
             <skip div-type="Gedicht"/>
-            <rename n="v" by="-1"/>
+            <rename n="e" by="-1"/>
         </adjustments>
         <vocabulary-key>
             <algorithm xml:id="xslt1">
@@ -48,13 +48,9 @@
                 <IRI>tag:parkj@textalign.net,2015:self</IRI>
                 <name xml:lang="eng">Jenny Park</name>
             </person>
-            <role xml:id="creator">
-                <IRI>http://schema.org/creator</IRI>
-                <name xml:lang="eng">creator</name>
-            </role>
-            <verb xml:id="likes">
-                <IRI>tag:parkj@textalign.net,2015:likes</IRI>
-                <name>likes</name>
+            <verb xml:id="resembles">
+                <IRI>tag:parkj@textalign.net,2015:verb:resembles</IRI>
+                <name>resembles</name>
             </verb>
             <alias id="ring" idrefs="ger eng-us"/>
         </vocabulary-key>
@@ -69,5 +65,18 @@
             <comment when="2018-08-09-04:00" who="park">Finish file.</comment>
         </to-do>
     </head>
-    <body claimant="xslt1"/>
+    <body claimant="park">
+        <claim verb="resembles">
+            <subject src="eng-uk">
+                <tok ref="2" pos="1-2" chars="3-4"/>
+                <from-tok ref="1" pos="3"/>
+                <through-tok ref="2" pos="1"/>
+            </subject>
+            <object work="eng-uk" ref="3-4"/>
+        </claim>
+        <!-- testing -->
+        <claim verb="lacks" subject="ger">
+            <at src="eng-uk" ref="1"/>
+        </claim>
+    </body>
 </TAN-A>
