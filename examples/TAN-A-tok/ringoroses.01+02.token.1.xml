@@ -3,7 +3,7 @@
 <?xml-model href="../../schemas/TAN-A-tok.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <!--<?xml-model href="http://textalign.net/release/TAN-2019/schemas/TAN-A-tok.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="http://textalign.net/release/TAN-2019/schemas/TAN-A-tok.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
-<TAN-A-tok xmlns="tag:textalign.net,2015:ns" TAN-version="2019" id="tag:parkj@textalign.net,2015:TAN-A-tok,ring01+ring02">
+<TAN-A-tok xmlns="tag:textalign.net,2015:ns" TAN-version="2020" id="tag:parkj@textalign.net,2015:TAN-A-tok,ring01+ring02">
     <head>
         <name>token-based alignment of two versions of Ring o Roses</name>
         <master-location href="http://textalign.net/release/TAN-2019/examples/TAN-A-tok/ringoroses.01+02.token.1.xml"/>
@@ -27,9 +27,9 @@
         </source>
         <vocabulary-key>
             <algorithm xml:id="xslt2">
-                <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
+                <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2020</IRI>
                 <name>Stylesheet to create a TAN file.</name>
-                <location href="../../applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl" accessed-when="2018-08-09T13:17:48.557-04:00"/>
+                <location href="../../applications/convert/convert%20TAN%202018%20to%20TAN%202020.xsl" accessed-when="2018-08-09T13:17:48.557-04:00"/>
             </algorithm>
             <bitext-relation xml:id="B-descends-from-A">
                 <IRI>tag:textalign.net,2015:bitext-relation:a/x+/b</IRI>

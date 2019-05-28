@@ -3,7 +3,7 @@
 <?xml-model href="../../schemas/TAN-mor.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <!--<?xml-model href="http://textalign.net/release/TAN-2019/schemas/TAN-R-mor.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="http://textalign.net/release/TAN-2019/schemas/TAN-R-mor.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
-<TAN-mor xmlns="tag:textalign.net,2015:ns" TAN-version="2019" id="tag:kalvesmaki.com,2014:tan-r-mor:eng:penn">
+<TAN-mor xmlns="tag:textalign.net,2015:ns" TAN-version="2020" id="tag:kalvesmaki.com,2014:tan-r-mor:eng:penn">
    <head>
       <name>University of Pennsylvania (Penn) Treebank Tag-set</name>
       <master-location href="https://raw.githubusercontent.com/Arithmeticus/TAN-lexico-morphology/master/TAN-mor/eng.kalvesmaki.com%2C2014.2.xml"/>
@@ -23,9 +23,9 @@
          http://www.comp.leeds.ac.uk/amalgam/tagsets/upenn.html</comment>
       <vocabulary-key ed-when="2015-03-03" ed-who="kalvesmaki">
          <algorithm xml:id="xslt2">
-            <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
+            <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2020</IRI>
             <name>Stylesheet to create a TAN file.</name>
-            <location href="../../applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl" accessed-when="2018-08-09T11:22:47.928-04:00"/>
+            <location href="../../applications/convert/convert%20TAN%202018%20to%20TAN%202020.xsl" accessed-when="2018-08-09T11:22:47.928-04:00"/>
          </algorithm>
          <person xml:id="kalvesmaki">
             <IRI>http://viaf.org/viaf/299582703</IRI>

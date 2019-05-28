@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../../schemas/TAN-A-lm.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="../../schemas/TAN-A-lm.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<TAN-A-lm xmlns="tag:textalign.net,2015:ns" TAN-version="2019" id="tag:parkj@textalign.net,2015:ring01-lm">
+<TAN-A-lm xmlns="tag:textalign.net,2015:ns" TAN-version="2020" id="tag:parkj@textalign.net,2015:ring01-lm">
     <head>
         <name>Part-of-speech analysis of 1881 version of Ring a Ring o' Roses</name>
         <master-location href="http://textalign.net/release/TAN-2019/examples/TAN-A-lm/ring-o-roses.eng.1881.lm.xml"/>
@@ -19,9 +19,9 @@
         </source>
         <vocabulary-key>
             <algorithm xml:id="xslt2">
-                <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
+                <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2020</IRI>
                 <name>Stylesheet to create a TAN file.</name>
-                <location href="../../applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl" accessed-when="2018-08-09T11:21:18.078-04:00"/>
+                <location href="../../applications/convert/convert%20TAN%202018%20to%20TAN%202020.xsl" accessed-when="2018-08-09T11:21:18.078-04:00"/>
             </algorithm>
             <morphology xml:id="penn" ed-when="2015-08-20-04:00" ed-who="park">
                 <IRI>tag:kalvesmaki.com,2014:tan-r-mor:eng:penn</IRI>

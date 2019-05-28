@@ -3,7 +3,7 @@
 <?xml-model href="../schemas/TAN-TEI.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <!--<?xml-model href="http://textalign.net/release/TAN-2019/schemas/TAN-TEI.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="http://textalign.net/release/TAN-2019/schemas/TAN-TEI.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
-<TEI xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:tan="tag:textalign.net,2015:ns" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns="http://www.tei-c.org/ns/1.0" TAN-version="2019" id="tag:parkj@textalign.net,2015:gomme.1898.ring-o-roses">
+<TEI xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:tan="tag:textalign.net,2015:ns" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns="http://www.tei-c.org/ns/1.0" TAN-version="2020" id="tag:parkj@textalign.net,2015:gomme.1898.ring-o-roses">
   <teiHeader>
     <fileDesc>
       <titleStmt><title/>
@@ -50,9 +50,9 @@
     </adjustments>
     <vocabulary-key>
       <algorithm xml:id="xslt2">
-        <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
+        <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2020</IRI>
         <name>Stylesheet to create a TAN file.</name>
-        <location href="../applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl" accessed-when="2018-08-09T11:09:27.084-04:00"/>
+        <location href="../applications/convert/convert%20TAN%202018%20to%20TAN%202020.xsl" accessed-when="2018-08-09T11:09:27.084-04:00"/>
       </algorithm>
       <div-type xml:id="sect">
         <IRI>http://dbpedia.org/resource/Section_(typography)</IRI>

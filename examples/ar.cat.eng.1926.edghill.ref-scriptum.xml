@@ -3,7 +3,7 @@
 <?xml-model href="../schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <!--<?xml-model href="http://textalign.net/release/TAN-2019/schemas/TAN-T.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="http://textalign.net/release/TAN-2019/schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
-<TAN-T xmlns="tag:textalign.net,2015:ns" id="tag:kalvesmaki.com,2014:tan-t:ar.cat.eng.1926.edghill:model-object-refs" TAN-version="2019">
+<TAN-T xmlns="tag:textalign.net,2015:ns" id="tag:kalvesmaki.com,2014:tan-t:ar.cat.eng.1926.edghill:model-object-refs" TAN-version="2020">
    <head>
       <name>Categories, Aristotle, English translation by E. M. Edghill</name>
       <master-location href="https://raw.githubusercontent.com/textalign/TAN-2019/master/examples/ar.cat.eng.1926.edghill.ref-scriptum.xml"/>

@@ -54,7 +54,7 @@
    <!-- CORE GLOBAL VARIABLES -->
 
    <!-- general -->
-   <xsl:variable name="TAN-version" as="xs:string">2019</xsl:variable>
+   <xsl:variable name="TAN-version" as="xs:string">2020</xsl:variable>
    <xsl:variable name="TAN-version-is-under-development" as="xs:boolean" select="true()"/>
    <xsl:variable name="previous-TAN-versions" select="('1 dev', '2018')"/>
    <xsl:variable name="internet-available" as="xs:boolean">
