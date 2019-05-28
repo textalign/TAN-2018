@@ -3335,6 +3335,13 @@
                            select="tan:error('wrn01', $this-message, $possible-hrefs, 'replace-attributes')"
                         />
                      </xsl:when>
+                     <!-- skip <source> in class 1 files when the URL points to non-XML. -->
+                     <xsl:when
+                        test="
+                           self::tan:source and ($this-class = 1) and (
+                           some $i in $these-hrefs
+                              satisfies unparsed-text-available($i))"
+                     />
                      <xsl:when
                         test="self::tan:source and not(exists(tan:location)) and tan:tan-type(.) = 'TAN-mor'"/>
                      <xsl:otherwise>
