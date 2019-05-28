@@ -5675,7 +5675,7 @@ process-link-to
 									<String>*</String>
 								</field>
 								<field name="attributeValue">
-									<String>2019</String>
+									<String>2020</String>
 								</field>
 							</documentTypeRule>
 							<documentTypeRule>

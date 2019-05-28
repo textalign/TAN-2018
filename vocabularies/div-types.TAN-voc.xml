@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../schemas/TAN-voc.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="../schemas/TAN-voc.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2019" id="tag:textalign.net,2015:tan-voc:div-types">
+<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2020" id="tag:textalign.net,2015:tan-voc:div-types">
     <head>
         <name>TAN keywords for types of divisions</name>
         <desc>Definitive list of key terms used for textual divisions.</desc>
-        <master-location href="http://textalign.net/release/TAN-2019/vocabularies/div-types.TAN-voc.xml"/>
+        <master-location href="http://textalign.net/release/TAN-2020/vocabularies/div-types.TAN-voc.xml"/>
         <license licensor="kalvesmaki" which="by 4.0"/>
         <vocabulary-key>
             <group-type xml:id="inline-start" which="no new line start"/>

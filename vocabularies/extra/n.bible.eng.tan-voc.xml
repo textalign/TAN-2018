@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../../schemas/TAN-voc.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="../../schemas/TAN-voc.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2019" id="tag:textalign.net,2015:tan-voc:n:eng:bible">
+<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2020" id="tag:textalign.net,2015:tan-voc:n:eng:bible">
     <head>
         <name>commonly used vocabulary for the bible</name>
-        <master-location href="http://textalign.net/release/TAN-2019/vocabularies/extra/n.bible.eng.tan-voc.xml"/>
+        <master-location href="http://textalign.net/release/TAN-2020/vocabularies/extra/n.bible.eng.tan-voc.xml"/>
         <license which="by 4.0" licensor="kalvesmaki"/>
         <vocabulary-key>
             <person xml:id="kalvesmaki">

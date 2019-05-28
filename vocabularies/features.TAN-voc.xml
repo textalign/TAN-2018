@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../schemas/TAN-voc.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="../schemas/TAN-voc.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2019" id="tag:textalign.net,2015:tan-voc:features">
+<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2020" id="tag:textalign.net,2015:tan-voc:features">
     <head>
         <name>TAN keywords for features</name>
         <desc>This file contains in TAN-voc format the core vocabulare adopted by OLiA for parts of
             speech: http://purl.org/olia/olia.owl.</desc>
-        <master-location href="http://textalign.net/release/TAN-2019/vocabularies/features.TAN-voc.xml"/>
+        <master-location href="http://textalign.net/release/TAN-2020/vocabularies/features.TAN-voc.xml"/>
         <license licensor="kalvesmaki" which="by 4.0"/>
         <vocabulary-key>
             <person xml:id="kalvesmaki">

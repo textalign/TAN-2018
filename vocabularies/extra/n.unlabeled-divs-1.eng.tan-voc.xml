@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../../schemas/TAN-voc.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="../../schemas/TAN-voc.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2019" id="tag:textalign.net,2015:tan-voc:n:eng:unlabeled-divs-1">
+<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2020" id="tag:textalign.net,2015:tan-voc:n:eng:unlabeled-divs-1">
     <head>
         <name>Commonly used vocabulary in English for divs that are unnamed, first system</name>
         <desc>There are a handful of div types that do not easily lend themselves to values of @n
             because that type of div is traditionally not labeled or numbered. In practice, @n is
             given a value that is identical to, or looks a lot like, the value of @type. This
             TAN-voc file tries to provide a lingua franca for such unlabeled div types.</desc>
-        <master-location href="http://textalign.net/release/TAN-2019/vocabularies/extra/n.unlabeled-divs-1.tan-voc.xml"/>
+        <master-location href="http://textalign.net/release/TAN-2020/vocabularies/extra/n.unlabeled-divs-1.tan-voc.xml"/>
         <license which="by 4.0" licensor="kalvesmaki"/>
         <vocabulary-key>
             <person xml:id="kalvesmaki">

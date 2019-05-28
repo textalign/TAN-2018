@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<serialized version="20.1" xml:space="preserve">
+<serialized version="21.0" xml:space="preserve">
 	<serializableOrderedMap>
 		<entry>
 			<String>document.types</String>
@@ -652,65 +652,6 @@ process-link-to
 											<String>doctypeRules</String>
 										</field>
 										<field name="index">
-											<Integer>0</Integer>
-										</field>
-										<field name="value">
-											<null/>
-										</field>
-										<field name="patchHandling">
-											<String>removeIndex</String>
-										</field>
-										<field name="anchor">
-											<null/>
-										</field>
-									</poPatch>
-									<poPatch>
-										<field name="fieldPath">
-											<String>doctypeRules</String>
-										</field>
-										<field name="index">
-											<Integer>0</Integer>
-										</field>
-										<field name="value">
-											<documentTypeRule>
-												<field name="namespace">
-													<String>*</String>
-												</field>
-												<field name="rootElem">
-													<String>TEI</String>
-												</field>
-												<field name="fileName">
-													<String>*</String>
-												</field>
-												<field name="publicID">
-													<String>*</String>
-												</field>
-												<field name="javaRuleClass">
-													<String></String>
-												</field>
-												<field name="attributeLocalName">
-													<String>TAN-version</String>
-												</field>
-												<field name="attributeNamespace">
-													<String>*</String>
-												</field>
-												<field name="attributeValue">
-													<String>2019</String>
-												</field>
-											</documentTypeRule>
-										</field>
-										<field name="patchHandling">
-											<String>addIndex</String>
-										</field>
-										<field name="anchor">
-											<null/>
-										</field>
-									</poPatch>
-									<poPatch>
-										<field name="fieldPath">
-											<String>doctypeRules</String>
-										</field>
-										<field name="index">
 											<Integer>1</Integer>
 										</field>
 										<field name="value">
@@ -737,7 +678,49 @@ process-link-to
 													<String>*</String>
 												</field>
 												<field name="attributeValue">
-													<String>2019</String>
+													<String>2020</String>
+												</field>
+											</documentTypeRule>
+										</field>
+										<field name="patchHandling">
+											<String>addIndex</String>
+										</field>
+										<field name="anchor">
+											<null/>
+										</field>
+									</poPatch>
+									<poPatch>
+										<field name="fieldPath">
+											<String>doctypeRules</String>
+										</field>
+										<field name="index">
+											<Integer>2</Integer>
+										</field>
+										<field name="value">
+											<documentTypeRule>
+												<field name="namespace">
+													<String>*</String>
+												</field>
+												<field name="rootElem">
+													<String>TEI</String>
+												</field>
+												<field name="fileName">
+													<String>*</String>
+												</field>
+												<field name="publicID">
+													<String>*</String>
+												</field>
+												<field name="javaRuleClass">
+													<String></String>
+												</field>
+												<field name="attributeLocalName">
+													<String>TAN-version</String>
+												</field>
+												<field name="attributeNamespace">
+													<String>*</String>
+												</field>
+												<field name="attributeValue">
+													<String>2020</String>
 												</field>
 											</documentTypeRule>
 										</field>
@@ -3085,7 +3068,7 @@ go-to-prev-leaf-div</String>
 											<String></String>
 										</field>
 										<field name="accelerator">
-											<null/>
+											<String>M3 SEMICOLON</String>
 										</field>
 										<field name="actionModes">
 											<actionMode-array>
@@ -3905,7 +3888,7 @@ go-to-prev-leaf-div</String>
 											<String></String>
 										</field>
 										<field name="accelerator">
-											<String>M3 SEMICOLON</String>
+											<null/>
 										</field>
 										<field name="actionModes">
 											<actionMode-array>
@@ -4980,7 +4963,7 @@ replace-marked-text-with-string-composite
 											<String></String>
 										</field>
 										<field name="accelerator">
-											<String>M4 BACK_SLASH</String>
+											<null/>
 										</field>
 										<field name="actionModes">
 											<actionMode-array>
@@ -6439,7 +6422,7 @@ process-link-to
 									<String>*</String>
 								</field>
 								<field name="attributeValue">
-									<String>2019</String>
+									<String>2020</String>
 								</field>
 							</documentTypeRule>
 							<documentTypeRule>
@@ -6565,6 +6548,9 @@ process-link-to
 												<String>${ask('Copy where', relative_url, 'Copy%20of%20${cfne}')}</String>
 											</field>
 											<field name="hasXPathValue">
+												<Boolean>false</Boolean>
+											</field>
+											<field name="isStatic">
 												<Boolean>false</Boolean>
 											</field>
 										</transformationParameter>

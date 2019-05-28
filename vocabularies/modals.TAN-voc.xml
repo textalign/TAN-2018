@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../schemas/TAN-voc.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="../schemas/TAN-voc.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2019" id="tag:textalign.net,2015:tan-voc:modals">
+<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2020" id="tag:textalign.net,2015:tan-voc:modals">
    <head>
       <name>TAN keywords for types of modals</name>
       <desc>This file has been created ad hoc to reflect the kind of modal qualifiers that textual
          scholars habitually employ to nuance their claims. These categories are not to be seen as
          necessarily correlating with any branch modal logic. </desc>
-      <master-location href="http://textalign.net/release/TAN-2019/vocabularies/modals.TAN-voc.xml"/>
+      <master-location href="http://textalign.net/release/TAN-2020/vocabularies/modals.TAN-voc.xml"/>
       <license licensor="kalvesmaki" which="by 4.0"/>
       <vocabulary-key>
          <person xml:id="kalvesmaki">

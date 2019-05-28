@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../schemas/TAN-voc.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="../schemas/TAN-voc.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2019" id="tag:textalign.net,2015:tan-voc:reuse-type">
+<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2020" id="tag:textalign.net,2015:tan-voc:reuse-type">
     <head>
         <name>TAN keywords for types of bitext reuse</name>
         <desc>List of standardized terms used for types of bitext reuse.</desc>
-        <master-location href="http://textalign.net/release/TAN-2019/vocabularies/reuse-types.TAN-voc.xml"/>
+        <master-location href="http://textalign.net/release/TAN-2020/vocabularies/reuse-types.TAN-voc.xml"/>
         <license licensor="kalvesmaki" which="by 4.0"/>
         <vocabulary-key>
             <person xml:id="kalvesmaki">

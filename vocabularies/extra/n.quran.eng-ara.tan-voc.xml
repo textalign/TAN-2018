@@ -2,12 +2,12 @@
 <?xml-model href="../../schemas/TAN-voc.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="../../schemas/TAN-voc.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <TAN-voc xmlns="tag:textalign.net,2015:ns"
-         TAN-version="2019"
+         TAN-version="2020"
          id="tag:textalign.net,2015:tan-voc:n:eng-ara:quran">
    <head>
       <name>Commonly used names for Surahs in the Quran, incorporating English and Arabic.</name>
       <master-location
-         href="http://textalign.net/release/TAN-2019/vocabularies/extra/n.quran.eng-ara.tan-voc.xml"/>
+         href="http://textalign.net/release/TAN-2020/vocabularies/extra/n.quran.eng-ara.tan-voc.xml"/>
       <license which="by 4.0" licensor="kalvesmaki"/>
       <vocabulary-key>
          <person xml:id="kalvesmaki">
