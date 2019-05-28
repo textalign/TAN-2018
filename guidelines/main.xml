@@ -17,8 +17,12 @@
                <email>kalvesmaki@gmail.com</email>
             </author>
          </info>
-         <remark> This document and the files it describes are, unless otherwise specified, licensed
-            under a Creative Commons Attribution 4.0 International License:
+         <remark>All software, code, and dependencies (/applications, /functions, /schemas,
+            /vocabularies) are released under a GNU General Public License, <link
+               xlink:href="https://opensource.org/licenses/GPL-3.0"
+               >https://opensource.org/licenses/GPL-3.0</link>.</remark>
+         <remark>All other materials (such as this document), unless otherwise specified, are
+            licensed under a Creative Commons Attribution 4.0 International License:
             http://creativecommons.org/licenses/by/4.0/ </remark>
       </legalnotice>
       <revhistory>
