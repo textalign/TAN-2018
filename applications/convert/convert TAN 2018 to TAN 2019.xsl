@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns="tag:textalign.net,2015:ns" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
     xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:ti="http://chs.harvard.edu/xmlns/cts"
-    xmlns:tan="tag:textalign.net,2015:ns" exclude-result-prefixes="#all" version="2.0">
+    xmlns:tan="tag:textalign.net,2015:ns" exclude-result-prefixes="#all" version="2.0"
+    xpath-default-namespace="http://www.w3.org/2005/xpath-functions">
 
     <!-- Input: A TAN file written to conform to the TAN schema that was written before December 2017 -->
     <!-- Output: The same TAN file, updated to suit the 2018 schemas. -->
@@ -19,6 +20,8 @@
     <xsl:param name="stylesheet-url" select="static-base-uri()"/>
     <xsl:param name="stylesheet-name" select="'Converter from TAN 2018 to TAN 2019'"/>
     <xsl:param name="change-message" select="'Converted from 2018 to 2019 schemas.'"/>
+
+    <xsl:variable name="other-stylesheets" select="$applications-collection[xsl:stylesheet]"/>
 
     <!-- INPUT -->
 
@@ -279,6 +282,37 @@
         </adjustments>
     </xsl:template>
 
+    <xsl:template match="tan:reassign/tan:tok" mode="input-pass-1">
+        <passage>
+            <xsl:copy-of select="@ref"/>
+            <xsl:if test="not(exists(*)) and exists(@pos)">
+                <xsl:variable name="these-poses" select="tan:analyze-sequence(@pos, 'pos')"/>
+                <xsl:for-each select="$these-poses/*">
+                    <xsl:variable name="is-odd" select="position() mod 2 = 1"/>
+                    <xsl:choose>
+                        <xsl:when test="$is-odd">
+                            <from-tok pos="{.}"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <through-tok pos="{.}"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:for-each>
+                <xsl:apply-templates mode="#current"/>
+            </xsl:if>
+        </passage>
+    </xsl:template>
+    <xsl:template match="tan:reassign/tan:tok/tan:from" mode="input-pass-1">
+        <from-tok>
+            <xsl:copy-of select="@*"/>
+        </from-tok>
+    </xsl:template>
+    <xsl:template match="tan:reassign/tan:tok/tan:to" mode="input-pass-1">
+        <through-tok>
+            <xsl:copy-of select="@*"/>
+        </through-tok>
+    </xsl:template>
+
     <xsl:template match="tan:definitions" mode="input-pass-1 test-input">
         <vocabulary-key>
             <xsl:apply-templates select="@*" mode="#current"/>
@@ -294,6 +328,33 @@
         </vocabulary-key>
     </xsl:template>
     <xsl:template match="tan:morphology/tan:for-lang" mode="input-pass-1 test-input"/>
+    <xsl:template match="tan:algorithm" mode="input-pass-1 test-input">
+        <xsl:variable name="last-text-node" select="node()[last()]/self::text()"/>
+        <xsl:copy>
+            <xsl:copy-of select="@*"/>
+            <xsl:apply-templates select="node() except $last-text-node" mode="#current"/>
+            <xsl:if test="not(exists(tan:location))">
+                <xsl:variable name="these-iris" select="tan:IRI"/>
+                <xsl:variable name="these-matching-stylesheets"
+                    select="$other-stylesheets[xsl:stylesheet/*[(replace(@select, '^.|.$', ''), text()) = $these-iris]]"/>
+                <xsl:variable name="matching-stylesheet-urls"
+                    select="
+                        for $i in $these-matching-stylesheets
+                        return
+                            tan:base-uri($i)"
+                />
+                <xsl:for-each select="$matching-stylesheet-urls">
+                    <xsl:value-of select="$most-common-indentations[4]"/>
+                    <location href="{tan:uri-relative-to(., $doc-uri)}" accessed-when="{$today-iso}"/>
+                </xsl:for-each>
+                <xsl:if test="not(exists($matching-stylesheet-urls))">
+                    <xsl:value-of select="$most-common-indentations[4]"/>
+                    <location href="" accessed-when="{$today-iso}"/>
+                </xsl:if>
+            </xsl:if>
+            <xsl:copy-of select="$last-text-node"/>
+        </xsl:copy>
+    </xsl:template>
     <xsl:template match="tan:algorithm/tan:desc" mode="input-pass-1 test-input">
         <xsl:variable name="url-check" select="tan:parse-urls(text())"/>
         <xsl:variable name="urls-valid" as="xs:string*">
@@ -335,6 +396,12 @@
                 mode="#current"/>
         </xsl:copy>
     </xsl:template>
+    
+    <xsl:template match="tan:locus" mode="input-pass-1">
+        <at>
+            <xsl:apply-templates select="@* | node()" mode="#current"/>
+        </at>
+    </xsl:template>
 
     <xsl:template match="@in-progress" mode="input-pass-1"/>
 
@@ -355,7 +422,7 @@
     <xsl:variable name="pass-1-agent-vocabulary"
         select="tan:vocabulary(('person', 'organization'), false(), (), $pass-1-resolved/*/tan:head)"/>
     <xsl:variable name="pass-1-likely-primary-agents"
-        select="$pass-1-agent-vocabulary/*[tan:IRI[starts-with(., $doc-namespace)]]"/>
+        select="$pass-1-agent-vocabulary/*[tan:IRI[starts-with(., $doc-id-namespace)]]"/>
     <xsl:variable name="pass-1-primary-agent-ids"
         select="
             for $i in $pass-1-likely-primary-agents
@@ -363,8 +430,7 @@
                 if (exists($i/tan:id)) then
                     $i/tan:id[1]
                 else
-                    replace($i/tan:name[1], '\s', '_')"
-    />
+                    replace($i/tan:name[1], '\s', '_')"/>
     <xsl:template match="tan:file-resp" mode="input-pass-2">
         <xsl:copy>
             <xsl:copy-of select="@*"/>
@@ -373,13 +439,12 @@
             </xsl:if>
         </xsl:copy>
     </xsl:template>
-    
+
     <!-- TEMPLATE -->
 
     <xsl:param name="template-infused-with-revised-input" select="$input-pass-2"/>
 
     <xsl:template match="/" mode="revise-infused-template">
-        <xsl:message>revise infused template</xsl:message>
         <xsl:document>
             <xsl:for-each select="node()">
                 <xsl:text>&#xa;</xsl:text>
@@ -391,22 +456,27 @@
     <xsl:template match="@xml:base" mode="credit-stylesheet"/>
 
     <!-- OUTPUT -->
-    <xsl:param name="output-url-relative-to-input" as="xs:string?"
-        select="replace($doc-uri, '(\.\w+)$', concat('-', $today-iso, '$1'))"/>
+    <xsl:param name="output-directory-relative-to-actual-input" select="tan:uri-directory($doc-uri)"/>
+    <xsl:param name="output-filename" select="concat(tan:cfn(/), '-', $today-iso, '.xml')"/>
+    <!--<xsl:param name="output-url-relative-to-actual-input" as="xs:string?"
+        select="replace($doc-uri, '(\.\w+)$', concat('-', $today-iso, '$1'))"/>-->
 
-    <!--<xsl:template match="/" priority="1">
-        <!-\- diagnostics -\->
-        <!-\-<diagnostics>
-            <xsl:copy-of select="$input-pass-1"/>
-            <!-\\-<xsl:copy-of select="$template-doc"/>-\\->
-            <!-\\-<xsl:copy-of select="$template-infused-with-revised-input"/>-\\->
-        </diagnostics>-\->
-        <!-\-<xsl:copy-of select="$test-input"/>-\->
-        <!-\-<xsl:copy-of select="tan:get-doc-history($orig-self)"/>-\->
-        <!-\-<xsl:copy-of select="$doc-history"/>-\->
-        <!-\-<xsl:copy-of select="$input-pass-1"/>-\->
-        <xsl:copy-of select="$input-pass-2"/>
-        <!-\-<xsl:copy-of select="$infused-template-credited"/>-\->
-    </xsl:template>-->
+    <xsl:template match="/" priority="1">
+        <!-- diagnostics -->
+        <!--<diagnostics>
+            <xsl:value-of select="base-uri(/)"/>
+            <!-\-<xsl:value-of select="$output-url-resolved"/>-\->
+        </diagnostics>-->
+        <!--<xsl:copy-of select="$applications-collection"/>-->
+        <!--<xsl:copy-of select="$template-doc"/>-->
+        <!--<xsl:copy-of select="$template-infused-with-revised-input"/>-->
+        <!--<xsl:copy-of select="$test-input"/>-->
+        <!--<xsl:copy-of select="tan:get-doc-history($orig-self)"/>-->
+        <!--<xsl:copy-of select="$doc-history"/>-->
+        <!--<xsl:copy-of select="$input-pass-1"/>-->
+        <!--<xsl:copy-of select="$input-pass-2"/>-->
+        <!--<xsl:copy-of select="$infused-template-credited"/>-->
+        <xsl:copy-of select="$final-output"/>
+    </xsl:template>
 
 </xsl:stylesheet>
