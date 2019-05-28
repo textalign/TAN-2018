@@ -5,8 +5,8 @@
     xmlns:tan="tag:textalign.net,2015:ns" exclude-result-prefixes="#all" version="2.0"
     xpath-default-namespace="http://www.w3.org/2005/xpath-functions">
 
-    <!-- Input: A TAN file written to conform to the TAN schema that was written before December 2017 -->
-    <!-- Output: The same TAN file, updated to suit the 2018 schemas. -->
+    <!-- Input: A TAN file written to conform to the TAN schema that was written for the TAN-2018 schema -->
+    <!-- Output: The same TAN file, updated to suit the 2020 schemas. -->
     <!-- It is important that this stylesheet avoid any variables or functions that try to resolve the file -->
 
     <!-- The following is a stylesheet that ensures that this transformation gets credited/blamed in the resultant TAN-TEI file -->
@@ -16,10 +16,10 @@
 
     <!-- STYLESHEET -->
     <xsl:param name="stylesheet-iri"
-        select="'tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019'"/>
+        select="'tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2020"/>
     <xsl:param name="stylesheet-url" select="static-base-uri()"/>
-    <xsl:param name="stylesheet-name" select="'Converter from TAN 2018 to TAN 2019'"/>
-    <xsl:param name="change-message" select="'Converted from 2018 to 2019 schemas.'"/>
+    <xsl:param name="stylesheet-name" select="'Converter from TAN 2018 to TAN 2020'"/>
+    <xsl:param name="change-message" select="'Converted from 2018 to 2020 schemas.'"/>
 
     <xsl:variable name="other-stylesheets" select="$applications-collection[xsl:stylesheet]"/>
 
@@ -38,10 +38,10 @@
     </xsl:template>
 
     <xsl:template match="processing-instruction()" priority="1" mode="input-pass-1 test-input">
-        <xsl:processing-instruction name="{name(.)}" select="replace(., 'TAN-2018', 'TAN-2019')"/>
+        <xsl:processing-instruction name="{name(.)}" select="replace(., 'TAN-2018', 'TAN-2020')"/>
     </xsl:template>
     <xsl:template match="/comment()" mode="input-pass-1 test-input">
-        <xsl:comment select="replace(., 'TAN-2018', 'TAN-2019')"/>
+        <xsl:comment select="replace(., 'TAN-2018', 'TAN-2020')"/>
     </xsl:template>
 
     <xsl:template match="text()[not(matches(., '\S'))]" mode="input-pass-1 test-input">
@@ -92,7 +92,7 @@
     </xsl:template>
 
     <xsl:template match="@TAN-version" mode="input-pass-1 test-input">
-        <xsl:attribute name="TAN-version">2019</xsl:attribute>
+        <xsl:attribute name="TAN-version">2020</xsl:attribute>
     </xsl:template>
 
     <xsl:template match="@when-accessed" mode="input-pass-1 test-input">
