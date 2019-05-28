@@ -43,39 +43,37 @@
 
    <!-- FILE PROCESSING: EXPANSION -->
 
-   <xsl:template match="tan:category " mode="dependency-expansion-terse core-expansion-terse">
-      <xsl:variable name="duplicate-codes"
-         select="
-            tan:duplicate-items(for $i in tan:feature/@code
-            return
-               lower-case($i))"
-      />
+   <xsl:template match="tan:TAN-mor/tan:body" mode="dependency-adjustments-pass-1 core-expansion-terse">
+      <xsl:variable name="duplicate-features" select="tan:duplicate-items(tan:category/tan:feature/tan:type)"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:apply-templates mode="#current">
-            <xsl:with-param name="duplicate-codes" select="$duplicate-codes"/>
+            <xsl:with-param name="duplicate-features" select="$duplicate-features" tunnel="yes"/>
          </xsl:apply-templates>
       </xsl:copy>
    </xsl:template>
-   <xsl:template match="tan:feature" mode="dependency-expansion-terse core-expansion-terse">
-      <xsl:param name="duplicate-codes"/>
+   <xsl:template match="tan:category " mode="dependency-adjustments-pass-1 core-expansion-terse">
+      <xsl:variable name="duplicate-codes" select="tan:duplicate-items(tan:feature/tan:code)"/>
       <xsl:copy>
-         <xsl:copy-of select="@* except @xml:id"/>
-         <xsl:if test="exists(@xml:id)">
-            <xsl:attribute name="xml:id" select="lower-case(@xml:id)"/>
-         </xsl:if>
-         <xsl:if test="exists(@code)">
-            <xsl:if test="lower-case(@code) = $duplicate-codes">
-               <xsl:copy-of select="tan:error('tmo02')"/>
-            </xsl:if>
-            <xsl:variable name="this-code" select="tan:help-extracted(@code)"/>
-            <code>
-               <xsl:copy-of select="$this-code/@help"/>
-               <xsl:value-of select="lower-case($this-code/text())"/>
-            </code>
-         </xsl:if>
-         <xsl:apply-templates mode="#current"/>
+         <xsl:copy-of select="@*"/>
+         <xsl:apply-templates mode="#current">
+            <xsl:with-param name="duplicate-codes" select="$duplicate-codes" tunnel="yes"/>
+         </xsl:apply-templates>
       </xsl:copy>
+   </xsl:template>
+   <xsl:template match="tan:feature/tan:type" mode="dependency-adjustments-pass-1 core-expansion-terse">
+      <xsl:param name="duplicate-features" tunnel="yes"/>
+      <xsl:if test=". = $duplicate-features">
+         <xsl:copy-of select="tan:error('tmo01', concat(., ' repeats'))"/>
+      </xsl:if>
+      <xsl:copy-of select="."/>
+   </xsl:template>
+   <xsl:template match="tan:feature/tan:code" mode="dependency-adjustments-pass-1 core-expansion-terse">
+      <xsl:param name="duplicate-codes" tunnel="yes"/>
+      <xsl:if test=". = $duplicate-codes">
+         <xsl:copy-of select="tan:error('tmo02', concat(., ' repeats'))"/>
+      </xsl:if>
+      <xsl:copy-of select="."/>
    </xsl:template>
 
 </xsl:stylesheet>

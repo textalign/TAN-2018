@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tan="tag:textalign.net,2015:ns" exclude-result-prefixes="#all" version="2.0">
-    <!-- Input: any file -->
+    <!-- Input: any file (including this one) -->
     <!-- Output: a catalog file for schemas/, functions/, and TAN-voc -->
     <!-- The resultant files are important for the function library and validation, which can use fn:collection() only in connection with an XML file listing the XML files available. -->
     <xsl:output indent="yes"/>

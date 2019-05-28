@@ -21,7 +21,8 @@
             <xsl:with-param name="inherited-affects-elements" select="tan:affects-element"
                tunnel="yes"/>
             <xsl:with-param name="is-reserved"
-               select="matches(parent::tan:TAN-voc/@id, '^tag:textalign.net,2015:')" tunnel="yes"/>
+               select="(parent::tan:TAN-voc/@id = $TAN-vocabulary-files/*/@id) or $doc-is-error-test"
+               tunnel="yes"/>
          </xsl:apply-templates>
       </xsl:copy>
    </xsl:template>
@@ -40,7 +41,7 @@
                select="tan:error('voc03', concat('try: ', string-join($this-fix/@affects-element, ', ')), $this-fix, 'copy-attributes')"
             />
          </xsl:if>
-         <xsl:if test="($this-val = 'vocabulary') and not(tan:doc-namespace(root(.)) = $TAN-namespace)">
+         <xsl:if test="($this-val = 'vocabulary') and not(tan:doc-id-namespace(root(.)) = $TAN-id-namespace)">
             <xsl:copy-of select="tan:error('voc06')"/>
          </xsl:if>
          <xsl:apply-templates mode="#current"/>
@@ -75,16 +76,22 @@
                $inherited-affects-elements"/>
       <xsl:variable name="reserved-vocabulary-doc"
          select="$TAN-vocabularies[tan:TAN-voc/tan:body[tokenize(@affects-element, '\s+') = $these-affects-elements]]"/>
-      <xsl:variable name="reserved-vocabulary-items"
+      <!--<xsl:variable name="reserved-vocabulary-items"
          select="
             if (exists($reserved-vocabulary-doc)) then
                key('item-via-node-name', $these-affects-elements, $reserved-vocabulary-doc)
             else
-               ()"/>
+               ()"/>-->
+      <xsl:variable name="reserved-vocabulary-items"
+         select="
+            for $i in $reserved-vocabulary-doc
+            return
+               key('item-via-node-name', $these-affects-elements, $i)"
+      />
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:if
-            test="($is-reserved = true()) and (not(exists(tan:IRI[starts-with(., $TAN-namespace)]))) and (not(exists(tan:token-definition)))">
+            test="($is-reserved = true()) and (not(exists(tan:IRI[starts-with(., $TAN-id-namespace)]))) and (not(exists(tan:token-definition)))">
             <xsl:variable name="this-fix" as="element()">
                <IRI>
                   <xsl:value-of select="$TAN-namespace"/>
@@ -125,9 +132,10 @@
    </xsl:template>
    <xsl:template match="tan:name" mode="core-expansion-normal">
       <xsl:param name="duplicate-names" tunnel="yes"/>
+      <xsl:variable name="this-name-normalized" select="tan:normalize-name(.)"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
-         <xsl:if test=". = $duplicate-names">
+         <xsl:if test="$this-name-normalized = $duplicate-names">
             <xsl:copy-of select="tan:error('voc02')"/>
          </xsl:if>
          <xsl:apply-templates mode="#current"/>
