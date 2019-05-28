@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns="tag:textalign.net,2015:ns" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tan="tag:textalign.net,2015:ns"
-   xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:tei="http://www.tei-c.org/ns/1.0"
+   xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:fn="http://www.w3.org/2005/xpath-functions"
    xmlns:math="http://www.w3.org/2005/xpath-functions/math" xmlns:functx="http://www.functx.com"
    xmlns:sch="http://purl.oclc.org/dsdl/schematron" xmlns:xhtml="http://www.w3.org/1999/xhtml"
    xmlns:mods="http://www.loc.gov/mods/v3" xmlns:map="http://www.w3.org/2005/xpath-functions/map"
-   exclude-result-prefixes="#all" version="3.0">
+   xmlns:oac="http://www.openannotation.org/ns/" xmlns:cnt="http://www.w3.org/2008/content#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/"
+   xmlns:foaf="http://xmlns.com/foaf/0.1/" exclude-result-prefixes="#all" version="3.0">
    <!-- This is a special set of extra functions for searching outside sources for information, and processing the results of those searches -->
 
    <xsl:variable name="search-services" select="doc('TAN-search-services.xml')"/>
@@ -71,25 +73,35 @@
          <param name="engine" value="morpheus{$lang-code}"/>
          <param name="word" value="{$search-expression}"/>
       </xsl:variable>
-      <xsl:variable name="morpheus-json" select="tan:search-for-entities('morpheus', $params)"/>
-      <xsl:copy-of select="json-to-xml($morpheus-json)"/>
+      <xsl:variable name="morpheus-results" select="tan:search-for-entities('morpheus', $params)"/>
+      <xsl:variable name="morpheus-results-norm" as="document-node()?">
+         <xsl:choose>
+            <xsl:when
+               test="
+                  not(some $i in $morpheus-results
+                     satisfies tan:node-type($i) = 'document')">
+               <xsl:document>
+                  <xsl:copy-of select="$morpheus-results"/>
+               </xsl:document>
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:sequence select="$morpheus-results"/>
+            </xsl:otherwise>
+         </xsl:choose>
+      </xsl:variable>
+      <xsl:copy-of select="$morpheus-results-norm"/>
+      <!--<xsl:copy-of select="json-to-xml($morpheus-json)"/>-->
    </xsl:function>
 
-   <xsl:variable name="internet-available" as="xs:boolean"
-      select="unparsed-text-available('http://www.google.com')"/>
    <xsl:function name="tan:search-for-entities" as="item()*">
       <!-- Input: a sequence of strings (search keywords), a string (options: loc), a string (options: marcxml, dc, mods), a positive integer -->
       <!-- Output: up to N records (N = integer parameter) in the protocol of the 3rd paramater, using the SRU protocol of the library catalog specified in the 2nd parameter based on search words in the 1st -->
       <xsl:param name="server-idref" as="xs:string"/>
       <xsl:param name="params" as="element()+"/>
-      <xsl:variable name="diagnostics" select="true()"/>
       <xsl:variable name="server-info" select="$search-services/*/service[name = $server-idref]"/>
       <xsl:variable name="server-url-base" select="$server-info/url-base"/>
       <xsl:variable name="server-params"
          select="$server-info/(param, root()/*/protocol[@xml:id = $server-info/protocol]/param)"/>
-      <!--<xsl:message select="$server-info"/>-->
-      <!--<xsl:message select="$server-info/*"></xsl:message>-->
-      <!--<xsl:message select="$server-info/root()/*/protocol[@xml:id = $server-info/protocol]"/>-->
       <xsl:variable name="these-params" as="xs:string*">
          <xsl:for-each select="$params">
             <xsl:variable name="this-param-name" select="@name"/>
@@ -140,6 +152,12 @@
       <xsl:variable name="this-search-url"
          select="concat($server-url-base, string-join($these-params,'&amp;'))"/>
 
+      <xsl:variable name="diagnostics-on" select="false()"/>
+      <xsl:if test="$diagnostics-on">
+         <xsl:message select="'diagnostics on for tan:search-for-entities()'"/>
+         <xsl:message select="'server info: ', $server-info"/>
+         <xsl:message select="'server url base: ', $server-url-base"/>
+      </xsl:if>
       <xsl:choose>
          <xsl:when test="not($internet-available)"/>
          <xsl:when test="doc-available($this-search-url)">
@@ -312,8 +330,9 @@
       </xsl:choose>
    </xsl:function>
 
-   <xsl:variable name="morpheus-map" as="map(xs:string, xs:string)">
+   <xsl:param name="morpheus-map" as="map(xs:string, xs:string)">
       <xsl:map>
+         <xsl:map-entry key="'numeral'" select="'number cardinal'"/>
          <xsl:map-entry key="'verb participle'" select="'verb'"/>
          <xsl:map-entry key="'dative'" select="'case dative'"/>
          <xsl:map-entry key="'genitive'" select="'case genitive'"/>
@@ -321,7 +340,6 @@
          <xsl:map-entry key="'active'" select="'voice active'"/>
          <xsl:map-entry key="'middle'" select="'voice middle'"/>
          <xsl:map-entry key="'passive'" select="'voice passive'"/>
-         <xsl:map-entry key="'mediopassive'" select="'middle-passive'"/>
          <xsl:map-entry key="'imperative'" select="'verb imperative'"/>
          <xsl:map-entry key="'pluperfect'" select="'tense pluperfect'"/>
          <xsl:map-entry key="'indicative'" select="'mood indicative'"/>
@@ -329,12 +347,167 @@
          <xsl:map-entry key="'subjunctive'" select="'modality subjunctive'"/>
          <xsl:map-entry key="'masculine/feminine'" select="'gender common'"/>
          <xsl:map-entry key="'irregular'" select="'noun'"/>
+         <!-- See the standard features TAN-voc file @ unique for an interesting discussion about the place of particles, and an argument that they should be treated as unique -->
+         <xsl:map-entry key="'particle'" select="'unique'"/>
+         <xsl:map-entry key="'adverbial'" select="'adjectival adverb'"/>
+         <xsl:map-entry key="'ablative'" select="'case ablative'"/>
       </xsl:map>
-   </xsl:variable>
-   <xsl:template match="node()" mode="claims-morpheus">
+   </xsl:param>
+   <xsl:template match="node()"
+      mode="claims-morpheus-old claims-morpheus claims-morpheus-desc
+      build-morpheus-ana build-morpheus-lex">
       <xsl:apply-templates mode="#current"/>
    </xsl:template>
    <xsl:template match="/*" mode="claims-morpheus">
+      <xsl:variable name="this-tok"
+         select="replace(oac:Annotation/oac:hasTarget/rdf:Description/@rdf:about, 'urn:word:', '')"/>
+      <xsl:variable name="this-agent" select="oac:Annotation/dcterms:creator/foaf:Agent/@rdf:about"/>
+      <xsl:variable name="when-returned" select="oac:Annotation/dcterms:created/text()"/>
+      <xsl:variable name="diagnostics-on" select="false()"/>
+      <xsl:if test="$diagnostics-on">
+         <xsl:message select="'diagnostics on for template mode: claims-morpheus'"/>
+         <xsl:message select="'this tok: ', $this-tok"/>
+         <xsl:message select="'this agent: ', $this-agent"/>
+         <xsl:message select="'data returned when: ', $when-returned"/>
+      </xsl:if>
+      <claims>
+         <!-- We use the element name that will appear in the <key>, to expedite processing. -->
+         <claimant>
+            <algorithm>
+               <IRI>
+                  <xsl:value-of select="concat('tag:textalign.net,2015:algorithm:', $this-agent)"/>
+               </IRI>
+               <name>Tufts morphology service</name>
+            </algorithm>
+         </claimant>
+         <claim-when>
+            <xsl:value-of select="$when-returned"/>
+         </claim-when>
+         <xsl:apply-templates mode="build-morpheus-ana">
+            <xsl:with-param name="this-tok" select="$this-tok" tunnel="yes"/>
+         </xsl:apply-templates>
+         <xsl:apply-templates mode="build-morpheus-lex"/>
+      </claims>
+   </xsl:template>
+   <xsl:template match="oac:Body" mode="build-morpheus-ana">
+      <xsl:param name="this-tok" tunnel="yes"/>
+      <xsl:variable name="this-primary-language" select="cnt:rest/entry/dict/hdwd/@xml:lang"/>
+      <xsl:variable name="these-dials" select="cnt:rest/entry/infl/dial"/>
+      <xsl:variable name="distinct-dialects"
+         select="
+            distinct-values(for $i in $these-dials
+            return
+               tokenize($i, ' '))"/>
+      <xsl:variable name="these-lang-codes" as="xs:string*"
+         select="
+            if (exists($distinct-dialects)) then
+               for $i in $distinct-dialects
+               return
+                  string-join(($this-primary-language, $i), '-')
+            else
+               $this-primary-language"
+      />
+      <xsl:if test="exists($these-lang-codes)">
+         <ana>
+            <xsl:for-each select="$these-lang-codes">
+               <for-lang>
+                  <xsl:value-of select="."/>
+               </for-lang>
+            </xsl:for-each>
+            <tok val="{$this-tok}"/>
+            <lm>
+               <xsl:apply-templates mode="#current"/>
+            </lm>
+         </ana>
+      </xsl:if>
+   </xsl:template>
+   <xsl:template match="entry" mode="build-morpheus-ana">
+      <xsl:variable name="this-headword" select="dict/hdwd/text()"/>
+      <xsl:variable name="this-infl-count" select="count(infl)"/>
+      <xsl:variable name="diagnostics-on" select="false()"/>
+      <xsl:if test="$diagnostics-on">
+         <xsl:message select="'diagnostics on, template mode: build-morpheus-ana'"/>
+         <xsl:message select="'this headword: ', $this-headword"/>
+      </xsl:if>
+      <l>
+         <xsl:value-of select="$this-headword"/>
+      </l>
+      <xsl:apply-templates mode="#current">
+         <xsl:with-param name="infl-count" select="$this-infl-count"/>
+      </xsl:apply-templates>
+   </xsl:template>
+   <xsl:template match="dict" mode="build-morpheus-ana"/>
+   <xsl:template match="infl" mode="build-morpheus-ana">
+      <xsl:param name="infl-count"/>
+      <m>
+         <xsl:if test="$infl-count gt 1">
+            <xsl:attribute name="cert" select="1 div $infl-count"/>
+         </xsl:if>
+         <xsl:apply-templates mode="#current"/>
+      </m>
+   </xsl:template>
+
+   <xsl:template match="pofs | case | gend | num | mood | tense | voice | comp"
+      mode="build-morpheus-ana build-morpheus-lex">
+      <xsl:variable name="this-val" select="text()"/>
+      <xsl:variable name="has-multiple-vals" select="false()"/>
+      <xsl:variable name="these-vals"
+         select="
+            if ($has-multiple-vals) then
+               tokenize($this-val, ' ')
+            else
+               $this-val"/>
+      <xsl:variable name="these-vals-norm"
+         select="
+            for $i in $these-vals
+            return
+               (map:get($morpheus-map, $i), $i)[1]"/>
+      <xsl:variable name="diagnostics-on" select="false()"/>
+      <xsl:if test="$diagnostics-on">
+         <xsl:message select="'diagnostics on for template mode build-morpheus-ana'"/>
+      </xsl:if>
+      <xsl:for-each select="$these-vals-norm">
+         <xsl:variable name="this-atomic-val" select="."/>
+         <xsl:variable name="this-feature-vocabulary"
+            select="$TAN-feature-vocabulary/tan:TAN-voc/tan:body//tan:item[tan:name = $this-atomic-val]"/>
+         <xsl:choose>
+            <xsl:when test="exists($this-feature-vocabulary)">
+               <feature>
+                  <xsl:copy-of select="$this-feature-vocabulary[1]/(* except tan:desc)"/>
+               </feature>
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:message select="'Uncertain meaning of ', ."/>
+            </xsl:otherwise>
+         </xsl:choose>
+         <xsl:if test="count($this-feature-vocabulary) gt 1">
+            <xsl:message
+               select="'Ambiguous meaning of', ., ':', string-join($this-feature-vocabulary/tan:name[1]/text(), ' OR ')"
+            />
+         </xsl:if>
+      </xsl:for-each>
+   </xsl:template>
+
+   <xsl:template match="infl" mode="build-morpheus-lex"/>
+   <xsl:template match="dict" mode="build-morpheus-lex">
+      <lex>
+         <xsl:comment>No standard TAN format exists for lexical information</xsl:comment>
+         <xsl:apply-templates mode="#current"/>
+      </lex>
+   </xsl:template>
+   <xsl:template match="hdwd" mode="build-morpheus-lex">
+      <xsl:apply-templates select="@xml:lang" mode="#current"/>
+      <headword>
+         <xsl:value-of select="."/>
+      </headword>
+   </xsl:template>
+   <xsl:template match="@xml:lang" mode="build-morpheus-lex">
+      <for-lang>
+         <xsl:value-of select="."/>
+      </for-lang>
+   </xsl:template>
+
+   <xsl:template match="/*" mode="claims-morpheus-old">
       <xsl:variable name="this-tok"
          select="replace((.//fn:map[@key = 'hasTarget']/fn:map[@key = 'Description']/fn:string)[1], 'urn:word:', '')"/>
       <claims>
@@ -355,7 +528,7 @@
          </xsl:apply-templates>
       </claims>
    </xsl:template>
-   <xsl:template match="fn:map[@key = 'entry']" mode="claims-morpheus">
+   <xsl:template match="fn:map[@key = 'entry']" mode="claims-morpheus-old">
       <xsl:param name="this-tok" tunnel="yes"/>
       <ana>
          <tok val="{$this-tok}"/>
@@ -364,7 +537,7 @@
          </lm>
       </ana>
    </xsl:template>
-   <xsl:template match="fn:map[@key = 'dict']" mode="claims-morpheus">
+   <xsl:template match="fn:map[@key = 'dict']" mode="claims-morpheus-old">
       <xsl:variable name="this-headword" select="fn:map[@key = 'hdwd']/fn:string[@key = '$']"/>
       <l>
          <xsl:value-of select="$this-headword"/>
@@ -379,25 +552,26 @@
             <xsl:variable name="this-stem-type" select="..//fn:map[@key = 'stemtype']/fn:string"/>
             <xsl:variable name="this-deriv-type" select="..//fn:map[@key = 'derivtype']/fn:string"/>
             <desc>
-               <xsl:for-each-group select="($this-decl, $this-stem-type, $this-deriv-type)" group-by="../@key">
+               <xsl:for-each-group select="($this-decl, $this-stem-type, $this-deriv-type)"
+                  group-by="../@key">
                   <xsl:variable name="this-type" select="current-grouping-key()"/>
                   <xsl:value-of select="concat(current-grouping-key(), ': ')"/>
                   <xsl:for-each-group select="current-group()" group-by=".">
                      <xsl:value-of select="concat(current-grouping-key(), ' ')"/>
-                  </xsl:for-each-group> 
+                  </xsl:for-each-group>
                   <xsl:text>; </xsl:text>
-               </xsl:for-each-group> 
+               </xsl:for-each-group>
             </desc>
          </lex>
       </lem>
    </xsl:template>
    <xsl:template match="fn:array[@key = 'infl']/fn:map | fn:map[@key = 'infl']"
-      mode="claims-morpheus">
+      mode="claims-morpheus-old">
       <m>
          <xsl:apply-templates mode="#current"/>
       </m>
    </xsl:template>
-   <xsl:template match="fn:map[@key = 'dial']" mode="claims-morpheus">
+   <xsl:template match="fn:map[@key = 'dial']" mode="claims-morpheus-old">
       <xsl:variable name="this-lang"
          select="preceding-sibling::fn:map[@key = 'term']/fn:string[@key = 'lang']"/>
       <xsl:variable name="these-dialects" select="tokenize(fn:string, ' ')"/>
@@ -408,7 +582,7 @@
       </xsl:for-each>
    </xsl:template>
    <xsl:template match="fn:map[@key = ('pofs', 'case', 'gend', 'num', 'mood', 'tense', 'voice')]"
-      mode="claims-morpheus">
+      mode="claims-morpheus-old">
       <xsl:variable name="this-val" select="fn:string[@key = '$']"/>
       <xsl:variable name="has-multiple-vals" select="false()"/>
       <xsl:variable name="these-vals"
@@ -425,7 +599,8 @@
                (map:get($morpheus-map, $i), $i)[1]"/>
       <xsl:for-each select="$these-vals-norm">
          <!--<xsl:variable name="this-glossary" select="tan:glossary('feature', .)"/>-->
-         <xsl:variable name="this-glossary" select="tan:vocabulary('feature', false(), ., $self-resolved/*/tan:head)"/>
+         <xsl:variable name="this-glossary"
+            select="tan:vocabulary('feature', false(), ., $self-resolved/*/tan:head)"/>
          <feature>
             <xsl:copy-of select="$this-glossary[1]/(* except tan:desc)"/>
          </feature>

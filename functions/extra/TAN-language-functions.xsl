@@ -49,8 +49,8 @@
    </xsl:function>
    
    <xsl:function name="tan:lang-catalog" as="document-node()*">
-      <!-- Input: a language code -->
-      <!-- Output: the catalogs for that language -->
+      <!-- Input: language codes -->
+      <!-- Output: the catalogs for those languages -->
       <xsl:param name="lang-codes" as="xs:string*"/>
       <xsl:variable name="lang-codes-rev"
          select="
@@ -73,9 +73,14 @@
          </xsl:if>
          <xsl:for-each select="$these-catalog-uris">
             <xsl:variable name="this-uri" select="resolve-uri(., $extra-parameters-base-uri)"/>
-            <xsl:if test="doc-available($this-uri)">
-               <xsl:sequence select="doc($this-uri)"/>
-            </xsl:if>
+            <xsl:choose>
+               <xsl:when test="doc-available($this-uri)">
+                  <xsl:sequence select="doc($this-uri)"/>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:message select="'Language catalog not available at ', $this-uri"/>
+               </xsl:otherwise>
+            </xsl:choose>
          </xsl:for-each>
       </xsl:for-each>
    </xsl:function>
