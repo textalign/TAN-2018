@@ -2,7 +2,7 @@
 <?xml-model href="../../schemas/TAN-A-lm.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="../../schemas/TAN-A-lm.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <!-- wrn04 -->
-<TAN-A-lm xmlns="tag:textalign.net,2015:ns" id="tag:textalign.net,2015:error-test-5" TAN-version="2019">
+<TAN-A-lm xmlns="tag:textalign.net,2015:ns" id="tag:textalign.net,2015:error-test-5" TAN-version="2020">
     <head>
         <name>Error test tan-a-lm</name>
         <license which="by_4.0" licensor="park"/>

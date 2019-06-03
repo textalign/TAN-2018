@@ -57,7 +57,7 @@
     <group affects-attribute="who ed-who roles src lexicon morphology reuse-type bitext-relation feature include licensor period rights work type adverb group verb where relationship topic subject object units">
         <error xml:id="tan05"><rule>Every idref in an attribute must point to a vocabulary item (by @xml:id or name) that is of the appropriate corresponding element.</rule></error>
         <error xml:id="tan06"><rule>All idrefs in an attribute must be unique.</rule></error>
-        <error xml:id="tan21"><rule>Idrefs in an attribute should not point to the same entity.</rule></error>
+        <error xml:id="tan21"><rule>Multiple idrefs in a single attribute should not point to the same entity.</rule></error>
     </group>
     <group affects-attribute="regex matches-m matches-tok rgx">
         <error xml:id="tan07"><rule>Attributes that take regular expressions must use escape sequences recognized by XML schema or TAN escape extensions (\u{}). See http://www.w3.org/TR/xmlschema-2/#regexs</rule></error>
@@ -100,14 +100,17 @@
     <group affects-element="inclusion vocabulary" affects-attribute="TAN-version">
         <error xml:id="inc06"><rule>Inclusions and vocabularies must match the host @TAN-version.</rule></error>
     </group>
-    <group affects-element="location inclusion see-also source vocabulary redivision annotation model predecessor successor">
-        <error xml:id="loc01"><rule>Every element with a &lt;location> should have at least one document available.</rule></error>
+    <group affects-element="location inclusion see-also source vocabulary redivision annotation model predecessor successor algorithm">
+        <error xml:id="loc01"><rule>An element that has a &lt;location> and is key for validation should have at least one document available.</rule></error>
         <error xml:id="loc02"><rule>Every TAN file referred to by way of an element containing &lt;location> should have an @id that matches the &lt;IRI> of the parent of the &lt;location></rule></error>
         <error xml:id="loc03"><rule>No element may point to a TAN file that has an identical @id value; the only exception is &lt;predecessor> and &lt;successor>.</rule></error>
         <warning xml:id="wrn03"><rule>If a target file has children items in the &lt;to-do>the corresponding comments will be returned as warnings.</rule></warning>
         <warning xml:id="wrn05"><rule>If a target file has a &lt;successor> a warning will be returned, noting the update.</rule></warning>
         <warning xml:id="wrn08"><rule>If an element's &lt;location> is faulty and if a catalog file entry is found pointing to a document with the same IRI, location information on those alternative locations will be returned</rule></warning>
         <warning xml:id="wrn09"><rule>If a target file points only to non-local locations and no internet is available, the following message will be returned.</rule><message>No internet available.</message></warning>
+    </group>
+    <group affects-element="location algorithm see-also">
+        <warning xml:id="loc04"><rule>If an element not essential to validation has no &lt;location> that points to a document a warning should be returned.</rule></warning>
     </group>
     <group affects-element="location inclusion see-also source vocabulary" affects-attribute="accessed-when">
         <warning xml:id="wrn02"><rule>If @accessed-when predates one or more dates in a target file, a warning will be returned.</rule></warning>
@@ -167,7 +170,8 @@
         <warning xml:id="tei04"><rule>Text that represents a line, column, or page break should be moved into a @rend within a &lt;lb>, &lt;pb>, or &lt;cb>.</rule></warning>
     </group>
     <group affects-element="tei:lb tei:pb tei:cb">
-        <error xml:id="tei05"><rule>A breaking element without @break="no" should have at least one space on either side; one with @break="no" should have no nearby spaces</rule></error>
+        <error xml:id="tei05"><rule>A milestone element without @break set to false should have at least one space on either side.</rule></error>
+        <error xml:id="tei06"><rule>A milestone element with @break set to false should have no nearby spaces</rule></error>
     </group>
     <group affects-element="source">
         <error xml:id="cl114"><rule>A class 1 &lt;source> may not point to a TAN file.</rule></error>

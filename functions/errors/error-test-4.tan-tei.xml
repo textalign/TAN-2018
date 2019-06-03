@@ -4,7 +4,7 @@
 <!-- this test file primed for verbose validation -->
 <!-- wrn04 cat01 verbose cat04 verbose cat07 verbose cat03 verbose (catalog should have a bogus id in it) 
     cat06 verbose (provided catalog doesn't have entry for this file) -->
-<TEI xmlns="http://www.tei-c.org/ns/1.0" TAN-version="2019" id="tag:textalign.net,2015:error-test-4">
+<TEI xmlns="http://www.tei-c.org/ns/1.0" TAN-version="2020" id="tag:textalign.net,2015:error-test-4">
     <teiHeader>
         <fileDesc>
             <titleStmt>
@@ -77,7 +77,7 @@
             <!-- tei02 tei03 tan05 cl104 verbose cl107 verbose -->
             <div type="line" n="1" include="test"><p>Line 1</p></div>
             <div type="line" n="2">
-                <!-- cl115 verbose cl116 verbose cl104 verbose -->
+                <!-- cl115 verbose cl116 verbose cl104 verbose cl107 verbose -->
                 <div type="part" n="ii"><p>2. Line 2, non-leaf div</p></div>
             </div>
             <!-- cl107 verbose -->

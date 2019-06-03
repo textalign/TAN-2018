@@ -2,7 +2,7 @@
 <?xml-model href="../../schemas/TAN-T.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="../../schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <!-- wrn07 tan20 -->
-<TAN-T xmlns="tag:textalign.net,2015:ns" TAN-version="20199" id="tag:textalign.net,2015:error-test">
+<TAN-T xmlns="tag:textalign.net,2015:ns" TAN-version="20209" id="tag:textalign.net,2015:error-test">
     <head>
         <name>TAN transcription of Ring a Ring o' Roses</name>
         <license which="by_4.0" licensor="park"/>
@@ -79,9 +79,9 @@
             <location href="error-test-2.tan-voc.xml" accessed-when="2018-12-29"/>
         </annotation>
         <!-- whi04 whi05 lnk05 -->
-        <vocabulary which="bad"/>
+        <vocabulary which="bad" accessed-when="2019-05-31"/>
         <vocabulary-key>
-            <!-- loc01 -->
+            <!-- loc04 -->
             <algorithm xml:id="xslt2">
                 <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
                 <name>Stylesheet to create a TAN file.</name>
@@ -103,7 +103,7 @@
             </person>
             <!-- inc02 -->
             <person include="bad-inc"/>
-            <!-- loc01 -->
+            <!-- loc04 -->
             <algorithm xml:id="xslt1">
                 <IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI>
                 <name>Stylesheet to populate a TAN-A file from collections.</name>
