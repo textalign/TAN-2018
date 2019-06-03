@@ -5,7 +5,7 @@
          xmlns:teix="http://www.tei-c.org/ns/Examples"
          datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
          ns="http://www.tei-c.org/ns/1.0"><!--
-Schema generated from ODD source 2019-05-28T07:00:17Z. .
+Schema generated from ODD source 2019-05-30T13:37:44Z. .
 TEI Edition: Version 3.5.0. Last updated on
 	29th January 2019, revision 3c0c64ec4
 TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 3.5.0/
@@ -109,8 +109,9 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 3.5.0/
                <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">If @n is to be given more than one value, those items must be separated by a space or a comma. </a:documentation>
                <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">A hyphen-minus, - (U+002D, the most common form of hyphen), always has special meaning, specifying a range. This feature is useful for cases where a &lt;div&gt; straddles more than one standard reference number (e.g., a translation of Aristotle that cannot be easily tied to Bekker numbers). </a:documentation>
                <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">If you need to use a hyphen-like character in an @n that does not specify a range, consider ‐ (U+2010 HYPHEN), ‑ (U+2011 NON-BREAKING HYPHEN), ‒ (U+2012 FIGURE DASH), – (U+2013 EN DASH), or − (U+2212 MINUS SIGN).</a:documentation>
+               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">@n does not allow punctuation reserved for delimiting levels of a hierarchy such as the period/full stop or colon. Values of @n should be simple, and not combine different types of &lt;div&gt;s (or &lt;group&gt;s). Elements with such complex values of @n should be broken up into individual elements, one for each simple @n value.</a:documentation>
                <data type="string">
-                  <param name="pattern">[\w_\.]+([\- ,]+[\w_\.]+)*</param>
+                  <param name="pattern">[\w_]+([\- ,]+[\w_]+)*</param>
                </data>
             </attribute>
          </define>

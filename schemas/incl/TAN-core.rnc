@@ -85,8 +85,10 @@ attr-n =
     ## A hyphen-minus, - (U+002D, the most common form of hyphen), always has special meaning, specifying a range. This feature is useful for cases where a <div> straddles more than one standard reference number (e.g., a translation of Aristotle that cannot be easily tied to Bekker numbers). 
     
     ## If you need to use a hyphen-like character in an @n that does not specify a range, consider ‐ (U+2010 HYPHEN), ‑ (U+2011 NON-BREAKING HYPHEN), ‒ (U+2012 FIGURE DASH), – (U+2013 EN DASH), or − (U+2212 MINUS SIGN).
+    
+    ## @n does not allow punctuation reserved for delimiting levels of a hierarchy such as the period/full stop or colon. Values of @n should be simple, and not combine different types of <div>s (or <group>s). Elements with such complex values of @n should be broken up into individual elements, one for each simple @n value.
     attribute n {
-        xsd:string { pattern = "[\w_\.]+([\- ,]+[\w_\.]+)*" }
+        xsd:string { pattern = "[\w_]+([\- ,]+[\w_]+)*" }
     }
 attr-object-datatype =
     

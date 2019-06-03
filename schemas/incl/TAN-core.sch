@@ -136,7 +136,7 @@
             <sqf:description>
                <sqf:title>Replace self leaf div</sqf:title>
             </sqf:description>
-
+            <sqf:replace select="$self-and-next-leaf-div-replacements/*[1]" match="self::*"/>
          </sqf:fix>
          <sqf:fix id="replace-self-and-next-leaf-div"
             use-when="count($self-and-next-leaf-div-replacements/*) gt 1">

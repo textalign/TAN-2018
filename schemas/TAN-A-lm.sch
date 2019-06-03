@@ -3,27 +3,12 @@
    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" queryBinding="xslt2">
    <title>Tests for TAN-A-lm files.</title>
    <ns prefix="tan" uri="tag:textalign.net,2015:ns"/>
-   <phase id="terse">
-      <active pattern="core-tests"/>
-      <active pattern="terse-true"/>
-   </phase>
-   <phase id="normal">
-      <active pattern="core-tests"/>
-      <active pattern="normal-true"/>
-   </phase>
-   <phase id="verbose">
-      <active pattern="core-tests"/>
-      <active pattern="verbose-true"/>
-   </phase>
-   <pattern id="terse-true">
-      <xsl:param name="validation-is-terse" select="true()"/>
-   </pattern>
-   <pattern id="normal-true">
-      <xsl:param name="validation-is-normal" select="true()"/>
-   </pattern>
-   <pattern id="verbose-true">
-      <xsl:param name="validation-is-verbose" select="true()"/>
-   </pattern>
+   <include href="incl/sch-pattern-terse.sch"/>
+   <include href="incl/sch-pattern-normal.sch"/>
+   <include href="incl/sch-pattern-verbose.sch"/>
+   <include href="incl/sch-phase-terse.sch"/>
+   <include href="incl/sch-phase-normal.sch"/>
+   <include href="incl/sch-phase-verbose.sch"/>
    <include href="incl/TAN-core.sch"/>
    <xsl:include href="../functions/TAN-A-lm-functions.xsl"/>
 </schema>
