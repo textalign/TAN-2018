@@ -233,9 +233,9 @@
                select="'this doc with @n and @ref converted: ', $doc-with-n-and-ref-converted"/>
          </xsl:if>
          <xsl:choose>
-            <xsl:when test="not(namespace-uri(*) = ($TAN-namespace, $TEI-namespace))">
+            <xsl:when test="exists(*) and not(namespace-uri(*) = ($TAN-namespace, $TEI-namespace))">
                <xsl:message
-                  select="'Document namespace is', namespace-uri(*), 'which is not in the TAN or TEI namespaces so tan:resolve() returning only stamped version'"/>
+                  select="'Document namespace is', $quot, namespace-uri(*), $quot, ', which is not in the TAN or TEI namespaces so tan:resolve() returning only stamped version'"/>
                <xsl:sequence select="$doc-stamped"/>
             </xsl:when>
             <xsl:otherwise>

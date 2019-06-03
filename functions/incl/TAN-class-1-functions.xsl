@@ -738,12 +738,40 @@
       </xsl:choose>
    </xsl:template>
 
+   <xsl:template match="* | comment() | processing-instruction()" mode="selective-shallow-skip">
+      <xsl:param name="nodes-to-deep-copy" tunnel="yes"/>
+      <xsl:param name="nodes-to-deep-skip" tunnel="yes"/>
+      <xsl:choose>
+         <xsl:when
+            test="
+               some $i in $nodes-to-deep-skip
+                  satisfies deep-equal($i, .)"
+         />
+         <xsl:when
+            test="
+               some $i in $nodes-to-deep-copy
+                  satisfies deep-equal($i, .)">
+            <xsl:copy-of select="."/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:apply-templates mode="#current"/>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:template>
    <xsl:template match="tei:lb | tei:pb | tei:cb"
       mode="core-expansion-terse dependency-adjustments-pass-1 normalize-tei-space">
-      <xsl:variable name="prev-text" select="preceding-sibling::node()/descendant-or-self::text()"/>
-      <xsl:variable name="prev-text-joined" select="string-join($prev-text, '')"/>
-      <xsl:variable name="next-text" select="following-sibling::node()/descendant-or-self::text()"/>
-      <xsl:variable name="next-text-joined" select="string-join($next-text, '')"/>
+      <xsl:variable name="leaf-div" select="ancestor::tei:div[1]"/>
+      <xsl:variable name="this-element" select="."/>
+      <xsl:variable name="div-text-pass-1" as="element()">
+         <text>
+            <xsl:apply-templates select="$leaf-div" mode="selective-shallow-skip">
+               <xsl:with-param name="nodes-to-deep-copy" tunnel="yes" select="$this-element"/>
+               <xsl:with-param name="nodes-to-deep-skip" tunnel="yes" select="$leaf-div/tan:type"/>
+            </xsl:apply-templates>
+         </text>
+      </xsl:variable>
+      <xsl:variable name="prev-text-joined" select="$div-text-pass-1/text()[1]"/>
+      <xsl:variable name="next-text-joined" select="$div-text-pass-1/text()[2]"/>
       <xsl:variable name="break-mark-check" as="element()?">
          <xsl:if test="string-length($prev-text-joined) gt 0">
             <xsl:analyze-string select="$prev-text-joined" regex="{$break-marker-regex}\s*$"
@@ -766,6 +794,19 @@
             </xsl:analyze-string>
          </xsl:if>
       </xsl:variable>
+      <xsl:variable name="text-should-be-joined" select="@break = ('no', 'n', 'false')"
+         as="xs:boolean"/>
+      <xsl:variable name="element-has-adjacent-space"
+         select="
+            (if (string-length($prev-text-joined) lt 1) then
+               true()
+            else
+               matches($prev-text-joined, '\s$'))
+            or (if (string-length($next-text-joined) lt 1) then
+               true()
+            else
+               matches($next-text-joined, '^\s'))"
+      />
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:if test="exists($break-mark-check) and not(exists(@rend))">
@@ -773,11 +814,11 @@
                select="concat($break-mark-check/tan:match, ' looks like a break mark')"/>
             <xsl:copy-of select="tan:error('tei04', $this-message)"/>
          </xsl:if>
-         <xsl:if
-            test="
-               (@break = ('no', 'n') and (matches($prev-text, '\s$') or matches($next-text, '^\s'))
-               or (not(@break = ('no', 'n')) and (matches($prev-text, '\S$') and matches($next-text, '^\S'))))">
-            <xsl:copy-of select="tan:error('tei05')"/>
+         <xsl:if test="not($text-should-be-joined) and not($element-has-adjacent-space)">
+            <xsl:copy-of select="tan:error('tei05', concat('prev text: [', $prev-text-joined, ']; next text: [', $next-text-joined, ']'))"/>
+         </xsl:if>
+         <xsl:if test="$text-should-be-joined and $element-has-adjacent-space">
+            <xsl:copy-of select="tan:error('tei06')"/>
          </xsl:if>
       </xsl:copy>
    </xsl:template>

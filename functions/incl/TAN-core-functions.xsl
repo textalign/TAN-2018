@@ -3182,16 +3182,6 @@
       <!-- Input: An element that is or contains one or more tan:location elements -->
       <!-- Output: the value of the first tan:location/@href to point to a document available, resolved. If no location is available nothing is returned. -->
       <xsl:param name="element-with-href-in-self-or-descendants" as="element()?"/>
-      <!--<xsl:variable name="pass-1"
-         select="tan:resolve-href($element-with-href-in-self-or-descendants)"/>-->
-      <!--<xsl:value-of
-         select="
-            ($pass-1//@href[if (tan:url-is-local(.) or $internet-available) then
-               doc-available(.)
-            else
-               false()
-            ])[1]"
-      />-->
       <xsl:value-of select="tan:first-loc-available-loop($element-with-href-in-self-or-descendants//@href, 0)"/>
    </xsl:function>
    <xsl:function name="tan:first-loc-available-loop" as="xs:string?">
@@ -3199,7 +3189,7 @@
       <xsl:param name="loop-counter" as="xs:integer"/>
       <xsl:choose>
          <xsl:when test="$loop-counter gt $loop-tolerance">
-            <xsl:message select="'loop tolerance exceeded it tan:first-loc-available()'"/>
+            <xsl:message select="'loop tolerance exceeded in tan:first-loc-available()'"/>
          </xsl:when>
          <xsl:when test="not(exists($href-attributes))"/>
          <xsl:otherwise>
@@ -3213,6 +3203,15 @@
                   else
                      false()"
             />
+            <xsl:variable name="diagnostics-on" select="false()"/>
+            <xsl:if test="$diagnostics-on">
+               <xsl:message select="'diagnostics on for tan:first-loc-available-loop(), loop #', $loop-counter"/>
+               <xsl:message select="'this href attribute: ', $this-href-attribute"/>
+               <xsl:message select="'this href is local? ', $this-href-is-local"/>
+               <xsl:message select="'internet available? ', $internet-available"/>
+               <xsl:message select="'doc available? ', doc-available($this-href-attribute)"/>
+               <xsl:message select="'this href fetches something? ', $this-href-fetches-something"/>
+            </xsl:if>
             <xsl:choose>
                <xsl:when test="$this-href-fetches-something">
                   <xsl:value-of select="$this-href-attribute"/>
@@ -3307,12 +3306,13 @@
                   </xsl:for-each>
                </xsl:variable>
                <xsl:variable name="this-message-raw" as="xs:string*">
-                  <xsl:value-of select="concat('No doc available found for ', string-join($these-hrefs, ' '))"/>
+                  <xsl:value-of select="concat('No XML document found found at ', string-join($these-hrefs, ' '))"/>
                   <xsl:if test="exists($possible-hrefs)">
                      <xsl:value-of
                         select="concat(' For @href try: ', string-join($possible-hrefs/@href, ', '))"
                      />
                   </xsl:if>
+                  <!--<xsl:value-of select="for $i in $these-hrefs return concat(' uri local? ', tan:url-is-local($i))"/>-->
                </xsl:variable>
                <xsl:variable name="this-message" select="string-join($this-message-raw, '')"/>
                <xsl:document>
@@ -3335,15 +3335,19 @@
                            select="tan:error('wrn01', $this-message, $possible-hrefs, 'replace-attributes')"
                         />
                      </xsl:when>
-                     <!-- skip <source> in class 1 files when the URL points to non-XML. -->
+                     <!-- Skip <source> in class 1 files when the URL points to non-XML. -->
                      <xsl:when
                         test="
-                           self::tan:source and ($this-class = 1) and (
-                           some $i in $these-hrefs
-                              satisfies unparsed-text-available($i))"
+                           self::tan:source and ($this-class = 1) and (some $i in $these-hrefs
+                              satisfies ((unparsed-text-available($i))) or doc-available(concat('zip:', $i, '!/_rels/.rels')))"
                      />
                      <xsl:when
                         test="self::tan:source and not(exists(tan:location)) and tan:tan-type(.) = 'TAN-mor'"/>
+                     <xsl:when test="self::tan:algorithm or self::tan:see-also">
+                        <xsl:copy-of
+                           select="tan:error('loc04', $this-message, $possible-hrefs, 'replace-attributes')"
+                        />
+                     </xsl:when>
                      <xsl:otherwise>
                         <xsl:copy-of
                            select="tan:error('loc01', $this-message, $possible-hrefs, 'replace-attributes')"

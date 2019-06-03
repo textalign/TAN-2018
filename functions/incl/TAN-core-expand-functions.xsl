@@ -60,6 +60,7 @@
             <xsl:variable name="these-dependencies-resolved" as="document-node()*">
                <!-- Get all files upon which the host file depends, namely <source>s and <morphology>s -->
                <xsl:choose>
+                  <xsl:when test="not(exists($dependencies))"/>
                   <!-- Only class 2 files have dependencies; if they have already been fed in, keep 'em -->
                   <xsl:when test="(count($dependencies) gt 0) or ($this-class-number = (1, 3))">
                      <xsl:sequence select="$dependencies"/>
@@ -823,11 +824,17 @@
          select="$this-from, $this-to, tan:dateTime-to-decimal((self::tan:*/@when, @ed-when, @accessed-when))"/>
       <!-- We presume each @href has already been resolved -->
       <xsl:variable name="this-href" select="@href"/>
-
+      <xsl:variable name="attributes-that-take-idrefs"
+         select="
+            if (exists(@include)) then
+               (@include, @ed-who)
+            else
+               (@*[tan:takes-idrefs(.)] except @div-type)"
+      />
       <xsl:copy>
          <xsl:copy-of select="@*"/>
 
-         <xsl:for-each select="@*[tan:takes-idrefs(.)] except @div-type">
+         <xsl:for-each select="$attributes-that-take-idrefs">
             <!-- Check @which and attributes that point to vocabulary items -->
             <!-- We exclude @div-type, because it cannot be resolved against anything but the source headers -->
             <xsl:variable name="this-attr-name" select="name(.)"/>
