@@ -525,14 +525,19 @@
       </xsl:for-each>
    </xsl:function>
 
-   <xsl:function name="tan:blob-to-regex" as="xs:string*">
-      <!-- Input: any strings that follow a blob-like syntax -->
+   <xsl:function name="tan:glob-to-regex" as="xs:string*">
+      <!-- Input: any strings that follow a glob-like syntax -->
       <!-- Output: the strings converted to regular expressions -->
       <xsl:param name="globs" as="xs:string*"/>
       <xsl:for-each select="$globs">
-         <xsl:variable name="pass1" select="replace(., '\*', '.*')"/>
-         <xsl:variable name="pass2" select="replace($pass1, '\?', '.')"/>
-         <xsl:value-of select="concat('^', $pass2, '$')"/>
+         <!-- escape special regex characters that aren't special glob characters -->
+         <xsl:variable name="pass-1" select="replace(., '([\.\\\|\^\$\+\{\}\(\)])', '\$1')"/>
+         <!-- convert glob * -->
+         <xsl:variable name="pass-2" select="replace($pass-1, '\*', '.*')"/>
+         <!-- convert glob ? -->
+         <xsl:variable name="pass-3" select="replace($pass-2, '\?', '.')"/>
+         <!-- make sure the results match either an entire filename or an entire path -->
+         <xsl:value-of select="concat('^', $pass-3, '$|/', $pass-3, '$')"/>
       </xsl:for-each>
    </xsl:function>
 
