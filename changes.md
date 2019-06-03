@@ -35,7 +35,7 @@ Files are now resolved differently.
 
 Expansion has been streamlined, to avoid summoning global or in-scope variables that do not matter. XSLT operations ignore such unused variables, but Schematron validation seems not to. Thoroughly revised the way a hierarchy is reset in the course of expanding the sources of a class 2 file, using @reset to mark elements that need to be moved and @has-been-reset to mark those that have. Resetting has been moved from class 2 functions to class 1 functions.
 
-New errors introduced: wrn07, wrn08, inc05, tan21, inc06, whi05, voc06
+New errors introduced: wrn07, wrn08, inc05, tan21, inc06, whi05, voc06, loc04
 
 Deleted errors: tan13 (an &lt;alias> should be able to combine different element types, esp. &lt;person> and &lt;organization>; it's up to other elements that use the &lt;alias> @ids to import the correct kinds of vocabulary items).
 

@@ -56,49 +56,28 @@
          </xsl:if>
       </xsl:variable>
       
-      <xsl:variable name="stylesheet-role"
-         select="$TAN-vocabularies/tan:TAN-voc/tan:body[@affects-element = 'role']/tan:item[tan:name = 'stylesheet']"/>
-      <xsl:variable name="role-element-for-stylesheet"
-         select="tan:head/(tan:definitions, tan:vocabulary-key)/tan:role[(tan:IRI = $stylesheet-role/tan:IRI) or (tan:name, @which) = $stylesheet-role/tan:name]"/>
-      <xsl:variable name="stylesheet-role-id">
-         <xsl:choose>
-            <xsl:when test="exists($role-element-for-stylesheet)">
-               <xsl:value-of select="$role-element-for-stylesheet/@xml:id"/>
-            </xsl:when>
-            <xsl:otherwise>
-               <xsl:variable name="new-id-number-start"
-                  select="
-                     max((0,
-                     for $i in tan:head/(tan:definitions, tan:vocabulary-key)/tan:role/@xml:id[matches(., '^stylesheet\d+$')]
-                     return
-                        number(replace($i, '\D+', ''))))"
-               />
-               <xsl:variable name="new-id-number"
-                  select="
-                     if ($new-id-number-start = 0) then
-                        ''
-                     else
-                        string($new-id-number-start + 1)"
-               />
-               <xsl:value-of select="concat('stylesheet', $new-id-number)"/>
-            </xsl:otherwise>
-         </xsl:choose>
-      </xsl:variable>
-      <xsl:variable name="new-role-element" as="element()?">
-         <xsl:if test="not(exists($role-element-for-stylesheet))">
-            <role xml:id="{$stylesheet-role-id}" which="stylesheet"/>
-         </xsl:if>
-      </xsl:variable>
+      <xsl:variable name="last-xslt-id-number"
+         select="
+            max((0,
+            for $i in tan:head/(tan:definitions, tan:vocabulary-key)/*/@xml:id[matches(., '^xslt\d+$')]
+            return
+               number(replace($i, '\D+', ''))))"
+      />
+      <xsl:variable name="new-id-number" select="string($last-xslt-id-number + 1)"/>
+      <xsl:variable name="stylesheet-role-id" select="concat('xslt', $new-id-number)"/>
       
+      <xsl:variable name="preexisting-stylesheet-resps" select="tan:head/tan:resp[@roles = 'stylesheet']"/>
       <xsl:variable name="new-resp-element" as="element()?">
-         <resp who="{$stylesheet-id}" roles="{$stylesheet-role-id}"/>
+         <xsl:if test="not(exists($preexisting-stylesheet-resps))">
+            <resp who="{$stylesheet-id}" roles="stylesheet"/>
+         </xsl:if>
       </xsl:variable>
       <xsl:copy>
          <!-- we apply templates to attributes, in case @xml:base or other attributes should be deleted -->
          <xsl:apply-templates select="@*" mode="#current"/>
          <xsl:apply-templates mode="#current">
             <xsl:with-param name="new-vocabulary-key-children" tunnel="yes" as="element()*"
-               select="($new-algorithm-element, $new-role-element)"/>
+               select="$new-algorithm-element"/>
             <xsl:with-param name="new-resp-elements" select="$new-resp-element" tunnel="yes"/>
          </xsl:apply-templates>
       </xsl:copy>
@@ -106,31 +85,33 @@
 
    <xsl:template match="tan:definitions | tan:vocabulary-key" mode="credit-stylesheet">
       <xsl:param name="new-vocabulary-key-children" tunnel="yes"/>
+      <xsl:param name="new-resp-elements" tunnel="yes"/>
       <xsl:variable name="first-indent" select="node()[1][self::text()]"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
-         <xsl:for-each select="$new-vocabulary-key-children">
-            <xsl:copy-of select="$first-indent"/>
-            <xsl:copy-of select="."/>
-         </xsl:for-each>
+         <xsl:copy-of select="tan:copy-indentation($new-vocabulary-key-children, *[1])"/>
          <xsl:copy-of select="node()"/>
       </xsl:copy>
+      <xsl:if test="exists($new-resp-elements)">
+         <xsl:copy-of select="tan:copy-indentation($new-resp-elements, .)"/>
+      </xsl:if>
       <xsl:copy-of select="following-sibling::node()[1][self::text()]"/>
    </xsl:template>
    
-   <xsl:template match="tan:resp[1]" mode="credit-stylesheet">
-      <xsl:param name="new-resp-elements" tunnel="yes"/>
-      <xsl:copy-of select="$new-resp-elements"/>
-      <xsl:value-of select="$most-common-indentations[2]"/>
-      <xsl:copy-of select="."/>
+   <xsl:template match="tan:resp[@roles = 'stylesheet'][1]" mode="credit-stylesheet">
+      <xsl:param name="new-vocabulary-key-children" tunnel="yes"/>
+      <xsl:copy>
+         <xsl:copy-of select="@* except @who"/>
+         <xsl:attribute name="who"
+            select="string-join((@who, $new-vocabulary-key-children/@xml:id), ' ')"/>
+      </xsl:copy>
    </xsl:template>
    
    <xsl:template match="tan:change[last()]" mode="credit-stylesheet">
       <xsl:param name="new-vocabulary-key-children" tunnel="yes" as="element()*"/>
       <xsl:copy-of select="."/>
       <xsl:value-of select="$most-common-indentations[2]"/>
-      <change who="{$new-vocabulary-key-children/self::tan:algorithm/@xml:id}"
-         when="{current-dateTime()}">
+      <change who="{$new-vocabulary-key-children/@xml:id}" when="{current-dateTime()}">
          <xsl:value-of select="$change-message"/>
       </change>
    </xsl:template>

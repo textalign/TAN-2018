@@ -9,7 +9,7 @@
     <!-- Companion stylesheet to convert.xsl -->
     
     <xsl:include href="convert-docx-to-tan-tei.xsl"/>
-    <xsl:include href="../../../TAN-2019/applications/get%20inclusions/convert-docx-to-tan-a.xsl"/>
+    <xsl:include href="../../../TAN-2020/applications/get%20inclusions/convert-docx-to-tan-a.xsl"/>
 
     <!-- PASS 1 -->
 

@@ -16,7 +16,7 @@
 
     <!-- STYLESHEET -->
     <xsl:param name="stylesheet-iri"
-        select="'tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2020"/>
+        select="'tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2020'"/>
     <xsl:param name="stylesheet-url" select="static-base-uri()"/>
     <xsl:param name="stylesheet-name" select="'Converter from TAN 2018 to TAN 2020'"/>
     <xsl:param name="change-message" select="'Converted from 2018 to 2020 schemas.'"/>
@@ -423,16 +423,41 @@
         select="tan:vocabulary(('person', 'organization'), false(), (), $pass-1-resolved/*/tan:head)"/>
     <xsl:variable name="pass-1-likely-primary-agents"
         select="$pass-1-agent-vocabulary/*[tan:IRI[starts-with(., $doc-id-namespace)]]"/>
+    <xsl:variable name="pass-1-likely-primary-agents-consolidated"
+        select="tan:group-elements-by-IRI($pass-1-likely-primary-agents)"/>
     <xsl:variable name="pass-1-primary-agent-ids"
         select="
-            for $i in $pass-1-likely-primary-agents
+            for $i in $pass-1-likely-primary-agents-consolidated
             return
-                if (exists($i/tan:id)) then
-                    $i/tan:id[1]
+                if (exists($i/tan:item/tan:id)) then
+                    ($i/tan:item/tan:id)[1]
                 else
-                    replace($i/tan:name[1], '\s', '_')"/>
+                    replace(($i/tan:item/tan:name)[1], '\s', '_')"/>
+    
+    <!-- skip elements that have @xml:ids that repeat @which -->
+    <xsl:template match="*[@xml:id and @which][lower-case(@which) = lower-case(@xml:id)]" mode="input-pass-2"/>
+    
+    <!-- consolidate <resp> -->
+    <xsl:template match="tan:resp[not(@period)]" mode="input-pass-2">
+        <xsl:variable name="this-roles-attr" select="@roles"/>
+        <xsl:variable name="matching-resp" select="../tan:resp[not(@period)][@roles = $this-roles-attr]"/>
+        <xsl:variable name="preceding-resp" select="preceding-sibling::tan:resp[not(@period)][@roles = $this-roles-attr]"/>
+        <xsl:if test="not(exists($preceding-resp))">
+            <xsl:variable name="distinct-whos"
+                select="
+                    distinct-values(for $i in $matching-resp/@who
+                    return
+                        tokenize(normalize-space($i), ' '))"
+            />
+            <xsl:copy copy-namespaces="no">
+                <xsl:copy-of select="@* except @who"/>
+                <xsl:attribute name="who" select="string-join($distinct-whos, ' ')"/>
+            </xsl:copy>
+        </xsl:if>
+    </xsl:template>
+    
     <xsl:template match="tan:file-resp" mode="input-pass-2">
-        <xsl:copy>
+        <xsl:copy copy-namespaces="no">
             <xsl:copy-of select="@*"/>
             <xsl:if test="exists($pass-1-primary-agent-ids)">
                 <xsl:attribute name="who" select="string-join($pass-1-primary-agent-ids, ' ')"/>
@@ -442,7 +467,12 @@
 
     <!-- TEMPLATE -->
 
-    <xsl:param name="template-infused-with-revised-input" select="$input-pass-2"/>
+    <!--<xsl:param name="template-url-resolved" select="base-uri(/)"/>-->
+    <!--<xsl:param name="template-infused-with-revised-input" select="$input-pass-2"/>-->
+    <xsl:param name="default-output-directory-resolved" select="base-uri(/)"/>
+    <xsl:param name="infused-template-revised" as="document-node()">
+        <xsl:apply-templates select="$input-pass-2" mode="revise-infused-template"/>
+    </xsl:param>
 
     <xsl:template match="/" mode="revise-infused-template">
         <xsl:document>
