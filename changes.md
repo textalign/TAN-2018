@@ -103,6 +103,8 @@ Along with the new approach to @n above comes the new element &lt;n-alias> and i
 
 Now renamed TAN-A, because this is the most generic form of an alignment or annotation file. In theory, it could be used to express TAN-A-tok and TAN-A-lm, but not vice versa.
 
+Added $datatypes-that-require-unit-specification, to modify rules that forced some objects to be set as elements instead of attributes within claims.
+
 ## TAN-A-lm
 
 New @tok-pop. (Need to write error rules.)
@@ -160,6 +162,8 @@ tan:ordinal() moved to main function set
 tan:counts-to-firsts renamed tan:lengths-to-positions()
 
 tan:batch-replace-advanced()
+
+tan:initial-upper-case()
 
 ## Extra variables
 

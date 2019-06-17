@@ -209,7 +209,7 @@
                             <xsl:choose>
                                 <xsl:when test="$adjacent-grouping">
                                     <xsl:for-each-group select="*"
-                                        group-adjacent="tan:conditions-hold($alter-action, .)">
+                                        group-adjacent="tan:all-conditions-hold($alter-action, .)">
                                         <xsl:choose>
                                             <xsl:when test="current-grouping-key() = true()">
                                                 <xsl:for-each-group select="current-group()"
@@ -440,7 +440,7 @@
         <xsl:param name="delay" select="0" as="xs:integer"/>
         <xsl:variable name="this-node" select="."/>
         <xsl:variable name="these-alters"
-            select="$alters[(self::*, tan:where)[tan:conditions-hold(., $this-node, $test-sequence, false())]]"/>
+            select="$alters[(self::*, tan:where)[tan:all-conditions-hold(., $this-node, $test-sequence, false())]]"/>
         <xsl:variable name="special-pi" select="processing-instruction()[matches(., 'deep-copy')]"/>
         <xsl:choose>
             <xsl:when test="exists($special-pi)">

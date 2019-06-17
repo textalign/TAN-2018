@@ -60,7 +60,6 @@
             <xsl:variable name="these-dependencies-resolved" as="document-node()*">
                <!-- Get all files upon which the host file depends, namely <source>s and <morphology>s -->
                <xsl:choose>
-                  <xsl:when test="not(exists($dependencies))"/>
                   <!-- Only class 2 files have dependencies; if they have already been fed in, keep 'em -->
                   <xsl:when test="(count($dependencies) gt 0) or ($this-class-number = (1, 3))">
                      <xsl:sequence select="$dependencies"/>
@@ -95,7 +94,7 @@
                      with errors returned for missing markers, or too many of them.
                   -->
 
-                  <xsl:variable name="class-2-expansion-pass-1" as="document-node()?">
+                  <!--<xsl:variable name="class-2-expansion-pass-1" as="document-node()?">
                      <xsl:choose>
                         <xsl:when test="$this-is-tan-a">
                            <xsl:apply-templates select="$core-expansion-pass-2" mode="expand-work"/>
@@ -104,13 +103,13 @@
                            <xsl:sequence select="$core-expansion-pass-2"/>
                         </xsl:otherwise>
                      </xsl:choose>
-                  </xsl:variable>
+                  </xsl:variable>-->
 
                   <!-- All textual references must begin with @ref (expanded to <ref> in an earlier pass) -->
                   <xsl:variable name="these-ref-parents"
-                     select="$class-2-expansion-pass-1/*/tan:body//*[tan:ref]"/>
+                     select="$core-expansion-pass-2/*/tan:body//*[tan:ref]"/>
                   <xsl:variable name="adjustments-part-1"
-                     select="$class-2-expansion-pass-1/*/tan:head/tan:adjustments/(tan:skip, tan:rename, tan:equate)"/>
+                     select="$core-expansion-pass-2/*/tan:head/tan:adjustments/(tan:skip, tan:rename, tan:equate)"/>
 
                   <!-- The first pass of source expansion processes the first three steps of the <adjustments>: <skip>, <rename>, <equate> -->
                   <!-- We almost always go through this pass even if there are no adjustments, because it also sets up <n> and <ref> elements in dependency <div>s that are essential for later references -->
@@ -121,7 +120,7 @@
                            test="not($is-validation) or exists($adjustments-part-1) or exists($these-ref-parents) or $this-is-tan-lm">
                            <xsl:apply-templates select="$these-dependencies-resolved"
                               mode="dependency-adjustments-pass-1">
-                              <xsl:with-param name="class-2-doc" select="$class-2-expansion-pass-1"
+                              <xsl:with-param name="class-2-doc" select="$core-expansion-pass-2"
                                  tunnel="yes"/>
                            </xsl:apply-templates>
                         </xsl:when>
@@ -164,14 +163,14 @@
                   <!-- Now perform second round of adjustments, <reassign> -->
 
                   <xsl:variable name="adjustments-part-2"
-                     select="$class-2-expansion-pass-1/*/tan:head/tan:adjustments/tan:reassign"/>
+                     select="$core-expansion-pass-2/*/tan:head/tan:adjustments/tan:reassign"/>
 
                   <xsl:variable name="dependencies-adjusted-pass-2a" as="document-node()*">
                      <xsl:choose>
                         <xsl:when test="exists($adjustments-part-2)">
                            <xsl:apply-templates select="$dependencies-adjusted-pass-1b"
                               mode="dependency-adjustments-pass-2">
-                              <xsl:with-param name="class-2-doc" select="$class-2-expansion-pass-1"
+                              <xsl:with-param name="class-2-doc" select="$core-expansion-pass-2"
                                  tunnel="yes"/>
                            </xsl:apply-templates>
                         </xsl:when>
@@ -201,7 +200,7 @@
                      </xsl:choose>
                   </xsl:variable>
 
-                  <!-- Now place in dependencies markers corresponding to the text references made in the class-2 body. 
+                  <!-- Now, in dependencies, place markers corresponding to the text references made in the class-2 body. 
                      Markers are of three sorts: <div> references (derived from @ref); token references (derived from
                      @val/@rgx + @pos); character references (derived from @chars)
                   -->
@@ -211,7 +210,7 @@
                         <xsl:when test="exists($these-ref-parents)">
                            <xsl:apply-templates select="$dependencies-adjusted-pass-2b"
                               mode="mark-dependencies-pass-1">
-                              <xsl:with-param name="class-2-doc" select="$class-2-expansion-pass-1"
+                              <xsl:with-param name="class-2-doc" select="$core-expansion-pass-2"
                                  tunnel="yes"/>
                            </xsl:apply-templates>
                         </xsl:when>
@@ -229,7 +228,7 @@
                         <xsl:when test="exists($these-tok-parents)">
                            <xsl:apply-templates select="$dependencies-marked-pass-1"
                               mode="mark-dependencies-pass-2">
-                              <xsl:with-param name="class-2-doc" select="$class-2-expansion-pass-1"
+                              <xsl:with-param name="class-2-doc" select="$core-expansion-pass-2"
                                  tunnel="yes"/>
                            </xsl:apply-templates>
                         </xsl:when>
@@ -253,8 +252,8 @@
                   </xsl:variable>
 
                   <!-- Now check the dependent class 2 document to see if there were any errors -->
-                  <xsl:variable name="class-2-expansion-pass-2" as="document-node()?">
-                     <xsl:apply-templates select="$class-2-expansion-pass-1"
+                  <xsl:variable name="class-2-expansion-pass-1" as="document-node()?">
+                     <xsl:apply-templates select="$core-expansion-pass-2"
                         mode="class-2-expansion-terse">
                         <xsl:with-param name="dependencies-adjusted-and-marked"
                            select="$dependencies-stripped-to-markers" tunnel="yes"/>
@@ -263,19 +262,20 @@
 
                   <xsl:if test="$diagnostics-on">
                      <xsl:variable name="diagnostics-on-for-main-class-2-file" as="xs:boolean"
-                        select="false()"/>
+                        select="true()"/>
                      <xsl:variable name="diagnostics-on-for-what-dependency-numbers"
-                        as="xs:integer*" select="(2)"/>
+                        as="xs:integer*" select="(0)"/>
                      <xsl:if test="$diagnostics-on-for-main-class-2-file">
                         <xsl:message select="'orig doc: ', $tan-doc"/>
                         <xsl:message
                            select="'main class 2 file, core expansion pass 1: ', $core-expansion-pass-1"/>
                         <xsl:message
                            select="'main class 2 file, core expansion pass 2: ', $core-expansion-pass-2"/>
+                        <xsl:message select="'these ref parents: ', $these-ref-parents"/>
+                        <xsl:message select="'these adjustments part 1: ', $adjustments-part-1"/>
+                        <xsl:message select="'these adjustments part 2: ', $adjustments-part-2"/>
                         <xsl:message
-                           select="'main class 2 file, expansion pass 1: ', $class-2-expansion-pass-1"/>
-                        <xsl:message
-                           select="'main class 2 file, expansion pass 2: ', $class-2-expansion-pass-2"
+                           select="'main class 2 file, expansion pass 2: ', $class-2-expansion-pass-1"
                         />
                      </xsl:if>
                      <xsl:if test="exists($diagnostics-on-for-what-dependency-numbers)">
@@ -298,7 +298,7 @@
                   </xsl:if>
                   <xsl:choose>
                      <xsl:when test="$this-is-tan-lm">
-                        <xsl:apply-templates select="$class-2-expansion-pass-2"
+                        <xsl:apply-templates select="$class-2-expansion-pass-1"
                            mode="tan-a-lm-expansion-terse">
                            <xsl:with-param name="dependencies" as="document-node()*"
                               select="$dependencies-marked-pass-2" tunnel="yes"/>
@@ -306,8 +306,8 @@
                         <xsl:copy-of select="$dependencies-marked-pass-2"/>
                      </xsl:when>
                      <xsl:otherwise>
-                        <!--<xsl:copy-of select="$class-2-expansion-pass-1, $dependencies-adjusted-pass-1b"/>-->
-                        <xsl:copy-of select="$class-2-expansion-pass-2, $dependencies-marked-pass-2"
+                        <!--<xsl:copy-of select="$core-expansion-pass-2, $dependencies-adjusted-pass-2b"/>-->
+                        <xsl:copy-of select="$class-2-expansion-pass-1, $dependencies-marked-pass-2"
                         />
                      </xsl:otherwise>
                   </xsl:choose>

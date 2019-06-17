@@ -2513,18 +2513,18 @@
       </xsl:for-each>
    </xsl:function>
 
-   <xsl:function name="tan:conditions-hold" as="xs:boolean?">
+   <xsl:function name="tan:all-conditions-hold" as="xs:boolean?">
       <!-- 2-param version of the master one, below -->
       <xsl:param name="element-with-condition-attributes" as="element()?"/>
       <xsl:param name="context-to-evaluate-against" as="item()*"/>
       <xsl:copy-of
-         select="tan:conditions-hold($element-with-condition-attributes, $context-to-evaluate-against, (), true())"
+         select="tan:all-conditions-hold($element-with-condition-attributes, $context-to-evaluate-against, (), true())"
       />
    </xsl:function>
-   <xsl:function name="tan:conditions-hold" as="xs:boolean">
-      <!-- Input: a TAN element with attributes that should be checked for their truth value; a context against which the check the values; an optional sequence of strings indicates the names of elements that should be processed and in what order; a boolean indicating what value to return by default -->
-      <!-- Output: the input elements, with the relevant attributes replaced by a value indicating whether the condition holds -->
-      <!-- If there are no conditions detected, the output is true() -->
+   <xsl:function name="tan:all-conditions-hold" as="xs:boolean">
+      <!-- Input: a TAN element with attributes that should be checked for their truth value; a context against which to check the values; an optional sequence of strings indicates the names of elements that should be processed and in what order; a boolean indicating what value to return by default -->
+      <!-- Output: true, if every condition holds; false otherwise -->
+      <!-- If no conditions are found, the output reverts to the default -->
       <xsl:param name="element-with-condition-attributes" as="element()?"/>
       <xsl:param name="context-to-evaluate-against" as="item()*"/>
       <xsl:param name="evaluation-sequence" as="xs:string*"/>
@@ -2537,11 +2537,10 @@
             </where>
          </xsl:for-each>
       </xsl:variable>
-      <xsl:variable name="loop-results" as="xs:boolean?"
-         select="tan:condition-evaluation-loop($element-with-condition-attributes-sorted-and-distributed, $context-to-evaluate-against, $default-value)"
+      <xsl:variable name="loop-results" as="xs:boolean"
+         select="tan:all-conditions-hold-evaluation-loop($element-with-condition-attributes-sorted-and-distributed, $context-to-evaluate-against, $default-value)"
       />
-      <xsl:variable name="final-results" as="xs:boolean" select="($loop-results, $default-value)[1]"/>
-      <xsl:variable name="diagnostics-on" select="true()"/>
+      <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'diagnostics on for tan:conditions-hold()'"/>
          <xsl:message select="'element with condition attributes: ', $element-with-condition-attributes"/>
@@ -2549,18 +2548,21 @@
          <xsl:message select="'evaluation sequence: ', $evaluation-sequence"/>
          <xsl:message select="'conditions sorted and distributed: ', $element-with-condition-attributes-sorted-and-distributed"/>
          <xsl:message select="'loop results: ', $loop-results"/>
-         <xsl:message select="'final results: ', $final-results"/>
       </xsl:if>
-      <xsl:value-of select="$final-results"/>
+      <xsl:value-of select="$loop-results"/>
    </xsl:function>
-   <xsl:function name="tan:condition-evaluation-loop" as="xs:boolean?">
-      <!-- Companion function to the one above, indicating whether the conditions in the attributes hold -->
-      <!-- It looks for the first true value then exits with a true; failing that, it returns any falses found; if none are found, it exits empty -->
+   <xsl:function name="tan:all-conditions-hold-evaluation-loop" as="xs:boolean">
+      <!-- Companion function to the one above, indicating whether every condition holds -->
+      <!-- It iterates through elements with condition attributes and checks each against the context; if a false is found, the loop ends 
+         with a false; if no conditions are found the default value is returned; otherwise it returns true -->
+      <!-- We use a loop function to avoid evaluating conditions that might be time-consuming -->
       <xsl:param name="elements-with-condition-attributes-to-be-evaluated" as="element()*"/>
       <xsl:param name="context-to-evaluate-against" as="item()*"/>
-      <xsl:param name="default-value" as="xs:boolean"/>
+      <xsl:param name="current-value" as="xs:boolean"/>
       <xsl:choose>
-         <xsl:when test="not(exists($elements-with-condition-attributes-to-be-evaluated))"/>
+         <xsl:when test="not(exists($elements-with-condition-attributes-to-be-evaluated))">
+            <xsl:value-of select="$current-value"/>
+         </xsl:when>
          <xsl:otherwise>
             <xsl:variable name="next-element-to-evaluate"
                select="$elements-with-condition-attributes-to-be-evaluated[1]"/>
@@ -2571,12 +2573,12 @@
                </xsl:apply-templates>
             </xsl:variable>
             <xsl:choose>
-               <xsl:when test="$this-analysis/@* = true()">
-                  <xsl:copy-of select="true()"/>
+               <xsl:when test="$this-analysis/@* = false()">
+                  <xsl:copy-of select="false()"/>
                </xsl:when>
                <xsl:otherwise>
                   <xsl:copy-of
-                     select="tan:condition-evaluation-loop($elements-with-condition-attributes-to-be-evaluated[position() gt 1], $context-to-evaluate-against, $default-value)"
+                     select="tan:all-conditions-hold-evaluation-loop($elements-with-condition-attributes-to-be-evaluated[position() gt 1], $context-to-evaluate-against, true())"
                   />
                </xsl:otherwise>
             </xsl:choose>

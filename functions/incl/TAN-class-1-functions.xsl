@@ -1347,10 +1347,9 @@
    <xsl:template match="tan:tok/* | tan:non-tok/*" mode="unmark-tokens"/>
 
 
-   <xsl:template match="/" mode="mark-dependencies-pass-1">
+   <xsl:template match="/" priority="1" mode="mark-dependencies-pass-1">
       <xsl:param name="class-2-doc" tunnel="yes" as="document-node()?"/>
       <xsl:variable name="this-src-id" select="*/@src"/>
-      <xsl:variable name="this-work-id" select="*/@work"/>
       <xsl:variable name="this-token-definition"
          select="$class-2-doc/*/tan:head/tan:token-definition[tan:src = $this-src-id][1]"/>
       <xsl:variable name="this-token-definition-resolved" as="element()">
@@ -1372,23 +1371,26 @@
       <xsl:variable name="n-alias-items"
          select="tan:TAN-T/tan:head/tan:vocabulary/tan:item[tan:affects-attribute = 'n']"/>
       <xsl:variable name="these-ref-parents"
-         select="$class-2-doc/*/tan:body//*[tan:src = $this-src-id or tan:work = $this-work-id]/descendant-or-self::*[tan:ref]"/>
+         select="$class-2-doc/*/tan:body//*[tan:src = $this-src-id or tan:work = $this-src-id]/descendant-or-self::*[tan:ref]"/>
       <xsl:variable name="these-ref-parents-resolved" as="element()*">
          <xsl:apply-templates select="$these-ref-parents" mode="resolve-numerals">
             <xsl:with-param name="ambig-is-roman" select="$ambig-is-roman" tunnel="yes"/>
             <xsl:with-param name="n-alias-items" select="$n-alias-items" tunnel="yes"/>
          </xsl:apply-templates>
       </xsl:variable>
-
+      
       <xsl:variable name="diagnostics-on" select="false()"/>
+      <xsl:if test="$diagnostics-on">
+         <xsl:message
+            select="'diagnostics on for template mode mark-dependencies-pass-1, treating dependency document @src = ', xs:string($this-src-id)"/>
+         <xsl:message select="'token definition: ', $this-token-definition-resolved"/>
+         <xsl:message select="'ambiguous is Roman?', $ambig-is-roman"/>
+         <xsl:message select="'ref parents (before resolution): ', $these-ref-parents"/>
+         <xsl:message select="'ref parents (resolved): ', $these-ref-parents-resolved"/>
+      </xsl:if>
       <xsl:choose>
          <xsl:when test="exists($these-ref-parents)">
-            <xsl:if test="$diagnostics-on">
-               <xsl:message
-                  select="'template mode mark-dependencies-pass-1, diagnostics on an document node for ', $this-src-id"/>
-               <xsl:message select="'ref parents (resolved): ', $these-ref-parents-resolved"/>
-               <xsl:message select="'token definition: ', $this-token-definition-resolved"/>
-            </xsl:if>
+            
             <xsl:document>
                <xsl:apply-templates mode="#current">
                   <xsl:with-param name="ref-parents" select="$these-ref-parents-resolved"

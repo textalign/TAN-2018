@@ -336,7 +336,6 @@
       <!-- If <name> is a candidate for being referred to by @which, make a clone version of the normalized name immediately after, if its normalized form differs -->
       <xsl:variable name="this-name" select="text()"/>
       <xsl:variable name="this-name-normalized" select="tan:normalize-name($this-name)"/>
-      <!-- We push normalized values to the top, so the first name is always normalized -->
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:if test="$leave-breadcrumbs = true()">
@@ -682,16 +681,7 @@
       </xsl:if>
    </xsl:template>
    <xsl:template match="tan:item/tan:name" mode="reduce-tan-voc-files">
-      <xsl:param name="is-standard-tan-voc" as="xs:boolean" tunnel="yes"/>
       <xsl:copy-of select="."/>
-      <xsl:if test="not($is-standard-tan-voc)">
-         <xsl:variable name="this-name-normalized" select="tan:normalize-name(.)"/>
-         <xsl:if test="not(. = $this-name-normalized)">
-            <name norm="">
-               <xsl:value-of select="$this-name-normalized"/>
-            </name>
-         </xsl:if>
-      </xsl:if>
    </xsl:template>
    <xsl:template match="tan:IRI" mode="reduce-tan-voc-files">
       <xsl:param name="idref-attributes-and-IRIs" tunnel="yes"/>
