@@ -66,6 +66,7 @@
         </to-do>
     </head>
     <body claimant="park">
+        <comment when="2019-06-16" who="park">The following claims merely exemplify the statements one could make, and do not make truthful assertions.</comment>
         <claim verb="resembles">
             <subject src="eng-uk">
                 <tok ref="2" pos="1-2" chars="3-4"/>
@@ -74,7 +75,10 @@
             </subject>
             <object work="eng-uk" ref="3-4"/>
         </claim>
-        <!-- testing -->
+        <claim verb="quotes">
+            <subject work="ring" ref="1"/>
+            <object work="ring" ref="2"/>
+        </claim>
         <claim verb="lacks" subject="ger">
             <at src="eng-uk" ref="1"/>
         </claim>
