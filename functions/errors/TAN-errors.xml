@@ -254,7 +254,7 @@
     
     <!-- TAN-A ERRORS -->
     <group affects-attribute="object-datatype object-lexical-constraint" affects-element="claim verb">
-        <error xml:id="clm01"><rule>Claims involving verbs whose object is constrained must use &lt;object>, not @object.</rule></error>
+        <error xml:id="clm01"><rule>Claims involving verbs whose constrained object requires specification of units must use &lt;object>, not @object.</rule></error>
     </group>
     <group affects-attribute="object-datatype object-lexical-constraint" affects-element="claim verb">
         <error xml:id="clm02"><rule>Verbs that have object constraints must not be combined with other verbs in @verb.</rule></error>
