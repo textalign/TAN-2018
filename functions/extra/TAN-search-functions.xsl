@@ -306,10 +306,10 @@
             />
          </IRI>
          <name>
-            <xsl:value-of select="div[1]"/>
+            <xsl:value-of select="child::div[1]"/>
          </name>
          <desc>
-            <xsl:value-of select="div[2]"/>
+            <xsl:value-of select="child::div[2]"/>
          </desc>
       </item>
    </xsl:template>

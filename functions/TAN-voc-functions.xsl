@@ -8,8 +8,8 @@
    <!-- Core functions for TAN-voc files. Written principally for Schematron validation, but suitable for general use in other contexts -->
 
    <xsl:include href="incl/TAN-class-3-functions.xsl"/>
-   <xsl:include href="extra/TAN-schema-functions.xsl"/>
    <xsl:include href="incl/TAN-core-functions.xsl"/>
+   <xsl:import href="extra/TAN-schema-functions.xsl"/>
 
    <xsl:template match="tan:body" mode="core-expansion-terse">
       <xsl:variable name="all-body-iris" select=".//tan:IRI"/>

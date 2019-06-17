@@ -22,6 +22,7 @@
    <xsl:variable name="doc-history" select="tan:get-doc-history($orig-self)"/>
    <!--<xsl:variable name="doc-filename" select="replace($doc-uri, '.*/([^/]+)$', '$1')"/>-->
    <xsl:variable name="doc-filename" select="tan:cfne(/)"/>
+   <xsl:param name="saxon-extension-functions-available" static="yes" as="xs:boolean" select="fn:function-available('saxon:evaluate', 3)"/>
    
    <!-- sources -->
    <!--<xsl:variable name="sources-1st-da" select="tan:get-1st-doc($head/tan:source)"/>
@@ -145,7 +146,7 @@
       <!-- Output: the numerical value of the letters -->
       <!-- NB, this does not take into account the use of letters representing numbers 1000 and greater -->
       <xsl:param name="greek-numerals" as="xs:string*"/>
-      <xsl:value-of select="tan:letter-to-number($greek-numerals)"/>
+      <xsl:sequence select="tan:letter-to-number($greek-numerals)"/>
    </xsl:function>
 
    <xsl:function name="tan:syr-to-int" as="xs:integer*">
@@ -170,7 +171,7 @@
                      ()
                   else
                      $orig-numeral-seq[$i]"/>
-         <xsl:value-of select="tan:letter-to-number(string-join($duplicates-stripped, ''))"/>
+         <xsl:sequence select="tan:letter-to-number(string-join($duplicates-stripped, ''))"/>
       </xsl:for-each>
    </xsl:function>
 
@@ -1099,48 +1100,45 @@
                <xsl:matching-substring>
                   <xsl:variable name="this-xpath" select="replace(., '[\{\}]', '')"/>
                   <xsl:choose>
-                     <xsl:when test="function-available('saxon:evaluate', 3)">
+                     <xsl:when test="true()" use-when="$saxon-extension-functions-available">
                         <!-- If saxon:evaluate is available, use it -->
                         <xsl:copy-of select="saxon:evaluate($this-xpath, $context-1, $context-2)"
                            copy-namespaces="no"/>
+                        
+                     </xsl:when>
+                     
+                     <xsl:when test="$this-xpath = 'name($p1)'">
+                        <xsl:value-of select="name($context-1)"/>
+                     </xsl:when>
+                     <xsl:when test="matches($this-xpath, '^$p1/@')">
+                        <xsl:value-of select="$context-1/@*[name() = replace(., '^\$@', '')]"
+                        />
+                     </xsl:when>
+                     <xsl:when test="matches($this-xpath, '^$p1/\w+$')">
+                        <xsl:value-of select="$context-1/*[name() = $this-xpath]"/>
+                     </xsl:when>
+                     <xsl:when test="matches($this-xpath, '^$p1/\w+\[\d+\]$')">
+                        <xsl:variable name="simple-xpath-analyzed" as="xs:string*">
+                           <xsl:analyze-string select="$this-xpath" regex="\[\d+\]$">
+                              <xsl:matching-substring>
+                                 <xsl:value-of select="replace(., '\$p|\D', '')"/>
+                              </xsl:matching-substring>
+                              <xsl:non-matching-substring>
+                                 <xsl:value-of select="."/>
+                              </xsl:non-matching-substring>
+                           </xsl:analyze-string>
+                        </xsl:variable>
+                        <xsl:value-of
+                           select="$context-1/*[name() = $simple-xpath-analyzed[1]][$simple-xpath-analyzed[2]]"
+                        />
                      </xsl:when>
                      <xsl:otherwise>
-                        <!-- otherwise, only some very common substitutions will be supported, e.g., an attribute value or the first <name> child -->
-                        <xsl:choose>
-                           <xsl:when test="$this-xpath = 'name($p1)'">
-                              <xsl:value-of select="name($context-1)"/>
-                           </xsl:when>
-                           <xsl:when test="matches($this-xpath, '^$p1/@')">
-                              <xsl:value-of select="$context-1/@*[name() = replace(., '^\$@', '')]"
-                              />
-                           </xsl:when>
-                           <xsl:when test="matches($this-xpath, '^$p1/\w+$')">
-                              <xsl:value-of select="$context-1/*[name() = $this-xpath]"/>
-                           </xsl:when>
-                           <xsl:when test="matches($this-xpath, '^$p1/\w+\[\d+\]$')">
-                              <xsl:variable name="simple-xpath-analyzed" as="xs:string*">
-                                 <xsl:analyze-string select="$this-xpath" regex="\[\d+\]$">
-                                    <xsl:matching-substring>
-                                       <xsl:value-of select="replace(., '\$p|\D', '')"/>
-                                    </xsl:matching-substring>
-                                    <xsl:non-matching-substring>
-                                       <xsl:value-of select="."/>
-                                    </xsl:non-matching-substring>
-                                 </xsl:analyze-string>
-                              </xsl:variable>
-                              <xsl:value-of
-                                 select="$context-1/*[name() = $simple-xpath-analyzed[1]][$simple-xpath-analyzed[2]]"
-                              />
-                           </xsl:when>
-                           <xsl:otherwise>
-                              <xsl:message>
-                                 <xsl:value-of
-                                    select="concat('saxon:evaluate unavailable, and no actions predefined for string: ', .)"
-                                 />
-                              </xsl:message>
-                              <xsl:value-of select="."/>
-                           </xsl:otherwise>
-                        </xsl:choose>
+                        <xsl:message>
+                           <xsl:value-of
+                              select="concat('saxon:evaluate unavailable, and no actions predefined for string: ', .)"
+                           />
+                        </xsl:message>
+                        <xsl:value-of select="."/>
                      </xsl:otherwise>
                   </xsl:choose>
                </xsl:matching-substring>

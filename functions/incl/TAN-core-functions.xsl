@@ -2047,16 +2047,16 @@
                   xs:integer($i)"/>
          <xsl:choose>
             <xsl:when test="$range[1] lt 1 or $range[2] lt 1">
-               <xsl:copy-of select="0"/>
+               <xsl:sequence select="0"/>
             </xsl:when>
             <xsl:when test="$range[1] gt $max or $range[2] gt $max">
-               <xsl:copy-of select="-1"/>
+               <xsl:sequence select="-1"/>
             </xsl:when>
             <xsl:when test="$range[1] gt $range[2]">
-               <xsl:copy-of select="-2"/>
+               <xsl:sequence select="-2"/>
             </xsl:when>
             <xsl:otherwise>
-               <xsl:copy-of select="$range[1] to $range[last()]"/>
+               <xsl:sequence select="$range[1] to $range[last()]"/>
             </xsl:otherwise>
          </xsl:choose>
       </xsl:for-each>
@@ -2157,7 +2157,7 @@
       <!-- Input: any node -->
       <!-- Output: the base uri of the node's document -->
       <xsl:param name="any-node" as="node()?"/>
-      <xsl:value-of
+      <xsl:sequence
          select="($any-node/ancestor-or-self::*[@xml:base]/@xml:base, base-uri($any-node), root($any-node)/*/@xml:base)[string-length(.) gt 0][1]"
       />
    </xsl:function>
