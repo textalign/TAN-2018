@@ -190,15 +190,15 @@
             for $i in $these-morphologies
             return
                count($i/tan:TAN-mor/tan:body/tan:category)"/>
-      <xsl:variable name="relevant-asserts-and-reports"
+      <xsl:variable name="relevant-rules"
          select="
             $these-morphologies/tan:TAN-mor/tan:body/tan:rule[some $i in (self::*, tan:where)
-               satisfies tan:conditions-hold($i, $this-m, (), false())]"
+               satisfies tan:all-conditions-hold($i, $this-m, (), true())]"
       />
       <xsl:variable name="disobeyed-asserts"
-         select="$relevant-asserts-and-reports/tan:assert[not(tan:conditions-hold(., $this-m, (), true()))]"/>
+         select="$relevant-rules/tan:assert[not(tan:all-conditions-hold(., $this-m, (), true()))]"/>
       <xsl:variable name="disobeyed-reports"
-         select="$relevant-asserts-and-reports/tan:report[tan:conditions-hold(., $this-m, (), true())]"/>
+         select="$relevant-rules/tan:report[tan:all-conditions-hold(., $this-m, (), true())]"/>
       <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'diagnostics on for tan-a-lm-expansion-terse'"/>
@@ -208,7 +208,7 @@
          <xsl:message select="'morphology-ids: ', $morphology-ids"/>
          <xsl:message select="'these morphologies: ', tan:shallow-copy($these-morphologies/*)"/>
          <xsl:message select="'morphology category quatities: ', $these-morphology-cat-quantities"/>
-         <xsl:message select="'relevant asserts and reports: ', $relevant-asserts-and-reports"/>
+         <xsl:message select="'relevant rules: ', $relevant-rules"/>
          <xsl:message select="'disobeyed asserts: ', $disobeyed-asserts"/>
          <xsl:message select="'disobeyed reports: ', $disobeyed-reports"/>
       </xsl:if>
