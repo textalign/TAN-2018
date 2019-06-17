@@ -18,6 +18,7 @@
       select="$id-idrefs/tan:id-idrefs/tan:id[tan:idrefs[@attribute = 'subject']]/tan:element"/>
    <xsl:variable name="objects-target-what-elements-names"
       select="$id-idrefs/tan:id-idrefs/tan:id[tan:idrefs[@attribute = 'object']]/tan:element"/>
+   <xsl:variable name="datatypes-that-require-unit-specification" as="xs:string+" select="('decimal', 'float', 'double', 'integer', 'nonPositiveInteger', 'negativeInteger', 'long', 'nonNegativeInteger', 'positiveInteger')"/>
 
    <!-- FUNCTIONS -->
 
@@ -178,59 +179,85 @@
 
    <!-- TERSE EXPANSION -->
 
-   <xsl:template match="tan:work[ancestor::tan:claim]" mode="expand-work">
-      <xsl:variable name="this-work-id" select="."/>
-      <xsl:variable name="this-work-group"
-         select="/tan:TAN-A/tan:head/tan:vocabulary-key/tan:group[tan:work/@src = $this-work-id]"/>
-      <xsl:copy>
-         <xsl:copy-of select="@*"/>
-         <xsl:value-of select="$this-work-group/@n"/>
-      </xsl:copy>
-      <xsl:copy-of select="."/>
-      <!--<xsl:for-each select="$this-work-group/*">
-         <src>
-            <xsl:value-of select="@src"/>
-         </src>
-      </xsl:for-each>-->
-   </xsl:template>
-
-   <xsl:template match="tan:head" priority="1" mode="core-expansion-terse">
+   <!-- TAN-A files have one idref that cannot be fully resolved in the traditional resolve phase, and that's taking care
+      of @work. We rectify that by building <work> vocabulary and (1) copying it to the <vocabulary-key> and (2) passing
+      it to every claim's <work> to copy all aliases.
+   -->
+   <xsl:template match="/" mode="core-expansion-terse">
       <xsl:param name="dependencies" as="document-node()*" tunnel="yes"/>
-      <xsl:variable name="this-head" select="."/>
+      <xsl:variable name="this-head" select="tan:TAN-A/tan:head"/>
       <xsl:variable name="token-definition-source-duplicates"
          select="tan:duplicate-items(tan:token-definition/tan:src)"/>
-      <xsl:variable name="work-elements" as="element()*">
+      <xsl:variable name="work-elements-pass-1" as="element()*">
          <xsl:for-each select="$dependencies/*/tan:head/tan:work">
             <xsl:variable name="this-src" select="/*/@src"/>
+            <xsl:variable name="attr-which-vocabulary" select="tan:attribute-vocabulary(@which)"/>
+            <xsl:variable name="this-vocabulary-item"
+               select="
+                  if (exists(tan:IRI)) then
+                     .
+                  else
+                     $attr-which-vocabulary/tan:item"
+            />
             <xsl:variable name="these-equate-works"
                select="$this-head/tan:vocabulary-key/tan:alias[tan:idref = $this-src]"/>
             <xsl:copy>
-               <xsl:copy-of select="$this-src"/>
                <xsl:copy-of select="@*"/>
-               <xsl:copy-of select="node()"/>
-               <xsl:for-each select="$these-equate-works">
-                  <equate>
-                     <!-- By using the @q value of the <alias>, we set up the routine to look for any other source mentioned by that <alias> -->
-                     <xsl:value-of select="@q"/>
-                  </equate>
+               <xsl:for-each select="$this-vocabulary-item/(tan:IRI, tan:name)">
+                  <xsl:copy>
+                     <xsl:copy-of select="@common"/>
+                     <xsl:value-of select="."/>
+                  </xsl:copy>
+               </xsl:for-each>
+               <id>
+                  <xsl:value-of select="$this-src"/>
+               </id>
+               <xsl:for-each select="$these-equate-works/tan:idref">
+                  <id>
+                     <xsl:value-of select="."/>
+                  </id>
                </xsl:for-each>
             </xsl:copy>
          </xsl:for-each>
       </xsl:variable>
-      <xsl:variable name="default-work-collation"
-         select="tan:group-elements-by-shared-node-values($work-elements, 'IRI')"/>
-      <xsl:variable name="calculated-work-collation"
-         select="tan:group-elements-by-shared-node-values($work-elements, 'IRI|equate')"/>
+      <xsl:variable name="work-elements-pass-2" as="element()*"
+         select="tan:group-elements-by-shared-node-values($work-elements-pass-1, 'IRI|id')"/>
+      <xsl:variable name="work-elements-pass-3" as="element()*">
+         <xsl:apply-templates select="$work-elements-pass-2" mode="#current"/>
+      </xsl:variable>
       <xsl:copy>
-         <xsl:copy-of select="@*"/>
          <xsl:apply-templates mode="#current">
-            <xsl:with-param name="default-work-collation" select="$default-work-collation"
-               tunnel="yes"/>
-            <xsl:with-param name="extra-vocabulary" select="$calculated-work-collation" tunnel="yes"/>
+            <xsl:with-param name="extra-vocabulary" select="$work-elements-pass-3" tunnel="yes"/>
             <xsl:with-param name="token-definition-errors"
                select="$token-definition-source-duplicates"/>
          </xsl:apply-templates>
       </xsl:copy>
+   </xsl:template>
+   
+   <xsl:template match="tan:claim/tan:work" mode="core-expansion-terse">
+      <!-- This template targets <work> elements in the body, not the head -->
+      <xsl:param name="extra-vocabulary" tunnel="yes" as="element()*"/>
+      <xsl:variable name="this-work-id" select="."/>
+      <xsl:variable name="this-vocab" select="$extra-vocabulary[self::tan:work][(tan:id, tan:name) = $this-work-id]"/>
+      <xsl:choose>
+         <xsl:when test="exists($this-vocab)">
+            <xsl:for-each select="$this-vocab/tan:id">
+               <work attr="">
+                  <xsl:value-of select="."/>
+               </work>
+            </xsl:for-each>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:copy-of select="."/>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:template>
+   
+   <xsl:template match="tan:group[tan:work]" mode="core-expansion-terse">
+      <work>
+         <xsl:copy-of select="@*"/>
+         <xsl:copy-of select="tan:distinct-items(tan:work/*)"/>
+      </work>
    </xsl:template>
 
    <xsl:template match="tan:body" mode="core-expansion-terse">
@@ -296,14 +323,22 @@
          select="$this-verb-vocab/(* except (tan:IRI, tan:name, tan:desc, tan:location, tan:comment))"/>
       <xsl:variable name="these-verbs-with-general-constraints"
          select="$these-verb-vocab-items[tan:group]"/>
-      <xsl:variable name="these-verbs-with-object-data-constraints"
-         select="$these-verb-vocab-items[exists(@object-datatype)]"/>
+      <xsl:variable name="these-verbs-with-data-for-object"
+         select="$these-verb-vocab-items[@object-datatype]"/>
+      <xsl:variable name="these-verbs-whose-objects-require-unit-specification"
+         select="$these-verb-vocab-items[@object-datatype = $datatypes-that-require-unit-specification]"/>
       <xsl:variable name="verbal-groups" select="$these-verbs-with-general-constraints/tan:group"/>
 
 
       <!-- objects -->
       <xsl:variable name="these-object-refs" select="(tan:object, tan:claim)"/>
-      <xsl:variable name="these-entity-object-refs" select="$these-object-refs[@attr]"/>
+      <xsl:variable name="these-entity-object-refs"
+         select="
+            if (exists($these-verbs-with-data-for-object)) then
+               ()
+            else
+               $these-object-refs[@attr]"
+      />
       <xsl:variable name="these-textual-passage-object-refs"
          select="$these-object-refs[tan:src or tan:work]"/>
       <xsl:variable name="this-entity-object-vocab"
@@ -338,12 +373,19 @@
          <xsl:message select="'verb refs actual: ', $these-verb-refs"/>
          <xsl:message select="'verb vocab items: ', $these-verb-vocab-items"/>
          <xsl:message
-            select="'verbs with object constraints: ', $these-verbs-with-object-data-constraints"/>
+            select="'verbs with object constraints: ', $these-verbs-whose-objects-require-unit-specification"/>
          <xsl:message select="'verbal groups: ', $verbal-groups"/>
          <xsl:message select="'objects: entities: ', $these-entity-object-vocab-items"/>
          <xsl:message select="'objects: textual passages: ', $these-textual-passage-object-refs"/>
          <xsl:message select="'objects: data: ', $these-data-object-refs"/>
       </xsl:if>
+      
+      <xsl:variable name="errors-that-should-be-ignored"
+         as="element()*">
+         <xsl:if test="exists($these-verbs-with-data-for-object)">
+            <xsl:sequence select="tan:error[tan:item/tan:id = $these-data-object-refs]"/>
+         </xsl:if>
+      </xsl:variable>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <!-- subject problems -->
@@ -352,9 +394,9 @@
          </xsl:if>
          <!-- verb problems -->
          <!-- verb data constraint problems -->
-         <xsl:if test="exists($these-verbs-with-object-data-constraints)">
+         <xsl:if test="exists($these-verbs-whose-objects-require-unit-specification)">
             <!-- if data is expected, no object should be an entity or a textual passage -->
-            <xsl:if test="exists(tan:object[@attr]) or exists(tan:object[@src or @work])">
+            <xsl:if test="exists(tan:object[not(@units)])">
                <xsl:copy-of select="tan:error('clm01')"/>
             </xsl:if>
             <xsl:if test="count($these-verb-vocab-items) gt 1">
@@ -406,60 +448,7 @@
          <xsl:if test="$verbal-groups = 'zero objects' and exists($these-object-refs)">
             <xsl:copy-of select="tan:error('vrb11')"/>
          </xsl:if>
-
-
-
-         <!--<xsl:if
-            test="
-               $verbal-groups = 'textual entity subject'
-               and (exists($these-textual-passage-subject-refs) or exists($these-subject-nontextual-entities))">
-            <xsl:copy-of select="tan:error('vrb01')"/>
-         </xsl:if>
-         <xsl:if
-            test="$verbal-groups = 'textual entity object'
-            and (exists($these-textual-passage-object-refs) or exists($these-object-nontextual-entities) or exists($these-data-object-refs))">
-            <xsl:copy-of select="tan:error('vrb02')"/>
-         </xsl:if>
-         <xsl:if
-            test="$verbal-groups = 'textual passage subject' 
-            and (exists($these-entity-subject-vocab-items))">
-            <xsl:copy-of select="tan:error('vrb03')"/>
-         </xsl:if>
-         <xsl:if
-            test="
-               $verbal-groups = 'textual passage object'
-               and (exists($these-entity-object-vocab-items))">
-            <xsl:copy-of select="tan:error('vrb04')"/>
-         </xsl:if>
-         <xsl:if
-            test="
-               $verbal-groups = 'textual subject'
-               and exists($these-subject-nontextual-entities)">
-            <xsl:copy-of select="tan:error('vrb05')"/>
-         </xsl:if>
-         <xsl:if
-            test="
-               $verbal-groups = 'textual object'
-               and exists($these-object-nontextual-entities)">
-            <xsl:copy-of select="tan:error('vrb06')"/>
-         </xsl:if>
-         <xsl:if test="$verbal-groups = 'object required' 
-            and not(exists($these-object-refs))">
-            <xsl:copy-of select="tan:error('vrb07')"/>
-         </xsl:if>
-         <xsl:if test="$verbal-groups = 'object disallowed' 
-            and exists($these-object-refs)">
-            <xsl:copy-of select="tan:error('vrb08')"/>
-         </xsl:if>
-         <xsl:if
-            test="$verbal-groups = 'textual entity subject' and (exists($these-subject-nontextual-entities) or exists($these-textual-passage-subject-refs))">
-            <xsl:copy-of select="tan:error('vrb05')"/>
-         </xsl:if>
-         <!-\- locus problems -\->
-         <xsl:if test="$verbal-groups = 'locus based' and not(exists($these-loci))">
-            <xsl:copy-of select="tan:error('clm06', concat('at least one locus (&lt;at>) is required for the verb ', string-join($these-verbs-with-general-constraints[tan:group = 'locus-based']/tan:name[1], ', ')))"/>
-         </xsl:if>-->
-         <xsl:apply-templates mode="#current">
+         <xsl:apply-templates select="node() except $errors-that-should-be-ignored" mode="#current">
             <xsl:with-param name="verbs" select="$these-verb-vocab-items"/>
          </xsl:apply-templates>
       </xsl:copy>

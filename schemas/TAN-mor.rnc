@@ -39,7 +39,7 @@ cond-attr-m-has-features =
     
     ## specifies one or more features separated by spaces or the padded + (a plus sign with surrounding spaces). A plain space is treated  as meaning "or" and the padded + as meaning "and." If there is at least one match between the list and the value of the codes in an <m> then the condition will be treated as true. The padded plus sign specifies that all the items need to be found in the <m>. 
     
-    ## For example, feature-test="A B + C D + E" means that the condition will be true for a given <m> only if that <m> has A or B and C or D and E present as values. This test is one of four tests for determining the truth value that will trigger the message in a <report> or <assert> 
+    ## For example, feature-test="A B + C D + E" means that the condition will be true for a given <m> only if that <m> has A or (B and C) or (D and E) present as values. This test is one of four tests for determining the truth value that will trigger the message in a <report> or <assert> 
     attribute m-has-features {
         xsd:string { pattern = "[^\s\+]+(\s(\+\s)?[^\s\+]+)*" }
     }
