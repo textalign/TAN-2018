@@ -543,7 +543,7 @@
 
    <xsl:function name="tan:acronym" as="xs:string?">
       <!-- Input: any strings -->
-      <!-- Output: the acronym of those strings, space-tokenized -->
+      <!-- Output: the acronym of those strings (initial letters joined without spaces) -->
       <xsl:param name="string-input" as="xs:string*"/>
       <xsl:variable name="initials"
          select="
@@ -654,6 +654,26 @@
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
+   
+   <xsl:function name="tan:initial-upper-case" as="xs:string*">
+      <!-- Input: any strings -->
+      <!-- Output: each string with the initial letters capitalized and the rest set lower-case -->
+      <xsl:param name="strings" as="xs:string*"/>
+      <xsl:variable name="non-letter-regex">\P{L}</xsl:variable>
+      <xsl:for-each select="$strings">
+         <xsl:variable name="pass-1" as="xs:string*">
+            <xsl:analyze-string select="." regex="^{$non-letter-regex}+">
+               <xsl:matching-substring>
+                  <xsl:value-of select="."/>
+               </xsl:matching-substring>
+               <xsl:non-matching-substring>
+                  <xsl:value-of select="upper-case(substring(., 1, 1)) || lower-case(substring(., 2))"/>
+               </xsl:non-matching-substring>
+            </xsl:analyze-string>
+         </xsl:variable>
+         <xsl:value-of select="string-join($pass-1)"/>
+      </xsl:for-each>
+   </xsl:function>
 
 
    <!-- Functions: booleans -->
