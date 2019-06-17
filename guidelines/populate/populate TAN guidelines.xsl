@@ -20,10 +20,10 @@
 
    <xsl:include href="../../functions/incl/TAN-core-functions.xsl"/>
    <xsl:include href="../../functions/TAN-extra-functions.xsl"/>
-   <xsl:include href="../get%20inclusions/rng-to-text.xsl"/>
-   <xsl:include href="../get%20inclusions/tan-snippet-to-docbook.xsl"/>
-   <xsl:include href="../get%20inclusions/tan-vocabularies-to-docbook.xsl"/>
-   <xsl:include href="../get%20inclusions/XSLT%20analysis.xsl"/>
+   <xsl:include href="../../applications/get%20inclusions/rng-to-text.xsl"/>
+   <xsl:include href="../../applications/get%20inclusions/tan-snippet-to-docbook.xsl"/>
+   <xsl:include href="../../applications/get%20inclusions/tan-vocabularies-to-docbook.xsl"/>
+   <xsl:include href="../../applications/get%20inclusions/XSLT%20analysis.xsl"/>
 
    <xsl:param name="max-examples" select="4"/>
    <xsl:param name="qty-contextual-siblings" select="1"/>
