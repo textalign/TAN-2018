@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../../schemas/TAN-voc.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="../../schemas/TAN-voc.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../../schemas/TAN-voc.sch" phase="normal" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <!-- wrn04 -->
 <TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2020" id="tag:textalign.net,9999:error-test-2">
     <head>
@@ -28,7 +28,7 @@
         </successor>
         <adjustments/>
         <vocabulary-key>
-            <!-- wrn09 or loc01 (depends upon internet availability) -->
+            <!-- wrn09 or loc01 (if internet is available) -->
             <algorithm xml:id="xslt3">
                 <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
                 <name>Stylesheet to create a TAN file.</name>

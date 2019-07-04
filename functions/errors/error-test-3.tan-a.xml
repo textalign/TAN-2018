@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--<?xml-model href="../../schemas/TAN-A.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="../../schemas/TAN-A.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
+<?xml-model href="../../schemas/TAN-A.rnc" type="application/relax-ng-compact-syntax"?>
+<?xml-model href="../../schemas/TAN-A.sch" type="application/xml" phase="verbose" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <!-- this test file primed for verbose validation -->
 <!-- wrn04 verbose: cat01 cat03 cat04 cat07 -->
 <TAN-A xmlns="tag:textalign.net,2015:ns" id="tag:textalign.net,2015:error-test" TAN-version="2020">
@@ -148,7 +148,7 @@
                 <tok rgx=".+" pos="last-100, 1000"/>
             </object>
             <!-- ref02 verbose -->
-            <object work="test-4" ref="test5"/>
+            <object work="test-4" ref="test999"/>
             <object src="test-4" ref="3.a">
                 <!-- chr01 -->
                 <tok val="Some" chars="5"/>
@@ -156,8 +156,21 @@
             <!-- ref01 -->
             <object src="test-4" ref="bad4"/>
         </claim>
+        <!-- vrb02 vrb03 -->
+        <claim verb="reads">
+            <subject src="test-4" ref="3.a"/>
+            <object>one version</object>
+            <object>another version</object>
+        </claim>
+        <!-- vrb07 -->
+        <claim subject="craziness" verb="lacks_text">
+            <at src="test-4" ref="3.a"/>
+        </claim>
+        <!-- vrb06 vrb08 -->
+        <claim subject="person_1" verb="paraphrases" object="craziness"/>
         <!-- clm01 clm02 clm03 vrb05 vrb06 -->
         <claim verb="parallels weighs" subject="org1" object="person_1"/>
+        <!-- clm01 -->
         <claim verb="weighs" subject="org1">
             <!-- clm03 -->
             <object>many</object>
@@ -168,7 +181,13 @@
         </claim>
         <!-- clm05 clm07 -->
         <claim object="org1"/>
-        <!-- vrb01 vrb04 -->
-        <claim subject="person_1" verb="claims"/>
+        <!-- vrb01 vrb04 vrb09 vrb10 -->
+        <claim subject="person_1 craziness" verb="claims">
+            <at src="test-4" ref="3.a"/>
+        </claim>
+        <!-- vrb11 -->
+        <claim subject="test-1" verb="lacks_text" object="craziness">
+            <at src="test-4" ref="3.a"/>
+        </claim>
     </body>
 </TAN-A>

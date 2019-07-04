@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--<?xml-model href="../../schemas/TAN-TEI.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="../../schemas/TAN-TEI.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
+<?xml-model href="../../schemas/TAN-TEI.rnc" type="application/relax-ng-compact-syntax"?>
+<?xml-model href="../../schemas/TAN-TEI.sch" phase="verbose" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <!-- this test file primed for verbose validation -->
 <!-- wrn04 cat01 verbose cat04 verbose cat07 verbose cat03 verbose (catalog should have a bogus id in it) 
     cat06 verbose (provided catalog doesn't have entry for this file) -->
@@ -74,7 +74,7 @@
         <body xml:lang="eng">
             <!-- cl104 verbose cl107 verbose -->
             <div type="preface" n="preface"><p>This is a preface</p></div>
-            <!-- tei02 tei03 tan05 cl104 verbose cl107 verbose -->
+            <!-- tei02 tei03 tan05 cl104 verbose cl107 verbose tan21 -->
             <div type="line" n="1" include="test"><p>Line 1</p></div>
             <div type="line" n="2">
                 <!-- cl115 verbose cl116 verbose cl104 verbose cl107 verbose -->
@@ -87,7 +87,7 @@
             </div>
             <div type="line" n="3">
                 <!-- cl107 verbose cl116 verbose cl104 verbose -->
-                <div type="part" n="a"><p>3.a. Some text with bad |<!-- tei04 tei05 --><lb/>line break.</p></div>
+                <div type="part" n="a"><p>3.a. Some text with bad |<!-- tei04 tei05 --><lb/>line<!-- tei06 --><lb break="no"/> breaks.</p></div>
             </div>
             <!-- cl104 verbose cl107 verbose -->
             <div type="part" n="test3"><p>Test line 3.</p></div>
