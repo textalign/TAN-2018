@@ -39,13 +39,13 @@
                 sentiment, not on how it will be presented to the reader. The reading of witnesses
                 is taken to be the natural grammatical object of the claim.</comment>
             <item group="zero_objects">
-                <IRI>tag:textalign.net,2015:verb:is-lacking</IRI>
-                <name>is lacking</name>
-                <name>lacks</name>
+                <IRI>tag:textalign.net,2015:verb:lacks-text</IRI>
+                <name>lacks text</name>
+                <name>lacks text at</name>
                 <desc>At the locus, the textual entity referred to by the subject lacks any text.
                     The claim takes no object.</desc>
             </item>
-            <item group="zero_objects">
+            <item group="one_object">
                 <IRI>tag:textalign.net,2015:verb:agrees-with</IRI>
                 <name>matches</name>
                 <name>agrees with</name>
