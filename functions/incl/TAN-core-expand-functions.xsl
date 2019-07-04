@@ -739,9 +739,10 @@
                select="$these-catalogs/collection/doc[@id = $these-iris]"/>
             <xsl:variable name="possible-uris"
                select="
-                  for $i in $catalog-matches
+                  for $i in $catalog-matches,
+                  $j in tan:base-uri($i)[not(. = $this-base-uri)]
                   return
-                     resolve-uri($i/@href, xs:string(tan:base-uri($i)))[not(. = $this-base-uri)]"/>
+                     resolve-uri($i/@href, xs:string($j))"/>
             <xsl:variable name="this-fix" as="element()*">
                <xsl:for-each select="$possible-uris">
                   <location href="{tan:uri-relative-to(xs:string(.), xs:string($this-base-uri))}"
@@ -852,7 +853,7 @@
                select="$this-vocabulary/*[count(distinct-values((@xml:id, @id, tan:id, tan:name)[. = $these-vals-normalized])) gt 1]"/>
             <xsl:variable name="all-permissible-vocabulary-items"
                select="tan:vocabulary($these-target-elements, false(), (), $local-head)"/>
-            <xsl:variable name="diagnostics-on" select="$these-vals = 'person_1'"/>
+            <xsl:variable name="diagnostics-on" select="false()"/>
             <xsl:if test="$diagnostics-on">
                <xsl:message select="'diagnostics on for ', ."/>
                <xsl:message

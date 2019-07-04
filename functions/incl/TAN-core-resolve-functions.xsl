@@ -256,7 +256,7 @@
       <xsl:param name="leave-breadcrumbs" as="xs:boolean" tunnel="yes"/>
       <xsl:param name="stamp-root-element-with-attr-name" as="xs:string?" tunnel="yes"/>
       <xsl:param name="stamp-root-element-with-attr-val" as="xs:string?" tunnel="yes"/>
-      <xsl:variable name="this-base-uri" select="tan:base-uri(.)" as="xs:anyURI?"/>
+      <xsl:variable name="this-base-uri" select="tan:base-uri(.)" as="xs:anyURI"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:if test="not(exists(@xml:base))">

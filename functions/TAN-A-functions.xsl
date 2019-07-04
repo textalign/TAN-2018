@@ -332,13 +332,7 @@
 
       <!-- objects -->
       <xsl:variable name="these-object-refs" select="(tan:object, tan:claim)"/>
-      <xsl:variable name="these-entity-object-refs"
-         select="
-            if (exists($these-verbs-with-data-for-object)) then
-               ()
-            else
-               $these-object-refs[@attr]"
-      />
+      <xsl:variable name="these-entity-object-refs" select="$these-object-refs[@attr]"/>
       <xsl:variable name="these-textual-passage-object-refs"
          select="$these-object-refs[tan:src or tan:work]"/>
       <xsl:variable name="this-entity-object-vocab"
@@ -363,7 +357,7 @@
       <!-- loci -->
       <xsl:variable name="these-loci" select="tan:at"/>
 
-      <xsl:variable name="diagnostics-on" select="exists(tan:verb[matches(., 'claims')])"/>
+      <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'diagnostics on, template mode core-expansion-terse, for: ', ."/>
          <xsl:message select="'subjects inherited: ', $inherited-subjects"/>

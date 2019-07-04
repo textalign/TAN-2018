@@ -2153,13 +2153,28 @@
          </xsl:choose>
       </xsl:for-each>
    </xsl:function>
-   <xsl:function name="tan:base-uri" as="xs:anyURI?">
+   <xsl:function name="tan:base-uri" as="xs:anyURI">
       <!-- Input: any node -->
       <!-- Output: the base uri of the node's document -->
+      <!-- An explicit @xml:base has the highest priority over any native base-uri(). If the node is a fragment and has no declared or detected
+         base uri, the static-base-uri() will be returned -->
       <xsl:param name="any-node" as="node()?"/>
-      <xsl:sequence
+      <xsl:variable name="specified-ancestral-xml-base-attrs" select="$any-node/ancestor-or-self::*[@xml:base]"/>
+      <xsl:variable name="default-xml-base" select="base-uri($any-node)"/>
+      <xsl:choose>
+         <xsl:when test="exists($specified-ancestral-xml-base-attrs)">
+            <xsl:sequence select="$specified-ancestral-xml-base-attrs[1]/@xml:base"/>
+         </xsl:when>
+         <xsl:when test="string-length($default-xml-base) gt 0">
+            <xsl:sequence select="$default-xml-base"/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:sequence select="static-base-uri()"/>
+         </xsl:otherwise>
+      </xsl:choose>
+      <!--<xsl:sequence
          select="($any-node/ancestor-or-self::*[@xml:base]/@xml:base, base-uri($any-node), root($any-node)/*/@xml:base)[string-length(.) gt 0][1]"
-      />
+      />-->
    </xsl:function>
    <xsl:function name="tan:uri-relative-to" as="xs:string?">
       <!-- Input: two strings representing URIs -->

@@ -206,7 +206,7 @@
       <xsl:variable name="this-q" select="@q"/>
       <xsl:variable name="this-ref" select="text()"/>
       <xsl:variable name="ref-markers" as="element()*">
-         <xsl:for-each select="$dependencies-adjusted-and-marked[*/@work = $these-work-ids or */@src = $these-src-ids]">
+         <xsl:for-each select="$dependencies-adjusted-and-marked[*/(@work, @src) = ($these-work-ids, $these-src-ids)]">
             <xsl:variable name="this-src-id" select="*/@src"/>
             <xsl:variable name="these-ref-markers" select="key('q-ref', $this-q, .)"/>
             <xsl:variable name="this-message" as="xs:string+" select="$this-src-id, ' lacks @ref ', $this-ref"/>
@@ -214,7 +214,7 @@
                <xsl:when test="exists($these-ref-markers)">
                   <xsl:sequence select="$these-ref-markers"/>
                </xsl:when>
-               <xsl:when test="(exists($these-work-ids) and not($this-src-id = $these-work-ids))">
+               <xsl:when test="exists($these-work-ids)">
                   <xsl:copy-of select="tan:error('ref02', string-join($this-message, ''))"/>
                </xsl:when>
                <xsl:otherwise>

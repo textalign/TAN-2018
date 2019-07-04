@@ -24,6 +24,21 @@
                         <scenarioAssociation-array>
                             <scenarioAssociation>
                                 <field name="url">
+                                    <String>../library-arithmeticus/aristotle/ar.cat.grc.1949.minio-paluello.ref-scriptum-native.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Compare one class 1 file to another</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
                                     <String>examples/ring-o-roses.eng.1881.xml</String>
                                 </field>
                                 <field name="scenarioIds">
