@@ -87,7 +87,7 @@ Some enhancement of functions:
 
 ## TAN-T(EI)
 
-To facilitate the expedient processing of &lt;see-also>, new elements have been introduced: &lt;model>, &lt;redivision>, and &lt;annotation>. A model (only one allowed) specifies another class 1 file that has been used as a model for division types and @n values. A redivision is the exact same work, version, and scriptum, but segmented and labeled with a different type of reference system. An &lt;annotation> is a class 2 file that makes the class 1 file a &lt;source>.
+To facilitate the expedient processing of &lt;see-also>, new elements have been introduced: &lt;model>, &lt;redivision>, &lt;annotation>, and &lt;companion-version> (different version of the same work in the same scriptum). A model (only one allowed) specifies another class 1 file that has been used as a model for division types and @n values. A redivision is the exact same work, version, and scriptum, but segmented and labeled with a different type of reference system. An &lt;annotation> is a class 2 file that makes the class 1 file a &lt;source>.
 
 In the service of merging different sources, the new tan:group-divs() groups together &lt;div>s that might have multiple &lt;ref>s and be in their own peculiar sequence. It was written to preserve as best as possible the original sequence of each reference within a given source.
 
@@ -164,6 +164,8 @@ tan:counts-to-firsts renamed tan:lengths-to-positions()
 tan:batch-replace-advanced()
 
 tan:initial-upper-case()
+
+tan:title-case()
 
 ## Extra variables
 
