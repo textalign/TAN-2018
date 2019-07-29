@@ -2781,7 +2781,7 @@
       <!-- 4 param version of fuller one below -->
       <xsl:param name="target-element-names" as="xs:string+"/>
       <xsl:param name="values-are-from-attr-which" as="xs:boolean"/>
-      <xsl:param name="attribute-value" as="xs:string?"/>
+      <xsl:param name="attribute-values" as="xs:string*"/>
       <xsl:param name="local-vocabulary-parent" as="element()?"/>
       <xsl:variable name="reference-external-vocabularies"
          select="
@@ -2789,7 +2789,7 @@
             or ($target-element-names = 'n')"
       />
       <xsl:copy-of
-         select="tan:vocabulary($target-element-names, $values-are-from-attr-which, $attribute-value, $local-vocabulary-parent, $reference-external-vocabularies)"
+         select="tan:vocabulary($target-element-names, $values-are-from-attr-which, $attribute-values, $local-vocabulary-parent, $reference-external-vocabularies)"
       />
    </xsl:function>
 
@@ -2805,7 +2805,7 @@
       <!-- TO DO (March 2019): make more efficient; we now can guarantee that if the <head> has <vocabulary>s with <item>s the external vocabularies have already been queried -->
       <xsl:param name="target-element-names" as="xs:string+"/>
       <xsl:param name="values-are-from-attr-which" as="xs:boolean"/>
-      <xsl:param name="attribute-value" as="xs:string?"/>
+      <xsl:param name="attribute-values" as="xs:string*"/>
       <xsl:param name="local-vocabulary-parent" as="element()?"/>
       <xsl:param name="reference-external-vocabularies" as="xs:boolean"/>
       <xsl:variable name="target-element-names-supported-in-standard-tan-voc"
@@ -2814,19 +2814,24 @@
       <!-- Normalize the attribute value. If it is @which, treat it as a name value and normalize it accordingly. Otherwise treat it as space-delimited multiple values -->
       <xsl:variable name="values-normalized" as="xs:string*">
          <xsl:choose>
-            <xsl:when test="(count($attribute-value) lt 1) or ($attribute-value = ('*', ''))">
+            <xsl:when test="(count($attribute-values) lt 1) or ($attribute-values = ('*', ''))">
                <!-- If there is no value, or it is a null value, or it is an asterisk, the user wants everything -->
                <xsl:text>*</xsl:text>
             </xsl:when>
             <!-- If the values are from @which, each value is a single value, and should be normalized for space and case -->
             <xsl:when test="$values-are-from-attr-which">
-               <xsl:for-each select="$attribute-value">
+               <xsl:for-each select="$attribute-values">
                   <xsl:value-of select="tan:normalize-name(.)"/>
                </xsl:for-each>
             </xsl:when>
             <!-- If the values are not from @which they are case sensitive, and spaces should be interpreted as separating multiple values -->
             <xsl:otherwise>
-               <xsl:copy-of select="tokenize(normalize-space($attribute-value), ' ')"/>
+               <xsl:copy-of
+                  select="
+                     for $i in $attribute-values
+                     return
+                        tokenize(normalize-space($i), ' ')"
+               />
             </xsl:otherwise>
          </xsl:choose>
       </xsl:variable>
@@ -3112,7 +3117,7 @@
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'diagnostics on for tan:vocabulary()'"/>
          <xsl:message select="'target element: ', $target-element-names"/>
-         <xsl:message select="'attribute value: ', $attribute-value"/>
+         <xsl:message select="'attribute value: ', $attribute-values"/>
          <xsl:message select="'values normalized: ', string-join($values-normalized, ', ')"/>
          <xsl:message select="'fetch everything?', $fetch-everything"/>
          <xsl:message select="'vals are from @which: ', $values-are-from-attr-which"/>

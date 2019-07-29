@@ -581,8 +581,8 @@
    <xsl:function name="tan:batch-replace-advanced" as="item()*">
       <!-- Input: a string; a sequence of elements <[ANY NAME] pattern="" [flags=""]>[ANY CONTENT]</[ANY NAME]> -->
       <!-- Output: a sequence of items, with instances of @pattern replaced by the content of the elements -->
-      <!-- This is a more advanced form of tan:batch-replace(), in that it allows text to be spiked by elements. -->
-      <!-- The function was devised in service of raw text that needed to be converted to TAN-T. Text clearly identifying references can then be turned into elements, and the result can then be changed into a traditional hierarchy. -->
+      <!-- This is a more advanced form of tan:batch-replace(), in that it allows text to be replaced by elements. -->
+      <!-- The function was devised to convert raw text into TAN-T. Textual references can be turned into <div n=""/> anchors, and the result can then be changed into a traditional hierarchy. -->
       <xsl:param name="string" as="xs:string?"/>
       <xsl:param name="replace-elements" as="element()*"/>
       <xsl:choose>
@@ -654,6 +654,51 @@
             </xsl:analyze-string>
          </xsl:otherwise>
       </xsl:choose>
+   </xsl:template>
+   
+   <xsl:variable name="english-prepositions" as="xs:string+"
+      select="('aboard', 'about', 'above', 'across', 'after', 'against', 'along', 'amid', 'among', 'anti', 'around', 'as', 'at', 'before', 'behind', 'below', 'beneath', 'beside', 'besides', 'between', 'beyond', 'but', 'by', 'concerning', 'considering', 'despite', 'down', 'during', 'except', 'excepting', 'excluding', 'following', 'for', 'from', 'in', 'inside', 'into', 'like', 'minus', 'near', 'of', 'off', 'on', 'onto', 'opposite', 'outside', 'over', 'past', 'per', 'plus', 'regarding', 'round', 'save', 'since', 'than', 'through', 'to', 'toward', 'towards', 'under', 'underneath', 'unlike', 'until', 'up', 'upon', 'versus', 'via', 'with', 'within', 'without')"
+   />
+   <xsl:variable name="english-articles" as="xs:string+" select="('a', 'the')"/>
+   <xsl:function name="tan:title-case" as="xs:string*">
+      <!-- Input: a sequence of strings -->
+      <!-- Output: each string set in title case, following the conventions of English (one of the only languages that bother with title-case) -->
+      <!-- According to Chicago rules of title casing, the first and last words are always capitalized, and interior words are capitalzied unless they are a preposition or article -->
+      <xsl:param name="string-to-convert" as="xs:string*"/>
+      <xsl:for-each select="$string-to-convert">
+         <xsl:variable name="pass-1" as="element()">
+            <phrase>
+               <xsl:analyze-string select="." regex="\w+">
+                  <xsl:matching-substring>
+                     <word>
+                        <xsl:choose>
+                           <xsl:when test=". = ($english-prepositions, $english-articles)">
+                              <xsl:value-of select="lower-case(.)"/>
+                           </xsl:when>
+                           <xsl:otherwise>
+                              <xsl:value-of select="tan:initial-upper-case(.)"/>
+                           </xsl:otherwise>
+                        </xsl:choose>
+                     </word>
+                  </xsl:matching-substring>
+                  <xsl:non-matching-substring>
+                     <non-word>
+                        <xsl:value-of select="."/>
+                     </non-word>
+                  </xsl:non-matching-substring>
+               </xsl:analyze-string>
+            </phrase>
+         </xsl:variable>
+         <xsl:variable name="pass-2" as="element()">
+            <xsl:apply-templates select="$pass-1" mode="title-case"/>
+         </xsl:variable>
+         <xsl:value-of select="string-join($pass-2/*, '')"/>
+      </xsl:for-each>
+   </xsl:function>
+   <xsl:template match="tan:word[1] | tan:word[last()]" mode="title-case">
+      <xsl:copy>
+         <xsl:value-of select="tan:initial-upper-case(.)"/>
+      </xsl:copy>
    </xsl:template>
    
    <xsl:function name="tan:initial-upper-case" as="xs:string*">

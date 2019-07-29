@@ -20,7 +20,7 @@
       <xsl:variable name="lang-match"
          select="$iso-639-3/tan:iso-639-3/tan:l[@name = $lang-name]/@id"/>
       <xsl:value-of select="$lang-match"/>
-      <xsl:if test="not(exists($lang-match))">
+      <xsl:if test="not(exists($lang-match)) and (string-length($lang-name) gt 0)">
          <xsl:value-of
             select="
                for $i in $iso-639-3/tan:iso-639-3/tan:l[matches(@name, $lang-name, 'i')]
@@ -38,7 +38,7 @@
       <xsl:variable name="lang-match"
          select="$iso-639-3/tan:iso-639-3/tan:l[@id = $lang-code]/@name"/>
       <xsl:value-of select="$lang-match"/>
-      <xsl:if test="not(exists($lang-match))">
+      <xsl:if test="not(exists($lang-match)) and (string-length($lang-code) gt 0)">
          <xsl:value-of
             select="
                for $i in $iso-639-3/tan:iso-639-3/tan:l[matches(@id, $lang-code, 'i')]
