@@ -18,6 +18,9 @@
         <zeroOrMore>
           <ref name="link-element-annotation"/>
         </zeroOrMore>
+        <zeroOrMore>
+          <ref name="link-element-companion-version"/>
+        </zeroOrMore>
       </interleave>
     </define>
     <define name="declaration-non-core">
@@ -133,6 +136,12 @@
     <element name="redivision">
       <a:documentation>identifies a class 1 file that has the same work, scriptum, and version, but segmented according to a different reference system.</a:documentation>
       <a:documentation>The normalized transcriptions of redivided texts must be identical</a:documentation>
+      <ref name="entity-digital-tan-no-id"/>
+    </element>
+  </define>
+  <define name="link-element-companion-version">
+    <element name="companion-version">
+      <a:documentation>identifies a class 1 file that transcribes a different version of the same work found in the same scriptum.</a:documentation>
       <ref name="entity-digital-tan-no-id"/>
     </element>
   </define>

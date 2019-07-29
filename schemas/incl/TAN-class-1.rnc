@@ -3,7 +3,7 @@ default namespace local = "tag:textalign.net,2015:ns"
 include "TAN-core.rnc" {
     source-content = entity-nondigital-no-id | entity-digital-nontan-no-id
     networked-files-non-core =
-        link-element-redivision* & link-element-model? & link-element-annotation*
+        link-element-redivision* & link-element-model? & link-element-annotation* & link-element-companion-version*
     declaration-non-core = decl-class-1 & decl-non-class-1
     voc-key-non-core = voc-element-class-1 & voc-element-non-class-1
     adjust-non-core = element-normalization* & adjust-repl*
@@ -76,6 +76,11 @@ link-element-redivision =
     
     ## The normalized transcriptions of redivided texts must be identical
     element redivision { entity-digital-tan-no-id }
+link-element-companion-version =
+    
+    ## identifies a class 1 file that transcribes a different version of the same work found in the same scriptum.
+    element companion-version { entity-digital-tan-no-id }
+    
 # PATTERNS
 adjust-repl = element-replace
 body-content-class-1 = empty

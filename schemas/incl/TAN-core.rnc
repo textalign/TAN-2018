@@ -501,7 +501,7 @@ voc-element-group-type =
     element group-type { entity-nondigital-id }
 voc-element-org =
     
-    ## contains an IRI + name pattern identifying an organization, a group of persons, whether formally incorporated or not.
+    ## contains an IRI + name pattern identifying an organization: a group of persons, whether formally incorporated or not.
     element organization { entity-nondigital-id }
 voc-element-period =
     

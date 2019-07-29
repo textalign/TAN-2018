@@ -5,7 +5,7 @@
          xmlns:teix="http://www.tei-c.org/ns/Examples"
          datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
          ns="http://www.tei-c.org/ns/1.0"><!--
-Schema generated from ODD source 2019-05-30T13:37:44Z. .
+Schema generated from ODD source 2019-07-29T09:46:31Z. .
 TEI Edition: Version 3.5.0. Last updated on
 	29th January 2019, revision 3c0c64ec4
 TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 3.5.0/
@@ -685,7 +685,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 3.5.0/
          </define>
          <define name="voc-element-org">
             <element name="organization">
-               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">contains an IRI + name pattern identifying an organization, a group of persons, whether formally incorporated or not.</a:documentation>
+               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">contains an IRI + name pattern identifying an organization: a group of persons, whether formally incorporated or not.</a:documentation>
                <ref name="entity-nondigital-id"/>
             </element>
          </define>
@@ -1057,6 +1057,9 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 3.5.0/
             <zeroOrMore>
                <ref name="link-element-annotation"/>
             </zeroOrMore>
+            <zeroOrMore>
+               <ref name="link-element-companion-version"/>
+            </zeroOrMore>
          </interleave>
       </define>
       <define name="declaration-non-core">
@@ -1169,6 +1172,12 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 3.5.0/
          <element name="redivision">
             <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">identifies a class 1 file that has the same work, scriptum, and version, but segmented according to a different reference system.</a:documentation>
             <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">The normalized transcriptions of redivided texts must be identical</a:documentation>
+            <ref name="entity-digital-tan-no-id"/>
+         </element>
+      </define>
+      <define name="link-element-companion-version">
+         <element name="companion-version">
+            <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">identifies a class 1 file that transcribes a different version of the same work found in the same scriptum.</a:documentation>
             <ref name="entity-digital-tan-no-id"/>
          </element>
       </define>

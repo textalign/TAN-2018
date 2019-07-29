@@ -741,7 +741,7 @@
   </define>
   <define name="voc-element-org">
     <element name="organization">
-      <a:documentation>contains an IRI + name pattern identifying an organization, a group of persons, whether formally incorporated or not.</a:documentation>
+      <a:documentation>contains an IRI + name pattern identifying an organization: a group of persons, whether formally incorporated or not.</a:documentation>
       <ref name="entity-nondigital-id"/>
     </element>
   </define>

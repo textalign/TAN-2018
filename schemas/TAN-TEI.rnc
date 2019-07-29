@@ -8,7 +8,7 @@ namespace teix = "http://www.tei-c.org/ns/Examples"
 namespace xi = "http://www.w3.org/2001/XInclude"
 namespace xlink = "http://www.w3.org/1999/xlink"
 
-# Schema generated from ODD source 2019-05-30T13:37:44Z. .
+# Schema generated from ODD source 2019-07-29T09:46:37Z. .
 # TEI Edition: Version 3.5.0. Last updated on
 #	29th January 2019, revision 3c0c64ec4
 # TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 3.5.0/
@@ -475,7 +475,7 @@ div {
       element div-type { entity-nondigital-id }
     voc-element-org =
       
-      ## contains an IRI + name pattern identifying an organization, a group of persons, whether formally incorporated or not.
+      ## contains an IRI + name pattern identifying an organization: a group of persons, whether formally incorporated or not.
       element organization { entity-nondigital-id }
     voc-element-period =
       
@@ -586,6 +586,7 @@ div {
     link-element-redivision*
     & link-element-model?
     & link-element-annotation*
+    & link-element-companion-version*
   declaration-non-core = decl-class-1 & decl-non-class-1
   voc-key-non-core = voc-element-class-1 & voc-element-non-class-1
   adjust-non-core = element-normalization* & adjust-repl*
@@ -659,6 +660,10 @@ div {
     
     ## The normalized transcriptions of redivided texts must be identical
     element redivision { entity-digital-tan-no-id }
+  link-element-companion-version =
+    
+    ## identifies a class 1 file that transcribes a different version of the same work found in the same scriptum.
+    element companion-version { entity-digital-tan-no-id }
   adjust-repl = element-replace
   body-content-class-1 = empty
   body-content-non-class-1 = empty
