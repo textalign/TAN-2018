@@ -355,7 +355,11 @@
 
 
       <!-- loci -->
-      <xsl:variable name="these-loci" select="tan:at"/>
+      <xsl:variable name="these-at-refs" select="tan:at-ref"/>
+      
+      <!-- special elements that must be explicitly allowed -->
+      <!-- in-lang -->
+      <xsl:variable name="these-in-langs" select="tan:in-lang"/>
 
       <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
@@ -407,7 +411,7 @@
          <xsl:if test="$verbal-groups = 'one object' and not(count($these-object-refs) = 1)">
             <xsl:copy-of select="tan:error('vrb02')"/>
          </xsl:if>
-         <xsl:if test="$verbal-groups = 'one or more loci' and not(exists($these-loci))">
+         <xsl:if test="$verbal-groups = 'one or more at refs' and not(exists($these-at-refs))">
             <xsl:copy-of select="tan:error('vrb03')"/>
          </xsl:if>
          <xsl:if test="$verbal-groups = 'one or more objects' and not(exists($these-object-refs))">
@@ -415,18 +419,15 @@
          </xsl:if>
          <xsl:if
             test="
-               $verbal-groups = 'textual artefact or passage object'
+               $verbal-groups = 'textual artefact object'
                and exists($these-object-nontextual-artefact-entities)">
             <xsl:copy-of select="tan:error('vrb05')"/>
          </xsl:if>
          <xsl:if
             test="
-               $verbal-groups = 'textual artefact or passage subject'
+               $verbal-groups = 'textual artefact subject'
                and exists($these-subject-nontextual-artefact-entities)">
             <xsl:copy-of select="tan:error('vrb06')"/>
-         </xsl:if>
-         <xsl:if test="$verbal-groups = 'textual entity subject' and exists($these-subject-nontextual-entities)">
-            <xsl:copy-of select="tan:error('vrb07')"/>
          </xsl:if>
          <xsl:if
             test="$verbal-groups = 'textual object' and exists($these-object-nontextual-entities)">
@@ -436,11 +437,14 @@
             test="$verbal-groups = 'textual subject' and exists($these-subject-nontextual-entities)">
             <xsl:copy-of select="tan:error('vrb09')"/>
          </xsl:if>
-         <xsl:if test="$verbal-groups = 'zero loci' and exists($these-loci)">
+         <xsl:if test="not($verbal-groups = ('one at ref', 'one or more at refs')) and exists($these-at-refs)">
             <xsl:copy-of select="tan:error('vrb10')"/>
          </xsl:if>
          <xsl:if test="$verbal-groups = 'zero objects' and exists($these-object-refs)">
             <xsl:copy-of select="tan:error('vrb11')"/>
+         </xsl:if>
+         <xsl:if test="not($verbal-groups = 'allows in lang') and exists($these-in-langs)">
+            <xsl:copy-of select="tan:error('vrb12')"/>
          </xsl:if>
          <xsl:apply-templates select="node() except $errors-that-should-be-ignored" mode="#current">
             <xsl:with-param name="verbs" select="$these-verb-vocab-items"/>
@@ -476,7 +480,10 @@
 
    <!-- NORMAL EXPANSION -->
 
-
+   <xsl:template match="tan:subject/tan:div | tan:object/tan:div" priority="1" mode="core-expansion-normal">
+      <!-- This template prevents a <div> within a claim being treated as if part of a class 1 file. -->
+      <xsl:copy-of select="."/>
+   </xsl:template>
 
    <!-- VERBOSE EXPANSION -->
 

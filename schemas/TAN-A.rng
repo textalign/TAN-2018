@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<grammar ns="tag:textalign.net,2015:ns" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:local="tag:textalign.net,2015:ns" xmlns="http://relaxng.org/ns/structure/1.0">
+<grammar ns="tag:textalign.net,2015:ns" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:local="tag:textalign.net,2015:ns" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
   <include href="incl/TAN-class-2.rng">
     <start>
       <element name="TAN-A">
@@ -36,6 +36,13 @@
     </define>
   </include>
   <!-- ATTRIBUTES -->
+  <define name="attr-in-lang">
+    <attribute name="in-lang">
+      <a:documentation>restricts a claim to a particular language; used with only certain verbs, e.g., "translates"</a:documentation>
+      <a:documentation>Verbs must explicitly allow this element in their definition, otherwise it is not permitted.</a:documentation>
+      <data type="language"/>
+    </attribute>
+  </define>
   <define name="ptr-attr-modal">
     <attribute name="adverb">
       <a:documentation>names a &lt;modal&gt; that qualifies the claim.</a:documentation>
@@ -114,25 +121,51 @@
             <optional>
               <ref name="object"/>
             </optional>
+            <zeroOrMore>
+              <ref name="element-at-ref"/>
+            </zeroOrMore>
             <optional>
-              <ref name="element-locus"/>
+              <ref name="in-lang"/>
             </optional>
           </interleave>
         </group>
       </choice>
     </element>
   </define>
-  <define name="element-locus">
-    <oneOrMore>
-      <element name="locus">
-        <a:documentation>restricts a claim to a particular location within a scriptum or work.</a:documentation>
-        <a:documentation>This element functions much like &lt;place&gt;, but the geography is textual rather than spatial.</a:documentation>
-        <optional>
-          <ref name="ed-stamp"/>
-        </optional>
-        <ref name="textual-reference"/>
-      </element>
-    </oneOrMore>
+  <define name="element-at-ref">
+    <element name="at-ref">
+      <a:documentation>restricts a claim to a particular abstract textual reference that does not exist in either the subject or the object. </a:documentation>
+      <a:documentation>It is used to restrict the scope of a claim when location cannot be tethered to either the object or subject, e.g., "Manuscript S reads 'abcd' at reference 1.2"</a:documentation>
+      <a:documentation>This element functions much like &lt;where&gt;, but the geography is textual rather than spatial.</a:documentation>
+      <optional>
+        <ref name="ed-stamp"/>
+      </optional>
+      <ref name="textual-reference"/>
+    </element>
+  </define>
+  <define name="element-div">
+    <element name="div">
+      <a:documentation>restricts a claim to a particular passage in a subject or object. It is especially useful for clarifying which part of a scriptum is meant, e.g., page ranges, in a particular scriptum.</a:documentation>
+      <a:documentation>Unlike class-1 &lt;div&gt;s, this one takes no text and no inclusions.</a:documentation>
+      <optional>
+        <ref name="ed-stamp"/>
+      </optional>
+      <ref name="ptr-attr-type"/>
+      <ref name="attr-n"/>
+      <zeroOrMore>
+        <ref name="element-div"/>
+      </zeroOrMore>
+    </element>
+  </define>
+  <define name="element-in-lang">
+    <element name="in-lang">
+      <a:documentation>restricts a claim to a particular language; used with only certain verbs, e.g., "translates"</a:documentation>
+      <a:documentation>Verbs must explicitly allow this element in their definition, otherwise it is not permitted.</a:documentation>
+      <optional>
+        <ref name="ed-stamp"/>
+      </optional>
+      <data type="language"/>
+    </element>
   </define>
   <define name="element-object">
     <element name="object">
@@ -154,7 +187,10 @@
       <optional>
         <ref name="ed-stamp"/>
       </optional>
-      <ref name="textual-reference"/>
+      <choice>
+        <ref name="nontextual-reference"/>
+        <ref name="textual-reference"/>
+      </choice>
     </element>
   </define>
   <define name="element-tok-for-claim-no-ref">
@@ -263,6 +299,14 @@
     </element>
   </define>
   <!-- PATTERNS -->
+  <define name="in-lang">
+    <choice>
+      <ref name="attr-in-lang"/>
+      <oneOrMore>
+        <ref name="element-in-lang"/>
+      </oneOrMore>
+    </choice>
+  </define>
   <define name="subject">
     <choice>
       <ref name="ptr-attr-subject"/>
@@ -300,6 +344,7 @@
     <choice>
       <ref name="multi-source-whole-div-textual-reference"/>
       <ref name="single-source-partial-div-textual-reference"/>
+      <ref name="scriptum-reference"/>
     </choice>
   </define>
   <!-- If a textual reference points merely to <div>s then all one need is @src/@work plus @ref -->
@@ -336,5 +381,11 @@
         <ref name="text-passage-selector-with-ref"/>
       </choice>
     </oneOrMore>
+  </define>
+  <define name="scriptum-reference">
+    <ref name="ptr-attr-which"/>
+    <zeroOrMore>
+      <ref name="element-div"/>
+    </zeroOrMore>
   </define>
 </grammar>

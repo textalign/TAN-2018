@@ -14,7 +14,7 @@
 
     <!-- This stylesheet make sense only when the the processed files are different versions of the same work in the same language. -->
 
-    <xsl:output indent="no"/>
+    <xsl:output indent="yes"/>
 
     <xsl:param name="validation-phase" select="'terse'"/>
 
@@ -22,7 +22,7 @@
     <xsl:param name="compare-on-matching-ref-basis" as="xs:boolean" select="false()"/>
 
     <!-- Do you want to isolate the differences to individual characters, or look at the differences word for word? -->
-    <xsl:param name="snap-results-to-word" as="xs:boolean" select="true()"/>
+    <xsl:param name="snap-results-to-word" as="xs:boolean" select="false()"/>
 
     <xsl:param name="comparison-doc-uris-relative-to-actual-input" as="xs:string+">
         <!--<xsl:value-of
@@ -31,16 +31,17 @@
         <!--<xsl:value-of
             select="'Arist-Ar_007.tan-t.ref-logical-native.xml'"
         />-->
-        <xsl:value-of
+        <!--<xsl:value-of
             select="'psalms.lat.jerome-from-vetus-latina.xml'"
-        />
+        />-->
+        <xsl:value-of select="'ar.cat.grc.1949.minio-paluello.ref-scriptum-native.xml'"/>
     </xsl:param>
     <xsl:variable name="comp-doc-uris-resolved"
         select="
             for $i in $comparison-doc-uris-relative-to-actual-input
             return
                 resolve-uri($i, $doc-uri)"/>
-    <xsl:param name="input-items" as="document-node()*">
+    <xsl:param name="input-items-expanded" as="document-node()*">
         <xsl:choose>
             <xsl:when test="not($doc-class = 1)">
                 <xsl:message>Initial input document is not class 1, so will be ignored</xsl:message>
@@ -63,9 +64,39 @@
 
     <xsl:variable name="input-texts" as="xs:string*"
         select="
-            for $i in $input-items
+            for $i in $input-items-expanded
             return
                 tan:text-join($i/tan:TAN-T/tan:body)"/>
+    
+    <xsl:variable name="input-merged"
+        select="tan:merge-expanded-docs($input-items-expanded)"
+        as="document-node()?"/>
+    
+    <xsl:variable name="input-merge-diffed" as="document-node()?">
+        <xsl:apply-templates select="$input-merged" mode="diff-merge"/>
+    </xsl:variable>
+    
+    <xsl:template match="tan:div[tan:div[@type = '#version']]" mode="diff-merge">
+        <xsl:variable name="these-versions" select="tan:div[@type = '#version']/text()"/>
+        <xsl:copy>
+            <xsl:copy-of select="@*"/>
+            <xsl:apply-templates mode="#current"/>
+        </xsl:copy>
+        <xsl:for-each select="1 to (count($these-versions) - 1)">
+            <xsl:variable name="this-a-pos" select="."/>
+            <xsl:for-each select="($this-a-pos + 1) to count($these-versions)">
+                <xsl:variable name="this-b-pos" select="."/>
+                <div class="diff">
+                    <xsl:copy-of select="tan:diff($these-versions[$this-a-pos], $these-versions[$this-b-pos], $snap-results-to-word)"/>
+                </div>
+            </xsl:for-each>
+        </xsl:for-each>
+    </xsl:template>
+    
+    <xsl:variable name="diff-to-html" as="document-node()?"
+        select="tan:tan-to-html($input-merge-diffed)"/>
+    
+    
 
     <xsl:variable name="comparison-result" as="element()?">
         <xsl:choose>
@@ -85,7 +116,7 @@
     <xsl:variable name="result-analyzed" select="tan:analyze-string-length($comparison-result)"
         as="element()?"/>
 
-    <xsl:variable name="self-analyzed" select="tan:analyze-string-length($input-items[1])"/>
+    <xsl:variable name="self-analyzed" select="tan:analyze-string-length($input-items-expanded[1])"/>
     <xsl:variable name="self-analyzed-leaf-divs"
         select="$self-analyzed/tan:TAN-T/tan:body//tan:div[not(tan:div)]"/>
 
@@ -173,7 +204,8 @@
         </xsl:copy>
     </xsl:template>
     
-    <xsl:variable name="input-pass-4" select="tan:tan-to-html($self-infused-with-diff)"/>
+    <!--<xsl:variable name="input-pass-4" select="tan:tan-to-html($self-infused-with-diff)"/>-->
+    <xsl:variable name="input-pass-4" select="$diff-to-html"/>
     
     <!-- TEMPLATE -->
     
@@ -184,18 +216,20 @@
     <xsl:variable name="output-dir-uri" select="resolve-uri('../../../output/', static-base-uri())"/>
     <xsl:param name="output-url-relative-to-actual-input" as="xs:string?" select="concat($output-dir-uri, 'html/', tan:cfn(/), '-', $today-iso, '.html')"/>
 
-    <!--<xsl:template match="/" priority="5">
-        <!-\-<xsl:copy-of select="$self-resolved"/>-\->
-        <xsl:copy-of select="$comparison-result"/>
-        <!-\-<xsl:copy-of select="$self-analyzed"/>-\->
-        <!-\-<xsl:copy-of select="$diff-keyed-to-self-1"/>-\->
-        <!-\-<xsl:copy-of select="$diff-keyed-to-self-2"/>-\->
-        <!-\-<xsl:copy-of select="$self-infused-with-diff"/>-\->
-        <!-\-<xsl:copy-of select="tan:tan-to-html($self-infused-with-diff)"/>-\->
-        <!-\-<xsl:copy-of select="$template-doc"/>-\->
-        <!-\-<xsl:copy-of select="$template-infused-with-revised-input"/>-\->
+    <xsl:template match="/" priority="5">
+        <!--<xsl:copy-of select="$self-resolved"/>-->
+        <!--<xsl:copy-of select="$comparison-result"/>-->
+        <!--<xsl:copy-of select="$input-merged"/>-->
+        <!--<xsl:copy-of select="$input-merge-diffed"/>-->
+        <!--<xsl:copy-of select="$diff-to-html"/>-->
+        <!--<xsl:copy-of select="$self-analyzed"/>-->
+        <!--<xsl:copy-of select="$diff-keyed-to-self-1"/>-->
+        <!--<xsl:copy-of select="$diff-keyed-to-self-2"/>-->
+        <!--<xsl:copy-of select="$self-infused-with-diff"/>-->
+        <!--<xsl:copy-of select="$template-doc"/>-->
+        <xsl:copy-of select="$template-infused-with-revised-input"/>
         
-    </xsl:template>-->
+    </xsl:template>
 
 
 </xsl:stylesheet>

@@ -539,10 +539,12 @@
    <!-- Step: three template modes that resolve vocabulary -->
 
    <!-- temporary location for some resolve-function templates -->
-   <xsl:template match="document-node() | comment() | text() | * | @div-type"
+   <xsl:template match="document-node() | text() | * | @div-type"
       mode="reduce-to-idref-attributes-and-IRIs">
       <xsl:apply-templates select="node() | @*" mode="#current"/>
    </xsl:template>
+   <xsl:template match="comment() | processing-instruction()"
+      mode="reduce-to-idref-attributes-and-IRIs"/>
    <xsl:template match="tan:IRI" mode="reduce-to-idref-attributes-and-IRIs">
       <xsl:copy-of select="."/>
    </xsl:template>

@@ -162,9 +162,10 @@
             <object>one version</object>
             <object>another version</object>
         </claim>
-        <!-- vrb07 -->
+        <!-- vrb09 vrb12 -->
         <claim subject="craziness" verb="lacks_text">
-            <at src="test-4" ref="3.a"/>
+            <at-ref src="test-4" ref="3.a"/>
+            <in-lang>grc</in-lang>
         </claim>
         <!-- vrb06 vrb08 -->
         <claim subject="person_1" verb="paraphrases" object="craziness"/>
@@ -183,11 +184,11 @@
         <claim object="org1"/>
         <!-- vrb01 vrb04 vrb09 vrb10 -->
         <claim subject="person_1 craziness" verb="claims">
-            <at src="test-4" ref="3.a"/>
+            <at-ref src="test-4" ref="3.a"/>
         </claim>
         <!-- vrb11 -->
         <claim subject="test-1" verb="lacks_text" object="craziness">
-            <at src="test-4" ref="3.a"/>
+            <at-ref src="test-4" ref="3.a"/>
         </claim>
     </body>
 </TAN-A>

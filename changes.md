@@ -8,6 +8,8 @@ The directories `do things` and `TAN-key` have been renamed `applications` and `
 
 The head has been revised. Better management of the &lt;head> was needed, and semantic and grammatical clarity in its parts. The &lt;head> is now conceived of as consisting first of all of sequential parts: name/desc of the file; general declarations; links to other files; adjustments; abbreviations; credits; changes; and a to-do list.
 
+For changes in standard vocabularies, see TAN-voc (olim TAN-key) below.
+
 * General declarations included &lt;license> and &lt;licensor>; they are now joined by &lt;ambiguous-letter-numerals-are-roman>; &lt;token-definition>; &lt;work> (class 1 files); &lt;version> (class 1 files); &lt;for-lang>, &lt;tok-starts-with>, &lt;tok-is> (class 3 files)
 * There may be more than one &lt;license> (since some things might be dual licensed). &lt;licensor> is removed and only @licensor in &lt;license> is allowed
 * &lt;key> has been changed to &lt;vocabulary>. The files being pointed to, after all, are not providing key-value pairs, or anything similar to what we think of when we speak of keys. Really those files provide IRI + name + desc + location values for individual things. (Hence TAN-key files are now being called TAN-voc.)
@@ -37,7 +39,7 @@ Expansion has been streamlined, to avoid summoning global or in-scope variables 
 
 New errors introduced: wrn07, wrn08, inc05, tan21, inc06, whi05, voc06, loc04
 
-Deleted errors: tan13 (an &lt;alias> should be able to combine different element types, esp. &lt;person> and &lt;organization>; it's up to other elements that use the &lt;alias> @ids to import the correct kinds of vocabulary items).
+Deleted errors: tan13 (an &lt;alias> should be able to combine different element types, esp. &lt;person> and &lt;organization>; it's up to other elements that use the &lt;alias> @ids to import the correct kinds of vocabulary items); vrb07.
 
 Errors named tky... are now renamed voc...
 
@@ -51,7 +53,7 @@ Deleted functions: tan:glossary() (replaced by new tan:vocabulary()), tan:defini
 
 Moved tan:element-fingerprint() from extra functions to main functions
 
-New global variables: $shy (same as $dhy), $doc-catalog-uris, $doc-catalogs, $local-catalog, $relationships-reserved, $relationship-model, $relationship-resegmented-copy, $break-marker-regex, $loop-tolerance, $elements-supported-by-TAN-vocabulary-files, $is-validation, $TAN-version-is-under-development, $internet-available, $names-of-attributes-that-take-idrefs, $names-of-attributes-that-may-take-multiple-space-delimited-values, $names-of-attributes-that-permit-keyword-last, $names-of-attributes-that-are-case-indifferent, $names-of-elements-that-describe-text-creators, $names-of-elements-that-describe-text-bearers, $names-of-elements-that-describe-textual-entities, $TEI-namespace, TAN-id-namespace, $doc-is-error-test, $doc-id-namespace, $TAN-vocabularies-vocabulary
+New global variables: $shy (same as $dhy), $doc-catalog-uris, $doc-catalogs, $local-catalog, $relationships-reserved, $relationship-model, $relationship-resegmented-copy, $break-marker-regex, $loop-tolerance, $elements-supported-by-TAN-vocabulary-files, $is-validation, $TAN-version-is-under-development, $internet-available, $names-of-attributes-that-take-idrefs, $names-of-attributes-that-may-take-multiple-space-delimited-values, $names-of-attributes-that-permit-keyword-last, $names-of-attributes-that-are-case-indifferent, $names-of-elements-that-take-idrefs, $names-of-elements-that-describe-text-creators, $names-of-elements-that-describe-text-bearers, $names-of-elements-that-describe-textual-entities, $TEI-namespace, TAN-id-namespace, $doc-is-error-test, $doc-id-namespace, $TAN-vocabularies-vocabulary
 
 Supplied main parameters directory, to hold global parameters most likely to change. Includes parameters for main validation, and those supporting appications.
 
@@ -105,6 +107,12 @@ Now renamed TAN-A, because this is the most generic form of an alignment or anno
 
 Added $datatypes-that-require-unit-specification, to modify rules that forced some objects to be set as elements instead of attributes within claims.
 
+<locus> is now <at-ref>, and is treated as an opt-in element. That is, a claim may not include it unless it is part of a verb type that explicitly allows it.
+
+<in-lang> introduced as an opt-in claim element, to support claims about translations.
+
+A scriptum <subject> and <object> may take descendant <div>s to specify a particular place in scripta. This allows for more precise claims to be made, e.g., Bonner 2015, volume 1 pages 14-27 provides a transcription of manuscript A, folios 14-23.
+
 ## TAN-A-lm
 
 New @tok-pop. (Need to write error rules.)
@@ -134,6 +142,8 @@ New @affects-attribute opens up a vocabulary file to serve as an alias for @n in
 Standard TAN-voc file for relationships has been removed. If a relationship is deemed to be important, it will be codified in a new element name (e.g., &lt;model> was introduced to replace the relationship vocabulary item for models).
 
 Standard TAN-voc file for vocabularies has been added. These point to the supplementary TAN-voc files under vocabularies/extra/, to allow for those extra vocabularies to be invoked by means of &lt;vocabulary which=""/> in any TAN file.
+
+group-types.TAN-voc.xml and verbs.TAN-voc.xml have been revised in light of a revision of the hierarchy of textuals. New textual verbs have been introduced accordingly, and structured more clearly. 
 
 ## Extra functions
 

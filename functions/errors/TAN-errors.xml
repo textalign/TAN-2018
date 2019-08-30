@@ -272,15 +272,15 @@
         <error xml:id="clm07"><rule>Every &lt;claim> must have at least one verb, either @verb (self or ancestral &lt;body>)</rule></error>
         <error xml:id="vrb01"><rule>For verbs of the group "claim object" every object must be a claim.</rule></error>
         <error xml:id="vrb02"><rule>Verbs of the group "one object" must have exactly one object.</rule></error>
-        <error xml:id="vrb03"><rule>Verbs of the group "one or more loci" must have one or more &lt;at>s.</rule></error>
+        <error xml:id="vrb03"><rule>Verbs of the group "one or more at refs" must have one or more &lt;at-ref>s.</rule></error>
         <error xml:id="vrb04"><rule>Verbs of the group "one or more objects" must have one or more objects.</rule></error>
         <error xml:id="vrb05"><rule>For verbs of the group "textual artefact object" every object must be a textual artefact (source, scriptum, work, version).</rule></error>
         <error xml:id="vrb06"><rule>For verbs of the group "textual artefact subject" every subject must be a textual artefact (source, scriptum, work, version).</rule></error>
-        <error xml:id="vrb07"><rule>For verbs of the group "textual entity subject" every subject must be a creator of texts (person, organization) or bearer of texts (scriptum, work, version, source).</rule></error>
         <error xml:id="vrb08"><rule>For verbs of the group "textual object" every object must be a textual passage or a textual entity.</rule></error>
         <error xml:id="vrb09"><rule>For verbs of the group "textual subject" every subject must be a textual passage or a textual entity.</rule></error>
-        <error xml:id="vrb10"><rule>Verbs of the group "zero loci" may take no &lt;at>s.</rule></error>
+        <error xml:id="vrb10"><rule>Verbs may take &lt;at-ref> only if they are members of the group "one at ref" or "one or more at refs"</rule></error>
         <error xml:id="vrb11"><rule>Verbs of the group "zero objects" may take no objects.</rule></error>
+        <error xml:id="vrb12"><rule>Verbs that take &lt;in-lang> must be of the group "allows in-lang"</rule></error>
     </group>
     
     <!-- TAN-A-lm ERRORS -->

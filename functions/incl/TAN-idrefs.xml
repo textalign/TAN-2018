@@ -97,8 +97,8 @@
         <element>scriptum</element>
         <element>topic</element>
         <element>source</element>
-        <idrefs attribute="subject"/>
-        <idrefs attribute="object"/>
+        <idrefs attribute="subject" element="subject"/>
+        <idrefs attribute="object" element="object"/>
         <idrefs attribute="claim-basis"/>
     </id>
     <id>

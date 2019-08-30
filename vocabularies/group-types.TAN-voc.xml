@@ -20,6 +20,7 @@
         <resp roles="creator" who="kalvesmaki"/>
         <change when="2016-04-23" who="kalvesmaki">Started file</change>
         <change when="2019-03-04" who="kalvesmaki">Added verb group types</change>
+        <change when="2019-08-30" who="kalvesmaki">Added at-ref as a synonym for locus</change>
         <to-do/>
     </head>
     <body affects-element="group-type">
@@ -207,18 +208,46 @@
             </item>
         </group>
         <group type="verb_types">
-            <item>
-                <IRI>tag:textalign.net,2015:verb:group:textual-artefact-subject</IRI>
-                <name>textual artefact subject</name>
-                <desc>Verbs whose subjects are entire textual artefacts (scripta, works, versions,
-                    sources).</desc>
-            </item>
-            <item>
-                <IRI>tag:textalign.net,2015:verb:group:textual-artefact-object</IRI>
-                <name>textual artefact object</name>
-                <desc>verbs whose objects are entire textual artefacts (scripta, works, versions,
-                    sources).</desc>
-            </item>
+            <comment when="2019-08-30" who="kalvesmaki">Items in this group proceed from specific to
+                general. See the comment below for a guide to the conceptual hierarchy.</comment>
+            <!--<textuals>
+                <desc>Texts and those who make texts, not necessarily mutually exclusive categories.
+                    The term "textual entity" refers to complete text makers or textual artefacts,
+                    not specific parts of them.</desc>
+                <text-makers>
+                    <desc>Entities who have some agency, intentional or not, in the creation of a
+                        text.</desc>
+                    <text-creators>
+                        <desc>Entities who have at least some creative force over the creation of a
+                            text</desc>
+                        <members>
+                            <person/>
+                            <organization/>
+                        </members>
+                    </text-creators>
+                    <text-generators>
+                        <desc>Entities who generate text but are not the creative originating force,
+                            e.g., algorithms, scribes, printers)</desc>
+                        <members>
+                            <person/>
+                            <organization/>
+                            <algorithm/>
+                        </members>
+                    </text-generators>
+                </text-makers>
+                <textual-artefacts>
+                    <desc>Texts made by text makers.</desc>
+                    <members>
+                        <scriptum/>
+                        <work/>
+                        <version/>
+                        <source/>
+                    </members>
+                    <textual-passages>
+                        <desc>Specific parts of a textual artefact, normally the members mentioned above, qualified by &lt;ref> or &lt;div>.</desc>
+                    </textual-passages>
+                </textual-artefacts>
+            </textuals>-->
             <item>
                 <IRI>tag:textalign.net,2015:verb:group:textual-passage-subject</IRI>
                 <name>textual passage subject</name>
@@ -232,38 +261,54 @@
                     works, versions, sources).</desc>
             </item>
             <item>
+                <IRI>tag:textalign.net,2015:verb:group:textual-artefact-subject</IRI>
+                <name>whole textual artefact subject</name>
+                <desc>Verbs whose subjects are entire textual artefacts (scripta, works, versions,
+                    sources).</desc>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:verb:group:textual-artefact-object</IRI>
+                <name>whole textual artefact object</name>
+                <desc>verbs whose objects are entire textual artefacts (scripta, works, versions,
+                    sources).</desc>
+            </item>
+            <item>
                 <IRI>tag:textalign.net,2015:verb:group:textual-artefact-or-passage-subject</IRI>
+                <name>textual artefact subject</name>
+                <name>textual passage or artefact subject</name>
                 <name>textual artefact or passage subject</name>
-                <desc>Verbs whose subjects are textual artefacts or specific passages of textual
-                    artefacts (scripta, works, versions, sources).</desc>
+                <desc>Verbs whose subjects are entire textual artefacts or specific passages of
+                    textual artefacts (scripta, works, versions, sources).</desc>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:verb:group:textual-artefact-or-passage-object</IRI>
+                <name>textual artefact object</name>
+                <name>textual passage or artefact object</name>
                 <name>textual artefact or passage object</name>
-                <desc>Verbs whose objects are textual artefacts or specific passages of textual
-                    artefacts (scripta, works, versions, sources).</desc>
+                <desc>Verbs whose objects are entire textual artefacts or specific passages of
+                    textual artefacts (scripta, works, versions, sources).</desc>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:verb:group:textual-entity-subject</IRI>
                 <name>textual entity subject</name>
-                <desc>verbs whose subjects are creators of texts (persons, organizations) or bearers
-                    of texts (scripta, works, versions, sources)</desc>
+                <desc>verbs whose subjects are creators of texts (persons, organizations) or whole
+                    textual artefacts (scripta, works, versions, sources)</desc>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:verb:group:textual-entity-object</IRI>
                 <name>textual entity object</name>
-                <desc>verbs whose objects are creators of texts (persons, organizations) or bearers
-                    of texts (scripta, works, versions, sources)</desc>
+                <desc>verbs whose objects are creators of texts (persons, organizations) or whole
+                    textual artefacts (scripta, works, versions, sources)</desc>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:verb:group:textual-subject</IRI>
                 <name>textual subject</name>
-                <desc>verbs whose subjects are textual passages or textual entities</desc>
+                <desc>verbs whose subjects are text makers or textual artefacts</desc>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:verb:group:textual-object</IRI>
                 <name>textual object</name>
-                <desc>verbs whose objects are textual passages or textual entities</desc>
+                <desc>verbs whose objects are text makers or textual artefacts</desc>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:verb:group:claim-object</IRI>
@@ -284,21 +329,6 @@
                 <IRI>tag:textalign.net,2015:verb:group:one-or-more-objects</IRI>
                 <name>one or more objects</name>
                 <desc>verbs that must take one or more objects</desc>
-            </item>
-            <item>
-                <IRI>tag:textalign.net,2015:verb:group:zero-loci</IRI>
-                <name>zero loci</name>
-                <desc>verbs that do not allow loci</desc>
-            </item>
-            <item>
-                <IRI>tag:textalign.net,2015:verb:group:one-locus</IRI>
-                <name>one locus</name>
-                <desc>verbs that require only one locus</desc>
-            </item>
-            <item>
-                <IRI>tag:textalign.net,2015:verb:group:one-or-more-loci</IRI>
-                <name>one or more loci</name>
-                <desc>verbs that must take one or more loci</desc>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:verb:group:verbatim70-100</IRI>
@@ -348,6 +378,27 @@
                 <desc>verbs whose subjects must postdate objects</desc>
                 <desc>If a textual passage is said to quote from another, then the former must
                     postdate the latter.</desc>
+            </item>
+            <!-- opt-in claim elements -->
+            <item>
+                <IRI>tag:textalign.net,2015:verb:group:one-locus</IRI>
+                <IRI>tag:textalign.net,2015:verb:group:one-at-ref</IRI>
+                <name>one locus</name>
+                <name>one at ref</name>
+                <desc>verbs that require only one &lt;at-ref> (locus)</desc>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:verb:group:one-or-more-loci</IRI>
+                <IRI>tag:textalign.net,2015:verb:group:one-or-more-at-refs</IRI>
+                <name>one or more loci</name>
+                <name>one or more at refs</name>
+                <desc>verbs that must take one or more &lt;at-ref>s (loci)</desc>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:verb:group:allows-in-lang</IRI>
+                <name>zero or more in langs</name>
+                <name>allows in lang</name>
+                <desc>verbs that permit the element in-lang</desc>
             </item>
         </group>
     </body>

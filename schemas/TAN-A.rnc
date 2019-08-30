@@ -15,6 +15,12 @@ include "incl/TAN-class-2.rnc" {
     body-content-non-class-2 = ptr-attr-subject?, ptr-attr-object?, ptr-attr-verb?, element-claim*
 }
 # ATTRIBUTES
+attr-in-lang =
+    
+    ## restricts a claim to a particular language; used with only certain verbs, e.g., "translates"
+    
+    ## Verbs must explicitly allow this element in their definition, otherwise it is not permitted.
+    attribute in-lang { xsd:language }
 ptr-attr-modal =
     
     ## names a <modal> that qualifies the claim.
@@ -71,14 +77,28 @@ element-claim =
            ptr-attr-modal?,
            ptr-attr-verb?,
            ptr-attr-place?,
-           (subject? & object? & element-locus?))
+           (subject? & object? & element-at-ref* & in-lang?))
     }
-element-locus =
+element-at-ref =
     
-    ## restricts a claim to a particular location within a scriptum or work, much like the phrase "At passage X, ...."
+    ## restricts a claim to a particular abstract textual reference that does not exist in either the subject or the object. 
     
-    ## This element functions much like <place>, but the geography is textual rather than spatial.
-    element at { ed-stamp?, textual-reference }+
+    ## It is used to restrict the scope of a claim when location cannot be tethered to either the object or subject, e.g., "Manuscript S reads 'abcd' at reference 1.2"
+    
+    ## This element functions much like <where>, but the geography is textual rather than spatial.
+    element at-ref { ed-stamp?, textual-reference }
+element-div =
+    
+    ## restricts a claim to a particular passage in a subject or object. It is especially useful for clarifying which part of a scriptum is meant, e.g., page ranges, in a particular scriptum.
+    
+    ## Unlike class-1 <div>s, this one takes no text and no inclusions.
+    element div { ed-stamp?, ptr-attr-type, attr-n, element-div* }
+element-in-lang =
+    
+    ## restricts a claim to a particular language; used with only certain verbs, e.g., "translates"
+    
+    ## Verbs must explicitly allow this element in their definition, otherwise it is not permitted.
+    element in-lang { ed-stamp?, xsd:language }
 element-object =
     
     ## is similar to @object, but for complex content, mainly concepts that do not lend themselves to the IRI + name pattern, particularly languages and units or passages of text.
@@ -90,7 +110,7 @@ element-subject =
     ## Unlike @subject, which can point to any entity, <subject> is intended exclusively to point to a textual subject.
     
     ##  Each <subject> is interpreted as a single entity, with all textual references treated as a single, grouped passage.
-    element subject { ed-stamp?, textual-reference }
+    element subject { ed-stamp?, (nontextual-reference | textual-reference) }
 element-tok-for-claim-no-ref =
     
     ## points to one or more tokens in a source + ref defined by the parent.    
@@ -156,12 +176,15 @@ voc-element-work =
     ## This element takes the IRI + name pattern. For more, see main.xml#conceptual_works
     element work { entity-nondigital-id }
 # PATTERNS
+in-lang = attr-in-lang | element-in-lang+
 subject = ptr-attr-subject | element-subject+
 object = ptr-attr-object | complex-object+
 complex-object = element-object | element-claim+
 nontextual-reference = (attr-lang-xml | ptr-attr-units)?, text
 textual-reference =
-    multi-source-whole-div-textual-reference | single-source-partial-div-textual-reference
+    multi-source-whole-div-textual-reference
+    | single-source-partial-div-textual-reference
+    | scriptum-reference
 # If a textual reference points merely to <div>s then all one need is @src/@work plus @ref
 multi-source-whole-div-textual-reference = (ptr-attr-src-many | ptr-attr-work), attr-ref-many
 # If a textual reference points to parts of divs, i.e., tokens and token-defined passages, then it is source-specific (@src not @work). 
@@ -173,3 +196,4 @@ single-div-partial-textual-reference =
 # If a partial textual reference is a spans <div>s then @ref should be in the children elements
 multi-div-partial-textual-reference =
     (element-tok-for-claim-with-ref | text-passage-selector-with-ref)+
+scriptum-reference = ptr-attr-which, element-div*
