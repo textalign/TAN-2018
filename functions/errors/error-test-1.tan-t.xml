@@ -85,12 +85,15 @@
             <algorithm xml:id="xslt2">
                 <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
                 <name>Stylesheet to create a TAN file.</name>
+                <name>xslt2</name>
                 <!-- wrn01 -->
                 <location href="../../bad-url/applications/convert/convert%20TAN%202018%20to%20TAN%202019.xsl" accessed-when="2018-08-09T11:14:15.228-04:00"/>
             </algorithm>
             <div-type xml:id="line" which="line (verse)"/>
             <!-- tan03 -->
             <div-type xml:id="park" which="page"/>
+            <!-- tan12 -->
+            <div-type xml:id="section" which="section"/>
             <alias id="doubleline" idrefs="line park"/>
             <!-- tan14 -->
             <alias id="loop1" idrefs="loop2"/>

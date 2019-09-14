@@ -9,7 +9,8 @@ start =
     body-attributes-non-core = element-scope?, attribute-scope?
     group-attributes-non-core = element-scope?, attribute-scope?
     body-content-non-class-3 = body-group* & body-item* 
-    body-item = element-item
+    body-item = element-item | voc-element-verb
+    extra-verb-attrs = ptr-attr-group
 }
 # ATTRIBUTES
 attribute-scope =
@@ -23,7 +24,9 @@ attribute-scope =
 # ELEMENTS
 element-item =
     
-    ## names an item that is being described. The item is assumed to be a species of the type of thing discussed by the TAN element that is affected.
+    ## names an item that is being described. The item is assumed to be a type of thing indicated by the closest @affects-attribute or @affects-element.
+    
+    ## The term "item" implies something that can be more than one type of thing. Verbs are special, and cannot be assigned any other categories, so <item> should not be used of verbs. Use <verb> instead.
     element item {
         ed-stamp?,
         (inclusion

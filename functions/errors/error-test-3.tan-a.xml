@@ -112,18 +112,46 @@
                 <IRI>tag:textalign.net,2015:test:organization:org1</IRI>
                 <name>a made-up organization</name>
             </organization>
-            <verb xml:id="weighs" object-datatype="double">
+            <scriptum xml:id="scr-a">
+                <IRI>tag:textalign.net,2015:test:scriptum:a</IRI>
+                <name>a made up scriptum</name>
+            </scriptum>
+            <verb xml:id="weighs">
                 <IRI>tag:textalign.net,2015:test:verb:weighs</IRI>
                 <name>X weighs a certain amount</name>
+                <constraints>
+                    <object status="required" content-datatype="double"/>
+                </constraints>
             </verb>
-            <verb xml:id="has_title" object-datatype="string" object-lexical-constraint="Mr.?|Mr?s.?|Dr.?">
+            <verb xml:id="has_title">
                 <IRI>tag:textalign.net,2015:test:verb:has-title</IRI>
                 <name>X has a title</name>
+                <constraints>
+                    <object status="required" content-datatype="string" content-lexical-constraint="Mr.?|Mr?s.?|Dr.?"/>
+                </constraints>
+            </verb>
+            <verb xml:id="no-sub">
+                <IRI>tag:textalign.net,2015:test:verb:no-sub</IRI>
+                <name>no subject</name>
+                <constraints>
+                    <subject status="disallowed"/>
+                </constraints>
+            </verb>
+            <verb xml:id="no-obj">
+                <IRI>tag:textalign.net,2015:test:verb:no-obj</IRI>
+                <name>no object</name>
+                <constraints>
+                    <object status="disallowed"/>
+                </constraints>
             </verb>
             <topic xml:id="craziness">
                 <IRI>tag:textalign.net,2015:test:topic:craziness</IRI>
                 <name>craziness</name>
             </topic>
+            <unit xml:id="inches">
+                <IRI>tag:textalign.net,2015:test:unit:inches</IRI>
+                <name>inches</name>
+            </unit>
             <organization include="test-6"/>
         </vocabulary-key>
         <resp who="person_1" roles="editor"/>
@@ -156,37 +184,38 @@
             <!-- ref01 -->
             <object src="test-4" ref="bad4"/>
         </claim>
-        <!-- vrb02 vrb03 -->
+        <!-- clm08 -->
         <claim verb="reads">
             <subject src="test-4" ref="3.a"/>
             <object>one version</object>
             <object>another version</object>
         </claim>
-        <!-- vrb09 vrb12 -->
+        <!-- clm08 -->
         <claim subject="craziness" verb="lacks_text">
             <at-ref src="test-4" ref="3.a"/>
             <in-lang>grc</in-lang>
         </claim>
-        <!-- vrb06 vrb08 -->
+        <!-- clm08 -->
         <claim subject="person_1" verb="paraphrases" object="craziness"/>
-        <!-- clm01 clm02 clm03 vrb05 vrb06 -->
+        <!-- clm01 clm02 clm03 clm08 -->
         <claim verb="parallels weighs" subject="org1" object="person_1"/>
         <!-- clm01 -->
         <claim verb="weighs" subject="org1">
             <!-- clm03 -->
             <object>many</object>
         </claim>
-        <claim subject="person_1" verb="has_title">
-            <!-- clm04 -->
-            <object>what?</object>
+        <!-- clm02 clm08 clm09 -->
+        <claim subject="person_1" verb="has_title no-obj">
+            <!-- clm04 clm05 -->
+            <object units="inches">what?</object>
         </claim>
-        <!-- clm05 clm07 -->
+        <!-- clm07 -->
         <claim object="org1"/>
-        <!-- vrb01 vrb04 vrb09 vrb10 -->
-        <claim subject="person_1 craziness" verb="claims">
+        <!-- clm08 clm09 -->
+        <claim subject="person_1 craziness" verb="no-sub claims">
             <at-ref src="test-4" ref="3.a"/>
         </claim>
-        <!-- vrb11 -->
+        <!-- clm08 -->
         <claim subject="test-1" verb="lacks_text" object="craziness">
             <at-ref src="test-4" ref="3.a"/>
         </claim>

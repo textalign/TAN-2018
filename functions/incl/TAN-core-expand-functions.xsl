@@ -84,6 +84,12 @@
                      tunnel="yes"/>
                </xsl:apply-templates>
             </xsl:variable>
+            
+            <xsl:if test="$diagnostics-on">
+               <xsl:message select="'Core expansion pass 1:', $core-expansion-pass-1"/>
+               <xsl:message select="'Dependencies resolved: ', $these-dependencies-resolved"/>
+               <xsl:message select="'Core expansion pass 2:', $core-expansion-pass-2"/>
+            </xsl:if>
 
             <xsl:choose>
                <!-- terse expansion class 2 -->
@@ -314,8 +320,6 @@
                </xsl:when>
                <xsl:otherwise>
                   <!-- classes 1, 3 diagnostics, results -->
-                  <!--<xsl:copy-of select="$tan-doc-and-dependencies"/>-->
-                  <!--<xsl:copy-of select="$core-expansion-pass-1, $dependencies"/>-->
                   <xsl:copy-of select="$core-expansion-pass-2, $dependencies"/>
                </xsl:otherwise>
             </xsl:choose>
@@ -810,7 +814,7 @@
       </xsl:copy>
    </xsl:template>
 
-   <xsl:template match="tei:teiHeader | tan:inclusion" mode="core-expansion-terse-attributes">
+   <xsl:template match="tei:teiHeader" mode="core-expansion-terse-attributes">
       <xsl:copy-of select="."/>
    </xsl:template>
 
@@ -832,6 +836,7 @@
             else
                (@*[tan:takes-idrefs(.)] except @div-type)"
       />
+      <xsl:variable name="this-id" select="@xml:id, @id"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
 
@@ -920,9 +925,12 @@
                   <xsl:value-of select="."/>
                </xsl:element>
             </xsl:for-each>
+            <xsl:if test="$this-vocabulary/*/tan:name = $this-id">
+               <xsl:copy-of select="tan:error('tan12')"/>
+            </xsl:if>
          </xsl:for-each>
 
-         <xsl:if test="(@xml:id, @id) = $duplicate-ids">
+         <xsl:if test="$this-id = $duplicate-ids">
             <xsl:copy-of
                select="tan:error('tan03', concat('ids used so far: ', string-join($all-ids, ', ')))"
             />
@@ -1011,7 +1019,7 @@
             </new>
          </xsl:if>
          <!-- default behavior for any other attributes left over -->
-         <xsl:apply-templates select="@code, @val, @rgx, @div-type, @affects-element, @by"
+         <xsl:apply-templates select="@code, @val, @rgx, @div-type, @affects-element, @by, @item-type"
             mode="#current"/>
          <xsl:apply-templates mode="#current"/>
       </xsl:copy>

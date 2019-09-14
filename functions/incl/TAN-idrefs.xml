@@ -31,6 +31,10 @@
         <idrefs attribute="work"/>
     </id>
     <id>
+        <element>work</element>
+        <idrefs attribute="work"/>
+    </id>
+    <id>
         <element>div-type</element>
         <idrefs element="div" attribute="type"/>
     </id>
@@ -100,6 +104,10 @@
         <idrefs attribute="subject" element="subject"/>
         <idrefs attribute="object" element="object"/>
         <idrefs attribute="claim-basis"/>
+    </id>
+    <id>
+        <element>claim</element>
+        <idrefs attribute="object" element="object"/>
     </id>
     <id>
         <element>modal</element>

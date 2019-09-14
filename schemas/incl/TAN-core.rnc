@@ -3,9 +3,9 @@ default namespace = "tag:textalign.net,2015:ns"
 start = element TAN-T { empty }
 #   1A. ATTRIBUTES
 attr-accessed-when =
-        ## specifies when an electronic file was last examined
-        attribute accessed-when { xsd:date | xsd:dateTime }
-
+    
+    ## specifies when an electronic file was last examined
+    attribute accessed-when { xsd:date | xsd:dateTime }
 attr-cert =
     
     ## states how certain an agent is of the data governed by the parent element, expressed as a real number from 0 (no certainty) to 1 (completely certainty).
@@ -20,6 +20,60 @@ attr-cert2 =
     
     ## provides a second measure of certainty. The value is taken along with @cert as the range in which an editors certainty resides. 
     attribute cert2 { data-certainty }
+attr-content-datatype =
+    
+    ## specifies the type of data that the object must take. This attribute is intended to specify that a particular verb governs raw units, not entities definable by the IRI + name pattern. Use this attribute if and only if the verb may not govern objects defined as a TAN keyword.
+    attribute content-datatype {
+        "string"
+        | "boolean"
+        | "decimal"
+        | "float"
+        | "double"
+        | "duration"
+        | "dateTime"
+        | "time"
+        | "date"
+        | "gYearMonth"
+        | "gYear"
+        | "gMonthDay"
+        | "gDay"
+        | "gMonth"
+        | "hexBinary"
+        | "base64Binary"
+        | "anyURI"
+        | "QName"
+        | "normalizedString"
+        | "token"
+        | "language"
+        | "NMTOKEN"
+        | "NMTOKENS"
+        | "Name"
+        | "NCName"
+        | "ID"
+        | "IDREF"
+        | "IDREFS"
+        | "ENTITY"
+        | "ENTITIES"
+        | "integer"
+        | "nonPositiveInteger"
+        | "negativeInteger"
+        | "long"
+        | "int"
+        | "short"
+        | "byte"
+        | "nonNegativeInteger"
+        | "unsignedLong"
+        | "unsignedInt"
+        | "unsignedShort"
+        | "unsignedByte"
+        | "positiveInteger"
+    }
+attr-content-lexical-constraint =
+    
+    ## specifies a regular expression that constrains the value of any <object>. 
+    
+    ## Note that the regular expression will be strictly followed, e.g., "\d+" will be satisfied by "a1" (because there is at least on digit). If you wish to constrain the entire value, be sure to use ^ and $, e.g., "^\d+$". 
+    attribute content-lexical-constraint { text }
 attr-ed-when =
     
     ## marks the date or time when an element or its content was edited (added or modified)
@@ -68,6 +122,12 @@ attr-id-xml =
     
     ## identifies an entity described within an element. Must be unique within a given file. Must consist only of word characters.
     attribute xml:id { text }
+attr-item-type =
+    
+    ## specifies what type of item a verb's object or subject must be. Expected values are names of elements allowed in any vocabulary.
+    
+    ## To bind the type to a textual reference to a class-1 source, use 'ref', which would anticipate a claim with object/subject element with @ref (and either @src or @work).
+    attribute item-type { text }
 attr-lang-xml =
     
     ## specifies a language code that names the language of the text enclosed by the parent element. Values are inherited by all descendants except for those that have an @xml:lang and their descendants.  
@@ -90,66 +150,16 @@ attr-n =
     attribute n {
         xsd:string { pattern = "[\w_]+([\- ,]+[\w_]+)*" }
     }
-attr-object-datatype =
-    
-    ## specifies the type of data that the object must take. This attribute is intended to specify that a particular verb governs raw units, not entities definable by the IRI + name pattern. Use this attribute if and only if the verb may not govern objects defined as a TAN keyword.
-    attribute object-datatype {
-        "string"
-        | "boolean"
-        | "decimal"
-        | "float"
-        | "double"
-        | "duration"
-        | "dateTime"
-        | "time"
-        | "date"
-        | "gYearMonth"
-        | "gYear"
-        | "gMonthDay"
-        | "gDay"
-        | "gMonth"
-        | "hexBinary"
-        | "base64Binary"
-        | "anyURI"
-        | "QName"
-        | "normalizedString"
-        | "token"
-        | "language"
-        | "NMTOKEN"
-        | "NMTOKENS"
-        | "Name"
-        | "NCName"
-        | "ID"
-        | "IDREF"
-        | "IDREFS"
-        | "ENTITY"
-        | "ENTITIES"
-        | "integer"
-        | "nonPositiveInteger"
-        | "negativeInteger"
-        | "long"
-        | "int"
-        | "short"
-        | "byte"
-        | "nonNegativeInteger"
-        | "unsignedLong"
-        | "unsignedInt"
-        | "unsignedShort"
-        | "unsignedByte"
-        | "positiveInteger"
-    }
-attr-object-lexical-constraint =
-    
-    ## specifies a regular expression that constrains the value of any <object>. 
-    
-    ## Note that the regular expression will be strictly followed, e.g., "\d+" will be satisfied by "a1" (because there is at least on digit). If you wish to constrain the entire value, be sure to use ^ and $, e.g., "^\d+$". 
-    attribute object-lexical-constraint { text }
 attr-pattern =
     
     ## specifies a regular expression pattern to be searched for or matched. TAN regular expressions include an extended syntax, most noted by the special escape character \k{}. 
     
     ## For more see main.xml#regular_expressions and https://www.w3.org/TR/xpath-functions-30/#regex-syntax
     attribute pattern { text }
+attr-status =
+    
+    ## specifies whether the item is required.
+    attribute status { "required" | "allowed" | "disallowed" }
 attr-TAN-ver =
     
     ## specifies the version of TAN schemas used. 
@@ -258,6 +268,10 @@ element-adjustments =
          | (adjust-condition,
             (element-comment* & (adjust-core, adjust-non-core))))
     }
+element-at-ref-constraint =
+    
+    ## specifies whether a verb uses <at-ref> (default disallowed).
+    element at-ref { ed-stamp?, attr-status }
 element-body =
     
     ## contains the data
@@ -333,6 +347,10 @@ element-head =
             element-change+,
             element-to-do))
     }
+element-in-lang-constraint =
+    
+    ## specifies whether a verb uses <in-lang> (default disallowed).
+    element in-lang { ed-stamp?, attr-status }
 element-IRI =
     
     ## contains an International Resource Identifier that serves as a name for the a concept, person, or thing referred to by the parent element. IRIs are explained at main.xml#IRIs_and_linked_data.
@@ -364,7 +382,7 @@ element-location =
     ## declares where an electronic file was found and when. 
     
     ## The URL may be absolute or relative to the current document. 
-    element location {ed-stamp?, attr-accessed-when, attr-href}
+    element location { ed-stamp?, attr-accessed-when, attr-href }
 element-master-location =
     
     ## points to a location where a master copy of the file is to be found. Use of this element entails a commitment to updating the TAN file in those locations.
@@ -389,6 +407,21 @@ element-numerals =
         ## specifies whether roman numerals should have interpretive priority over letter numerals. For example, should "c" be interpreted as 3 or 100? Default is roman.
         attribute priority { "letters" | "roman" }
     }
+element-object-constraint =
+    
+    ## specifies expectations on a verb's use of object. By default, an object is required.
+    element object { ed-stamp?, attr-status, (constraint-item-type | constraint-content)? }
+    
+element-period-constraint =
+    
+    ## specifies expectations on a verb's use of object. By default, an object is required.
+    element period { ed-stamp?, attr-status }
+    
+element-place-constraint =
+    
+    ## specifies expectations on a verb's use of object. By default, an object is required.
+    element place { ed-stamp?, attr-status }
+    
 element-resp =
     
     ## specifies a role held by one or more persons, organizations, or algorithms, perhaps during a specified time period.
@@ -396,6 +429,10 @@ element-resp =
         ed-stamp?,
         (inclusion | (ptr-attr-who, ptr-attr-role, ptr-attr-period?))
     }
+element-subject-constraint =
+    
+    ## specifies expectations on a verb's use of subject. By default, a subject is required.
+    element subject { ed-stamp?, attr-status, (constraint-item-type | constraint-content)? }
 element-tail =
     
     ## permits any arbitrary content. This element is suitable as a placeholder for temporary data, especially to facilitate time-consuming validation routines. 
@@ -502,6 +539,8 @@ voc-element-group-type =
 voc-element-org =
     
     ## contains an IRI + name pattern identifying an organization: a group of persons, whether formally incorporated or not.
+    
+    ## This term is taken in its loosest sense. "Organization" and "person" are treated as mutually exclusive and exhaustive categories of all human beings, real or fictive. Therefore a tribe or clan, which ordinarily might dislike being thought of as an organization, are nevertheless so classified here.
     element organization { entity-nondigital-id }
 voc-element-period =
     
@@ -533,6 +572,12 @@ voc-element-role =
     
     ## A role may be any activity, e.g., editor, funder, supervisor, data-processor, peer reviewer, patron, defined through the enclosed IRI + name pattern.
     element role { entity-nondigital-id }
+voc-element-verb =
+    
+    ## contains an IRI + name pattern identifying a property, relationship, action, or something else that is used to say something about something. 
+    
+    ## The preferred term "verb" is equivalent to RDF "predicate." The latter term is avoided as misleading, since in ordinary usage the term "predicate" designates both the verb and everything it governs.
+    element verb { extra-verb-attrs?, entity-nondigital-constrained }
 # 
 #   1D. PATTERNS
 action-condition = action-simple-condition | action-complex-condition
@@ -555,8 +600,21 @@ body-group = element-group
 body-item = empty
 certainty-stamp = certainty-claim?, ed-stamp?
 certainty-claim = attr-cert, attr-cert2?
-constraints-on-entity = constraints-on-verb
-constraints-on-verb = attr-object-datatype, attr-object-lexical-constraint?
+constraint-content = attr-content-datatype, attr-content-lexical-constraint?
+constraint-item-type = attr-item-type
+constraints-on-verb =
+    
+    ## specifies the expectations for a given verb. Any verb without constraints is presumed to be transitive, requiring a subject and an object, allowing adverbs, but disallowing opt-in elements, e.g., <in-lang>.
+    element constraints {
+        ed-stamp?,
+        (element-comment*
+         & element-subject-constraint?
+         & element-object-constraint?
+         & element-at-ref-constraint?
+         & element-in-lang-constraint?
+         & element-period-constraint?
+         & element-place-constraint?)
+    }
 declaration-list = declaration-core & declaration-non-core
 declaration-core = element-license+ & element-numerals?
 declaration-non-core = empty
@@ -575,7 +633,8 @@ entity-digital-tan-id =
     (inclusion
      | (attr-id-xml, (element-comment* & entity-digital-tan-other-content)))
 entity-digital-core-content =
-    (element-IRI+, metadata-human-readable, element-checksum*, element-location+) | (ptr-attr-which & attr-accessed-when)
+    (element-IRI+, metadata-human-readable, element-checksum*, element-location+)
+    | (ptr-attr-which & attr-accessed-when)
 entity-digital-tan-no-id =
     ed-stamp?,
     (inclusion | (element-comment* & entity-digital-tan-other-content))
@@ -586,7 +645,7 @@ entity-digital-tan-self-content = metadata-human-readable, element-master-locati
 entity-nondigital-constrained =
     ed-stamp?,
     (inclusion
-     | (attr-id-xml, (element-comment* & entity-nondigital-with-constraints-content)))
+     | (attr-id-xml?, (element-comment* & entity-nondigital-with-constraints-content)))
 entity-nondigital-content = (element-IRI+, metadata-human-readable) | ptr-attr-which
 # named patterns that MUST take an id
 entity-nondigital-id =
@@ -598,8 +657,9 @@ entity-nondigital-no-id =
     ed-stamp?,
     (inclusion | (element-comment* & entity-nondigital-content))
 entity-nondigital-with-constraints-content =
-    (constraints-on-entity?, element-IRI+, metadata-human-readable) | ptr-attr-which
+    (element-IRI+, metadata-human-readable, constraints-on-verb?) | ptr-attr-which
 entity-tok-def = element-token-definition, metadata-human-readable
+extra-verb-attrs = empty
 group-attributes = group-attributes-core, group-attributes-non-core
 group-attributes-core = ptr-attr-type?, attr-n?
 group-attributes-non-core = empty

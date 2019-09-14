@@ -38,7 +38,7 @@
                if (exists(tan:location)) then
                   .
                else
-                  tan:element-vocabulary(.)/tan:item"/>
+                  tan:element-vocabulary(.)/(tan:item, tan:verb)"/>
          <xsl:variable name="this-element-name" select="name(.)"/>
          <!-- We intend to imprint in the new document an attribute with the name of the element that invoked it, so that we can easily 
             identify what kind of relationship the dependency enjoys with the dependent. It is so customary to abbreviate "source" 
@@ -61,6 +61,9 @@
          <xsl:copy-of
             select="tan:resolve-doc($this-first-doc, $leave-breadcrumbs, $this-name-norm, ($this-id, $this-element-expanded/(@xml:id, tan:id))[1], $resolve-vocabulary)"
          />
+         <xsl:if test="not(exists($this-first-doc))">
+            <xsl:sequence select="$empty-doc"/>
+         </xsl:if>
       </xsl:for-each>
    </xsl:function>
 
@@ -143,7 +146,7 @@
 
                   <!-- Step 1: go through the document and for each attribute with an idref (including @which), create a list of 
                      key-value pairs: the name of the elements being pointed to, and the idref values intended. Retain @q for 
-                     tracking errors. If there is an @xml:id or @id copy it as <id> for later reference. -->
+                     tracking errors. If a @which has a companion @xml:id or @id copy it as <id> for later reference. -->
                   <xsl:variable name="these-idref-attributes-and-IRIs" as="element()">
                      <idref-attributes-and-IRIs>
                         <xsl:apply-templates select="$doc-with-inclusions-resolved"
@@ -159,11 +162,17 @@
                         mode="reduce-tan-voc-files">
                         <xsl:with-param name="idref-attributes-and-IRIs"
                            select="$these-idref-attributes-and-IRIs" tunnel="yes"/>
+                        <xsl:with-param name="aliases"
+                           select="$doc-with-inclusions-resolved/*/tan:head/tan:vocabulary-key/tan:alias"
+                           tunnel="yes"/>
                         <xsl:with-param name="is-standard-tan-voc" select="false()" tunnel="yes"/>
                      </xsl:apply-templates>
                      <xsl:apply-templates select="$TAN-vocabularies" mode="reduce-tan-voc-files">
                         <xsl:with-param name="idref-attributes-and-IRIs"
                            select="$these-idref-attributes-and-IRIs" tunnel="yes"/>
+                        <xsl:with-param name="aliases"
+                           select="$doc-with-inclusions-resolved/*/tan:head/tan:vocabulary-key/tan:alias"
+                           tunnel="yes"/>
                         <xsl:with-param name="is-standard-tan-voc" select="true()" tunnel="yes"/>
                      </xsl:apply-templates>
                   </xsl:variable>
@@ -183,7 +192,7 @@
                   <xsl:variable name="diagnostics-on" select="false()"/>
                   <xsl:if test="$diagnostics-on">
                      <xsl:message select="'diagnostics on for tan:resolve-doc(), local variable $doc-with-vocabulary-resolved'"/>
-                     <xsl:message select="'this doc’s vocabulary: ', $this-doc/*/tan:head/tan:vocabulary"/>
+                     <xsl:message select="'this doc’s vocabulary key: ', $this-doc/*/tan:head/tan:vocabulary-key"/>
                      <xsl:message
                         select="'idref attributes parsed: ', $these-idref-attributes-and-IRIs"/>
                      <xsl:message
@@ -372,8 +381,6 @@
    </xsl:template>
    <xsl:template match="tan:vocabulary-key" mode="first-stamp">
       <xsl:param name="leave-breadcrumbs" as="xs:boolean" tunnel="yes"/>
-      <!-- We insert an empty <tan-vocabulary> as a placeholder to attract the standard vocabulary items that are invoked -->
-      <tan-vocabulary/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:if test="$leave-breadcrumbs = true()">
@@ -537,8 +544,6 @@
    </xsl:template>
 
    <!-- Step: three template modes that resolve vocabulary -->
-
-   <!-- temporary location for some resolve-function templates -->
    <xsl:template match="document-node() | text() | * | @div-type"
       mode="reduce-to-idref-attributes-and-IRIs">
       <xsl:apply-templates select="node() | @*" mode="#current"/>
@@ -564,6 +569,11 @@
                   <val>
                      <xsl:value-of select="tan:normalize-name(.)"/>
                   </val>
+                  <xsl:if test="exists(../(@id, @xml:id))">
+                     <id>
+                        <xsl:value-of select="../(@xml:id, @id)"/>
+                     </id>
+                  </xsl:if>
                </xsl:when>
                <xsl:when test="exists($this-val-norm/@help)">
                   <val>*</val>
@@ -582,15 +592,9 @@
                   </xsl:for-each>
                </xsl:otherwise>
             </xsl:choose>
-            <xsl:apply-templates select="../(@xml:id, @id)" mode="#current"/>
          </idref>
          <xsl:text>&#xa;</xsl:text>
       </xsl:if>
-   </xsl:template>
-   <xsl:template match="@xml:id | @id" mode="reduce-to-idref-attributes-and-IRIs">
-      <id>
-         <xsl:value-of select="."/>
-      </id>
    </xsl:template>
 
 
@@ -631,17 +635,22 @@
       </xsl:apply-templates>
    </xsl:template>
 
-   <xsl:template match="tan:item" priority="1" mode="reduce-tan-voc-files">
+   <xsl:template match="tan:item | tan:verb" priority="1" mode="reduce-tan-voc-files">
       <xsl:param name="is-standard-tan-voc" as="xs:boolean" tunnel="yes"/>
+      <xsl:param name="aliases" as="element()*" tunnel="yes"/>
       <xsl:param name="idref-attributes-and-IRIs" tunnel="yes"/>
       <xsl:param name="elements-affected" tunnel="yes"/>
       <xsl:param name="group-types" as="xs:string*" tunnel="yes"/>
       <xsl:variable name="these-elements-affected"
          select="
-            if (exists(@affects-element)) then
-               tokenize(normalize-space(@affects-element), ' ')
+            if (self::tan:verb) then
+               'verb'
             else
-               $elements-affected"/>
+               if (exists(@affects-element)) then
+                  tokenize(normalize-space(@affects-element), ' ')
+               else
+                  $elements-affected"
+      />
       <xsl:variable name="these-groups"
          select="tokenize(normalize-space(@group), ' '), $group-types"/>
       <xsl:variable name="requests-matching-elements-affected"
@@ -654,6 +663,7 @@
                tan:normalize-name(tan:name)"/>
       <xsl:variable name="relevant-requests"
          select="$requests-matching-elements-affected[tan:val = $these-names]"/>
+      <xsl:variable name="these-aliases" select="$aliases[tan:idref = $relevant-requests/tan:id]"/>
 
       <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
@@ -679,10 +689,15 @@
             </xsl:for-each>
             <xsl:apply-templates mode="#current"/>
             <xsl:copy-of select="$relevant-requests/tan:id"/>
+            <xsl:for-each select="$these-aliases/(@xml:id, @id)">
+               <alias>
+                  <xsl:value-of select="."/>
+               </alias>
+            </xsl:for-each>
          </xsl:copy>
       </xsl:if>
    </xsl:template>
-   <xsl:template match="tan:item/tan:name" mode="reduce-tan-voc-files">
+   <xsl:template match="tan:item/tan:name | tan:verb/tan:name" mode="reduce-tan-voc-files">
       <xsl:copy-of select="."/>
    </xsl:template>
    <xsl:template match="tan:IRI" mode="reduce-tan-voc-files">
@@ -691,7 +706,7 @@
          <xsl:copy-of select="."/>
       </xsl:if>
    </xsl:template>
-   <xsl:template match="tan:location | tan:token-definition" mode="reduce-tan-voc-files">
+   <xsl:template match="tan:location | tan:token-definition | tan:constraints" mode="reduce-tan-voc-files">
       <xsl:copy-of select="."/>
    </xsl:template>
 
@@ -720,11 +735,37 @@
    </xsl:template>
    <xsl:template match="tan:vocabulary-key" mode="imprint-vocabulary">
       <xsl:param name="tan-voc-files-reduced" tunnel="yes" as="document-node()*"/>
-      <xsl:copy-of select="."/>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:apply-templates mode="#current">
+            <xsl:with-param name="aliases" select="tan:alias" tunnel="yes"/>
+         </xsl:apply-templates>
+      </xsl:copy>
       <!-- Copy the relevant parts of the standard TAN vocabulary, after the <vocabulary-key> -->
-      <xsl:copy-of select="$tan-voc-files-reduced/tan:tan-vocabulary[tan:item]"/>
+      <xsl:copy-of select="$tan-voc-files-reduced/tan:tan-vocabulary[(tan:item, tan:verb)]"/>
+   </xsl:template>
+   <xsl:template match="tan:alias" priority="1" mode="imprint-vocabulary">
+      <xsl:copy-of select="."/>
+   </xsl:template>
+   <xsl:template match="tan:vocabulary-key/*[@xml:id][tan:name] | tan:claim[@xml:id]" mode="imprint-vocabulary">
+      <xsl:param name="aliases" as="element()*" tunnel="yes"/>
+      <xsl:variable name="this-id" select="@xml:id"/>
+      <xsl:variable name="these-aliases" select="$aliases[tan:idref = $this-id]"/>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:apply-templates mode="#current"/>
+         <id>
+            <xsl:value-of select="@xml:id"/>
+         </id>
+         <xsl:for-each select="$these-aliases/(@xml:id, @id)">
+            <alias>
+               <xsl:value-of select="."/>
+            </alias>
+         </xsl:for-each>
+      </xsl:copy>
    </xsl:template>
    <xsl:template match="tan:body" mode="imprint-vocabulary">
+      <!-- TAN-A overrides this template because it might have claims with @xml:ids to be processed -->
       <xsl:copy-of select="."/>
    </xsl:template>
 
@@ -1051,19 +1092,20 @@
    </xsl:template>
 
    <xsl:template match="tan:vocabulary-key" mode="resolve-vocabulary-references">
+      <!-- append any standard TAN vocabulary after the <vocabulary-key> -->
       <xsl:param name="vocabulary-analysis" as="element()*" tunnel="yes"/>
       <xsl:variable name="standard-vocabulary-items-used"
          select="$vocabulary-analysis[self::tan-vocabulary]"/>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:apply-templates mode="#current"/>
+      </xsl:copy>
       <xsl:if
          test="exists($standard-vocabulary-items-used) and not(exists(preceding-sibling::tan:tan-vocabulary))">
          <tan-vocabulary>
             <xsl:copy-of select="tan:distinct-items($standard-vocabulary-items-used/*)"/>
          </tan-vocabulary>
       </xsl:if>
-      <xsl:copy>
-         <xsl:copy-of select="@*"/>
-         <xsl:apply-templates mode="#current"/>
-      </xsl:copy>
    </xsl:template>
 
    <xsl:template match="*" mode="resolve-vocabulary-references">

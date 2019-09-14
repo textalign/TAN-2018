@@ -97,9 +97,9 @@
 
    <xsl:variable name="names-of-attributes-that-take-idrefs" as="xs:string+" select="$id-idrefs/tan:id-idrefs/tan:id/tan:idrefs/@attribute"/>
    <xsl:variable name="names-of-attributes-that-may-take-multiple-space-delimited-values" as="xs:string+"
-      select="$names-of-attributes-that-take-idrefs, ('n', 'affects-element')"/>
+      select="$names-of-attributes-that-take-idrefs, ('n', 'affects-element', 'affects-attribute', 'item-type')"/>
    <xsl:variable name="names-of-attributes-that-permit-keyword-last" select="('pos', 'chars', 'm-has-how-many-features')"/>
-   <xsl:variable name="names-of-attributes-that-are-case-indifferent" as="xs:string+" select="('code', 'n', 'ref')"/>
+   <xsl:variable name="names-of-attributes-that-are-case-indifferent" as="xs:string+" select="('code', 'n', 'ref', 'affects-element', 'affects-attribute', 'item-type')"/>
    <xsl:variable name="names-of-elements-that-take-idrefs" as="xs:string+" select="$id-idrefs/tan:id-idrefs/tan:id/tan:idrefs/@element"/>
    <xsl:variable name="names-of-elements-that-must-always-refer-to-tan-files"
       select="('morphology', 'inclusion', 'vocabulary', 'redivision', 'model', 'successor', 'predecessor', 'annotation')"/>
@@ -2729,7 +2729,8 @@
       <xsl:variable name="pass-1" as="element()*">
          <xsl:for-each-group select="$attributes[tan:takes-idrefs(.)]" group-by="tan:base-uri(.)">
             <xsl:variable name="this-base-uri" select="current-grouping-key()"/>
-            <xsl:variable name="this-local-head" select="(current-group()/root()/*/tan:head)[1]"/>
+            <xsl:variable name="this-root" select="current-group()/root()"/>
+            <xsl:variable name="this-local-head" select="($this-root/*/tan:head)[1]"/>
             <xsl:variable name="this-chosen-head" as="element()"
                select="
                   if (exists($this-local-head)) then
@@ -2743,12 +2744,13 @@
                   else
                      ''">
                <xsl:variable name="this-include-id" select="current-grouping-key()"/>
+               <!-- A TAN-A file might have vocabulary in the body -->
                <xsl:variable name="this-vocabulary-parent"
                   select="
                      if (string-length($this-include-id) gt 0) then
                         $this-chosen-head/tan:inclusion[@xml:id = $this-include-id]
                      else
-                        $this-chosen-head"
+                        $this-chosen-head, $this-root/tan:TAN-A/tan:body"
                />
                <xsl:for-each-group select="current-group()" group-by="name(.)">
                   <xsl:variable name="this-attribute-name" select="current-grouping-key()"/>
@@ -2801,356 +2803,49 @@
       <xsl:param name="target-element-names" as="xs:string+"/>
       <xsl:param name="values-are-from-attr-which" as="xs:boolean"/>
       <xsl:param name="attribute-values" as="xs:string*"/>
-      <xsl:param name="local-vocabulary-parent" as="element()?"/>
+      <xsl:param name="local-vocabulary-parents" as="element()*"/>
       <xsl:variable name="reference-external-vocabularies"
          select="
-            not(exists($local-vocabulary-parent/preceding-sibling::tan:resolved[. = 'vocabulary']) or (name($local-vocabulary-parent) = 'inclusion'))
+            not(exists($local-vocabulary-parents/preceding-sibling::tan:resolved[. = 'vocabulary']) or (name($local-vocabulary-parents) = 'inclusion'))
             or ($target-element-names = 'n')"
       />
       <xsl:copy-of
-         select="tan:vocabulary($target-element-names, $values-are-from-attr-which, $attribute-values, $local-vocabulary-parent, $reference-external-vocabularies)"
+         select="tan:vocabulary($target-element-names, $values-are-from-attr-which, $attribute-values, $local-vocabulary-parents, $reference-external-vocabularies)"
       />
    </xsl:function>
 
-   <!--<xsl:function name="tan:vocabulary-new" as="element()*">
-      <!-\- Input: names of elements; id or name values; the parent of the local vocabulary (most often
+   <xsl:function name="tan:vocabulary-new" as="element()*">
+      <!-- Input: names of elements; id or name values; the parent of the local vocabulary (most often
          <head>, resolved, but it might be <inclusion> to narrow the options to a particular set of 
-         included vocabulary) -\->
-      <!-\- Output: the vocabulary items for the particular elements, for the values assigned -\->
-      <!-\- If a match on id is found, no matches on name will be found -\->
-      <!-\- If no value is provided, or one of the values is an asterisk, all possible values will be returned -\->
-      <!-\- We assume the parent of the local vocabulary (<head>) is resolved -\->
+         included vocabulary) -->
+      <!-- Output: the vocabulary items for the particular elements, for the values assigned -->
+      <!-- If a match on id is found, no matches on name will be found -->
+      <!-- If no value is provided, or one of the values is an asterisk, all possible values will be returned -->
+      <!-- We assume the parent of the local vocabulary (<head>) is resolved -->
       
+
       <xsl:param name="target-element-names" as="xs:string+"/>
+      <xsl:param name="values-are-from-attr-which" as="xs:boolean"/><!-- deprecated -->
       <xsl:param name="id-or-name-values" as="xs:string*"/>
-      <xsl:param name="local-vocabulary-parent" as="element()?"/>
+      <xsl:param name="local-vocabulary-ancestor" as="element()?"/>
+      <xsl:param name="reference-external-vocabularies" as="xs:boolean"/><!-- deprecated -->
       <xsl:variable name="target-element-names-norm" as="xs:string+"
          select="tan:target-element-names($target-element-names)"/>
       <xsl:variable name="target-element-names-supported-in-standard-tan-voc"
          select="$target-element-names-norm[. = $elements-supported-by-TAN-vocabulary-files]"/>
 
-      <!-\- Normalize the attribute value. If it is @which, treat it as a name value and normalize it accordingly. Otherwise treat it as space-delimited multiple values -\->
-      <xsl:variable name="values-normalized" as="xs:string*">
-         <xsl:choose>
-            <xsl:when test="(count($id-or-name-values) lt 1) or ($id-or-name-values = ('*', ''))">
-               <!-\- If there is no value, or it is a null value, or it is an asterisk, the user wants everything -\->
-               <xsl:text>*</xsl:text>
-            </xsl:when>
-            <!-\- If the values are from @which, each value is a single value, and should be normalized for space and case -\->
-            <xsl:when test="$values-are-from-attr-which">
-               <xsl:for-each select="$id-or-name-values">
-                  <xsl:value-of select="tan:normalize-name(.)"/>
-               </xsl:for-each>
-            </xsl:when>
-            <!-\- If the values are not from @which they are case sensitive, and spaces should be interpreted as separating multiple values -\->
-            <xsl:otherwise>
-               <xsl:copy-of
-                  select="
-                     for $i in $id-or-name-values
-                     return
-                        tokenize(normalize-space($i), ' ')"
-               />
-            </xsl:otherwise>
-         </xsl:choose>
-      </xsl:variable>
-      <xsl:variable name="fetch-everything" select="$values-normalized = '*'"/>
-
-      <!-\- Look for local vocab items whose name matches the target -\->
-      <xsl:variable name="relevant-head-vocabulary-items"
-         select="$local-vocabulary-parent/(self::*, tan:vocabulary-key)/*[(name(.), tan:affects-element, tan:affects-attribute) = $target-element-names-norm]"/>
-      <xsl:variable name="relevant-head-vocabulary-aliases"
-         select="$local-vocabulary-parent/tan:vocabulary-key/tan:alias"/>
-      <!-\- Get external and standard TAN vocabularies already copied in the head -\->
-      <xsl:variable name="relevant-resolved-vocabulary-item-parents" as="element()*">
-         <xsl:apply-templates select="$local-vocabulary-parent/(tan:tan-vocabulary, tan:vocabulary)"
-            mode="filter-vocabulary-items">
-            <xsl:with-param name="affects-element" select="$target-element-names-norm" tunnel="yes"/>
-         </xsl:apply-templates>
-      </xsl:variable>
-
-      <!-\- Set the auxiliary vocabularies. Doing it here preempts a choose-when-otherwise deeper in the function. -\->
-      <xsl:variable name="extra-vocabularies"
+      <xsl:variable name="fetch-all-values" select="(count($id-or-name-values) lt 1) or ($id-or-name-values = ('*', ''))"/>
+      <xsl:variable name="values-normalized-as-idrefs"
          select="
-            if ($reference-external-vocabularies = false()) then
-               ()
-            else
-               tan:resolve-doc(tan:get-1st-doc($local-vocabulary-parent/tan:vocabulary)[*/@TAN-version = $TAN-version], false())"/>
-      <!-\- We allow a TAN-voc file to refer to its own vocabulary -\->
-      <xsl:variable name="relevant-new-extra-vocabulary-items"
-         select="
-            for $i in ($extra-vocabularies, $local-vocabulary-parent[parent::tan:TAN-voc]/root())
+            for $i in $id-or-name-values
             return
-               key('item-via-node-name', $target-element-names-norm, $i)"/>
-      <xsl:variable name="standard-vocabularies"
-         select="
-            if ($reference-external-vocabularies = false()) then
-               ()
-            else
-               $TAN-vocabularies[tan:TAN-voc/tan:body/@affects-element = $target-element-names-supported-in-standard-tan-voc]"/>
-      <xsl:variable name="relevant-new-standard-vocabulary-items"
-         select="
-            for $i in $standard-vocabularies
-            return
-               key('item-via-node-name', $target-element-names-supported-in-standard-tan-voc, $i)"/>
-
-      <xsl:variable name="picked-vocab-items" as="element()*">
-         <xsl:choose>
-            <xsl:when test="$fetch-everything">
-               <!-\- If the user wants everything, then the values don't matter -\->
-               <xsl:if
-                  test="exists($relevant-head-vocabulary-items) or exists($relevant-head-vocabulary-aliases)">
-                  <local>
-                     <xsl:copy-of select="$relevant-head-vocabulary-items"/>
-                     <xsl:for-each select="$relevant-head-vocabulary-aliases[tan:idref]">
-                        <xsl:variable name="these-idrefs" select="tan:idref"/>
-                        <!-\- Copy an <alias> only if it points to vocabulary items that are suited to the element names sought -\->
-                        <xsl:if
-                           test="
-                              every $i in $these-idrefs
-                                 satisfies (exists($relevant-head-vocabulary-items[(@xml:id = $i)]))">
-                           <xsl:copy-of select="."/>
-                        </xsl:if>
-                     </xsl:for-each>
-                  </local>
-               </xsl:if>
-               <xsl:copy-of select="$relevant-resolved-vocabulary-item-parents[tan:item]"/>
-               <xsl:copy-of
-                  select="tan:report-tan-voc-items(($relevant-new-extra-vocabulary-items, $relevant-new-standard-vocabulary-items))"
-               />
-            </xsl:when>
-            <xsl:when test="$values-are-from-attr-which">
-               <!-\- The user wants items based on <name> values -\->
-               <xsl:variable name="this-local-head-vocab"
-                  select="$relevant-head-vocabulary-items[tan:name = $values-normalized]"/>
-               <xsl:variable name="this-resolved-head-vocab"
-                  select="$relevant-resolved-vocabulary-item-parents[*[tan:name = $values-normalized]]"/>
-               <xsl:variable name="this-new-extra-vocab"
-                  select="$relevant-new-extra-vocabulary-items[tan:name = $values-normalized]"/>
-               <xsl:variable name="this-new-standard-vocab"
-                  select="$relevant-new-standard-vocabulary-items[tan:name = $values-normalized]"/>
-               <xsl:variable name="diagnostics-on" select="false()"/>
-               <xsl:if test="$diagnostics-on">
-                  <xsl:message select="'checking value as if from @which'"/>
-                  <xsl:message select="'value normalized: ', $values-normalized"/>
-                  <xsl:message select="'local head vocab items: ', $this-local-head-vocab"/>
-                  <xsl:message select="'resolved head vocab items: ', $relevant-resolved-vocabulary-item-parents"/>
-                  <xsl:message select="'new extra vocab items: ', $this-new-extra-vocab"/>
-                  <xsl:message select="'new standard vocab items: ', $this-new-standard-vocab"/>
-               </xsl:if>
-               <xsl:if test="exists($this-local-head-vocab)">
-                  <local>
-                     <xsl:copy-of select="$this-local-head-vocab"/>
-                  </local>
-               </xsl:if>
-               <xsl:for-each select="$this-resolved-head-vocab">
-                  <xsl:copy>
-                     <xsl:copy-of select="@*"/>
-                     <xsl:copy-of select="* except *[tan:name]"/>
-                     <xsl:copy-of select="*[tan:name = $values-normalized]"/>
-                  </xsl:copy>
-               </xsl:for-each>
-               <xsl:copy-of
-                  select="tan:report-tan-voc-items(($this-new-extra-vocab, $this-new-standard-vocab))"/>
-               <xsl:if
-                  test="not(exists($this-local-head-vocab)) and not(exists($this-resolved-head-vocab)) and not(exists($this-new-extra-vocab)) and not(exists($this-new-standard-vocab))">
-                  <xsl:variable name="extra-vocabulary-option"
-                     select="$extra-vocabulary-files/tan:TAN-voc/tan:body[(@affects-element, @affects-attribute) = $target-element-names-norm]/tan:item[tan:name = $values-normalized]"/>
-                  <xsl:variable name="extra-vocabulary-iris"
-                     select="$extra-vocabulary-option/root()/tan:TAN-voc/@id"/>
-                  <xsl:variable name="extra-vocabulary-items"
-                     select="$TAN-vocabularies-vocabulary/tan:TAN-voc/tan:body/tan:item[tan:IRI = $extra-vocabulary-iris]"/>
-                  <xsl:variable name="this-vocabulary-to-insert" as="element()*">
-                     <xsl:if test="exists($extra-vocabulary-items)">
-                        <xsl:for-each select="$extra-vocabulary-items">
-                           <vocabulary which="{tan:name[1]}"/>
-                        </xsl:for-each>
-                     </xsl:if>
-                  </xsl:variable>
-                  <xsl:variable name="this-item-to-insert" as="element()">
-                     <item>
-                        <xsl:for-each select="$target-element-names-norm">
-                           <affects-element>
-                              <xsl:value-of select="."/>
-                           </affects-element>
-                        </xsl:for-each>
-                        <IRI/>
-                        <name>
-                           <xsl:value-of select="$values-normalized"/>
-                        </name>
-                     </item>
-                  </xsl:variable>
-                  <xsl:variable name="this-message"
-                     select="
-                        concat($values-normalized, ' matches no name', (if (exists($extra-vocabulary-items)) then
-                           concat('; a standard TAN vocabulary does, but it must be invoked as a link element: ', tan:xml-to-string($this-vocabulary-to-insert))
-                        else
-                           ()))"
-                  />
-                  <xsl:choose>
-                     <xsl:when test="exists($extra-vocabulary-items)">
-                        <xsl:copy-of
-                           select="tan:error('whi01', $this-message, $this-vocabulary-to-insert, 'add-link-element')"/>
-                     </xsl:when>
-                     <xsl:otherwise>
-                        <xsl:copy-of
-                           select="tan:error('whi01', $this-message, $this-item-to-insert, 'add-link-element')"/>
-                     </xsl:otherwise>
-                  </xsl:choose>
-                  
-                  <!-\-<xsl:copy-of
-                     select="tan:insert-as-last-child($this-error-report, $this-item-to-insert, 'error')"
-                  />-\->
-               </xsl:if>
-            </xsl:when>
-            
-            <xsl:otherwise>
-               <!-\- The user wants items based first on idrefs (if no hits, retry this function but as if values are from @which) -\->
-               <!-\- If the file is valid, there should be one match from the vocab items or one or more matches via an alias; but we need to anticipate handling files that are not valid -\->
-               
-               <xsl:for-each select="$values-normalized">
-                  <xsl:variable name="this-val" select="."/>
-                  <xsl:variable name="item-to-insert-in-error" as="element()">
-                     <item>
-                        <xsl:for-each select="$target-element-names-norm">
-                           <affects-element>
-                              <xsl:value-of select="."/>
-                           </affects-element>
-                        </xsl:for-each>
-                        <id>
-                           <xsl:value-of select="$this-val"/>
-                        </id>
-                     </item>
-                  </xsl:variable>
-
-                  <!-\- First, get the immediately accessible local vocabulary -\->
-                  <xsl:variable name="this-local-head-vocab-items-matching-val"
-                     select="$relevant-head-vocabulary-items[((@xml:id, tan:id) = $this-val)]"/>
-                  <xsl:variable name="this-resolved-vocabulary-items-matching-val"
-                     select="$relevant-resolved-vocabulary-item-parents/*[tan:id = $this-val]"/>
-                  <!-\- Then, resolve the <alias>es -\->
-                  <xsl:variable name="this-local-head-aliases-matching-val"
-                     select="$relevant-head-vocabulary-aliases[(@xml:id, @id) = $this-val]"/>
-
-                  <xsl:variable name="this-local-head-alias-vocab-items" as="element()*">
-                     <xsl:for-each select="$this-local-head-aliases-matching-val">
-                        <xsl:variable name="this-id" select="@xml:id, @id"/>
-                        <xsl:for-each select="tan:idref">
-                           <xsl:variable name="this-idref" select="."/>
-
-                           <xsl:variable name="these-vocab-items"
-                              select="$relevant-head-vocabulary-items[@xml:id = $this-idref]"/>
-                           <xsl:for-each select="$these-vocab-items">
-                              <xsl:choose>
-                                 <xsl:when test="exists(tan:id[@type = 'alias'])">
-                                    <!-\- The vocabulary item has already had its alias id inserted -\->
-                                    <xsl:copy-of select="."/>
-                                 </xsl:when>
-                                 <xsl:otherwise>
-                                    <xsl:copy>
-                                       <xsl:copy-of select="@*"/>
-                                       <xsl:copy-of select="node()"/>
-                                       <id type="alias">
-                                          <xsl:value-of select="$this-id"/>
-                                       </id>
-                                    </xsl:copy>
-                                 </xsl:otherwise>
-                              </xsl:choose>
-                           </xsl:for-each>
-                        </xsl:for-each>
-
-                     </xsl:for-each>
-                  </xsl:variable>
-                  <xsl:variable name="this-local-head-vocab"
-                     select="$this-local-head-vocab-items-matching-val, $this-resolved-vocabulary-items-matching-val, $this-local-head-alias-vocab-items"
-                  />
-                  <xsl:variable name="this-local-head-vocab-with-attr-which" select="$this-local-head-vocab[@which]"/>
-                  <xsl:variable name="diagnostics-on" select="false()"/>
-                  <xsl:if test="$diagnostics-on">
-                     <xsl:message select="'checking value as if NOT from @which'"/>
-                     <xsl:message select="'this val: ', $this-val"/>
-                     <xsl:message select="'relevant head vocabulary items: ', $relevant-head-vocabulary-items"/>
-                     <xsl:message select="'relevant head vocabulary aliases: ', $relevant-head-vocabulary-aliases"/>
-                     <xsl:message select="'matching local head items: ', $this-local-head-vocab-items-matching-val"/>
-                     <xsl:message select="'matching local aliases: ', $this-local-head-aliases-matching-val"/>
-                     <xsl:message select="'matching resolved vocabulary items:', $this-resolved-vocabulary-items-matching-val"/>
-                     <xsl:message select="'matching local head items via aliases', $this-local-head-alias-vocab-items"/>
-                  </xsl:if>
-                  <xsl:for-each select="$this-local-head-vocab">
-                     <xsl:choose>
-                        <xsl:when test="exists(@which)">
-                           <!-\- If a local vocab item has @which, it needs to be resolved further -\->
-                           <xsl:variable name="this-id-insertion" as="element()*">
-                              <xsl:for-each select="@xml:id, @id">
-                                 <id>
-                                    <xsl:value-of select="."/>
-                                 </id>
-                              </xsl:for-each>
-                              <xsl:copy-of select="tan:id"/>
-                           </xsl:variable>
-                           <xsl:variable name="this-resolved-vocabulary"
-                              select="tan:vocabulary(name(), true(), @which, $local-vocabulary-parent, $reference-external-vocabularies)"/>
-                           <xsl:copy-of
-                              select="tan:insert-as-last-child($this-resolved-vocabulary, $this-id-insertion, ('item', $target-element-names-norm))"
-                           />
-                        </xsl:when>
-                        <xsl:otherwise>
-                           <local>
-                              <xsl:copy-of select="."/>
-                           </local>
-                        </xsl:otherwise>
-                     </xsl:choose>
-                  </xsl:for-each>
-                  <xsl:if test="not(exists($this-local-head-vocab))">
-                     <!-\- If nothing is found locally via @xml:id or @id, then treat the value as if it were pointing to <name> (that is, as if it were @which) -\->
-                     <xsl:variable name="vocab-as-if-which"
-                        select="tan:vocabulary($target-element-names-norm, true(), $this-val, $local-vocabulary-parent, $reference-external-vocabularies)"/>
-                     <xsl:copy-of select="$vocab-as-if-which[not(self::tan:error)]"/>
-                     <xsl:if test="matches($target-element-names[1], '/')">
-                        
-                        <xsl:message terminate="yes" select="'target element names: ', $target-element-names"/>
-                        
-                     </xsl:if>
-                     <xsl:if test="exists($vocab-as-if-which/self::tan:error)">
-                        <xsl:variable name="this-message"
-                           select="concat($this-val, ' matches no id')"/>
-                        <xsl:variable name="this-fix" as="element()">
-                           <xsl:element name="{$target-element-names-norm[1]}">
-                              <xsl:attribute name="xml:id" select="$this-val"/>
-                              <xsl:attribute name="which"/>
-                           </xsl:element>
-                        </xsl:variable>
-                        <xsl:copy-of
-                           select="tan:insert-as-last-child(tan:error('tan05', $this-message, $this-fix, 'add-vocabulary-key-item'), $item-to-insert-in-error, 'error')"
-                        />
-                     </xsl:if>
-                  </xsl:if>
-                  <xsl:if
-                     test="count(($this-local-head-vocab-items-matching-val, $this-local-head-aliases-matching-val)) gt 1">
-                     <!-\- The value has picked up more than one vocabulary item id -\->
-                     <xsl:copy-of
-                        select="tan:insert-as-last-child(tan:error('tan03'), $item-to-insert-in-error, 'error')"
-                     />
-                  </xsl:if>
-               </xsl:for-each>
-            </xsl:otherwise>
-         </xsl:choose>
-         
-      </xsl:variable>
-      <xsl:variable name="diagnostics-on" as="xs:boolean" select="false()"/>
-      <xsl:if test="$diagnostics-on">
-         <xsl:message select="'diagnostics on for tan:vocabulary()'"/>
-         <xsl:message select="'target element: ', $target-element-names-norm"/>
-         <xsl:message select="'attribute value: ', $id-or-name-values"/>
-         <xsl:message select="'values normalized: ', string-join($values-normalized, ', ')"/>
-         <xsl:message select="'fetch everything?', $fetch-everything"/>
-         <xsl:message select="'vals are from @which: ', $values-are-from-attr-which"/>
-         <xsl:message select="'relevant local vocabulary items: ', $relevant-head-vocabulary-items"/>
-         <xsl:message select="'relevant local aliases: ', $relevant-head-vocabulary-aliases"/>
-         <xsl:message select="'relevant resolved vocabulary items: ', $relevant-resolved-vocabulary-item-parents"/>
-         <xsl:message select="'picked vocab items: ', $picked-vocab-items"/>
-      </xsl:if>
-      <xsl:copy-of select="tan:distinct-items($picked-vocab-items)"/>
-   </xsl:function>-->
+               tokenize(normalize-space($i), ' ')"
+      />
+      <!--<xsl:variable name="values-normalized-as-if-which" select="tan:normalize-name(.)"/>-->
+      
+      <xsl:variable name="vocabulary-pass-1" as="element()*"></xsl:variable>
+      <xsl:copy-of select="$vocabulary-pass-1"/>
+   </xsl:function>
 
    <xsl:function name="tan:vocabulary" as="element()*">
       <!-- Input: names of elements; values to check; whether the values are based on @which; the parent of the 
@@ -3165,7 +2860,7 @@
       <xsl:param name="target-element-names" as="xs:string+"/>
       <xsl:param name="values-are-from-attr-which" as="xs:boolean"/>
       <xsl:param name="attribute-values" as="xs:string*"/>
-      <xsl:param name="local-vocabulary-parent" as="element()?"/>
+      <xsl:param name="local-vocabulary-parents" as="element()*"/>
       <xsl:param name="reference-external-vocabularies" as="xs:boolean"/>
       <xsl:variable name="target-element-names-norm" as="xs:string+"
          select="tan:target-element-names($target-element-names)"/>
@@ -3200,12 +2895,12 @@
 
       <!-- Look for local vocab items whose name matches the target -->
       <xsl:variable name="relevant-head-vocabulary-items"
-         select="$local-vocabulary-parent/(self::*, tan:vocabulary-key)/*[(name(.), tan:affects-element, tan:affects-attribute) = $target-element-names-norm]"/>
+         select="$local-vocabulary-parents/(self::*, tan:vocabulary-key)/*[(name(.), tan:affects-element, tan:affects-attribute) = $target-element-names-norm]"/>
       <xsl:variable name="relevant-head-vocabulary-aliases"
-         select="$local-vocabulary-parent/tan:vocabulary-key/tan:alias"/>
+         select="$local-vocabulary-parents/tan:vocabulary-key/tan:alias"/>
       <!-- Get external and standard TAN vocabularies already copied in the head -->
       <xsl:variable name="relevant-resolved-vocabulary-item-parents" as="element()*">
-         <xsl:apply-templates select="$local-vocabulary-parent/(tan:tan-vocabulary, tan:vocabulary)"
+         <xsl:apply-templates select="$local-vocabulary-parents/(tan:tan-vocabulary, tan:vocabulary)"
             mode="filter-vocabulary-items">
             <xsl:with-param name="affects-element" select="$target-element-names-norm" tunnel="yes"/>
          </xsl:apply-templates>
@@ -3217,11 +2912,11 @@
             if ($reference-external-vocabularies = false()) then
                ()
             else
-               tan:resolve-doc(tan:get-1st-doc($local-vocabulary-parent/tan:vocabulary)[*/@TAN-version = $TAN-version], false())"/>
+               tan:resolve-doc(tan:get-1st-doc($local-vocabulary-parents/tan:vocabulary)[*/@TAN-version = $TAN-version], false())"/>
       <!-- We allow a TAN-voc file to refer to its own vocabulary -->
       <xsl:variable name="relevant-new-extra-vocabulary-items"
          select="
-            for $i in ($extra-vocabularies, $local-vocabulary-parent[parent::tan:TAN-voc]/root())
+            for $i in ($extra-vocabularies, $local-vocabulary-parents[parent::tan:TAN-voc]/root())
             return
                key('item-via-node-name', $target-element-names-norm, $i)"/>
       <xsl:variable name="standard-vocabularies"
@@ -3431,7 +3126,7 @@
                               <xsl:copy-of select="tan:id"/>
                            </xsl:variable>
                            <xsl:variable name="this-resolved-vocabulary"
-                              select="tan:vocabulary(name(), true(), @which, $local-vocabulary-parent, $reference-external-vocabularies)"/>
+                              select="tan:vocabulary(name(), true(), @which, $local-vocabulary-parents, $reference-external-vocabularies)"/>
                            <xsl:copy-of
                               select="tan:insert-as-last-child($this-resolved-vocabulary, $this-id-insertion, ('item', $target-element-names-norm))"
                            />
@@ -3446,7 +3141,7 @@
                   <xsl:if test="not(exists($this-local-head-vocab))">
                      <!-- If nothing is found locally via @xml:id or @id, then treat the value as if it were pointing to <name> (that is, as if it were @which) -->
                      <xsl:variable name="vocab-as-if-which"
-                        select="tan:vocabulary($target-element-names-norm, true(), $this-val, $local-vocabulary-parent, $reference-external-vocabularies)"/>
+                        select="tan:vocabulary($target-element-names-norm, true(), $this-val, $local-vocabulary-parents, $reference-external-vocabularies)"/>
                      <xsl:copy-of select="$vocab-as-if-which[not(self::tan:error)]"/>
                      <xsl:if test="exists($vocab-as-if-which/self::tan:error)">
                         <xsl:variable name="this-message"
@@ -3493,6 +3188,13 @@
    <xsl:template match="tan:item" mode="filter-vocabulary-items">
       <xsl:param name="affects-element" as="xs:string*" tunnel="yes"/>
       <xsl:variable name="pick-me" select="$affects-element = tan:affects-element"/>
+      <xsl:if test="$pick-me = true()">
+         <xsl:copy-of select="."/>
+      </xsl:if>
+   </xsl:template>
+   <xsl:template match="tan:verb" mode="filter-vocabulary-items">
+      <xsl:param name="affects-element" as="xs:string*" tunnel="yes"/>
+      <xsl:variable name="pick-me" select="$affects-element = 'verb'"/>
       <xsl:if test="$pick-me = true()">
          <xsl:copy-of select="."/>
       </xsl:if>

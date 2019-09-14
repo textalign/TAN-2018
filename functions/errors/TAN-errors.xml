@@ -34,6 +34,7 @@
     </group>
     <group affects-attribute="xml:id id">
         <error xml:id="tan03"><rule>@xml:id values may not be repeated in the same document.</rule></error>
+        <warning xml:id="tan12"><rule>For imported vocabulary, a &lt;name> may be invoked directly, without assigning it to an @xml:id.</rule></warning>
     </group>
     <group affects-attribute="href" affects-element="location master-location">
         <error xml:id="tan08"><rule>@href must have &lt;location> or &lt;master-location> as a parent; any other parent will trigger a quick fix to populate the element with the IRI + name pattern of the target file.</rule></error>
@@ -253,34 +254,23 @@
     </group>
     
     <!-- TAN-A ERRORS -->
-    <group affects-attribute="object-datatype object-lexical-constraint" affects-element="claim verb">
-        <error xml:id="clm01"><rule>Claims involving verbs whose constrained object requires specification of units must use &lt;object>, not @object.</rule></error>
+    <group affects-attribute="content-datatype content-lexical-constraint units" affects-element="claim verb object subject">
+        <error xml:id="clm01"><rule>Claims involving verbs whose constrained content requires specification of units must use &lt;object> or &lt;subject> with @units.</rule></error>
+        <error xml:id="clm05"><rule>&lt;object> or &lt;subject> with @units may be used only with verbs with constrained content.</rule></error>
     </group>
-    <group affects-attribute="object-datatype object-lexical-constraint" affects-element="claim verb">
-        <error xml:id="clm02"><rule>Verbs that have object constraints must not be combined with other verbs in @verb.</rule></error>
+    <group affects-attribute="content-datatype content-lexical-constraint" affects-element="claim verb">
+        <error xml:id="clm02"><rule>A claim with a verb that has content constraints must not allow other verbs.</rule></error>
     </group>
-    <group affects-element="object" affects-attribute="object-datatype">
-        <error xml:id="clm03"><rule>&lt;object>s taking strings must match the predefined @object-datatype for the verb.</rule></error>
+    <group affects-element="subject object" affects-attribute="content-datatype">
+        <error xml:id="clm03"><rule>&lt;subject>s' and &lt;object>s' content must be castable to any datatype constraints defined by the verb.</rule></error>
     </group>
-    <group affects-element="object" affects-attribute="object-lexical-constraint">
-        <error xml:id="clm04"><rule>&lt;object>s taking strings for verbs that have lexical constraints must match those lexical constraints.</rule></error>
-    </group>
-    <group affects-attribute="subject" affects-element="claim subject">
-        <error xml:id="clm05"><rule>Every &lt;claim> must have at least one subject, either @subject (self or ancestral &lt;body>) or a child &lt;subject></rule></error>
+    <group affects-element="subject object" affects-attribute="content-lexical-constraint">
+        <error xml:id="clm04"><rule>&lt;subject>s' and &lt;object>s' content must match any lexical constraints defined by the verb.</rule></error>
     </group>
     <group affects-attribute="verb" affects-element="claim">
-        <error xml:id="clm07"><rule>Every &lt;claim> must have at least one verb, either @verb (self or ancestral &lt;body>)</rule></error>
-        <error xml:id="vrb01"><rule>For verbs of the group "claim object" every object must be a claim.</rule></error>
-        <error xml:id="vrb02"><rule>Verbs of the group "one object" must have exactly one object.</rule></error>
-        <error xml:id="vrb03"><rule>Verbs of the group "one or more at refs" must have one or more &lt;at-ref>s.</rule></error>
-        <error xml:id="vrb04"><rule>Verbs of the group "one or more objects" must have one or more objects.</rule></error>
-        <error xml:id="vrb05"><rule>For verbs of the group "textual artefact object" every object must be a textual artefact (source, scriptum, work, version).</rule></error>
-        <error xml:id="vrb06"><rule>For verbs of the group "textual artefact subject" every subject must be a textual artefact (source, scriptum, work, version).</rule></error>
-        <error xml:id="vrb08"><rule>For verbs of the group "textual object" every object must be a textual passage or a textual entity.</rule></error>
-        <error xml:id="vrb09"><rule>For verbs of the group "textual subject" every subject must be a textual passage or a textual entity.</rule></error>
-        <error xml:id="vrb10"><rule>Verbs may take &lt;at-ref> only if they are members of the group "one at ref" or "one or more at refs"</rule></error>
-        <error xml:id="vrb11"><rule>Verbs of the group "zero objects" may take no objects.</rule></error>
-        <error xml:id="vrb12"><rule>Verbs that take &lt;in-lang> must be of the group "allows in-lang"</rule></error>
+        <error xml:id="clm07"><rule>Every &lt;claim> must have or inherit at least one verb.</rule></error>
+        <error xml:id="clm08"><rule>Every &lt;claim> must respect constraints defined by the verb.</rule></error>
+        <error xml:id="clm09"><rule>No &lt;claim> with a verb that disallows an element may have another verb that requires that same element.</rule></error>
     </group>
     
     <!-- TAN-A-lm ERRORS -->

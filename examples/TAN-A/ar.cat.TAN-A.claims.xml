@@ -35,7 +35,6 @@
                 <name>Stylesheet to create a TAN file.</name>
                 <location href="../../applications/convert/convert%20TAN%202018%20to%20TAN%202020.xsl" accessed-when="2018-08-05T01:05:10.039-04:00"/>
             </algorithm>
-            <role xml:id="stylesheet" which="stylesheet"/>
             <person xml:id="andronicus">
                 <IRI>https://inpho.cogs.indiana.edu/thinker/2532</IRI>
                 <IRI>http://dbpedia.org/resource/Andronicus_of_Rhodes</IRI>
@@ -121,23 +120,48 @@
             <work xml:id="π" which="Commentarium graecum Porphyrii"/>
             <work xml:id="δ" which="Commentarium graecum Dexippi"/>
             <work xml:id="α" which="Lemmata de commentario graeco Ammonii"/>
-            <work xml:id="αc" which="Explanationes de commentario graeco Ammonii"/>
-            <alias xml:id="αd" idrefs="α αc"/>
+            <work xml:id="α.c" which="Explanationes de commentario graeco Ammonii"/>
+            <alias xml:id="α.d" idrefs="α α.c"/>
             <work xml:id="φ" which="Lemmata de commentario graeco Ioannis Philoponi"/>
-            <work xml:id="φc" which="Explanationes de commentario graeco Ioannis Philoponi"/>
-            <alias xml:id="φd" idrefs="φ φc"/>
+            <work xml:id="φ.c" which="Explanationes de commentario graeco Ioannis Philoponi"/>
+            <alias xml:id="φ.d" idrefs="φ φ.c"/>
             <work xml:id="ο" which="Lemmata de commentario graeco Olympiodori"/>
-            <work xml:id="οc" which="Explanationes de commentario graeco Olympiodori"/>
-            <alias xml:id="οd" idrefs="ο οc"/>
+            <work xml:id="ο.c" which="Explanationes de commentario graeco Olympiodori"/>
+            <alias xml:id="ο.d" idrefs="ο ο.c"/>
             <work xml:id="η" which="Lemmata de commentario graeco Eliae"/>
-            <work xml:id="ηc" which="Explanationes de commentario graeco Eliae"/>
-            <alias xml:id="ηd" idrefs="η ηc"/>
+            <work xml:id="η.c" which="Explanationes de commentario graeco Eliae"/>
+            <alias xml:id="η.d" idrefs="η η.c"/>
             <work xml:id="σ" which="Lemmata de commentario graeco Simplicii"/>
-            <work xml:id="σc" which="Explanationes de commentario graeco Simplicii"/>
-            <alias xml:id="σd" idrefs="σ σc"/>
-            <alias xml:id="comm-omnes" idrefs="π δ αd φd οd ηd σd"/>
+            <work xml:id="σ.c" which="Explanationes de commentario graeco Simplicii"/>
+            <alias xml:id="σ.d" idrefs="σ σ.c"/>
+            <alias xml:id="comm-omnes" idrefs="π δ α.d φ.d ο.d η.d σ.d"/>
             
             <verb which="refers or alludes to" xml:id="refers-to"/>
+            <verb xml:id="om">
+                <IRI>tag:parkj@textalign.net,2015:verb:omits</IRI>
+                <name>omits</name>
+                <name>omits text</name>
+                <desc>The subject omits/omitted certain text</desc>
+                <desc>This verb is similar to the standard TAN verb
+                    "lacks", but expands the definition to persons.</desc>
+                <constraints>
+                    <subject status="required" item-type="person work version scriptum"/>
+                    <at-ref status="required"/>
+                    <object status="disallowed"/>
+                </constraints>
+            </verb>
+            <verb xml:id="attests">
+                <IRI>tag:parkj@textalign.net,2015:verb:attests-to</IRI>
+                <name>attests</name>
+                <name>attests to</name>
+                <desc>The subject attests to the text found in the object</desc>
+                <desc>This verb is similar to the standard TAN verb
+                    "matches", but expands the definition to persons.</desc>
+                <constraints>
+                    <subject status="required" item-type="person work version scriptum"/>
+                    <object status="required" item-type="ref"/>
+                </constraints>
+            </verb>
             
             <modal which="possibly" xml:id="perhaps"/>
             <person xml:id="park">
@@ -167,7 +191,7 @@
     </head>
     <body claimant="xslt1">
         <!-- examples of claims relevant to the apparatus criticus -->
-        <comment when="2017-03-10-05:00" who="park">The following two claims interpret
+        <comment when="2017-03-10-05:00" who="park">The next two claims interpret
             Minio-Paluello's apparatus criticus entry for 1a2, which claims that Andronicus and
             Boethus might have omitted τῆς οὐσίας (based on what Porphyry and Dexippus say) and
             asserts that the reading adopted is found in the seven commentators. This interpretation
@@ -177,18 +201,23 @@
             careful reading of these texts shows that Porphyry claimed not that Andronicus and
             Boethus omitted the text, or relied on sources that had omitted it, but that they
             observed that there were manuscripts that had done so.</comment>
-        <claim subject="dexippus porphyry">
-            <claim subject="andronicus boethus" adverb="perhaps" verb="lacks_text">
-                <at src="grc" ref="1 a 2">
-                    <tok pos="3-4"/>
-                </at>
-            </claim>
+        <claim subject="andronicus boethus" adverb="perhaps" verb="om" xml:id="cl1a2a">
+            <at-ref src="grc" ref="1 a 2">
+                <tok pos="3-4"/>
+            </at-ref>
         </claim>
-        <claim subject="herminus comm-omnes" verb="matches">
+        <claim subject="δ π" verb="shows" object="cl1a2a"/>
+        <claim subject="comm-omnes" verb="attests">
             <object src="grc" ref="1 a 2">
                 <tok pos="3-4"/>
             </object>
         </claim>
+        <claim subject="comm-omnes" verb="attests" xml:id="cl1a2b">
+            <object src="grc" ref="1 a 2">
+                <tok pos="3-4"/>
+            </object>
+        </claim>
+        <claim subject="π" verb="shows" object="cl1a2b"/>
         <comment when="2017-03-10" who="park">The next three claims assert that the reading, ἀποδιδῷ
             τις, is attested to by π α φ ο but B transposes the words, and perhaps Boethius does as
             well. The claim sticks close to M-P's syntax, and does not fill in statements he would
@@ -196,15 +225,15 @@
             translation perhaps transposed the words, but that Boethius was perhaps following one or
             more Greek manuscripts that did.</comment>
         <claim subject="B" verb="reads">
-            <at src="grc" ref="1 a 5">
+            <at-ref src="grc" ref="1 a 5">
                 <tok pos="1-2"/>
-            </at>
+            </at-ref>
             <object>τις ἀποδιδῷ</object>
         </claim>
         <claim subject="Λ" adverb="perhaps" verb="reads">
-            <at src="grc" ref="1 a 5">
+            <at-ref src="grc" ref="1 a 5">
                 <tok pos="1-2"/>
-            </at>
+            </at-ref>
             <object>τις ἀποδιδῷ</object>
         </claim>
         <claim subject="π α φ ο" verb="matches">

@@ -39,7 +39,7 @@ Expansion has been streamlined, to avoid summoning global or in-scope variables 
 
 New errors introduced: wrn07, wrn08, inc05, tan21, inc06, whi05, voc06, loc04
 
-Deleted errors: tan13 (an &lt;alias> should be able to combine different element types, esp. &lt;person> and &lt;organization>; it's up to other elements that use the &lt;alias> @ids to import the correct kinds of vocabulary items); vrb07.
+Deleted errors: tan13 (an &lt;alias> should be able to combine different element types, esp. &lt;person> and &lt;organization>; it's up to other elements that use the &lt;alias> @ids to import the correct kinds of vocabulary items); all vrb error codes (consolidated in clm error codes).
 
 Errors named tky... are now renamed voc...
 
@@ -143,7 +143,13 @@ Standard TAN-voc file for relationships has been removed. If a relationship is d
 
 Standard TAN-voc file for vocabularies has been added. These point to the supplementary TAN-voc files under vocabularies/extra/, to allow for those extra vocabularies to be invoked by means of &lt;vocabulary which=""/> in any TAN file.
 
-group-types.TAN-voc.xml and verbs.TAN-voc.xml have been revised in light of a revision of the hierarchy of textuals. New textual verbs have been introduced accordingly, and structured more clearly. 
+group-types.TAN-voc.xml and verbs.TAN-voc.xml have been revised in light of a revision of the hierarchy of textuals. New textual verbs have been introduced accordingly, and structured more clearly. These groups, however, do not affect validation.
+
+Verbs are now treated as exceptional (the same way tokenization patterns are), and promoted from &lt;item> to &lt;verb>. By default, verbs require a subject and an object, and may allow place or period, and do not allow in-lang or at-ref. Users may now specify the construction of a &lt;verb>s through a child &lt;constraint>s, which specify requirements for subject, object, place, period, in-lang, at-ref, each allowed as a child element. The required @status specifies whether the given element is required, allowed, or disallowed. Subjects and objects may be defined according to an item type (the name of the element expected, in @item-type). An object may be defined as a datatype (@content-datatype), with an optional regular expression defining the datatype's lexical constraint (@content-lexical-constraint).
+
+Error reporting on claims has now been generalized according to constraints specified under a &lt;verb>'s vocabulary.
+
+Claims may now take @xml:id, allowing them to be referenced as vocabulary, and to be made parts of claims. Therefore claims may now not only nest, but become the subject or object of claims that are not ancestors.
 
 ## Extra functions
 
