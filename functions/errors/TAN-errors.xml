@@ -34,7 +34,7 @@
     </group>
     <group affects-attribute="xml:id id">
         <error xml:id="tan03"><rule>@xml:id values may not be repeated in the same document.</rule></error>
-        <warning xml:id="tan12"><rule>For imported vocabulary, a &lt;name> may be invoked directly, without assigning it to an @xml:id.</rule></warning>
+        <warning xml:id="tan12"><rule>An @xml:id on a vocabulary item need not duplicate a &lt;name>.</rule></warning>
     </group>
     <group affects-attribute="href" affects-element="location master-location">
         <error xml:id="tan08"><rule>@href must have &lt;location> or &lt;master-location> as a parent; any other parent will trigger a quick fix to populate the element with the IRI + name pattern of the target file.</rule></error>
@@ -294,9 +294,6 @@
     </group>
     <group affects-element="IRI item">
         <error xml:id="voc04"><rule>Every item in a reserved TAN-voc must have at least one IRI with a tag URN in the TAN namespace</rule></error>
-    </group>
-    <group affects-element="item" affects-attribute="object-datatype object-lexical-constraint">
-        <error xml:id="voc05"><rule>An item may take @object-datatype and @object-lexical-constraint only if the governing @affects-element is set to 'verb'</rule></error>
     </group>
     
     <!-- TAN-mor ERRORS -->

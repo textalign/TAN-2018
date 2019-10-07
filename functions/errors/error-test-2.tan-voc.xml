@@ -28,7 +28,7 @@
         </successor>
         <adjustments/>
         <vocabulary-key>
-            <!-- wrn09 or loc01 (if internet is available) -->
+            <!-- wrn09 or loc04 (if internet is available) -->
             <algorithm xml:id="xslt3">
                 <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
                 <name>Stylesheet to create a TAN file.</name>
@@ -69,19 +69,28 @@
         </item>
         <!-- voc03 voc06 -->
         <group affects-element="div-type body vocabulary">
-            <!-- voc04 voc05 -->
-            <item object-datatype="string">
+            <!-- voc04 -->
+            <verb>
                 <!-- tan09 -->
                 <IRI>tag:sample.com,2000:duplicateiri</IRI>
                 <!-- voc02 -->
                 <name>another</name>
-            </item>
+                <constraints>
+                    <object status="required" content-datatype="string"/>
+                </constraints>
+            </verb>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:bibliography</IRI>
                 <!-- tan09 -->
                 <IRI>tag:sample.com,2000:duplicateiri</IRI>
                 <!-- voc01 -->
                 <name>bibliography</name>
+                <!-- voc07 -->
+                <name>Another</name>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:div-type:bibliography:two</IRI>
+                <name>bibliography again</name>
                 <!-- voc07 -->
                 <name>Another</name>
             </item>

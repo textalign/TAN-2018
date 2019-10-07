@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--<?xml-model href="../../schemas/TAN-A.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="../../schemas/TAN-A.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
+<?xml-model href="../../schemas/TAN-A.rnc" type="application/relax-ng-compact-syntax"?>
+<?xml-model href="../../schemas/TAN-A.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <!--<?xml-model href="http://textalign.net/release/TAN-2019/schemas/TAN-A.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="http://textalign.net/release/TAN-2019/schemas/TAN-A.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
 <TAN-A xmlns="tag:textalign.net,2015:ns" TAN-version="2020" id="tag:parkj@textalign.net,2015:ring01-TAN-A-ring02">
@@ -52,6 +52,12 @@
                 <IRI>tag:parkj@textalign.net,2015:verb:resembles</IRI>
                 <name>resembles</name>
             </verb>
+            <scriptum xml:id="böhme">
+                <IRI>http://www.worldcat.org/oclc/4574384</IRI>
+                <name>Franz Magnus Böhme, Deutsches Kinderlied und Kinderspiel: Volksüberlieferungen aus
+                    allen Landen deutscher Zunge, gesammelt, geordnet und mit Angabe der Quellen. Leipzig,
+                    1897.</name>
+            </scriptum>
             <alias id="ring" idrefs="ger eng-us"/>
         </vocabulary-key>
         
@@ -79,8 +85,8 @@
             <subject work="ring" ref="1"/>
             <object work="ring" ref="2"/>
         </claim>
-        <claim verb="lacks" subject="ger">
-            <at src="eng-uk" ref="1"/>
+        <claim verb="lacks_text" subject="böhme">
+            <at-ref src="eng-uk" ref="1"/>
         </claim>
     </body>
 </TAN-A>

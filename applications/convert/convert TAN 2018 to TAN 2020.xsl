@@ -420,7 +420,7 @@
 
     <xsl:variable name="pass-1-resolved" select="tan:resolve-doc($input-pass-1)"/>
     <xsl:variable name="pass-1-agent-vocabulary"
-        select="tan:vocabulary(('person', 'organization'), false(), (), $pass-1-resolved/*/tan:head)"/>
+        select="tan:vocabulary(('person', 'organization'), (), $pass-1-resolved/*/tan:head)"/>
     <xsl:variable name="pass-1-likely-primary-agents"
         select="$pass-1-agent-vocabulary/*[tan:IRI[starts-with(., $doc-id-namespace)]]"/>
     <xsl:variable name="pass-1-likely-primary-agents-consolidated"

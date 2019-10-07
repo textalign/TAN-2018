@@ -1352,13 +1352,15 @@
       <xsl:variable name="this-src-id" select="*/@src"/>
       <xsl:variable name="this-token-definition"
          select="$class-2-doc/*/tan:head/tan:token-definition[tan:src = $this-src-id][1]"/>
+      <!--<xsl:variable name="this-token-definition-attr-which-norm" select="replace($this-token-definition/@which, '\s+', '_')"/>-->
+      <xsl:variable name="this-token-definition-vocabulary" select="tan:vocabulary('token-definition', $this-token-definition/@which, $class-2-doc/*/tan:head)"/>
       <xsl:variable name="this-token-definition-resolved" as="element()">
          <xsl:choose>
             <xsl:when test="exists($this-token-definition/@pattern)">
                <xsl:sequence select="$this-token-definition"/>
             </xsl:when>
-            <xsl:when test="exists($this-token-definition/@which)">
-               <xsl:copy-of select="tan:attribute-vocabulary($this-token-definition/@which)"/>
+            <xsl:when test="$this-token-definition-vocabulary">
+               <xsl:copy-of select="($this-token-definition-vocabulary/(tan:item, tan:token-definition))[1]"/>
             </xsl:when>
             <xsl:otherwise>
                <xsl:sequence select="$token-definition-default"/>

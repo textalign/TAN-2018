@@ -176,7 +176,7 @@
                   <xsl:sequence select="$dependencies[tan:TAN-mor/@morphology = $morphology-ids]"/>
                </xsl:when>
                <xsl:otherwise>
-                  <xsl:variable name="this-vocab" select="tan:vocabulary('morphology', false(), ., root()/tan:TAN-A-lm/tan:head)"/>
+                  <xsl:variable name="this-vocab" select="tan:vocabulary('morphology', ., root()/tan:TAN-A-lm/tan:head)"/>
                   <xsl:variable name="this-tan-mor" select="$dependencies[tan:TAN-mor/@id = $this-vocab/tan:item/tan:IRI]"/>
                   <xsl:sequence select="$this-tan-mor"/>
                </xsl:otherwise>
@@ -253,7 +253,7 @@
                $this-f"
       />
       <xsl:variable name="this-feature-vocabulary"
-         select="tan:vocabulary('feature', false(), $this-id-resolved, root()/tan:TAN-A-lm/tan:head)"
+         select="tan:vocabulary('feature', $this-id-resolved, root()/tan:TAN-A-lm/tan:head)"
       />
       <xsl:variable name="this-voc-item" select="$feature-vocabulary[(@xml:id, tan:id) = $this-id-resolved]"/>
       <xsl:variable name="diagnostics-on" select="false()"/>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns="tag:textalign.net,2015:ns" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tan="tag:textalign.net,2015:ns"
-   xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:tei="http://www.tei-c.org/ns/1.0"
+   xmlns:tei="http://www.tei-c.org/ns/1.0"
    xmlns:math="http://www.w3.org/2005/xpath-functions/math" xmlns:functx="http://www.functx.com"
    xmlns:sch="http://purl.oclc.org/dsdl/schematron" exclude-result-prefixes="#all" version="2.0">
 
@@ -652,8 +652,13 @@
             </xsl:when>
             <xsl:when test="self::tan:vocabulary">
                <xsl:variable name="duplicate-vocab-item-names" as="element()*">
-                  <xsl:for-each-group select="$target-resolved/tan:TAN-voc/tan:body//tan:item"
-                     group-by="tokenize(tan:normalize-text(ancestor-or-self::*[@affects-element][1]/@affects-element), ' ')">
+                  <xsl:for-each-group
+                     select="$target-resolved/tan:TAN-voc/tan:body//(tan:item, tan:verb)"
+                     group-by="
+                        if (self::tan:verb) then
+                           'verb'
+                        else
+                           tokenize(tan:normalize-text(ancestor-or-self::*[@affects-element][1]/@affects-element), ' ')">
                      <xsl:variable name="this-element-name" select="current-grouping-key()"/>
                      <xsl:for-each-group select="current-group()" group-by="tan:name">
                         <xsl:if
@@ -667,14 +672,15 @@
                   </xsl:for-each-group>
                </xsl:variable>
                <xsl:variable name="duplicate-vocab-item-IRIs" as="element()*">
-                  <xsl:for-each-group select="$target-resolved/tan:TAN-voc/tan:body//tan:item"
+                  <xsl:for-each-group select="$target-resolved/tan:TAN-voc/tan:body//(tan:item, tan:verb)"
                      group-by="tan:IRI">
                      <xsl:if
                         test="
                            count(current-group()) gt 1 and (some $i in current-group()
                               satisfies root($i)/*/@id = $target-resolved/*/@id)">
                         <duplicate
-                           affects-element="{distinct-values(for $i in current-group() return tokenize(tan:normalize-text($i/ancestor-or-self::*[@affects-element][1]/@affects-element),' '))}"
+                           affects-element="{distinct-values(for $i in current-group() return 
+                           tokenize(tan:normalize-text($i/ancestor-or-self::*[@affects-element][1]/@affects-element),' ')), (if (exists(current-group()/self::tan:verb)) then 'verb' else ())}"
                            iri="{current-grouping-key()}"/>
                      </xsl:if>
                   </xsl:for-each-group>
@@ -809,25 +815,31 @@
          <xsl:copy-of select="@*"/>
          <xsl:apply-templates mode="#current">
             <xsl:with-param name="ambig-is-roman" select="$ambig-is-roman" tunnel="yes"/>
-            <xsl:with-param name="local-head" select="tan:head" tunnel="yes"/>
+            <xsl:with-param name="vocabulary-nodes" select="tan:head, self::tan:TAN-A/tan:body"
+               tunnel="yes"/>
          </xsl:apply-templates>
       </xsl:copy>
    </xsl:template>
 
-   <xsl:template match="tei:teiHeader" mode="core-expansion-terse-attributes">
+   <xsl:template match="tei:teiHeader | tan:head/tan:vocabulary | tan:head/tan:tan-vocabulary"
+      mode="core-expansion-terse-attributes">
+      <!-- we just deep copy the teiHeader, whose attribute constructions cannot be predicted, and any 
+         vocabulary brought in from resolving the document, since the attributes should have already been
+         expanded or resolved in the context of their original document.
+      -->
       <xsl:copy-of select="."/>
    </xsl:template>
 
    <xsl:template match="*" mode="core-expansion-terse-attributes">
       <xsl:param name="ambig-is-roman" as="xs:boolean?" tunnel="yes"/>
-      <xsl:param name="local-head" tunnel="yes"/>
+      <xsl:param name="vocabulary-nodes" tunnel="yes"/>
       <xsl:variable name="these-errors" select="tan:error"/>
       <xsl:variable name="this-q" select="@q"/>
       <xsl:variable name="this-from" select="tan:dateTime-to-decimal(@from)"/>
       <xsl:variable name="this-to" select="tan:dateTime-to-decimal(@to)"/>
       <xsl:variable name="dates"
          select="$this-from, $this-to, tan:dateTime-to-decimal((self::tan:*/@when, @ed-when, @accessed-when))"/>
-      <!-- We presume each @href has already been resolved -->
+      <!-- We presume each @href was resolved when the document was resolved -->
       <xsl:variable name="this-href" select="@href"/>
       <xsl:variable name="attributes-that-take-idrefs"
          select="
@@ -840,41 +852,68 @@
       <xsl:copy>
          <xsl:copy-of select="@*"/>
 
+         <!-- Process every attribute. For those that permit multiple values, convert the attribute to a series
+         of elements, one value each. -->
+         
          <xsl:for-each select="$attributes-that-take-idrefs">
             <!-- Check @which and attributes that point to vocabulary items -->
             <!-- We exclude @div-type, because it cannot be resolved against anything but the source headers -->
             <xsl:variable name="this-attr-name" select="name(.)"/>
-            <xsl:variable name="these-target-elements" select="tan:target-element-names(.)"/>
-            <xsl:variable name="these-vals"
+            <xsl:variable name="this-is-which" select="$this-attr-name = 'which'"/>
+            <xsl:variable name="these-target-element-names" select="tan:target-element-names(.)"/>
+            <xsl:variable name="these-vals-pass-1"
                select="
-                  if ($this-attr-name = 'which') then
+                  if ($this-is-which) then
                      tan:normalize-name(.)
                   else
-                     tokenize(normalize-space(.), ' ')"/>
-            <xsl:variable name="these-vals-normalized" select="tan:help-extracted($these-vals)"/>
+                     tokenize(normalize-space(.))"
+            />
+            <xsl:variable name="these-vals-normalized" select="tan:help-extracted($these-vals-pass-1)"/>
+            <xsl:variable name="these-distinct-vals" select="distinct-values($these-vals-normalized)"/>
             <xsl:variable name="dupl-values" select="tan:duplicate-items($these-vals-normalized)"/>
-            <xsl:variable name="this-vocabulary" select="tan:attribute-vocabulary(.)"/>
+            <xsl:variable name="any-value-allowed" select="$these-vals-normalized = '*'"/>
+            <!--<xsl:variable name="this-vocabulary" select="tan:attribute-vocabulary(.)"/>-->
+            <xsl:variable name="this-vocabulary" select="tan:vocabulary($these-target-element-names, $these-vals-normalized, $vocabulary-nodes)"/>
+            <xsl:variable name="these-vocabulary-items" select="$this-vocabulary/(* except (tan:IRI, tan:name, tan:desc))"/>
+            <!-- The idea in the next variable is to look for vocabulary items that have ids, names, aliases, etc. that are pointed at by more than one of the attribute refs -->
             <xsl:variable name="vocabulary-pointed-to-more-than-once"
-               select="$this-vocabulary/*[count(distinct-values((@xml:id, @id, tan:id, tan:name)[. = $these-vals-normalized])) gt 1]"/>
+               select="
+                  if (count($these-distinct-vals) gt 1) then
+                     $these-vocabulary-items[count(for $i in $these-distinct-vals
+                     return
+                        if (* = $i) then
+                           $i
+                        else
+                           ()) gt 1]
+                  else
+                     ()"
+            />
             <xsl:variable name="all-permissible-vocabulary-items"
-               select="tan:vocabulary($these-target-elements, false(), (), $local-head)"/>
+               select="tan:vocabulary($these-target-element-names, (), $vocabulary-nodes)"/>
             <xsl:variable name="diagnostics-on" select="false()"/>
             <xsl:if test="$diagnostics-on">
                <xsl:message select="'diagnostics on for ', ."/>
                <xsl:message
-                  select="count($these-vals), 'normalized values: ', string-join($these-vals, ', ')"/>
+                  select="count($these-vals-pass-1), 'normalized values: ', string-join($these-vals-pass-1, ', ')"/>
                <xsl:message select="'these vals parsed: ', $these-vals-normalized"/>
                <xsl:message select="'this vocabulary: '"/>
                <xsl:message select="$this-vocabulary"/>
             </xsl:if>
+            <!-- If tan:vocabulary() finds errors, copy them. -->
             <xsl:copy-of select="$this-vocabulary/self::tan:error"/>
+            <xsl:if test="not(exists($these-vals-pass-1))">
+               <xsl:copy-of
+                  select="
+                     if ($this-is-which) then
+                        tan:error('whi01')
+                     else
+                        tan:error('tan05')"
+               />
+            </xsl:if>
             <xsl:if test="exists($dupl-values)">
                <xsl:variable name="this-message"
                   select="concat('duplicate values: ', string-join($dupl-values, ', '))"/>
                <xsl:copy-of select="tan:error('tan06', $this-message)"/>
-            </xsl:if>
-            <xsl:if test="count($these-vals) = 0">
-               <xsl:copy-of select="tan:error('tan05')"/>
             </xsl:if>
             <xsl:for-each select="$vocabulary-pointed-to-more-than-once">
                <xsl:variable name="these-duplicate-refs"
@@ -885,17 +924,53 @@
             </xsl:for-each>
             <xsl:for-each select="$these-vals-normalized">
                <xsl:variable name="this-val" select="text()"/>
+               <xsl:variable name="this-is-joker" select="$this-val = '*'"/>
                <xsl:variable name="this-val-esc" select="tan:escape($this-val)"/>
                <xsl:variable name="preexisting-error"
                   select="$these-errors[tan:item/(tan:id, tan:name) = $this-val]"/>
-               <xsl:element name="{$this-attr-name}">
-                  <xsl:attribute name="attr"/>
-                  <xsl:value-of select="$this-val"/>
-               </xsl:element>
-               <xsl:if test="exists(@help) or exists($preexisting-error)">
+               <xsl:variable name="vocab-items-available" select="$this-vocabulary/(* except tan:IRI, tan:name, tan:desc)"/>
+               <xsl:variable name="vocab-items-pointed-to-by-id" select="$vocab-items-available[(tan:id, tan:alias) = $this-val]"/>
+               <xsl:variable name="vocab-items-pointed-to-by-name"
+                  select="
+                     if (not(exists($vocab-items-pointed-to-by-id))) then
+                        $vocab-items-available[tan:name = tan:normalize-name($this-val)]
+                     else
+                        ()"
+               />
+               <xsl:variable name="item-is-erroneous"
+                  select="not($this-is-joker) and not(exists($vocab-items-pointed-to-by-id)) and not(exists($vocab-items-pointed-to-by-name))"
+               />
+               
+               <xsl:variable name="diagnostics-on" select="$this-val = 'cpg2430'"/>
+               <xsl:if test="$diagnostics-on">
+                  <xsl:message select="'Diagnostics on template mode core-expansion-terse-attributes, on individual value for attr', $this-attr-name"/>
+                  <xsl:message select="'This value:', $this-val"/>
+                  <xsl:message select="'Vocab items available: ', $vocab-items-available"/>
+                  <xsl:message select="'Vocab items pointed to by id:', $vocab-items-pointed-to-by-id"/>
+                  <xsl:message select="'Vocab items pointed to by name:', $vocab-items-pointed-to-by-name"/>
+               </xsl:if>
+               
+               <xsl:if test="$item-is-erroneous">
+                  <xsl:variable name="this-message"
+                     select="concat($this-val, ' matches no id')"/>
+                  <xsl:variable name="this-fix" as="element()">
+                     <xsl:element name="{$these-target-element-names[1]}">
+                        <xsl:attribute name="xml:id" select="$this-val"/>
+                        <xsl:attribute name="which"/>
+                     </xsl:element>
+                  </xsl:variable>
+                  <xsl:copy-of
+                     select="
+                        if ($this-is-which) then
+                           tan:error('whi01', $this-message, $this-fix, 'add-vocabulary-key-item')
+                        else
+                           tan:error('tan05', $this-message, $this-fix, 'add-vocabulary-key-item')"
+                  />
+               </xsl:if>
+               <xsl:if test="exists(@help) or $item-is-erroneous">
                   <xsl:variable name="this-fix" as="element()*">
                      <xsl:for-each
-                        select="$all-permissible-vocabulary-items/*[not(@q = $this-q)][name() = ('item', $these-target-elements)]">
+                        select="$all-permissible-vocabulary-items/*[not(@q = $this-q)][name() = ('item', $these-target-element-names)]">
                         <xsl:sort
                            select="
                               some $i in (@*, *)
@@ -917,12 +992,41 @@
                      select="concat($this-message-preamble, string-join($this-fix/@*, '; '))"/>
                   <xsl:copy-of select="tan:help($this-message, $this-fix, 'copy-attributes')"/>
                </xsl:if>
+               
+               <xsl:if test="$this-is-joker">
+                  <xsl:for-each select="$vocab-items-available">
+                     <xsl:element name="{$this-attr-name}">
+                        <xsl:attribute name="attr"/>
+                        <xsl:value-of select="tan:id[1]"/>
+                        <xsl:if test="$distribute-vocabulary = true()">
+                           <xsl:copy-of select="."/>
+                        </xsl:if>
+                     </xsl:element>
+                  </xsl:for-each>
+               </xsl:if>
+               <xsl:element name="{$this-attr-name}">
+                  <xsl:attribute name="attr"/>
+                  <xsl:value-of select="$this-val"/>
+                  <xsl:if test="$distribute-vocabulary = true()">
+                     <xsl:copy-of
+                        select="
+                           if (exists($vocab-items-pointed-to-by-id)) then
+                              $vocab-items-pointed-to-by-id
+                           else
+                              $vocab-items-pointed-to-by-name"
+                     />
+                  </xsl:if>
+               </xsl:element>
+               
             </xsl:for-each>
             <!-- The values might yield vocabulary ids that aren't in the original values (e.g., '*'), so expansion should include them -->
             <xsl:for-each select="$this-vocabulary/*/@xml:id[not(. = $these-vals-normalized)]">
                <xsl:element name="{$this-attr-name}">
                   <xsl:attribute name="attr"/>
                   <xsl:value-of select="."/>
+                  <xsl:if test="$distribute-vocabulary = true()">
+                     <xsl:copy-of select=".."/>
+                  </xsl:if>
                </xsl:element>
             </xsl:for-each>
             <xsl:if test="$this-vocabulary/*/tan:name = $this-id">
@@ -1019,7 +1123,7 @@
             </new>
          </xsl:if>
          <!-- default behavior for any other attributes left over -->
-         <xsl:apply-templates select="@code, @val, @rgx, @div-type, @affects-element, @by, @item-type"
+         <xsl:apply-templates select="@code, @val, @rgx, @div-type, @affects-element, @affects-attribute, @by, @item-type, @in-lang"
             mode="#current"/>
          <xsl:apply-templates mode="#current"/>
       </xsl:copy>

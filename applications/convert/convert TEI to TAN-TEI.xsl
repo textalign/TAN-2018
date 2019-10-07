@@ -60,7 +60,7 @@
         </xsl:for-each>
     </xsl:variable>
     <!--<xsl:variable name="agent-glossary" select="tan:glossary('person', (), $extra-vocabularies-cleaned, ()), tan:glossary('organization', (), $extra-vocabularies-cleaned, ())"/>-->
-    <xsl:variable name="agent-glossary" select="tan:vocabulary(('person', 'organization'), false(), '*', $self-resolved/*/tan:head)"/>
+    <xsl:variable name="agent-glossary" select="tan:vocabulary(('person', 'organization'), ())"/>
 
     <!-- These parameters modify the core TAN output stylesheet -->
     <xsl:variable name="stylesheet-iri"
@@ -357,8 +357,7 @@
     </xsl:template>
     <!--<xsl:variable name="div-type-glossary"
         select="tan:glossary('div-type', (), $extra-vocabularies-cleaned, ())"/>-->
-    <xsl:variable name="div-type-glossary"
-        select="tan:vocabulary('div-type', false(), '*', $self-resolved/*/tan:head)"/>
+    <xsl:variable name="div-type-glossary" select="tan:vocabulary('div-type', ())"/>
     <xsl:template match="tan:div-type[not(exists(following-sibling::tan:div-type))]"
         mode="build-div-types-and-clean-ns">
         <xsl:copy-of select="."/>

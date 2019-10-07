@@ -136,7 +136,7 @@
          </xsl:variable>
 
          <!-- step: resolve vocabulary -->
-         <!-- this step does not mark as erroneous any vocabulary that's missing. It merely reduces the vocabulary to the entities that are cited, and imprints them in the host file -->
+         <!-- this step does not mark as erroneous any vocabulary that's missing. It merely isolates every cited vocabulary items that can be found, and imprints them in the host file -->
          <xsl:variable name="doc-with-vocabulary-resolved" as="document-node()">
             <xsl:choose>
                <xsl:when test="$resolve-vocabulary = false()">
@@ -178,7 +178,7 @@
                   </xsl:variable>
                   <!-- Step 3: embed results of step 2 in the main document -->
                   <xsl:variable name="this-n-vocabulary"
-                     select="tan:vocabulary('n', true(), (), $doc-with-inclusions-resolved/*/tan:head)"/>
+                     select="tan:vocabulary('n', (), $doc-with-inclusions-resolved/(*/tan:head, tan:TAN-A/tan:body))"/>
                   <xsl:variable name="doc-with-vocabulary-imprinted" as="document-node()">
                      <xsl:apply-templates select="$doc-with-inclusions-resolved"
                         mode="imprint-vocabulary">
@@ -737,9 +737,7 @@
       <xsl:param name="tan-voc-files-reduced" tunnel="yes" as="document-node()*"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
-         <xsl:apply-templates mode="#current">
-            <xsl:with-param name="aliases" select="tan:alias" tunnel="yes"/>
-         </xsl:apply-templates>
+         <xsl:apply-templates mode="#current"/>
       </xsl:copy>
       <!-- Copy the relevant parts of the standard TAN vocabulary, after the <vocabulary-key> -->
       <xsl:copy-of select="$tan-voc-files-reduced/tan:tan-vocabulary[(tan:item, tan:verb)]"/>
@@ -747,7 +745,7 @@
    <xsl:template match="tan:alias" priority="1" mode="imprint-vocabulary">
       <xsl:copy-of select="."/>
    </xsl:template>
-   <xsl:template match="tan:vocabulary-key/*[@xml:id][tan:name] | tan:claim[@xml:id]" mode="imprint-vocabulary">
+   <xsl:template match="*/*[@xml:id]" mode="imprint-vocabulary">
       <xsl:param name="aliases" as="element()*" tunnel="yes"/>
       <xsl:variable name="this-id" select="@xml:id"/>
       <xsl:variable name="these-aliases" select="$aliases[tan:idref = $this-id]"/>
@@ -765,7 +763,7 @@
       </xsl:copy>
    </xsl:template>
    <xsl:template match="tan:body" mode="imprint-vocabulary">
-      <!-- TAN-A overrides this template because it might have claims with @xml:ids to be processed -->
+      <!-- in the master TAN-A function file, this template is overridden; TAN-A files might have claims with @xml:ids to be processed -->
       <xsl:copy-of select="."/>
    </xsl:template>
 
@@ -1010,7 +1008,7 @@
                         <xsl:variable name="n-vocabulary"
                            select="
                               if ($names-of-elements-of-interest = 'div') then
-                                 tan:vocabulary('n', true(), (), $this-inclusion-doc-lightly-resolved/*/tan:head, true())
+                                 tan:vocabulary('n', (), $this-inclusion-doc-lightly-resolved/(*/tan:head, tan:TAN-A/tan:body))
                               else
                                  ()"/>
                         <xsl:variable name="n-alias-constraints"
@@ -1019,9 +1017,6 @@
                            <xsl:message select="'ambig #s are roman: ', $ambig-is-roman"/>
                            <xsl:message select="'n vocabulary: ', $n-vocabulary"/>
                            <xsl:message select="'n alias constraints: ', $n-alias-constraints"/>
-                           <xsl:message
-                              select="'test: ', tan:vocabulary('div-type', false(), 'bk', $this-inclusion-doc-with-inclusions-resolved/*/tan:head, true())"
-                           />
                         </xsl:if>
                         <xsl:apply-templates select="$substitutes-stamped" mode="resolve-numerals">
                            <xsl:with-param name="ambig-is-roman" select="$ambig-is-roman"
@@ -1058,7 +1053,9 @@
          <xsl:copy-of select="@*"/>
          <!-- The next element signifies that the file has been resolved, and to interpret it, one need no longer access any vocabulary, whether standard or special -->
          <resolved>vocabulary</resolved>
-         <xsl:apply-templates mode="#current"/>
+         <xsl:apply-templates mode="#current">
+            <xsl:with-param name="aliases" select="tan:head/tan:vocabulary-key/tan:alias" tunnel="yes"/>
+         </xsl:apply-templates>
       </xsl:copy>
    </xsl:template>
 

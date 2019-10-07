@@ -599,8 +599,7 @@
                (map:get($morpheus-map, $i), $i)[1]"/>
       <xsl:for-each select="$these-vals-norm">
          <!--<xsl:variable name="this-glossary" select="tan:glossary('feature', .)"/>-->
-         <xsl:variable name="this-glossary"
-            select="tan:vocabulary('feature', false(), ., $self-resolved/*/tan:head)"/>
+         <xsl:variable name="this-glossary" select="tan:vocabulary('feature', .)"/>
          <feature>
             <xsl:copy-of select="$this-glossary[1]/(* except tan:desc)"/>
          </feature>

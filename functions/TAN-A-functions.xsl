@@ -286,8 +286,8 @@
       <xsl:param name="inherited-subjects" tunnel="yes"/>
       <xsl:param name="inherited-verbs" tunnel="yes"/>
       <xsl:variable name="vocabulary-parents" select="root()/*/*"/>
-      <xsl:variable name="immediate-subject-refs" select="tan:subject"/>
-      <xsl:variable name="immediate-verb-refs" select="tan:verb"/>
+      <xsl:variable name="immediate-subject-refs" select="tan:subject[@attr]/text(), tan:subject[@src or @work]"/>
+      <xsl:variable name="immediate-verb-refs" select="tan:verb/text()"/>
 
       <!-- subjects -->
       <xsl:variable name="these-subject-refs"
@@ -303,7 +303,7 @@
          select="
             for $i in $these-entity-subject-refs
             return
-               tan:vocabulary($subjects-target-what-elements-names, false(), $i, $vocabulary-parents, false())"/>
+               tan:vocabulary($subjects-target-what-elements-names, $i, $vocabulary-parents)"/>
       <xsl:variable name="these-entity-subject-vocab-items"
          select="$this-entity-subject-vocab/(* except (tan:IRI, tan:name, tan:desc, tan:location, tan:comment))"/>
       <xsl:variable name="these-subject-textual-entities"
@@ -326,7 +326,8 @@
          select="
             for $i in $these-verb-refs
             return
-               tan:vocabulary('verb', false(), $i, $vocabulary-parents, false())"/>
+               tan:vocabulary('verb', $i, $vocabulary-parents)"
+      />
       <xsl:variable name="these-verb-vocab-items"
          select="$this-verb-vocab/(* except (tan:IRI, tan:name, tan:desc, tan:location, tan:comment))"/>
       <xsl:variable name="verbs-that-disallow-subjects" select="$these-verb-vocab-items[tan:constraints/tan:subject/@status = 'disallowed']"/>
@@ -364,7 +365,8 @@
          select="
             for $i in $these-entity-object-refs
             return
-               tan:vocabulary($objects-target-what-elements-names, false(), $i, $vocabulary-parents, false())"/>
+               tan:vocabulary($objects-target-what-elements-names, $i, $vocabulary-parents)"
+      />
       <xsl:variable name="these-entity-object-vocab-items"
          select="$this-entity-object-vocab/(* except (tan:IRI, tan:name, tan:desc, tan:location, tan:comment))"/>
       <xsl:variable name="these-object-textual-entities"
@@ -421,7 +423,7 @@
             <xsl:copy-of select="tan:error('clm02')"/>
          </xsl:if>
          <xsl:if test="not(exists($these-subject-refs)) and exists($verbs-that-require-subjects)">
-            <xsl:copy-of select="tan:error('clm08', concat('The verb ', string-join($verbs-that-require-subjects/tan:name[1], ', '), ' require a subject'))"/>
+            <xsl:copy-of select="tan:error('clm08', concat('The verb ', string-join($verbs-that-require-subjects/tan:name[1], ', '), ' requires a subject'))"/>
          </xsl:if>
          <xsl:if test="exists($these-subject-refs) and exists($verbs-that-disallow-subjects)">
             <xsl:copy-of select="tan:error('clm08', concat('The verb ', string-join($verbs-that-disallow-subjects/tan:name[1], ', '), ' disallow a subject'))"/>
@@ -564,10 +566,11 @@
       <xsl:param name="verbs" as="element()*"/>
       <xsl:variable name="vocabulary-parents" select="root()/*/*"/>
       <xsl:variable name="this-name" select="name(.)"/>
+      <xsl:variable name="target-element-names" select="tan:target-element-names($this-name)"/>
       <xsl:variable name="these-constraint-rules" select="$verbs/tan:constraints/*[name(.) = $this-name]"/>
       <xsl:variable name="these-content-constraints" select="$these-constraint-rules[exists(@content-datatype)]"/>
       <xsl:variable name="these-item-type-constraints" select="$these-constraint-rules[@item-type]"/>
-      <xsl:variable name="this-text" select="normalize-space(.)"/>
+      <xsl:variable name="this-text" select="normalize-space(string-join(text(), ''))"/>
       <xsl:variable name="this-ref" select="@ref"/>
       <xsl:variable name="this-idref"
          select="
@@ -579,7 +582,7 @@
       <xsl:variable name="this-vocabulary"
          select="
             if (exists($this-idref)) then
-               tan:vocabulary($this-name, exists(@which), $this-idref, $vocabulary-parents)
+               tan:vocabulary($target-element-names, $this-idref, $vocabulary-parents)
             else
                ()"
       />
@@ -589,14 +592,10 @@
             return
                (name($i), $i/(tan:affects-element, tan:affects-attribute))"
       />
-      <xsl:if test="$this-text = 'cl1a1a'">
-         <test14a><xsl:copy-of select="$this-vocabulary"/></test14a>
-         <test14b></test14b>
-      </xsl:if>
       <xsl:for-each select="$these-item-type-constraints">
          <xsl:variable name="these-types-allowed" select="tokenize(normalize-space(@item-type), ' ')"/>
          <xsl:variable name="ref-allowed-and-found" select="exists($this-ref) and $these-types-allowed = 'ref'"/>
-         <xsl:variable name="acceptable-vocabulary" select="tan:vocabulary($these-types-allowed, false(), '*', $vocabulary-parents)"/>
+         <xsl:variable name="acceptable-vocabulary" select="tan:vocabulary($these-types-allowed, '*', $vocabulary-parents)"/>
          <xsl:if test="not($these-types-allowed = '*') and not($ref-allowed-and-found) and not($these-types-allowed = $target-element-names)">
             <xsl:copy-of
                select="

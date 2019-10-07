@@ -64,7 +64,7 @@
          </xsl:apply-templates>
       </xsl:copy>
    </xsl:template>
-   <xsl:template match="tan:item" mode="core-expansion-terse">
+   <xsl:template match="tan:item | tan:verb" mode="core-expansion-terse">
       <xsl:param name="is-reserved" as="xs:boolean?" tunnel="yes"/>
       <xsl:param name="inherited-affects-elements" tunnel="yes"/>
       <xsl:variable name="immediate-affects-elements" select="tan:affects-element"/>
@@ -98,9 +98,6 @@
                </IRI>
             </xsl:variable>
             <xsl:copy-of select="tan:error('voc04', (), $this-fix, 'prepend-content')"/>
-         </xsl:if>
-         <xsl:if test="not(every $i in $these-affects-elements satisfies $i = 'verb') and (exists(@object-datatype) or exists(@object-lexical-constraint))">
-            <xsl:copy-of select="tan:error('voc05')"/>
          </xsl:if>
          <xsl:apply-templates mode="#current">
             <xsl:with-param name="reserved-vocabulary-items" select="$reserved-vocabulary-items"/>

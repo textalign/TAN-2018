@@ -21,7 +21,7 @@
     <xsl:variable name="change-message" select="'Converted from TAN-TEI to TAN-T.'"/>
 
     <!--<xsl:variable name="div-type-glossary" select="tan:glossary('div-type', '')"/>-->
-    <xsl:variable name="div-type-glossary" select="tan:vocabulary('div-type', false(), '*', $self-resolved/*/tan:head)"/>
+    <xsl:variable name="div-type-glossary" select="tan:vocabulary('div-type', '*', $doc-vocabulary)"/>
     <xsl:variable name="div-type-glossary-for-tei-element"
         select="$div-type-glossary/*[tan:name[matches(., '^tei ')]]"/>
 
