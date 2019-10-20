@@ -38,7 +38,7 @@
     </group>
     <group affects-attribute="href" affects-element="location master-location">
         <error xml:id="tan08"><rule>@href must have &lt;location> or &lt;master-location> as a parent; any other parent will trigger a quick fix to populate the element with the IRI + name pattern of the target file.</rule></error>
-        <warning xml:id="wrn01"><rule>If an @href points to a local file that is not available, a warning will be returned.</rule><message>@href points to file that is either (1) not available or (2) not valid XML.</message></warning>
+        <warning xml:id="wrn01"><rule>If an @href points to a local file that is not available, a warning will be returned.</rule><message>@href points to file that is either (1) not available or (2) not valid XML</message></warning>
         <warning xml:id="wrn10"><rule>If an @href points to a file that is not local, and no internet is available, a warning will be returned.</rule><message>No internet access.</message></warning>
         <warning xml:id="wrn11"><rule>If the internet is available, and an @href points to a non-local file that is not available, a warning will be returned.</rule><message>@href points to non-local file that is either (1) not available, (2) not valid XML, or (3) at a server not trusted by the validation engine.</message></warning>
         <error xml:id="tan16"><rule>The only @href in a TAN document that may point to another document with the same document id is that of &lt;master-location> or &lt;see-also></rule></error>
@@ -92,14 +92,16 @@
     </group>
     <group affects-attribute="include" affects-element="inclusion">
         <error xml:id="inc02"><rule>For any element with @include, at least one element of the same name must be found in target inclusion document.</rule></error>
-        <error xml:id="inc03"><rule>Inclusions may not be circular.</rule></error>
         <fatal xml:id="inc04"><rule>Inclusions are integral parts of any TAN file. Access to at least one copy is absolutely mandatory.</rule></fatal>
     </group>
     <group affects-element="inclusion vocabulary">
+        <error xml:id="inc03"><rule>Inclusions/vocabularies may not be invoked circularly.</rule></error>
+    </group>
+    <group affects-element="inclusion vocabulary TAN-voc">
         <fatal xml:id="inc05"><rule>The vocabulary of a file may not include it.</rule></fatal>
     </group>
     <group affects-element="inclusion vocabulary" affects-attribute="TAN-version">
-        <error xml:id="inc06"><rule>Inclusions and vocabularies must match the host @TAN-version.</rule></error>
+        <warning xml:id="inc06"><rule>The @TAN-version for inclusions and vocabularies should match the current version.</rule></warning>
     </group>
     <group affects-element="location inclusion see-also source vocabulary redivision annotation model predecessor successor algorithm">
         <error xml:id="loc01"><rule>An element that has a &lt;location> and is key for validation should have at least one document available.</rule></error>
@@ -109,6 +111,9 @@
         <warning xml:id="wrn05"><rule>If a target file has a &lt;successor> a warning will be returned, noting the update.</rule></warning>
         <warning xml:id="wrn08"><rule>If an element's &lt;location> is faulty and if a catalog file entry is found pointing to a document with the same IRI, location information on those alternative locations will be returned</rule></warning>
         <warning xml:id="wrn09"><rule>If a target file points only to non-local locations and no internet is available, the following message will be returned.</rule><message>No internet available.</message></warning>
+    </group>
+    <group affects-element="location inclusion source vocabulary redivision model annotation predecessor successor">
+        <error xml:id="lnk07">If a linking element points to a file that must be resolved, that file must be a TAN file.</error>
     </group>
     <group affects-element="location algorithm see-also">
         <warning xml:id="loc04"><rule>If an element not essential to validation has no &lt;location> that points to a document a warning should be returned.</rule></warning>
@@ -159,8 +164,6 @@
         <error xml:id="cl111"><rule>No text may begin with a modifying character.</rule></error>
         <error xml:id="cl112"><rule>No text may have a spacing character followed by a modifying character.</rule></error>
         <error xml:id="cl113"><rule>No text may have Unicode characters that are disallowed, e.g., U+A0, NO BREAK SPACE.</rule></error>
-        <error xml:id="tei02"><rule>A &lt;div> must not mix @include with any other attributes.</rule></error>
-        <error xml:id="tei03"><rule>A &lt;div> must have either @type + @n or @include but not both.</rule></error>
         <error xml:id="cl118"><rule>No reference may point to a mixture of leaf and non-leaf &lt;div>s.</rule></error>
     </group>
     <group affects-element="div" affects-attribute="n">

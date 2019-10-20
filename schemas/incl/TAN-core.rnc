@@ -411,17 +411,14 @@ element-object-constraint =
     
     ## specifies expectations on a verb's use of object. By default, an object is required.
     element object { ed-stamp?, attr-status, (constraint-item-type | constraint-content)? }
-    
 element-period-constraint =
     
     ## specifies expectations on a verb's use of object. By default, an object is required.
     element period { ed-stamp?, attr-status }
-    
 element-place-constraint =
     
     ## specifies expectations on a verb's use of object. By default, an object is required.
     element place { ed-stamp?, attr-status }
-    
 element-resp =
     
     ## specifies a role held by one or more persons, organizations, or algorithms, perhaps during a specified time period.
@@ -510,13 +507,14 @@ link-element-vocabulary =
 voc-element-agent = voc-element-person | voc-element-org | voc-element-alg
 voc-element-alias =
     
-    ## assigns a group of xml:id values to a single xml:id.
+    ## assigns a group of xml:id values to a single id, held by @xml:id or @id. The two attributes are equivalent, but the latter supports characters disallowed by the former.   
     
-    ## This feature is useful for referring repeatedly to a group of agents, works, scripta, etc. 
+    ## This feature is useful for referring succinctly to a group of agents, works, scripta, etc.
+    
+    ## Because ids and idrefs are encapsulated within a single file, and because <alias> serves exclusively idrefs, this element may neither include nor be included.
     element alias {
         ed-stamp?,
-        (inclusion
-         | ((attr-id-xml | attr-id-alias), ptr-attr-idrefs))
+        ((attr-id-xml | attr-id-alias), ptr-attr-idrefs)
     }
 voc-element-alg =
     

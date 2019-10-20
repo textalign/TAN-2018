@@ -44,6 +44,8 @@
     <body lexicon="lex" morphology="morph" claimant="park">
         <ana>
             <tok val="unnormalized"/>
+            <!-- tok01 -->
+            <tok val="mistake"/>
             <lm>
                 <!-- tlm02 tlm03 -->
                 <m>a b c</m>

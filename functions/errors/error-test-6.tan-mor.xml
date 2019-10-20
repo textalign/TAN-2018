@@ -20,6 +20,8 @@
             <location href="error-test-2.tan-voc.xml" accessed-when="2019-01-07"/>
         </vocabulary>
         <vocabulary-key>
+            <!-- inc02  
+                ! this is an example of an inclusion that itself tries to include organization, but can't do so because of circularity rules -->
             <organization include="test-3"/>
             <organization xml:id="org2">
                 <IRI>tag:textalign.net,2015:test:organization:org2</IRI>

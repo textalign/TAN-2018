@@ -16,7 +16,7 @@
             <IRI>urn:myname:1234567</IRI>
             <name>English version of RRoR</name>
         </version>
-        <!-- inc04 lnk01 inc06 -->
+        <!-- inc04 lnk01 lnk07 -->
         <inclusion xml:id="bad-inc">
             <IRI>tag:some-iri</IRI>
             <name>xslt file</name>
@@ -34,6 +34,12 @@
             <IRI>tag:something.com,2014:made-up-iri</IRI>
             <name>Vocabulary</name>
             <location href="error-test-2.tan-voc.xml" accessed-when="2012-12-01"/>
+        </vocabulary>
+        <!-- lnk05 wrn02 wrn07 inc06 -->
+        <vocabulary>
+            <IRI>tag:textalign.net,2015:error-test</IRI>
+            <name>Error test file 1</name>
+            <location href="error-test-1.tan-t.xml" accessed-when="2019-10-10"/>
         </vocabulary>
         <source>
             <IRI>http://lccn.loc.gov/12032709</IRI>
@@ -63,7 +69,7 @@
             <!-- whe03 -->
             <period xml:id="lastmonth" from="2018-12-12" to="2018-12-11"/>
         </vocabulary-key>
-        <!-- tan06 tan01 -->
+        <!-- tan06 tan01 tan21 -->
         <file-resp who="park park"/>
         <resp roles="creator" who="park"/>
         <change when="2014-08-13" who="park">Started file</change>

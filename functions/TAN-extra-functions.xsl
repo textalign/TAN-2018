@@ -33,15 +33,19 @@
    
    <!-- see-also, context -->
    <xsl:variable name="see-alsos-1st-da" select="tan:get-1st-doc($head/tan:see-also)"/>
-   <xsl:variable name="see-alsos-resolved" select="tan:resolve-doc($see-alsos-1st-da, false(), 'see-also', (), ($validation-phase = 'verbose'))"/>
+   <!--<xsl:variable name="see-alsos-resolved" select="tan:resolve-doc($see-alsos-1st-da, false(), 'see-also', (), ($validation-phase = 'verbose'))"/>-->
+   <xsl:variable name="see-alsos-resolved"
+      select="tan:resolve-doc($see-alsos-1st-da, false(), tan:attr('relationship', 'see-also'))"/>
    
    <!-- predecessors -->
    <xsl:variable name="predecessors-1st-da" select="tan:get-1st-doc($head/tan:predecessor)"/>
-   <xsl:variable name="predecessors-resolved" select="tan:resolve-doc($predecessors-1st-da, false(), 'predecessor', (), ($validation-phase = 'verbose'))"/>
+   <!--<xsl:variable name="predecessors-resolved" select="tan:resolve-doc($predecessors-1st-da, false(), 'predecessor', (), ($validation-phase = 'verbose'))"/>-->
+   <xsl:variable name="predecessors-resolved" select="tan:resolve-doc($predecessors-1st-da, false(), tan:attr('relationship', 'predecessor'))"/>
    
    <!-- successors -->
    <xsl:variable name="successors-1st-da" select="tan:get-1st-doc($head/tan:successor)"/>
-   <xsl:variable name="successors-resolved" select="tan:resolve-doc($successors-1st-da, false(), 'successor', (), ($validation-phase = 'verbose'))"/>
+   <!--<xsl:variable name="successors-resolved" select="tan:resolve-doc($successors-1st-da, false(), 'successor', (), ($validation-phase = 'verbose'))"/>-->
+   <xsl:variable name="successors-resolved" select="tan:resolve-doc($successors-1st-da, false(), tan:attr('relationship', 'successor'))"/>
    
    <xsl:variable name="most-common-indentations" as="xs:string*">
       <xsl:for-each-group select="//text()[not(matches(., '\S'))][following-sibling::*]"

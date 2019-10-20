@@ -166,6 +166,29 @@
       </xsl:copy>
    </xsl:template>
    
+   <xsl:template match="tan:tok[not(@ref)]" mode="class-2-expansion-terse">
+      <xsl:param name="dependencies-adjusted-and-marked" as="document-node()*" tunnel="yes"/>
+      <xsl:variable name="this-q" select="@q"/>
+      <xsl:variable name="these-tok-markers"
+         select="
+            for $i in $dependencies-adjusted-and-marked
+            return
+               key('q-ref', $this-q, $i)"
+      />
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:choose>
+            <xsl:when test="exists($these-tok-markers)">
+               <xsl:copy-of select="$these-tok-markers"/>
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:copy-of select="tan:error('tok01', concat('The value ', @val, ' does not match any tokens in the source.'))"/>
+            </xsl:otherwise>
+         </xsl:choose>
+         <xsl:apply-templates mode="#current"/>
+      </xsl:copy>
+   </xsl:template>
+   
    <xsl:template match="tan:m" mode="tan-a-lm-expansion-terse">
       <xsl:param name="dependencies" tunnel="yes" as="document-node()*"/>
       <xsl:variable name="morphology-ids" select="ancestor-or-self::*[tan:morphology][1]/tan:morphology"/>

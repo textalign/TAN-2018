@@ -98,7 +98,7 @@
                                                 <xsl:variable name="this-doc-resolved"
                                                   select="
                                                         if ($this-is-tan) then
-                                                            tan:resolve-doc($this-doc, false())
+                                                            tan:resolve-doc($this-doc, false(), ())
                                                         else
                                                             $this-doc"/>
                                                 <xsl:copy-of
@@ -127,6 +127,7 @@
 
     
     <xsl:variable name="results-pass-2" as="document-node()">
+        <xsl:message select="'Resolving @href values relative to ', $target-url-resolved"/>
         <xsl:apply-templates select="$results-pass-1" mode="uri-relative-to">
             <xsl:with-param name="base-uri" tunnel="yes" select="$target-url-resolved"/>
         </xsl:apply-templates>
@@ -135,7 +136,8 @@
     <xsl:template match="node()"/>
     <xsl:template match="/">
         <xsl:result-document href="{$target-url-resolved}">
-            <xsl:copy-of select="$results-pass-1"/>
+            <!--<xsl:copy-of select="$results-pass-1"/>-->
+            <xsl:copy-of select="$results-pass-2"/>
         </xsl:result-document>
     </xsl:template>
 </xsl:stylesheet>

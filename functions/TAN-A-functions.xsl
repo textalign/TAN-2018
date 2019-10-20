@@ -176,6 +176,7 @@
    </xsl:function>
 
    <!-- PROCESSING TAN-A FILES: RESOLUTION -->
+   
    <xsl:template match="tan:body" mode="imprint-vocabulary" priority="1">
       <xsl:copy>
          <xsl:copy-of select="@*"/>

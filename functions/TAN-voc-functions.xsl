@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns="tag:textalign.net,2015:ns" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tan="tag:textalign.net,2015:ns"
-   xmlns:fn="http://www.w3.org/2005/xpath-functions"
    xmlns:math="http://www.w3.org/2005/xpath-functions/math" exclude-result-prefixes="#all"
    version="2.0">
 
@@ -11,6 +10,46 @@
    <xsl:include href="incl/TAN-core-functions.xsl"/>
    <xsl:import href="extra/TAN-schema-functions.xsl"/>
 
+   <!-- PROCESSING TAN-voc FILES: RESOLUTION -->
+   
+   <!--<xsl:template match="tan:body" mode="imprint-vocabulary" priority="1">
+      <xsl:variable name="this-id" select="../@id"/>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:apply-templates select="." mode="reduce-tan-voc-files">
+            <xsl:with-param name="is-standard-tan-voc" tunnel="yes" select="$this-id = $TAN-vocabularies/*/@id"/>
+         </xsl:apply-templates>
+      </xsl:copy>
+   </xsl:template>-->
+   <xsl:template match="tan:body | tan:group | tan:item" mode="imprint-vocabulary" priority="1">
+      <xsl:param name="inherited-affects-elements" as="xs:string*" tunnel="yes"/>
+      <xsl:variable name="these-affects-elements"
+         select="tokenize(normalize-space(@affects-element), ' ')"/>
+      <xsl:variable name="current-affects-elements"
+         select="
+            if (exists($these-affects-elements)) then
+               $these-affects-elements
+            else
+               $inherited-affects-elements"/>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:if test="name(.) = 'item'">
+            <xsl:for-each select="$current-affects-elements">
+               <affects-element>
+                  <xsl:value-of select="."/>
+               </affects-element>
+            </xsl:for-each>
+         </xsl:if>
+         <xsl:apply-templates mode="#current">
+            <xsl:with-param name="inherited-affects-elements" select="$current-affects-elements"
+               tunnel="yes"/>
+         </xsl:apply-templates>
+      </xsl:copy>
+   </xsl:template>
+
+
+   <!-- PROCESSING TAN-voc FILES: EXPANSION -->
+   
    <xsl:template match="tan:body" mode="core-expansion-terse">
       <xsl:variable name="all-body-iris" select=".//tan:IRI"/>
       <xsl:copy>
@@ -18,8 +57,8 @@
          <xsl:apply-templates mode="#current">
             <xsl:with-param name="duplicate-IRIs" select="tan:duplicate-items($all-body-iris)"
                tunnel="yes"/>
-            <xsl:with-param name="inherited-affects-elements" select="tan:affects-element"
-               tunnel="yes"/>
+            <!--<xsl:with-param name="inherited-affects-elements" select="tan:affects-element"
+               tunnel="yes"/>-->
             <xsl:with-param name="is-reserved"
                select="(parent::tan:TAN-voc/@id = $TAN-vocabulary-files/*/@id) or $doc-is-error-test"
                tunnel="yes"/>
@@ -47,7 +86,7 @@
          <xsl:apply-templates mode="#current"/>
       </xsl:copy>
    </xsl:template>
-   <xsl:template match="tan:group" mode="core-expansion-terse core-expansion-normal">
+   <!--<xsl:template match="tan:group" mode="core-expansion-terse core-expansion-normal">
       <xsl:param name="inherited-affects-elements" tunnel="yes"/>
       <xsl:variable name="immediate-affects-elements" select="tan:affects-element"/>
       <xsl:variable name="these-affects-elements"
@@ -63,35 +102,23 @@
                tunnel="yes"/>
          </xsl:apply-templates>
       </xsl:copy>
-   </xsl:template>
+   </xsl:template>-->
    <xsl:template match="tan:item | tan:verb" mode="core-expansion-terse">
       <xsl:param name="is-reserved" as="xs:boolean?" tunnel="yes"/>
-      <xsl:param name="inherited-affects-elements" tunnel="yes"/>
-      <xsl:variable name="immediate-affects-elements" select="tan:affects-element"/>
-      <xsl:variable name="these-affects-elements"
-         select="
-            if (exists($immediate-affects-elements)) then
-               $immediate-affects-elements
-            else
-               $inherited-affects-elements"/>
-      <xsl:variable name="reserved-vocabulary-doc"
+      <xsl:variable name="these-affects-elements" select="tan:affects-element/text()"/>
+      <xsl:variable name="reserved-vocabulary-docs"
          select="$TAN-vocabularies[tan:TAN-voc/tan:body[tokenize(@affects-element, '\s+') = $these-affects-elements]]"/>
-      <!--<xsl:variable name="reserved-vocabulary-items"
-         select="
-            if (exists($reserved-vocabulary-doc)) then
-               key('item-via-node-name', $these-affects-elements, $reserved-vocabulary-doc)
-            else
-               ()"/>-->
       <xsl:variable name="reserved-vocabulary-items"
          select="
-            for $i in $reserved-vocabulary-doc
+            for $i in $reserved-vocabulary-docs
             return
                key('item-via-node-name', $these-affects-elements, $i)"
       />
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:if
-            test="($is-reserved = true()) and (not(exists(tan:IRI[starts-with(., $TAN-id-namespace)]))) and (not(exists(tan:token-definition)))">
+            test="($is-reserved = true()) 
+            and (not(exists(tan:IRI[starts-with(., $TAN-id-namespace)]))) and (not(exists(tan:token-definition)))">
             <xsl:variable name="this-fix" as="element()">
                <IRI>
                   <xsl:value-of select="$TAN-namespace"/>
@@ -101,8 +128,6 @@
          </xsl:if>
          <xsl:apply-templates mode="#current">
             <xsl:with-param name="reserved-vocabulary-items" select="$reserved-vocabulary-items"/>
-            <xsl:with-param name="inherited-affects-elements" select="$these-affects-elements"
-               tunnel="yes"/>
          </xsl:apply-templates>
       </xsl:copy>
    </xsl:template>

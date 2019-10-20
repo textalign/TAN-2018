@@ -8,13 +8,13 @@ namespace teix = "http://www.tei-c.org/ns/Examples"
 namespace xi = "http://www.w3.org/2001/XInclude"
 namespace xlink = "http://www.w3.org/1999/xlink"
 
-# Schema generated from ODD source 2019-07-29T09:46:37Z. .
+# Schema generated from ODD source 2019-10-15T07:54:07Z. .
 # TEI Edition: Version 3.5.0. Last updated on
 #	29th January 2019, revision 3c0c64ec4
 # TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 3.5.0/
 #
 
-# Insofar as this ODD file constitutes an original work (see below) all material is released under a Creative Commons Attribution 4.0 International License: http://creativecommons.org/licenses/by/4.0/  The notice in the next paragraph is preserved whole from the template upon which this ODD file is based.  TEI material can be licensed differently depending on the use you intend to make of it. Hence it is made available under both the CC+BY and BSD-2 licences. The CC+BY licence is generally appropriate for usages which treat TEI content as data or documentation. The BSD-2 licence is generally appropriate for usage of TEI content in a software environment. For further information or clarification, please contact the TEI Consortium (info@tei-c.org).
+# Insofar as this ODD file constitutes an original work (see below) all material is released under a GNU General Public License, https://opensource.org/licenses/GPL-3.0 The notice in the next paragraph is preserved whole from the template upon which this ODD file is based.  TEI material can be licensed differently depending on the use you intend to make of it. Hence it is made available under both the CC+BY and BSD-2 licences. The CC+BY licence is generally appropriate for usages which treat TEI content as data or documentation. The BSD-2 licence is generally appropriate for usage of TEI content in a software environment. For further information or clarification, please contact the TEI Consortium (info@tei-c.org).
 div {
   div {
     attr-accessed-when =
@@ -712,7 +712,7 @@ anyElement-content =
     (text | anyElement-content)*
   }
   >> sch:pattern [
-       id = "d9e119905-constraint"
+       id = "d9e119892-constraint"
        "\x{a}" ~
        "         "
        sch:rule [
@@ -743,7 +743,7 @@ anyElement-datatype =
     (text | anyElement-datatype)*
   }
   >> sch:pattern [
-       id = "d9e121190-constraint"
+       id = "d9e121177-constraint"
        "\x{a}" ~
        "         "
        sch:rule [
@@ -1222,20 +1222,8 @@ att.duration.w3c.attribute.dur =
   ## (duration) indicates the length of this element in time.
   attribute dur { xsd:duration }?
 att.global.responsibility.attributes =
-  att.global.responsibility.attribute.ed-who,
-  att.global.responsibility.attribute.ed-when,
   att.global.responsibility.attribute.cert,
   att.global.responsibility.attribute.resp
-att.global.responsibility.attribute.ed-who =
-  
-  ## Reference to agent or agents who have edited (added or modified) an element or its content
-  attribute ed-who {
-    xsd:string { pattern = ".+" }
-  }?
-att.global.responsibility.attribute.ed-when =
-  
-  ## Reference to a date or time when an element or its content was edited (added or modified)
-  attribute ed-when { xsd:date | xsd:dateTime }?
 att.global.responsibility.attribute.cert =
   
   ## (certainty) signifies the degree of certainty associated with the intervention or interpretation.
@@ -1633,7 +1621,7 @@ att.typed.attributes =
   att.typed.attribute.type, att.typed.attribute.subtype
 att.typed.attribute.type =
   
-  ## Attribute may take multiple values, space delimited.
+  ## @type may take multiple values, space delimited. Each value is an idref or a name, pointing to a vocabulary item that provides the IRIs, names, and descriptions of the textual division.
   attribute type {
     xsd:string { pattern = ".+" }
   }?
@@ -3208,7 +3196,7 @@ desc =
     att.translatable.attributes,
     att.typed.attribute.subtype,
     
-    ## Attribute may take multiple values, space delimited.
+    ## @type may take multiple values, space delimited. Each value is an idref or a name, pointing to a vocabulary item that provides the IRIs, names, and descriptions of the textual division.
     attribute type {
       xsd:string { pattern = ".+" }
     }?,
@@ -4729,8 +4717,6 @@ certainty =
     att.global.analytic.attribute.ana,
     att.global.facs.attribute.facs,
     att.global.change.attribute.change,
-    att.global.responsibility.attribute.ed-who,
-    att.global.responsibility.attribute.ed-when,
     att.global.responsibility.attribute.resp,
     att.global.source.attribute.source,
     att.scoping.attributes,
@@ -8817,7 +8803,7 @@ affiliation =
     att.naming.attributes,
     att.typed.attribute.subtype,
     
-    ## Attribute may take multiple values, space delimited.
+    ## @type may take multiple values, space delimited. Each value is an idref or a name, pointing to a vocabulary item that provides the IRIs, names, and descriptions of the textual division.
     ## Sample values include: 1] sponsor; 2] recommend; 3] discredit; 4] pledged
     attribute type {
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
@@ -8835,7 +8821,7 @@ age =
     att.typed.attribute.subtype,
     att.dimensions.attributes,
     
-    ## Attribute may take multiple values, space delimited.
+    ## @type may take multiple values, space delimited. Each value is an idref or a name, pointing to a vocabulary item that provides the IRIs, names, and descriptions of the textual division.
     ## Sample values include: 1] western; 2] sui; 3] subjective; 4] objective; 5] inWorld (in world) ; 6] chronological; 7] biological; 8] psychological; 9] functional
     attribute type {
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
@@ -8857,7 +8843,7 @@ birth =
     att.naming.attributes,
     att.typed.attribute.subtype,
     
-    ## Attribute may take multiple values, space delimited.
+    ## @type may take multiple values, space delimited. Each value is an idref or a name, pointing to a vocabulary item that provides the IRIs, names, and descriptions of the textual division.
     ## Sample values include: 1] caesarean (caesarean section) ; 2] vaginal (vaginal delivery) ; 3] exNihilo (ex nihilo) ; 4] incorporated; 5] founded; 6] established
     attribute type {
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
@@ -8892,7 +8878,7 @@ death =
     att.naming.attributes,
     att.typed.attribute.subtype,
     
-    ## Attribute may take multiple values, space delimited.
+    ## @type may take multiple values, space delimited. Each value is an idref or a name, pointing to a vocabulary item that provides the IRIs, names, and descriptions of the textual division.
     ## Sample values include: 1] proclaimed; 2] assumed; 3] verified; 4] clinical; 5] brain; 6] natural; 7] unnatural; 8] fragmentation; 9] dissolution
     attribute type {
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
@@ -8910,7 +8896,7 @@ education =
     att.naming.attributes,
     att.typed.attribute.subtype,
     
-    ## Attribute may take multiple values, space delimited.
+    ## @type may take multiple values, space delimited. Each value is an idref or a name, pointing to a vocabulary item that provides the IRIs, names, and descriptions of the textual division.
     ## Sample values include: 1] primary; 2] secondary; 3] undergraduate; 4] graduate; 5] residency; 6] apprenticeship
     attribute type {
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
@@ -8947,7 +8933,7 @@ faith =
     att.canonical.attributes,
     att.typed.attribute.subtype,
     
-    ## Attribute may take multiple values, space delimited.
+    ## @type may take multiple values, space delimited. Each value is an idref or a name, pointing to a vocabulary item that provides the IRIs, names, and descriptions of the textual division.
     ## Sample values include: 1] practicing; 2] clandestine; 3] patrilineal; 4] matrilineal; 5] convert
     attribute type {
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
@@ -8981,7 +8967,7 @@ langKnowledge =
     att.editLike.attributes,
     att.typed.attribute.subtype,
     
-    ## Attribute may take multiple values, space delimited.
+    ## @type may take multiple values, space delimited. Each value is an idref or a name, pointing to a vocabulary item that provides the IRIs, names, and descriptions of the textual division.
     ## Sample values include: 1] listening; 2] speaking; 3] reading; 4] writing
     attribute type {
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
@@ -9098,7 +9084,7 @@ nationality =
     att.naming.attributes,
     att.typed.attribute.subtype,
     
-    ## Attribute may take multiple values, space delimited.
+    ## @type may take multiple values, space delimited. Each value is an idref or a name, pointing to a vocabulary item that provides the IRIs, names, and descriptions of the textual division.
     ## Sample values include: 1] birth; 2] naturalised; 3] self-assigned
     attribute type {
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
@@ -9116,7 +9102,7 @@ occupation =
     att.naming.attributes,
     att.typed.attribute.subtype,
     
-    ## Attribute may take multiple values, space delimited.
+    ## @type may take multiple values, space delimited. Each value is an idref or a name, pointing to a vocabulary item that provides the IRIs, names, and descriptions of the textual division.
     ## Sample values include: 1] primary; 2] other; 3] paid; 4] unpaid
     attribute type {
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
@@ -9387,7 +9373,7 @@ residence =
     att.naming.attributes,
     att.typed.attribute.subtype,
     
-    ## Attribute may take multiple values, space delimited.
+    ## @type may take multiple values, space delimited. Each value is an idref or a name, pointing to a vocabulary item that provides the IRIs, names, and descriptions of the textual division.
     ## Sample values include: 1] primary; 2] secondary; 3] temporary; 4] permanent
     attribute type {
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
@@ -9404,7 +9390,7 @@ sex =
     att.datable.attributes,
     att.typed.attribute.subtype,
     
-    ## Attribute may take multiple values, space delimited.
+    ## @type may take multiple values, space delimited. Each value is an idref or a name, pointing to a vocabulary item that provides the IRIs, names, and descriptions of the textual division.
     ## Sample values include: 1] explicit; 2] implicit
     attribute type {
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
@@ -9429,7 +9415,7 @@ socecStatus =
     att.naming.attributes,
     att.typed.attribute.subtype,
     
-    ## Attribute may take multiple values, space delimited.
+    ## @type may take multiple values, space delimited. Each value is an idref or a name, pointing to a vocabulary item that provides the IRIs, names, and descriptions of the textual division.
     ## Sample values include: 1] atBirth; 2] atDeath; 3] dependent; 4] inherited; 5] independent
     attribute type {
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
@@ -10408,7 +10394,7 @@ variantEncoding =
   }
 TEI =
   
-  ## (TEI document) Two headers are required, teiHeader and TAN's head, because the two heads are very different animals. [4. Default Text Structure 15.1. Varieties of Composite Text]
+  ## (TEI document) Two headers are required, teiHeader and TAN's head, because the two heads are very different animals. The teiHeader is quite expansive, allowing you to spend time talking about all sorts of things that may be only very loosely related to the body, and it is generally designed to be written and read by humans. The TAN header on the other hand is restricted to metadata directly related to the data itself, and is designed on every level to be RDF-ready. See the TAN guidelines for more.  [4. Default Text Structure 15.1. Varieties of Composite Text]
   element tei:TEI {
     ((teiHeader & element-head),
      ((model.resourceLike+, \text?) | \text)),
@@ -10422,7 +10408,7 @@ TEI =
     att.global.attributes,
     att.typed.attributes,
     
-    ## A tag URN is required in the root element
+    ## A tag URN is required in the root element, uniquely identifying the document. Revisions need not be renamed, since ISO-compliant dates will be checked to determine the version of the document.
     attribute id {
       xsd:anyURI {
         pattern =
@@ -10479,8 +10465,6 @@ body =
     att.global.analytic.attribute.ana,
     att.global.facs.attribute.facs,
     att.global.change.attribute.change,
-    att.global.responsibility.attribute.ed-who,
-    att.global.responsibility.attribute.ed-when,
     att.global.responsibility.attribute.cert,
     att.global.responsibility.attribute.resp,
     att.global.source.attribute.source,
@@ -10523,8 +10507,18 @@ floatingText =
   }
 \div =
   
-  ## (text division) Every <div> either contains purely <div>s / empty elements (like <milestone>) or it does not (leaf <div>s). [4.1. Divisions of the Body]
+  ## (text division) Every <div> either contains purely <div>s / empty elements (like <milestone>) or it does not (leaf <div>s). This element is redefined to be much more like the HTML div, which may be any unit whatsover, even those that are inline stretches of text. It does the job of <ab>, <p>, <l>, and all other text segmentation elements, leaving to @type the job of defining exactly what kind(s) of division is (are) intended. [4.1. Divisions of the Body]
   element tei:div {
+    attribute ed-who {
+      xsd:string { pattern = ".+" }
+    }?,
+    attribute ed-when { xsd:date | xsd:dateTime }?,
+    (attribute include { xsd:string }
+     | (att.global.attributes,
+        att.divLike.attributes,
+        att.typed.attributes,
+        att.declaring.attributes,
+        att.written.attributes)),
     ((model.divLike+ & model.milestoneLike*)
      | ((model.divTop | model.global)*,
         ((model.global*
@@ -10573,16 +10567,7 @@ floatingText =
          ]
          "\x{a}" ~
          "         "
-       ],
-    att.global.attributes,
-    att.divLike.attributes,
-    att.typed.attributes,
-    att.declaring.attributes,
-    att.written.attributes,
-    
-    ## This attribute signals that the parent element is to be replaced by all elements of the same name found in the referred inclusion
-    attribute include { xsd:string }?,
-    empty
+       ]
   }
 div1 =
   
@@ -11411,8 +11396,6 @@ space =
     att.global.analytic.attribute.ana,
     att.global.facs.attribute.facs,
     att.global.change.attribute.change,
-    att.global.responsibility.attribute.ed-who,
-    att.global.responsibility.attribute.ed-when,
     att.global.responsibility.attribute.cert,
     att.global.source.attribute.source,
     att.typed.attributes,

@@ -4,7 +4,7 @@
 <collection stable="true" metadata-resolved="false">
    <doc href="ar.cat.eng.1926.edghill.ref-logical.xml"
         id="tag:kalvesmaki.com,2014:tan-t:ar.cat.eng.1926.edghill:semantic-refs"
-        TAN-version="2019"
+        TAN-version="2020"
         xml:lang="eng"
         root="TAN-T">
       <name xmlns="tag:textalign.net,2015:ns">Categories, Aristotle, English translation by E. M. Edghill</name>
@@ -30,20 +30,23 @@
       <model xmlns="tag:textalign.net,2015:ns">
          <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:semantic-refs</IRI>
          <name>Categories, Aristotle, Greek text by Minio-Paluello</name>
-         <location href="ar.cat.grc.1949.minio-paluello.ref-logical.xml"
-                   accessed-when="2016-02-10T14:08:52.058-05:00"/>
+         <location accessed-when="2016-02-10T14:08:52.058-05:00"
+                   href="ar.cat.grc.1949.minio-paluello.ref-logical.xml"
+                   orig-href="ar.cat.grc.1949.minio-paluello.ref-logical.xml"/>
       </model>
       <see-also xmlns="tag:textalign.net,2015:ns" relationship="alt">
          <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:object-refs</IRI>
          <name>Categories, Aristotle, Greek text by Minio-Paluello</name>
-         <location href="ar.cat.grc.1949.minio-paluello.ref-scriptum.xml"
-                   accessed-when="2016-02-11T12:40:42.823-05:00"/>
+         <location accessed-when="2016-02-11T12:40:42.823-05:00"
+                   href="ar.cat.grc.1949.minio-paluello.ref-scriptum.xml"
+                   orig-href="ar.cat.grc.1949.minio-paluello.ref-scriptum.xml"/>
       </see-also>
       <redivision xmlns="tag:textalign.net,2015:ns">
          <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.eng.1926.edghill:model-object-refs</IRI>
          <name>Categories, Aristotle, English translation by E. M. Edghill</name>
-         <location href="ar.cat.eng.1926.edghill.ref-scriptum.xml"
-                   accessed-when="2016-06-22T08:13:35.791-04:00"/>
+         <location accessed-when="2016-06-22T08:13:35.791-04:00"
+                   href="ar.cat.eng.1926.edghill.ref-scriptum.xml"
+                   orig-href="ar.cat.eng.1926.edghill.ref-scriptum.xml"/>
       </redivision>
       <adjustments xmlns="tag:textalign.net,2015:ns">
          <normalization which="no hyphens"/>
@@ -51,7 +54,7 @@
    </doc>
    <doc href="ar.cat.eng.1926.edghill.ref-scriptum.xml"
         id="tag:kalvesmaki.com,2014:tan-t:ar.cat.eng.1926.edghill:model-object-refs"
-        TAN-version="2019"
+        TAN-version="2020"
         xml:lang="eng"
         root="TAN-T">
       <name xmlns="tag:textalign.net,2015:ns">Categories, Aristotle, English translation by E. M. Edghill</name>
@@ -77,21 +80,23 @@
       <redivision xmlns="tag:textalign.net,2015:ns">
          <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.eng.1926.edghill:semantic-refs</IRI>
          <name>Categories, Aristotle, English translation by E. M. Edghill</name>
-         <location href="ar.cat.eng.1926.edghill.ref-logical.xml"
-                   accessed-when="2016-07-07T16:36:28.867-04:00"/>
+         <location accessed-when="2016-07-07T16:36:28.867-04:00"
+                   href="ar.cat.eng.1926.edghill.ref-logical.xml"
+                   orig-href="ar.cat.eng.1926.edghill.ref-logical.xml"/>
       </redivision>
       <model xmlns="tag:textalign.net,2015:ns">
          <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:object-refs</IRI>
          <name>Categories, Aristotle, Greek text by Minio-Paluello</name>
-         <location href="ar.cat.grc.1949.minio-paluello.ref-scriptum.xml"
-                   accessed-when="2016-07-07T16:36:28.867-04:00"/>
+         <location accessed-when="2016-07-07T16:36:28.867-04:00"
+                   href="ar.cat.grc.1949.minio-paluello.ref-scriptum.xml"
+                   orig-href="ar.cat.grc.1949.minio-paluello.ref-scriptum.xml"/>
       </model>
       <adjustments xmlns="tag:textalign.net,2015:ns">
          <normalization which="no hyphens"/>
       </adjustments>
    </doc>
    <doc href="ar.cat.fra.1844.saint-hilaire.ref-logical-after-1949.xml"
-        TAN-version="2019"
+        TAN-version="2020"
         id="tag:kalvesmaki.com,2014:tan-t:ar.cat.fra.1844.saint-hilaire:semantic-refs-realigned"
         xml:lang="fra"
         root="TAN-T">
@@ -118,14 +123,16 @@
       <redivision xmlns="tag:textalign.net,2015:ns">
          <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.fra.1844.saint-hilaire:semantic-refs</IRI>
          <name>Categories, Aristotle, French translation by J. Barthélemy Saint-Hilaire</name>
-         <location href="ar.cat.fra.1844.saint-hilaire.ref-logical.xml"
-                   accessed-when="2016-07-14T11:38:29.251-04:00"/>
+         <location accessed-when="2016-07-14T11:38:29.251-04:00"
+                   href="ar.cat.fra.1844.saint-hilaire.ref-logical.xml"
+                   orig-href="ar.cat.fra.1844.saint-hilaire.ref-logical.xml"/>
       </redivision>
       <model xmlns="tag:textalign.net,2015:ns">
          <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:semantic-refs</IRI>
          <name>Categories, Aristotle, Greek text by Minio-Paluello</name>
-         <location href="ar.cat.grc.1949.minio-paluello.ref-logical.xml"
-                   accessed-when="2016-07-14T11:38:29.251-04:00"/>
+         <location accessed-when="2016-07-14T11:38:29.251-04:00"
+                   href="ar.cat.grc.1949.minio-paluello.ref-logical.xml"
+                   orig-href="ar.cat.grc.1949.minio-paluello.ref-logical.xml"/>
       </model>
       <adjustments xmlns="tag:textalign.net,2015:ns">
          <normalization which="no hyphens"/>
@@ -133,7 +140,7 @@
    </doc>
    <doc href="ar.cat.fra.1844.saint-hilaire.ref-logical.xml"
         id="tag:kalvesmaki.com,2014:tan-t:ar.cat.fra.1844.saint-hilaire:semantic-refs"
-        TAN-version="2019"
+        TAN-version="2020"
         xml:lang="fra"
         root="TAN-T">
       <name xmlns="tag:textalign.net,2015:ns">Categories, Aristotle, French translation by J. Barthélemy Saint-Hilaire</name>
@@ -159,8 +166,9 @@
       <redivision xmlns="tag:textalign.net,2015:ns">
          <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.fra.1844.saint-hilaire:semantic-refs-realigned</IRI>
          <name>Realignment of Categories, Aristotle, French translation by J. Barthélemy Saint-Hilaire</name>
-         <location href="ar.cat.fra.1844.saint-hilaire.ref-logical-after-1949.xml"
-                   accessed-when="2016-07-13T15:08:34.397-04:00"/>
+         <location accessed-when="2016-07-13T15:08:34.397-04:00"
+                   href="ar.cat.fra.1844.saint-hilaire.ref-logical-after-1949.xml"
+                   orig-href="ar.cat.fra.1844.saint-hilaire.ref-logical-after-1949.xml"/>
       </redivision>
       <adjustments xmlns="tag:textalign.net,2015:ns">
          <normalization which="no hyphens"/>
@@ -168,7 +176,7 @@
    </doc>
    <doc href="ar.cat.grc.1949.minio-paluello.ref-logical.xml"
         id="tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:semantic-refs"
-        TAN-version="2019"
+        TAN-version="2020"
         xml:lang="grc"
         root="TAN-T">
       <name xmlns="tag:textalign.net,2015:ns">Categories, Aristotle, Greek text by Minio-Paluello</name>
@@ -191,8 +199,9 @@
       <redivision xmlns="tag:textalign.net,2015:ns">
          <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:object-refs</IRI>
          <name>Categories, Aristotle, Greek text by Minio-Paluello, object-based references</name>
-         <location href="ar.cat.grc.1949.minio-paluello.ref-scriptum.xml"
-                   accessed-when="2015-09-11-04:00"/>
+         <location accessed-when="2015-09-11-04:00"
+                   href="ar.cat.grc.1949.minio-paluello.ref-scriptum.xml"
+                   orig-href="ar.cat.grc.1949.minio-paluello.ref-scriptum.xml"/>
       </redivision>
       <adjustments xmlns="tag:textalign.net,2015:ns">
          <normalization which="no hyphens"/>
@@ -200,7 +209,7 @@
    </doc>
    <doc href="ar.cat.grc.1949.minio-paluello.ref-scriptum.xml"
         id="tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:object-refs"
-        TAN-version="2019"
+        TAN-version="2020"
         xml:lang="grc"
         root="TAN-T">
       <name xmlns="tag:textalign.net,2015:ns">Categories, Aristotle, Greek text edited in 1949 by Minio-Paluello, native scriptum-based reference system</name>
@@ -227,8 +236,9 @@
             <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:semantic-refs</IRI>
             <name>Categories, Aristotle, Greek text by Minio-Paluello, semantic-based
                 references</name>
-            <location href="ar.cat.grc.1949.minio-paluello.ref-logical.xml"
-                   accessed-when="2015-09-11-04:00"/>
+            <location accessed-when="2015-09-11-04:00"
+                   href="ar.cat.grc.1949.minio-paluello.ref-logical.xml"
+                   orig-href="ar.cat.grc.1949.minio-paluello.ref-logical.xml"/>
         </redivision>
       <adjustments xmlns="tag:textalign.net,2015:ns">
             <normalization>
@@ -239,7 +249,7 @@
    </doc>
    <doc href="ar.cat.lat.1961.minio-paluello.ref-scriptum.xml"
         id="tag:kalvesmaki.com,2014:tan-t:ar.cat.lat.1961.a.minio-paluello:object-refs"
-        TAN-version="2019"
+        TAN-version="2020"
         xml:lang="lat"
         root="TAN-T">
       <name xmlns="tag:textalign.net,2015:ns">Categories, Aristotle, Latin translation by Boethius, first recension, edited by Minio-Paluello</name>
@@ -267,48 +277,32 @@
          <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:semantic-refs</IRI>
          <name>Categories, Aristotle, Greek text by Minio-Paluello</name>
          <location accessed-when="2018-12-11-05:00"
-                   href="ar.cat.grc.1949.minio-paluello.ref-logical.xml"/>
+                   href="ar.cat.grc.1949.minio-paluello.ref-logical.xml"
+                   orig-href="ar.cat.grc.1949.minio-paluello.ref-logical.xml"/>
       </see-also>
    </doc>
    <doc href="gomme.1989.ring-o-roses.xml"
-        TAN-version="2019"
+        TAN-version="2020"
         id="tag:parkj@textalign.net,2015:gomme.1898.ring-o-roses"
         root="TEI">
-      <name xmlns="tag:textalign.net,2015:ns"
-            xmlns:xi="http://www.w3.org/2001/XInclude"
-            xmlns:svg="http://www.w3.org/2000/svg"
-            xmlns:tan="tag:textalign.net,2015:ns"
-            xmlns:math="http://www.w3.org/1998/Math/MathML">Dictionary entry by Alice Bertha Gomme on Ring a Ring o' Roses</name>
+      <name xmlns="tag:textalign.net,2015:ns">Dictionary entry by Alice Bertha Gomme on Ring a Ring o' Roses</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
                        xmlns:xi="http://www.w3.org/2001/XInclude"
                        xmlns:svg="http://www.w3.org/2000/svg"
                        xmlns:tan="tag:textalign.net,2015:ns"
                        xmlns:math="http://www.w3.org/1998/Math/MathML"
                        href="http://textalign.net/release/TAN-2019/examples/gomme.1989.ring-o-roses.xml"/>
-      <license xmlns="tag:textalign.net,2015:ns"
-               xmlns:xi="http://www.w3.org/2001/XInclude"
-               xmlns:svg="http://www.w3.org/2000/svg"
-               xmlns:tan="tag:textalign.net,2015:ns"
-               xmlns:math="http://www.w3.org/1998/Math/MathML"
-               licensor="park">
+      <license xmlns="tag:textalign.net,2015:ns" licensor="park">
          <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
          <name>This data file is licensed under a Creative Commons Attribution 4.0 International
         License. The license is granted independent of rights and licenses associated with the
         source. </name>
       </license>
-      <work xmlns="tag:textalign.net,2015:ns"
-            xmlns:xi="http://www.w3.org/2001/XInclude"
-            xmlns:svg="http://www.w3.org/2000/svg"
-            xmlns:tan="tag:textalign.net,2015:ns"
-            xmlns:math="http://www.w3.org/1998/Math/MathML">
+      <work xmlns="tag:textalign.net,2015:ns">
          <IRI>tag:kalvesmaki@gmail.com,2014:work:gomme.1898.ring-o-roses</IRI>
          <name>Article by Alice Bertha Gomme on Ring a Ring o' Roses</name>
       </work>
-      <source xmlns="tag:textalign.net,2015:ns"
-              xmlns:xi="http://www.w3.org/2001/XInclude"
-              xmlns:svg="http://www.w3.org/2000/svg"
-              xmlns:tan="tag:textalign.net,2015:ns"
-              xmlns:math="http://www.w3.org/1998/Math/MathML">
+      <source xmlns="tag:textalign.net,2015:ns">
          <IRI>http://www.worldcat.org/oclc/2779087</IRI>
          <name>The traditional games of England, Scotland, and Ireland : with tunes, singing-rhymes,
         and methods of playing according to the variants extant and recorded in different parts of
@@ -316,11 +310,7 @@
          <comment when="2015-03-10" who="park">This work is to be found at vol. 2, pp.
         108-111.</comment>
       </source>
-      <adjustments xmlns="tag:textalign.net,2015:ns"
-                   xmlns:xi="http://www.w3.org/2001/XInclude"
-                   xmlns:svg="http://www.w3.org/2000/svg"
-                   xmlns:tan="tag:textalign.net,2015:ns"
-                   xmlns:math="http://www.w3.org/1998/Math/MathML">
+      <adjustments xmlns="tag:textalign.net,2015:ns">
          <normalization>
             <IRI>tag:textalign.net,2015:normalization:music-printed-removed</IRI>
             <name>Printed music has been removed.</name>
@@ -331,15 +321,71 @@
          </normalization>
       </adjustments>
    </doc>
+   <doc href="lords-prayer.eng.kjv.1760.xml"
+        TAN-version="2020"
+        id="tag:parkj@textalign.net,2015:bible:matthew:lords-prayer"
+        xml:lang="eng"
+        root="TAN-T">
+      <name xmlns="tag:textalign.net,2015:ns">Matthew's version of the Lord's Prayer, King James Version of the Bible, 1760
+         edition</name>
+      <master-location xmlns="tag:textalign.net,2015:ns"
+                       href="https://raw.githubusercontent.com/textalign/TAN-2019/master/examples/lords-prayer.eng.kjv.1760.xml"/>
+      <license xmlns="tag:textalign.net,2015:ns" which="by 4.0" licensor="park"/>
+      <work xmlns="tag:textalign.net,2015:ns">
+         <IRI>http://dbpedia.org/resource/Lord%27s_Prayer</IRI>
+         <name>Lord's Prayer</name>
+         <name xml:lang="lat">Pater Noster</name>
+         <desc>Sermon on the Mount, from Matthew 5-7.</desc>
+      </work>
+      <version xmlns="tag:textalign.net,2015:ns">
+         <IRI>tag:parkj@textalign.net,2015:version:matthews-version-of-the-lords-prayer</IRI>
+         <name>Matthew's version of the Lord's Prayer</name>
+      </version>
+      <vocabulary xmlns="tag:textalign.net,2015:ns">
+         <IRI>tag:parkj@textalign.net,2015:TAN-voc:standard</IRI>
+         <name>Keywords for TAN files edited by Jenny Park</name>
+         <location accessed-when="2019-10-08"
+                   href="TAN-voc/park-projects.TAN-voc.xml"
+                   orig-href="TAN-voc/park-projects.TAN-voc.xml"/>
+      </vocabulary>
+      <source xmlns="tag:textalign.net,2015:ns" which="kjv 1760"/>
+   </doc>
+   <doc href="matt.eng.kjv.1760.xml"
+        TAN-version="2020"
+        id="tag:parkj@textalign.net,2015:bible:matthew"
+        xml:lang="eng"
+        root="TAN-T">
+      <name xmlns="tag:textalign.net,2015:ns">Gospel of Matthew, King James Version of the Bible, 1760 edition</name>
+      <master-location xmlns="tag:textalign.net,2015:ns"
+                       href="https://raw.githubusercontent.com/textalign/TAN-2019/master/examples/matt.eng.kjv.1760.xml"/>
+      <license xmlns="tag:textalign.net,2015:ns" which="by 4.0" licensor="park"/>
+      <work xmlns="tag:textalign.net,2015:ns" which="matthew"/>
+      <inclusion xmlns="tag:textalign.net,2015:ns" xml:id="serm-mount">
+         <IRI>tag:parkj@textalign.net,2015:bible:matthew:sermon-on-the-mount</IRI>
+         <!--<IRI>tag:parkj@textalign.net,2015:bible:matthew</IRI>-->
+         <name>Sermon on the Mount, King James Version of the Bible, 1760 edition</name>
+         <location accessed-when="2019-10-09T02:09:11.163-04:00"
+                   href="sermon-on-the-mount.eng.kjv.1760.xml"
+                   orig-href="sermon-on-the-mount.eng.kjv.1760.xml"/>
+         <!--<location accessed-when="2019-10-09T02:09:11.163-04:00" href="matt.eng.kjv.1760.xml"/>-->
+      </inclusion>
+      <vocabulary xmlns="tag:textalign.net,2015:ns"
+                  which="bible eng"
+                  accessed-when="2019-10-08"/>
+      <vocabulary xmlns="tag:textalign.net,2015:ns">
+         <IRI>tag:parkj@textalign.net,2015:TAN-voc:standard</IRI>
+         <name>Keywords for TAN files edited by Jenny Park</name>
+         <location accessed-when="2019-10-08"
+                   href="TAN-voc/park-projects.TAN-voc.xml"
+                   orig-href="TAN-voc/park-projects.TAN-voc.xml"/>
+      </vocabulary>
+      <source xmlns="tag:textalign.net,2015:ns" which="kjv 1760"/>
+   </doc>
    <doc href="patricius.confessio.2003.eng.xml"
-        TAN-version="2019"
+        TAN-version="2020"
         id="tag:parkj@textalign.net,2015:patricius.confession.2003.eng"
         root="TEI">
-      <name xmlns="tag:textalign.net,2015:ns"
-            xmlns:xi="http://www.w3.org/2001/XInclude"
-            xmlns:svg="http://www.w3.org/2000/svg"
-            xmlns:tan="tag:textalign.net,2015:ns"
-            xmlns:math="http://www.w3.org/1998/Math/MathML">The Confession of St Patrick: A digital edition of the English translation by Pádraig
+      <name xmlns="tag:textalign.net,2015:ns">The Confession of St Patrick: A digital edition of the English translation by Pádraig
          McCarthy</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
                        xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -347,30 +393,17 @@
                        xmlns:tan="tag:textalign.net,2015:ns"
                        xmlns:math="http://www.w3.org/1998/Math/MathML"
                        href="http://textalign.net/release/TAN-2019/examples/patricius.confessio.2003.eng.xml"/>
-      <license xmlns="tag:textalign.net,2015:ns"
-               xmlns:xi="http://www.w3.org/2001/XInclude"
-               xmlns:svg="http://www.w3.org/2000/svg"
-               xmlns:tan="tag:textalign.net,2015:ns"
-               xmlns:math="http://www.w3.org/1998/Math/MathML"
-               licensor="park">
+      <license xmlns="tag:textalign.net,2015:ns" licensor="park">
          <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
          <name>This data file is licensed under a Creative Commons Attribution 4.0 International
             License. The license is granted independent of rights and licenses associated with the
             source. </name>
       </license>
-      <work xmlns="tag:textalign.net,2015:ns"
-            xmlns:xi="http://www.w3.org/2001/XInclude"
-            xmlns:svg="http://www.w3.org/2000/svg"
-            xmlns:tan="tag:textalign.net,2015:ns"
-            xmlns:math="http://www.w3.org/1998/Math/MathML">
+      <work xmlns="tag:textalign.net,2015:ns">
          <IRI>tag:parkj@textalign.net,2015:work:patricius:confessio</IRI>
          <name>Confession of St. Patrick</name>
       </work>
-      <source xmlns="tag:textalign.net,2015:ns"
-              xmlns:xi="http://www.w3.org/2001/XInclude"
-              xmlns:svg="http://www.w3.org/2000/svg"
-              xmlns:tan="tag:textalign.net,2015:ns"
-              xmlns:math="http://www.w3.org/1998/Math/MathML">
+      <source xmlns="tag:textalign.net,2015:ns">
          <IRI>tag:parkj@textalign.net,2015:source:http://www.confessio.ie/sites/confessio.ie/files/downloads/confessio_english.xml</IRI>
          <name>The Saint Patrick's Confessio Hypertext Stack Project edition</name>
          <checksum>
@@ -378,14 +411,14 @@
             <name>SHA-1</name>
             <value>91D95564ABDF2B2C1B9EEF016CBA51E8179646CC</value>
          </checksum>
-         <location href="http://www.confessio.ie/sites/confessio.ie/files/downloads/confessio_english.xml"
-                   accessed-when="2015-01-25"/>
-      </source>
-      <adjustments xmlns="tag:textalign.net,2015:ns"
-                   xmlns:xi="http://www.w3.org/2001/XInclude"
+         <location xmlns:xi="http://www.w3.org/2001/XInclude"
                    xmlns:svg="http://www.w3.org/2000/svg"
                    xmlns:tan="tag:textalign.net,2015:ns"
-                   xmlns:math="http://www.w3.org/1998/Math/MathML">
+                   xmlns:math="http://www.w3.org/1998/Math/MathML"
+                   accessed-when="2015-01-25"
+                   href="http://www.confessio.ie/sites/confessio.ie/files/downloads/confessio_english.xml"/>
+      </source>
+      <adjustments xmlns="tag:textalign.net,2015:ns">
          <normalization>
             <IRI>tag:textalign.net,2015:normalization:annotation-content-removed</IRI>
             <name>Footnotes or endnotes have been deleted.</name>
@@ -393,7 +426,7 @@
       </adjustments>
    </doc>
    <doc href="ring-o-roses.deu.1897.xml"
-        TAN-version="2019"
+        TAN-version="2020"
         id="tag:hans@beispiel.com,2014:ringel"
         xml:lang="deu"
         root="TAN-T">
@@ -428,8 +461,33 @@
          </normalization>
       </adjustments>
    </doc>
+   <doc href="ring-o-roses.eng.1881%20-%20include%20test.xml"
+        TAN-version="2020"
+        id="tag:parkj@textalign.net,2015:ring01:includetest"
+        xml:lang="eng"
+        root="TAN-T">
+      <name xmlns="tag:textalign.net,2015:ns">TAN transcription of Ring a Ring o' Roses</name>
+      <master-location xmlns="tag:textalign.net,2015:ns"
+                       href="http://textalign.net/release/TAN-2019/examples/ring-o-roses.eng.1881.xml"/>
+      <license xmlns="tag:textalign.net,2015:ns" which="by_4.0" licensor="park"/>
+      <work xmlns="tag:textalign.net,2015:ns">
+            <IRI>http://dbpedia.org/resource/Ring_a_Ring_o%27_Roses</IRI>
+            <name>"Ring a Ring o' Roses" or "Ring Around the Rosie"</name>
+        </work>
+      <source xmlns="tag:textalign.net,2015:ns">
+            <IRI>http://lccn.loc.gov/12032709</IRI>
+            <name>Kate Greenaway, Mother Goose, New York, G. Routledge and sons [1881]</name>
+        </source>
+      <inclusion xmlns="tag:textalign.net,2015:ns" xml:id="1881">
+            <IRI>tag:parkj@textalign.net,2015:ring01</IRI>
+            <name>TAN transcription of Ring a Ring o' Roses</name>
+            <location accessed-when="2019-10-07T21:58:55.59-04:00"
+                   href="ring-o-roses.eng.1881.xml"
+                   orig-href="ring-o-roses.eng.1881.xml"/>
+        </inclusion>
+   </doc>
    <doc href="ring-o-roses.eng.1881.xml"
-        TAN-version="2019"
+        TAN-version="2020"
         id="tag:parkj@textalign.net,2015:ring01"
         xml:lang="eng"
         root="TAN-T">
@@ -447,14 +505,10 @@
         </source>
    </doc>
    <doc href="ring-o-roses.eng.1957.xml"
-        TAN-version="2019"
+        TAN-version="2020"
         id="tag:parkj@textalign.net,2015:ring04"
         root="TEI">
-      <name xmlns="tag:textalign.net,2015:ns"
-            xmlns:xi="http://www.w3.org/2001/XInclude"
-            xmlns:svg="http://www.w3.org/2000/svg"
-            xmlns:tan="tag:textalign.net,2015:ns"
-            xmlns:math="http://www.w3.org/1998/Math/MathML">TAN transcription of 1790 version of Ring around the Rosie reported by Newell in
+      <name xmlns="tag:textalign.net,2015:ns">TAN transcription of 1790 version of Ring around the Rosie reported by Newell in
       1883</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
                        xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -462,42 +516,25 @@
                        xmlns:tan="tag:textalign.net,2015:ns"
                        xmlns:math="http://www.w3.org/1998/Math/MathML"
                        href="http://textalign.net/release/TAN-2019/examples/ring-o-roses.eng.1957.xml"/>
-      <license xmlns="tag:textalign.net,2015:ns"
-               xmlns:xi="http://www.w3.org/2001/XInclude"
-               xmlns:svg="http://www.w3.org/2000/svg"
-               xmlns:tan="tag:textalign.net,2015:ns"
-               xmlns:math="http://www.w3.org/1998/Math/MathML"
-               licensor="park">
+      <license xmlns="tag:textalign.net,2015:ns" licensor="park">
          <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
          <name>This data file is licensed under a Creative Commons Attribution 4.0 International
         License. The license is granted independent of rights and licenses associated with the
         source. </name>
       </license>
-      <work xmlns="tag:textalign.net,2015:ns"
-            xmlns:xi="http://www.w3.org/2001/XInclude"
-            xmlns:svg="http://www.w3.org/2000/svg"
-            xmlns:tan="tag:textalign.net,2015:ns"
-            xmlns:math="http://www.w3.org/1998/Math/MathML">
+      <work xmlns="tag:textalign.net,2015:ns">
          <IRI>http://dbpedia.org/resource/Ring_a_Ring_o%27_Roses</IRI>
          <name>Ring around the Rosie</name>
       </work>
-      <source xmlns="tag:textalign.net,2015:ns"
-              xmlns:xi="http://www.w3.org/2001/XInclude"
-              xmlns:svg="http://www.w3.org/2000/svg"
-              xmlns:tan="tag:textalign.net,2015:ns"
-              xmlns:math="http://www.w3.org/1998/Math/MathML">
+      <source xmlns="tag:textalign.net,2015:ns">
          <IRI>http://lccn.loc.gov/51014126</IRI>
          <name>The Oxford dictionary of nursery rhymes, edited by Iona and Peter Opie.</name>
       </source>
-      <adjustments xmlns="tag:textalign.net,2015:ns"
-                   xmlns:xi="http://www.w3.org/2001/XInclude"
-                   xmlns:svg="http://www.w3.org/2000/svg"
-                   xmlns:tan="tag:textalign.net,2015:ns"
-                   xmlns:math="http://www.w3.org/1998/Math/MathML">
+      <adjustments xmlns="tag:textalign.net,2015:ns">
     </adjustments>
    </doc>
    <doc href="ring-o-roses.eng.1987.xml"
-        TAN-version="2019"
+        TAN-version="2020"
         id="tag:parkj@textalign.net,2015:ring02"
         xml:lang="eng"
         root="TAN-T">
@@ -523,15 +560,51 @@
          <IRI>tag:parkj@textalign.net,2015:ring04</IRI>
          <name>TAN transcription of 1790 version of Ring around the Rosie reported by Newell in
             1883</name>
-         <location href="ring-o-roses.eng.1957.xml"
-                   accessed-when="2017-11-21T08:28:27.168-05:00"/>
+         <location accessed-when="2017-11-21T08:28:27.168-05:00"
+                   href="ring-o-roses.eng.1957.xml"
+                   orig-href="ring-o-roses.eng.1957.xml"/>
       </model>
       <adjustments xmlns="tag:textalign.net,2015:ns">
          <normalization which="no hyphens"/>
       </adjustments>
    </doc>
+   <doc href="sermon-on-the-mount.eng.kjv.1760.xml"
+        TAN-version="2020"
+        id="tag:parkj@textalign.net,2015:bible:matthew:sermon-on-the-mount"
+        xml:lang="eng"
+        root="TAN-T">
+      <name xmlns="tag:textalign.net,2015:ns">Sermon on the Mount, King James Version of the Bible, 1760 edition</name>
+      <master-location xmlns="tag:textalign.net,2015:ns"
+                       href="https://raw.githubusercontent.com/textalign/TAN-2019/master/examples/sermon-on-the-mount.eng.kjv.1760.xml"/>
+      <license xmlns="tag:textalign.net,2015:ns" which="by 4.0" licensor="park"/>
+      <work xmlns="tag:textalign.net,2015:ns">
+         <IRI>http://dbpedia.org/resource/Sermon_on_the_Mount</IRI>
+         <name>Sermon on the Mount</name>
+         <desc>Sermon on the Mount, from Matthew 5-7.</desc>
+      </work>
+      <vocabulary xmlns="tag:textalign.net,2015:ns"
+                  which="bible eng"
+                  accessed-when="2019-10-08"/>
+      <vocabulary xmlns="tag:textalign.net,2015:ns">
+         <IRI>tag:parkj@textalign.net,2015:TAN-voc:standard</IRI>
+         <name>Keywords for TAN files edited by Jenny Park</name>
+         <location accessed-when="2019-10-08"
+                   href="TAN-voc/park-projects.TAN-voc.xml"
+                   orig-href="TAN-voc/park-projects.TAN-voc.xml"/>
+      </vocabulary>
+      <source xmlns="tag:textalign.net,2015:ns" which="kjv 1760"/>
+      <inclusion xmlns="tag:textalign.net,2015:ns" xml:id="lords-prayer">
+         <IRI>tag:parkj@textalign.net,2015:bible:matthew:lords-prayer</IRI>
+         <!--<IRI>tag:parkj@textalign.net,2015:bible:matthew</IRI>-->
+         <name>Matthew's version of the Lord's Prayer, King James Version of the Bible, 1760
+            edition</name>
+         <location accessed-when="2019-10-09T02:32:50.973-04:00"
+                   href="lords-prayer.eng.kjv.1760.xml"
+                   orig-href="lords-prayer.eng.kjv.1760.xml"/>
+      </inclusion>
+   </doc>
    <doc href="TAN-A/ar.cat.TAN-A.claims.xml"
-        TAN-version="2019"
+        TAN-version="2020"
         id="tag:parkj@textalign.net,2015:ar.cat.tan-a:claims"
         claimant="xslt1"
         root="TAN-A">
@@ -548,26 +621,29 @@
       <vocabulary xmlns="tag:textalign.net,2015:ns">
             <IRI>tag:parkj@textalign.net,2015:TAN-key:ar.cat</IRI>
             <name>Keywords for Aristotle's Categories</name>
-            <location href="../TAN-voc/ar.cat.TAN-voc.xml"
-                   accessed-when="2017-03-10T11:50:15.499-05:00"/>
+            <location accessed-when="2017-03-10T11:50:15.499-05:00"
+                   href="TAN-voc/ar.cat.TAN-voc.xml"
+                   orig-href="../TAN-voc/ar.cat.TAN-voc.xml"/>
         </vocabulary>
       <source xmlns="tag:textalign.net,2015:ns" xml:id="grc">
             <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:object-refs</IRI>
             <name>Categories, Aristotle, Greek text by Minio-Paluello</name>
-            <location href="../ar.cat.grc.1949.minio-paluello.ref-scriptum.xml"
-                   accessed-when="2016-07-08T15:17:28.037-04:00"/>
+            <location accessed-when="2016-07-08T15:17:28.037-04:00"
+                   href="ar.cat.grc.1949.minio-paluello.ref-scriptum.xml"
+                   orig-href="../ar.cat.grc.1949.minio-paluello.ref-scriptum.xml"/>
         </source>
       <source xmlns="tag:textalign.net,2015:ns" xml:id="eng">
             <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.eng.1926.edghill:model-object-refs</IRI>
             <name>Categories, Aristotle, Greek text by Minio-Paluello</name>
-            <location href="../ar.cat.eng.1926.edghill.ref-scriptum.xml"
-                   accessed-when="2017-12-31"/>
+            <location accessed-when="2017-12-31"
+                   href="ar.cat.eng.1926.edghill.ref-scriptum.xml"
+                   orig-href="../ar.cat.eng.1926.edghill.ref-scriptum.xml"/>
         </source>
    </doc>
    <doc href="TAN-A/ar.cat.TAN-A.xml"
-        TAN-version="2019"
+        TAN-version="2020"
         id="tag:parkj@textalign.net,2015:ar.cat.tan-a"
-        claimant="xslt2"
+        claimant="park"
         root="TAN-A">
       <name xmlns="tag:textalign.net,2015:ns">Alignment of Aristotle's Categories</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
@@ -583,1083 +659,31 @@
       <source xmlns="tag:textalign.net,2015:ns" xml:id="grc">
             <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:semantic-refs</IRI>
             <name>Categories, Aristotle, Greek text by Minio-Paluello</name>
-            <location href="../ar.cat.grc.1949.minio-paluello.ref-logical.xml"
-                   accessed-when="2016-07-08T15:17:28.037-04:00"/>
+            <location accessed-when="2016-07-08T15:17:28.037-04:00"
+                   href="ar.cat.grc.1949.minio-paluello.ref-logical.xml"
+                   orig-href="../ar.cat.grc.1949.minio-paluello.ref-logical.xml"/>
         </source>
       <source xmlns="tag:textalign.net,2015:ns" xml:id="fra">
-            <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.fra.1844.saint-hilaire:semantic-refs</IRI>
+            <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.fra.1844.saint-hilaire:semantic-refs-realigned</IRI>
             <name>Categories, Aristotle, French translation by J. Barthélemy Saint-Hilaire</name>
-            <location href="../ar.cat.fra.1844.saint-hilaire.ref-logical.xml"
-                   accessed-when="2016-07-11T13:44:25.487-04:00"/>
+            <location accessed-when="2016-07-11T13:44:25.487-04:00"
+                   href="ar.cat.fra.1844.saint-hilaire.ref-logical-after-1949.xml"
+                   orig-href="../ar.cat.fra.1844.saint-hilaire.ref-logical-after-1949.xml"/>
         </source>
       <source xmlns="tag:textalign.net,2015:ns" xml:id="eng">
             <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.eng.1926.edghill:semantic-refs</IRI>
             <name>Categories, Aristotle, English translation by E. M. Edghill</name>
-            <location href="../ar.cat.eng.1926.edghill.ref-logical.xml"
-                   accessed-when="2016-07-08T15:18:25.573-04:00"/>
+            <location accessed-when="2016-07-08T15:18:25.573-04:00"
+                   href="ar.cat.eng.1926.edghill.ref-logical.xml"
+                   orig-href="../ar.cat.eng.1926.edghill.ref-logical.xml"/>
         </source>
       <adjustments xmlns="tag:textalign.net,2015:ns" src="*">
             <equate n="ti title"/>
             <equate n="pr praef pref preface"/>
         </adjustments>
-      <adjustments xmlns="tag:textalign.net,2015:ns" src="fra">
-            <skip div-type="sec"/>
-            <rename ref="1 1-3" new="1 1 1-3"/>
-            <rename ref="3 1-3" new="3 1 1-3"/>
-            <rename ref="4 1-3" new="4 1 1-3"/>
-            <rename ref="5 1-4" new="5 1 1-4"/>
-            <rename ref="5 7-9" new="5 2 3-5"/>
-            <rename ref="5 10" new="5 3 1"/>
-            <rename ref="5 11" new="5 3 2"/>
-            <rename ref="5 14" new="5 4 8"/>
-            <rename ref="5 15" new="5 5"/>
-            <rename ref="5 19" new="5 7 4"/>
-            <rename ref="5 20" new="5 8"/>
-            <rename ref="5 22" new="5 9 3"/>
-            <rename ref="5 24-26" new="5 9 6-8"/>
-            <rename ref="6 1-4" new="6 1 1-4"/>
-            <rename ref="6 6" new="6 1 5 3"/>
-            <rename ref="6 7-9" new="6 1 6-8"/>
-            <rename ref="6 10-12" new="6 2 1 1-3"/>
-            <rename ref="6 13" new="6 2 2"/>
-            <rename ref="6 15" new="6 2 6"/>
-            <rename ref="6 16" new="6 2 7"/>
-            <rename ref="6 17" new="6 3"/>
-            <rename ref="6 18" new="6 4 1"/>
-            <rename ref="6 19" new="6 4 1"/>
-            <rename ref="6 21" new="6 4 4"/>
-            <rename ref="6 22" new="6 4 5"/>
-            <rename ref="6 25" new="6 5"/>
-            <rename ref="6 26" new="6 6"/>
-            <rename ref="7 1" new="7 1 1 1"/>
-            <rename ref="7 4" new="7 1 4"/>
-            <rename ref="7 5-8" new="7 2 1-4"/>
-            <rename ref="7 9" new="7 3 1"/>
-            <rename ref="7 10" new="7 3 2"/>
-            <rename ref="7 12" new="7 3 6"/>
-            <rename ref="7 14" new="7 3 9"/>
-            <rename ref="7 15" new="7 3 10"/>
-            <rename ref="7 18" new="7 4 4"/>
-            <rename ref="7 21" new="7 4 10"/>
-            <rename ref="7 23" new="7 5 5 1"/>
-            <rename ref="7 24" new="7 5 5 2"/>
-            <rename ref="7 25" new="7 5 6"/>
-            <rename ref="7 27-29" new="7 5 9-11"/>
-            <rename ref="8 1" new="8 1 1 1"/>
-            <rename ref="8 2" new="8 1 1 2"/>
-            <rename ref="8 3" new="8 1 2"/>
-            <rename ref="8 6" new="8 1 7"/>
-            <rename ref="8 7" new="8 2"/>
-            <rename ref="8 8-10" new="8 3 1-3"/>
-            <rename ref="8 15" new="8 4 3"/>
-            <rename ref="8 16" new="8 4 4"/>
-            <rename ref="8 17" new="8 5 1"/>
-            <rename ref="8 18-22" new="8 5 1-5"/>
-            <rename ref="8 23" new="8 6 1"/>
-            <rename ref="8 24" new="8 6 2"/>
-            <rename ref="8 31" new="9 3 1"/>
-            <rename ref="8 33" new="9 3 5"/>
-            <rename ref="9 1" new="9 5 1 1"/>
-            <rename ref="9 3" new="9 5 2"/>
-            <rename ref="9 4" new="9 7 1 1"/>
-            <rename ref="9 5" new="9 7 1 2"/>
-            <rename ref="9 6" new="9 7 2"/>
-            <rename ref="9 7" new="9 7 3 1"/>
-            <rename ref="10 1" new="9 7 3 2"/>
-            <rename ref="10 2" new="10 1 1"/>
-            <rename ref="10 3" new="10 1 2"/>
-            <rename ref="10 4" new="10 2 1"/>
-            <rename ref="10 6" new="10 3 3 1"/>
-            <rename ref="10 7" new="10 3 3 2"/>
-            <rename ref="10 8" new="10 3 4"/>
-            <rename ref="10 10" new="10 3 7"/>
-            <rename ref="10 11" new="10 4 1"/>
-            <rename ref="10 12" new="10 4 2"/>
-            <rename ref="10 14-18" new="10 4 5-9"/>
-            <rename ref="10 20" new="10 5 5"/>
-            <rename ref="10 21-24" new="10 6 1-4"/>
-            <rename ref="10 26" new="10 6 5 4"/>
-            <rename ref="11 3" new="11 1 3"/>
-            <rename ref="11 4" new="11 1 4"/>
-            <rename ref="11 5" new="11 2 1"/>
-            <rename ref="11 6" new="11 2 2"/>
-            <rename ref="12 1" new="12 1 1 1"/>
-            <rename ref="12 2" new="12 1 1 2"/>
-            <rename ref="12 4" new="12 1 2"/>
-            <rename ref="12 5" new="12 1 3"/>
-            <rename ref="12 6" new="12 2 1"/>
-            <rename ref="12 8" new="12 2 4"/>
-            <rename ref="13 1" new="13 1 1"/>
-            <rename ref="13 2" new="13 1 2"/>
-            <rename ref="13 5" new="13 1 6"/>
-            <rename ref="14 1" new="14 1 1"/>
-            <rename ref="14 3" new="14 1 2 3"/>
-            <rename ref="14 6" new="14 2"/>
-            <rename ref="14 7" new="14 2"/>
-            <rename ref="15 1-6" new="15 1 1 1-6"/>
-            <rename ref="15 9" new="15 1 2"/>
-            <rename ref="15 10" new="15 1 3"/>
-            
-            <reassign>
-                <passage ref="5 5">
-                    <from-tok pos="1"/>
-                    <through-tok pos="27"/>
-                </passage>
-                <to ref="5 1 5"/>
-            </reassign>
-            <reassign>
-                <passage ref="5 5">
-                    <from-tok val="Ceci"/>
-                    <through-tok pos="4" val="corps"/>
-                </passage>
-                <to ref="5 1 6"/>
-            </reassign>
-            <reassign>
-                <passage ref="5 5">
-                    <from-tok val="Il"/>
-                    <through-tok val="exister"/>
-                </passage>
-                <to ref="5 1 7"/>
-            </reassign>
-            <reassign>
-                <passage ref="5 6">
-                    <from-tok pos="1"/>
-                    <through-tok val="première"/>
-                </passage>
-                <to ref="5 2 1"/>
-            </reassign>
-            <reassign>
-                <passage ref="5 6">
-                    <from-tok val="Si"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="5 2 1"/>
-            </reassign>
-            <reassign>
-                <passage ref="5 12">
-                    <from-tok pos="1"/>
-                    <through-tok val="sujet"/>
-                </passage>
-                <to ref="5 4 1"/>
-            </reassign>
-            <reassign>
-                <passage ref="5 12">
-                    <from-tok val="Ainsi"/>
-                    <through-tok val="sujet" pos="3"/>
-                </passage>
-                <to ref="5 4 2"/>
-            </reassign>
-            <reassign>
-                <passage ref="5 12">
-                    <from-tok val="Quant"/>
-                    <through-tok val="homme"/>
-                </passage>
-                <to ref="5 4 3"/>
-            </reassign>
-            <reassign>
-                <passage ref="5 12">
-                    <from-tok val="J"/>
-                    <through-tok val="bien"/>
-                </passage>
-                <to ref="5 4 4"/>
-            </reassign>
-            <reassign>
-                <passage ref="5 12">
-                    <from-tok val="Ainsi" pos="last"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="5 4 5"/>
-            </reassign>
-            <reassign>
-                <passage ref="5 13">
-                    <from-tok pos="1"/>
-                    <through-tok val="homme" pos="2"/>
-                </passage>
-                <to ref="5 4 6"/>
-            </reassign>
-            <reassign>
-                <passage ref="5 13">
-                    <from-tok val="La"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="5 4 7"/>
-            </reassign>
-            <reassign>
-                <passage ref="5 16">
-                    <from-tok pos="1"/>
-                    <through-tok val="réel"/>
-                </passage>
-                <to ref="5 6 1"/>
-            </reassign>
-            <reassign>
-                <passage ref="5 16">
-                    <from-tok val="Pour"/>
-                    <through-tok val="numérique"/>
-                </passage>
-                <to ref="5 6 2"/>
-            </reassign>
-            <reassign>
-                <passage ref="5 16">
-                    <from-tok val="Quant"/>
-                    <through-tok val="animal"/>
-                </passage>
-                <to ref="5 6 3 1"/>
-            </reassign>
-            <reassign>
-                <passage ref="5 16">
-                    <from-tok val="ceci"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="5 6 3 2"/>
-            </reassign>
-            <reassign>
-                <passage ref="5 17">
-                    <from-tok pos="1"/>
-                    <through-tok val="blanc"/>
-                </passage>
-                <to ref="5 6 3 3"/>
-            </reassign>
-            <reassign>
-                <passage ref="5 17">
-                    <from-tok pos="3" val="le"/>
-                    <through-tok val="manière"/>
-                </passage>
-                <to ref="5 6 3 4"/>
-            </reassign>
-            <reassign>
-                <passage ref="5 17">
-                    <from-tok val="Cependant"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="5 6 4"/>
-            </reassign>
-            <reassign>
-                <passage ref="5 18">
-                    <from-tok pos="1"/>
-                    <through-tok val="contraires"/>
-                </passage>
-                <to ref="5 7 1"/>
-            </reassign>
-            <reassign>
-                <passage ref="5 18">
-                    <from-tok val="En"/>
-                    <through-tok val="première"/>
-                </passage>
-                <to ref="5 7 2"/>
-            </reassign>
-            <reassign>
-                <passage ref="5 18">
-                    <from-tok val="le" pos="2"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="5 7 3"/>
-            </reassign>
-
-
-
-
-            <reassign>
-                <passage ref="5 21">
-                    <from-tok pos="1"/>
-                    <through-tok val="contraires"/>
-                </passage>
-                <to ref="5 9 1"/>
-            </reassign>
-            <reassign>
-                <passage ref="5 21">
-                    <from-tok val="Pour" pos="2"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="5 9 2"/>
-            </reassign>
-            <reassign>
-                <passage ref="5 23">
-                    <from-tok pos="1"/>
-                    <through-tok val="pensée"/>
-                </passage>
-                <to ref="5 9 4"/>
-            </reassign>
-            <reassign>
-                <passage ref="5 23">
-                    <from-tok val="Ainsi" pos="last"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="5 9 5"/>
-            </reassign>
-            <reassign>
-                <passage ref="6 5">
-                    <from-tok pos="1"/>
-                    <through-tok val="continue"/>
-                </passage>
-                <to ref="6 1 5 1"/>
-            </reassign>
-            <reassign>
-                <passage ref="6 5">
-                    <from-tok val="car"/>
-                    <through-tok val="point"/>
-                </passage>
-                <to ref="6 1 5 2"/>
-            </reassign>
-            <reassign>
-                <passage ref="6 14">
-                    <from-tok pos="1"/>
-                    <through-tok val="position"/>
-                </passage>
-                <to ref="6 2 3"/>
-            </reassign>
-            <reassign>
-                <passage ref="6 14">
-                    <from-tok val="On"/>
-                    <through-tok val="trois"/>
-                </passage>
-                <to ref="6 2 4"/>
-            </reassign>
-            <reassign>
-                <passage ref="6 14">
-                    <from-tok val="De" pos="2"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="6 2 5"/>
-            </reassign>
-            <reassign>
-                <passage ref="6 20">
-                    <from-tok pos="1"/>
-                    <through-tok val="grand"/>
-                </passage>
-                <to ref="6 4 2"/>
-            </reassign>
-            <reassign>
-                <passage ref="6 20">
-                    <from-tok val="De"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="6 4 3"/>
-            </reassign>
-            <reassign>
-                <passage ref="6 23">
-                    <from-tok pos="1"/>
-                    <through-tok val="mêmes"/>
-                </passage>
-                <to ref="6 4 6"/>
-            </reassign>
-            <reassign>
-                <passage ref="6 23">
-                    <from-tok val="En"/>
-                    <through-tok val="contraires" pos="last-1"/>
-                </passage>
-                <to ref="6 4 7"/>
-            </reassign>
-            <reassign>
-                <passage ref="6 23">
-                    <from-tok val="Il"/>
-                    <through-tok val="même" pos="last-1"/>
-                </passage>
-                <to ref="6 4 8"/>
-            </reassign>
-            <reassign>
-                <passage ref="6 23">
-                    <from-tok val="Donc"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="6 4 9"/>
-            </reassign>
-            <reassign>
-                <passage ref="6 24">
-                    <from-tok pos="1"/>
-                    <through-tok val="monde"/>
-                </passage>
-                <to ref="6 4 10"/>
-            </reassign>
-            <reassign>
-                <passage ref="6 24">
-                    <from-tok val="C" pos="2"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="6 4 11"/>
-            </reassign>
-            <reassign>
-                <passage ref="7 2">
-                    <from-tok pos="1"/>
-                    <through-tok val="chose" pos="4"/>
-                </passage>
-                <to ref="7 1 1 2"/>
-            </reassign>
-            <reassign>
-                <passage ref="7 2">
-                    <from-tok val="et"/>
-                    <through-tok val="genre"/>
-                </passage>
-                <to ref="7 1 1 3"/>
-            </reassign>
-            <reassign>
-                <passage ref="7 2">
-                    <from-tok val="Voici"/>
-                    <through-tok val="reste"/>
-                </passage>
-                <to ref="7 1 2"/>
-            </reassign>
-            <reassign>
-                <passage ref="7 2">
-                    <from-tok val="Ainsi"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="7 1 3 1"/>
-            </reassign>
-            <reassign>
-                <passage ref="7 3">
-                    <from-tok pos="1"/>
-                    <through-tok val="mêmes"/>
-                </passage>
-                <to ref="7 1 3 1"/>
-            </reassign>
-            <reassign>
-                <passage ref="7 3">
-                    <from-tok val="Ainsi"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="7 1 3 2"/>
-            </reassign>
-            <reassign>
-                <passage ref="7 11">
-                    <from-tok pos="1"/>
-                    <through-tok val="gouvernail"/>
-                </passage>
-                <to ref="7 3 3"/>
-            </reassign>
-            <reassign>
-                <passage ref="7 11">
-                    <from-tok val="Mais"/>
-                    <through-tok val="gouvernail" pos="last"/>
-                </passage>
-                <to ref="7 3 4"/>
-            </reassign>
-            <reassign>
-                <passage ref="7 11">
-                    <from-tok val="et"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="7 3 5"/>
-            </reassign>
-            <reassign>
-                <passage ref="7 13">
-                    <from-tok pos="1"/>
-                    <through-tok val="disparaît"/>
-                </passage>
-                <to ref="7 3 7"/>
-            </reassign>
-            <reassign>
-                <passage ref="7 13">
-                    <from-tok val="J"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="7 3 8"/>
-            </reassign>
-            <reassign>
-                <passage ref="7 16">
-                    <from-tok pos="1"/>
-                    <through-tok val="nouveau"/>
-                </passage>
-                <to ref="7 3 11"/>
-            </reassign>
-            <reassign>
-                <passage ref="7 16">
-                    <from-tok val="Avec"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="7 3 12"/>
-            </reassign>
-            <reassign>
-                <passage ref="7 17">
-                    <from-tok pos="1"/>
-                    <through-tok val="nature"/>
-                </passage>
-                <to ref="7 4 1"/>
-            </reassign>
-            <reassign>
-                <passage ref="7 17">
-                    <from-tok val="et"/>
-                    <through-tok val="reste"/>
-                </passage>
-                <to ref="7 4 2"/>
-            </reassign>
-            <reassign>
-                <passage ref="7 17">
-                    <from-tok val="Il"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="7 4 3"/>
-            </reassign>
-            <reassign>
-                <passage ref="7 19">
-                    <from-tok pos="1"/>
-                    <through-tok val="encore"/>
-                </passage>
-                <to ref="7 4 5"/>
-            </reassign>
-            <reassign>
-                <passage ref="7 19">
-                    <from-tok val="J"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="7 4 6"/>
-            </reassign>
-            <reassign>
-                <passage ref="7 20">
-                    <from-tok pos="1"/>
-                    <through-tok val="sensible"/>
-                </passage>
-                <to ref="7 4 7"/>
-            </reassign>
-            <reassign>
-                <passage ref="7 20">
-                    <from-tok val="En"/>
-                    <through-tok val="sensation" pos="6"/>
-                </passage>
-                <to ref="7 4 8"/>
-            </reassign>
-            <reassign>
-                <passage ref="7 20">
-                    <from-tok val="La"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="7 4 9"/>
-            </reassign>
-            <reassign>
-                <passage ref="7 22">
-                    <from-tok pos="1"/>
-                    <through-tok val="secondes"/>
-                </passage>
-                <to ref="7 5 1"/>
-            </reassign>
-            <reassign>
-                <passage ref="7 22">
-                    <from-tok val="Il" pos="1"/>
-                    <through-tok val="un" pos="6"/>
-                </passage>
-                <to ref="7 5 2"/>
-            </reassign>
-            <reassign>
-                <passage ref="7 22">
-                    <from-tok val="Il" pos="2"/>
-                    <through-tok val="un" pos="7"/>
-                </passage>
-                <to ref="7 5 3"/>
-            </reassign>
-            <reassign>
-                <passage ref="7 22">
-                    <from-tok val="Il" pos="3"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="7 5 4"/>
-            </reassign>
-            <reassign>
-                <passage ref="7 26">
-                    <from-tok pos="1"/>
-                    <through-tok val="applique"/>
-                </passage>
-                <to ref="7 5 7"/>
-            </reassign>
-            <reassign>
-                <passage ref="7 26">
-                    <from-tok val="Ceci"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="7 5 8"/>
-            </reassign>
-            <reassign>
-                <passage ref="8 4">
-                    <from-tok pos="1"/>
-                    <through-tok val="changeant"/>
-                </passage>
-                <to ref="8 1 3"/>
-            </reassign>
-            <reassign>
-                <passage ref="8 4">
-                    <from-tok val="Les"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="8 1 4"/>
-            </reassign>
-            <reassign>
-                <passage ref="8 5">
-                    <from-tok pos="1"/>
-                    <through-tok val="science"/>
-                </passage>
-                <to ref="8 1 5"/>
-            </reassign>
-            <reassign>
-                <passage ref="8 5">
-                    <from-tok val="Ainsi"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="8 1 6"/>
-            </reassign>
-            <reassign>
-                <passage ref="8 11">
-                    <from-tok pos="1"/>
-                    <through-tok val="affection"/>
-                </passage>
-                <to ref="8 3 4"/>
-            </reassign>
-            <reassign>
-                <passage ref="8 11">
-                    <from-tok val="Il"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="8 3 5"/>
-            </reassign>
-            <reassign>
-                <passage ref="8 12">
-                    <from-tok pos="1"/>
-                    <through-tok val="elles" pos="4"/>
-                </passage>
-                <to ref="8 3 6"/>
-            </reassign>
-            <reassign>
-                <passage ref="8 12">
-                    <from-tok val="Toutes" pos="2"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="8 3 7"/>
-            </reassign>
-            <reassign>
-                <passage ref="8 13">
-                    <from-tok pos="1"/>
-                    <through-tok val="affections"/>
-                </passage>
-                <to ref="8 3 8"/>
-            </reassign>
-            <reassign>
-                <passage ref="8 13">
-                    <from-tok val="tout"/>
-                    <through-tok val="colérique"/>
-                </passage>
-                <to ref="8 3 9"/>
-            </reassign>
-            <reassign>
-                <passage ref="8 13">
-                    <from-tok val="On"/>
-                    <through-tok val="eux"/>
-                </passage>
-                <to ref="8 3 10"/>
-            </reassign>
-            <reassign>
-                <passage ref="8 13">
-                    <from-tok val="Mais"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="8 3 11"/>
-            </reassign>
-            <reassign>
-                <passage ref="8 14">
-                    <from-tok pos="1"/>
-                    <through-tok val="courbe" pos="2"/>
-                </passage>
-                <to ref="8 4 1"/>
-            </reassign>
-            <reassign>
-                <passage ref="8 14">
-                    <from-tok val="et" pos="last"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="8 4 2"/>
-            </reassign>
-            <reassign>
-                <passage ref="8 25">
-                    <from-tok pos="1"/>
-                    <through-tok val="également"/>
-                </passage>
-                <to ref="8 6 3"/>
-            </reassign>
-            <reassign>
-                <passage ref="8 25">
-                    <from-tok val="et"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="8 6 4"/>
-            </reassign>
-            <reassign>
-                <passage ref="8 26">
-                    <from-tok pos="1"/>
-                    <through-tok val="autre" pos="2"/>
-                </passage>
-                <to ref="9 1 1"/>
-            </reassign>
-            <reassign>
-                <passage ref="8 26">
-                    <from-tok val="et" pos="last"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="9 1 2 1"/>
-            </reassign>
-            <reassign>
-                <passage ref="8 27">
-                    <from-tok pos="1"/>
-                    <through-tok val="qualitatifs"/>
-                </passage>
-                <to ref="9 1 2 2"/>
-            </reassign>
-            <reassign>
-                <passage ref="8 27">
-                    <from-tok val="Mais"/>
-                    <through-tok val="morales"/>
-                </passage>
-                <to ref="9 1 2 3"/>
-            </reassign>
-            <reassign>
-                <passage ref="8 27">
-                    <from-tok val="Ces"/>
-                    <through-tok val="morales" pos="2"/>
-                </passage>
-                <to ref="9 1 3"/>
-            </reassign>
-            <reassign>
-                <passage ref="8 27">
-                    <from-tok val="Donc"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="9 1 4"/>
-            </reassign>
-            <reassign>
-                <passage ref="8 28">
-                    <from-tok pos="1"/>
-                    <through-tok val="cercle" pos="5"/>
-                </passage>
-                <to ref="9 1 5"/>
-            </reassign>
-            <reassign>
-                <passage ref="8 28">
-                    <from-tok val="En" pos="last"/>
-                    <through-tok val="autre" pos="4"/>
-                </passage>
-                <to ref="9 1 6"/>
-            </reassign>
-            <reassign>
-                <passage ref="8 28">
-                    <from-tok val="Donc"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="9 1 7"/>
-            </reassign>
-            <reassign>
-                <passage ref="8 30">
-                    <from-tok pos="1"/>
-                    <through-tok val="manière"/>
-                </passage>
-                <to ref="9 2 1"/>
-            </reassign>
-            <reassign>
-                <passage ref="8 30">
-                    <from-tok val="donc"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="9 2 2"/>
-            </reassign>
-            <reassign>
-                <passage ref="8 32">
-                    <from-tok pos="1"/>
-                    <through-tok val="chose" pos="2"/>
-                </passage>
-                <to ref="9 3 2"/>
-            </reassign>
-            <reassign>
-                <passage ref="8 32">
-                    <from-tok val="Mais"/>
-                    <through-tok val="relation" pos="2"/>
-                </passage>
-                <to ref="9 3 3"/>
-            </reassign>
-            <reassign>
-                <passage ref="8 32">
-                    <from-tok val="Nous"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="9 3 4"/>
-            </reassign>
-            <reassign>
-                <passage ref="9 2">
-                    <from-tok pos="1"/>
-                    <through-tok val="chagrin"/>
-                </passage>
-                <to ref="9 5 1 2"/>
-            </reassign>
-            <reassign>
-                <passage ref="9 2">
-                    <from-tok val="ainsi"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="9 5 1 3"/>
-            </reassign>
-            <reassign>
-                <passage ref="10 5">
-                    <from-tok pos="1"/>
-                    <through-tok val="noir" pos="2"/>
-                </passage>
-                <to ref="10 3 1"/>
-            </reassign>
-            <reassign>
-                <passage ref="10 5">
-                    <from-tok val="Et"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="10 3 2"/>
-            </reassign>
-            <reassign>
-                <passage ref="10 9">
-                    <from-tok pos="1"/>
-                    <through-tok val="mauvaises"/>
-                </passage>
-                <to ref="10 3 5"/>
-            </reassign>
-            <reassign>
-                <passage ref="10 9">
-                    <from-tok val="Aussi"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="10 3 6"/>
-            </reassign>
-            <reassign>
-                <passage ref="10 13">
-                    <from-tok pos="1"/>
-                    <through-tok val="privation" pos="4"/>
-                </passage>
-                <to ref="10 4 3"/>
-            </reassign>
-            <reassign>
-                <passage ref="10 13">
-                    <from-tok val="Si"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="10 4 4"/>
-            </reassign>
-            <reassign>
-                <passage ref="10 19">
-                    <from-tok pos="1"/>
-                    <through-tok val="contraires"/>
-                </passage>
-                <to ref="10 5 1"/>
-            </reassign>
-            <reassign>
-                <passage ref="10 19">
-                    <from-tok val="D"/>
-                    <through-tok val="indifféremment"/>
-                </passage>
-                <to ref="10 5 2"/>
-            </reassign>
-            <reassign>
-                <passage ref="10 19">
-                    <from-tok val="On" pos="2"/>
-                    <through-tok val="deux" pos="5"/>
-                </passage>
-                <to ref="10 5 3"/>
-            </reassign>
-            <reassign>
-                <passage ref="10 19">
-                    <from-tok val="Concluons"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="10 5 4"/>
-            </reassign>
-            <reassign>
-                <passage ref="10 25">
-                    <from-tok pos="1"/>
-                    <through-tok val="vraie"/>
-                </passage>
-                <to ref="10 6 5 1"/>
-            </reassign>
-            <reassign>
-                <passage ref="10 25">
-                    <from-tok val="Soit"/>
-                    <through-tok val="pas" pos="3"/>
-                </passage>
-                <to ref="10 6 5 2"/>
-            </reassign>
-            <reassign>
-                <passage ref="10 25">
-                    <from-tok val="s" pos="last"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="10 6 5 3"/>
-            </reassign>
-            <reassign>
-                <passage ref="11 2">
-                    <from-tok pos="1"/>
-                    <through-tok val="bien" pos="2"/>
-                </passage>
-                <to ref="11 1 1"/>
-            </reassign>
-            <reassign>
-                <passage ref="11 2">
-                    <from-tok val="Ceci"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="11 1 2"/>
-            </reassign>
-            <reassign>
-                <passage ref="12 3">
-                    <from-tok pos="1"/>
-                    <through-tok val="existence"/>
-                </passage>
-                <to ref="12 1 1 3"/>
-            </reassign>
-            <reassign>
-                <passage ref="12 3">
-                    <from-tok val="Ainsi"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="12 1 1 4"/>
-            </reassign>
-            <reassign>
-                <passage ref="12 7">
-                    <from-tok pos="1"/>
-                    <through-tok val="première"/>
-                </passage>
-                <to ref="12 2 2"/>
-            </reassign>
-            <reassign>
-                <passage ref="12 7">
-                    <from-tok val="Or"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="12 2 3"/>
-            </reassign>
-            <reassign>
-                <passage ref="13 3">
-                    <from-tok pos="1"/>
-                    <through-tok val="nature"/>
-                </passage>
-                <to ref="13 1 3"/>
-            </reassign>
-            <reassign>
-                <passage ref="13 3">
-                    <from-tok val="Placées"/>
-                    <through-tok val="aquatique" pos="4"/>
-                </passage>
-                <to ref="13 1 4"/>
-            </reassign>
-            <reassign>
-                <passage ref="13 3">
-                    <from-tok val="On"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="13 1 5 1"/>
-            </reassign>
-            <reassign>
-                <passage ref="13 4">
-                    <from-tok pos="1"/>
-                    <through-tok val="espèces"/>
-                </passage>
-                <to ref="13 1 5 2"/>
-            </reassign>
-            <reassign>
-                <passage ref="13 4">
-                    <from-tok val="car"/>
-                    <through-tok val="existence"/>
-                </passage>
-                <to ref="13 1 5 3"/>
-            </reassign>
-            <reassign>
-                <passage ref="13 4">
-                    <from-tok val="Par"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="13 1 5 4"/>
-            </reassign>
-            <reassign>
-                <passage ref="14 2">
-                    <from-tok pos="1"/>
-                    <through-tok val="eux"/>
-                </passage>
-                <to ref="14 1 2 1"/>
-            </reassign>
-            <reassign>
-                <passage ref="14 2">
-                    <from-tok val="la"/>
-                    <through-tok val="reste"/>
-                </passage>
-                <to ref="14 1 2 2"/>
-            </reassign>
-            <reassign>
-                <passage ref="14 4">
-                    <from-tok pos="1"/>
-                    <through-tok val="juste"/>
-                </passage>
-                <to ref="14 1 3 1"/>
-            </reassign>
-            <reassign>
-                <passage ref="14 4">
-                    <from-tok val="Dans"/>
-                    <through-tok val="affecter"/>
-                </passage>
-                <to ref="14 1 3 2"/>
-            </reassign>
-            <reassign>
-                <passage ref="14 4">
-                    <from-tok val="Il"/>
-                    <through-tok val="autres" pos="2"/>
-                </passage>
-                <to ref="14 1 3 3"/>
-            </reassign>
-            <reassign>
-                <passage ref="14 4">
-                    <from-tok val="Si"/>
-                    <through-tok val="mouvements" pos="2"/>
-                </passage>
-                <to ref="14 1 3 4"/>
-            </reassign>
-            <reassign>
-                <passage ref="14 4">
-                    <from-tok val="or"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="14 1 3 5"/>
-            </reassign>
-            <reassign>
-                <passage ref="14 5">
-                    <from-tok pos="1"/>
-                    <through-tok val="etc"/>
-                </passage>
-                <to ref="14 1 4"/>
-            </reassign>
-            <reassign>
-                <passage ref="14 5">
-                    <from-tok val="Ainsi"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="14 1 5"/>
-            </reassign>
-            <reassign>
-                <passage ref="15 7">
-                    <from-tok pos="1"/>
-                    <through-tok val="vin" pos="2"/>
-                </passage>
-                <to ref="15 1 1 7"/>
-            </reassign>
-            <reassign>
-                <passage ref="15 7">
-                    <from-tok val="Et"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="15 1 1 8"/>
-            </reassign>
-            <reassign>
-                <passage ref="15 8">
-                    <from-tok pos="1"/>
-                    <through-tok val="propriété"/>
-                </passage>
-                <to ref="15 1 1 9"/>
-            </reassign>
-            <reassign>
-                <passage ref="15 8">
-                    <from-tok val="car"/>
-                    <through-tok pos="last"/>
-                </passage>
-                <to ref="15 1 1 10"/>
-            </reassign>
-        </adjustments>
    </doc>
    <doc href="TAN-A/ringoroses.div.1.xml"
-        TAN-version="2019"
+        TAN-version="2020"
         id="tag:parkj@textalign.net,2015:ring01-TAN-A-ring02"
         claimant="park"
         root="TAN-A">
@@ -1671,23 +695,31 @@
       <source xmlns="tag:textalign.net,2015:ns" xml:id="eng-uk">
             <IRI>tag:parkj@textalign.net,2015:ring01</IRI>
             <name>Transcription of ring around the roses in English (UK)</name>
-            <location href="../ring-o-roses.eng.1881.xml" accessed-when="2015-03-10"/>
+            <location accessed-when="2015-03-10"
+                   href="ring-o-roses.eng.1881.xml"
+                   orig-href="../ring-o-roses.eng.1881.xml"/>
         </source>
       <source xmlns="tag:textalign.net,2015:ns" xml:id="eng-us">
             <IRI>tag:parkj@textalign.net,2015:ring02</IRI>
             <name>Transcription of ring around the roses in English (US)</name>
-            <location href="../ring-o-roses.eng.1987.xml" accessed-when="2014-08-13"/>
+            <location accessed-when="2014-08-13"
+                   href="ring-o-roses.eng.1987.xml"
+                   orig-href="../ring-o-roses.eng.1987.xml"/>
         </source>
       <source xmlns="tag:textalign.net,2015:ns" xml:id="ger">
             <IRI>tag:hans@beispiel.com,2014:ringel</IRI>
             <name>Transcription of an ancestor of Ring around the roses in German</name>
-            <location href="../ring-o-roses.deu.1897.xml" accessed-when="2014-08-13"/>
+            <location accessed-when="2014-08-13"
+                   href="ring-o-roses.deu.1897.xml"
+                   orig-href="../ring-o-roses.deu.1897.xml"/>
         </source>
       <source xmlns="tag:textalign.net,2015:ns" xml:id="eng-1790">
             <IRI>tag:parkj@textalign.net,2015:ring04</IRI>
             <name>TAN transcription of 1790 version of Ring around the Rosie reported by Newell in
                 1883</name>
-            <location href="../ring-o-roses.eng.1957.xml" accessed-when="2017-10-21"/>
+            <location accessed-when="2017-10-21"
+                   href="ring-o-roses.eng.1957.xml"
+                   orig-href="../ring-o-roses.eng.1957.xml"/>
         </source>
       <adjustments xmlns="tag:textalign.net,2015:ns" src="ger">
             <skip div-type="Gedicht"/>
@@ -1695,7 +727,7 @@
         </adjustments>
    </doc>
    <doc href="TAN-A-lm/ar.cat.grc.1949.minio-paluello-sem-TAN-LM-sample.xml"
-        TAN-version="2019"
+        TAN-version="2020"
         id="tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:semantic-refs:TAN-A-lm:2016-04-05T07:07:40.033-04:00"
         lexicon="LSJ Lampe new"
         morphology="Perseus"
@@ -1713,19 +745,20 @@
       <inclusion xmlns="tag:textalign.net,2015:ns" xml:id="rel">
          <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:object-refs</IRI>
          <name>Categories, Aristotle, Greek text by Minio-Paluello</name>
-         <location href="../ar.cat.grc.1949.minio-paluello.ref-scriptum.xml"
-                   accessed-when="2016-09-28T08:50:23.457-04:00"/>
+         <location accessed-when="2016-09-28T08:50:23.457-04:00"
+                   href="ar.cat.grc.1949.minio-paluello.ref-scriptum.xml"
+                   orig-href="../ar.cat.grc.1949.minio-paluello.ref-scriptum.xml"/>
       </inclusion>
       <source xmlns="tag:textalign.net,2015:ns">
          <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:semantic-refs</IRI>
          <name>Categories, Aristotle, Greek text by Minio-Paluello</name>
-         <location href="../ar.cat.grc.1949.minio-paluello.ref-logical.xml"
-                   accessed-when="2016-04-05T07:07:40.033-04:00"/>
+         <location accessed-when="2016-04-05T07:07:40.033-04:00"
+                   href="ar.cat.grc.1949.minio-paluello.ref-logical.xml"
+                   orig-href="../ar.cat.grc.1949.minio-paluello.ref-logical.xml"/>
       </source>
-      <adjustments xmlns="tag:textalign.net,2015:ns"/>
    </doc>
    <doc href="TAN-A-lm/ring-o-roses.eng.1881.lm.xml"
-        TAN-version="2019"
+        TAN-version="2020"
         id="tag:parkj@textalign.net,2015:ring01-lm"
         lexicon="english"
         morphology="penn"
@@ -1744,11 +777,13 @@
       <source xmlns="tag:textalign.net,2015:ns">
             <IRI>tag:parkj@textalign.net,2015:ring01</IRI>
             <name>TAN transcription of Ring a Ring o' Roses</name>
-            <location href="../ring-o-roses.eng.1881.xml" accessed-when="2015-06-08-04:00"/>
+            <location accessed-when="2015-06-08-04:00"
+                   href="ring-o-roses.eng.1881.xml"
+                   orig-href="../ring-o-roses.eng.1881.xml"/>
         </source>
    </doc>
    <doc href="TAN-A-tok/ringoroses.01+02.token.1.xml"
-        TAN-version="2019"
+        TAN-version="2020"
         id="tag:parkj@textalign.net,2015:TAN-A-tok,ring01+ring02"
         bitext-relation="B-descends-from-A"
         reuse-type="adaptation"
@@ -1770,16 +805,20 @@
       <source xmlns="tag:textalign.net,2015:ns" xml:id="ring1881">
             <IRI>tag:parkj@textalign.net,2015:ring01</IRI>
             <name>Ring o roses 1881</name>
-            <location href="../ring-o-roses.eng.1881.xml" accessed-when="2015-01-17"/>
+            <location accessed-when="2015-01-17"
+                   href="ring-o-roses.eng.1881.xml"
+                   orig-href="../ring-o-roses.eng.1881.xml"/>
         </source>
       <source xmlns="tag:textalign.net,2015:ns" xml:id="ring1987">
             <IRI>tag:parkj@textalign.net,2015:ring02</IRI>
             <name>Ring o roses 1987</name>
-            <location href="../ring-o-roses.eng.1987.xml" accessed-when="2015-01-17"/>
+            <location accessed-when="2015-01-17"
+                   href="ring-o-roses.eng.1987.xml"
+                   orig-href="../ring-o-roses.eng.1987.xml"/>
         </source>
    </doc>
    <doc href="TAN-A-tok/ringoroses.01+03.token.1.xml"
-        TAN-version="2019"
+        TAN-version="2020"
         id="tag:parkj@textalign.net,2015:TAN-A-tok,ring01+ring03"
         reuse-type="correlationGeneral"
         bitext-relation="unclear"
@@ -1798,19 +837,23 @@
       <source xmlns="tag:textalign.net,2015:ns" xml:id="eng">
             <IRI>tag:parkj@textalign.net,2015:ring01</IRI>
             <name>1881 version of Ring around the Roses</name>
-            <location href="../ring-o-roses.eng.1881.xml" accessed-when="2015-05-24-04:00"/>
+            <location accessed-when="2015-05-24-04:00"
+                   href="ring-o-roses.eng.1881.xml"
+                   orig-href="../ring-o-roses.eng.1881.xml"/>
         </source>
       <source xmlns="tag:textalign.net,2015:ns" xml:id="ger">
             <IRI>tag:hans@beispiel.com,2014:ringel</IRI>
             <name>German version of Ring around the Roses</name>
-            <location href="../ring-o-roses.deu.1897.xml" accessed-when="2015-05-24-04:00"/>
+            <location accessed-when="2015-05-24-04:00"
+                   href="ring-o-roses.deu.1897.xml"
+                   orig-href="../ring-o-roses.deu.1897.xml"/>
         </source>
       <adjustments xmlns="tag:textalign.net,2015:ns" src="ger">
             <skip div-type="Gedicht"/>
         </adjustments>
    </doc>
    <doc href="TAN-A-tok/ringoroses.01+03.token.2.xml"
-        TAN-version="2019"
+        TAN-version="2020"
         id="tag:parkj@textalign.net,2015:TAN-A-tok,ring01+ring03:alt"
         reuse-type="correlationGeneral"
         bitext-relation="unclear"
@@ -1833,12 +876,16 @@
       <source xmlns="tag:textalign.net,2015:ns" xml:id="eng">
             <IRI>tag:parkj@textalign.net,2015:ring01</IRI>
             <name>1881 version of Ring around the Roses</name>
-            <location href="../ring-o-roses.eng.1881.xml" accessed-when="2015-05-24-04:00"/>
+            <location accessed-when="2015-05-24-04:00"
+                   href="ring-o-roses.eng.1881.xml"
+                   orig-href="../ring-o-roses.eng.1881.xml"/>
         </source>
       <source xmlns="tag:textalign.net,2015:ns" xml:id="ger">
             <IRI>tag:hans@beispiel.com,2014:ringel</IRI>
             <name>German version of Ring around the Roses</name>
-            <location href="../ring-o-roses.deu.1897.xml" accessed-when="2015-05-24-04:00"/>
+            <location accessed-when="2015-05-24-04:00"
+                   href="ring-o-roses.deu.1897.xml"
+                   orig-href="../ring-o-roses.deu.1897.xml"/>
         </source>
       <adjustments xmlns="tag:textalign.net,2015:ns" src="ger">
             <skip div-type="Gedicht"/>
@@ -1846,7 +893,7 @@
         </adjustments>
    </doc>
    <doc href="TAN-mor/eng.kalvesmaki.com,2014.2.xml"
-        TAN-version="2019"
+        TAN-version="2020"
         id="tag:kalvesmaki.com,2014:tan-r-mor:eng:penn"
         root="TAN-mor">
       <name xmlns="tag:textalign.net,2015:ns">University of Pennsylvania (Penn) Treebank Tag-set</name>
@@ -1868,7 +915,7 @@
          http://www.comp.leeds.ac.uk/amalgam/tagsets/upenn.html</comment>
    </doc>
    <doc href="TAN-voc/ar.cat.TAN-voc.xml"
-        TAN-version="2019"
+        TAN-version="2020"
         id="tag:parkj@textalign.net,2015:TAN-key:ar.cat"
         affects-element="work"
         root="TAN-voc">
@@ -1883,5 +930,14 @@
                 the source. </desc>
         </license>
       <adjustments xmlns="tag:textalign.net,2015:ns"/>
+   </doc>
+   <doc href="TAN-voc/park-projects.TAN-voc.xml"
+        TAN-version="2020"
+        id="tag:parkj@textalign.net,2015:TAN-voc:standard"
+        root="TAN-voc">
+      <name xmlns="tag:textalign.net,2015:ns">Keywords for TAN files edited by Jenny Park</name>
+      <master-location xmlns="tag:textalign.net,2015:ns"
+                       href="https://raw.githubusercontent.com/textalign/TAN-2019/master/examples/TAN-voc/park-projects.TAN-voc.xml"/>
+      <license xmlns="tag:textalign.net,2015:ns" licensor="park" which="by 4.0"/>
    </doc>
 </collection>

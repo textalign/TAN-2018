@@ -12,7 +12,7 @@
       <let name="this-q-ref" value="generate-id(.)"/>
       <let name="this-name" value="name(.)"/>
       <let name="this-checked-for-errors" value="tan:get-via-q-ref($this-q-ref, $self-expanded[1])"/>
-      <let name="has-include-or-which-attr" value="exists(@include) or exists(@which) or $this-name = 'inclusion'"/>
+      <let name="has-include-or-which-attr" value="exists(@include) or exists(@which)"/>
       <let name="relevant-fatalities"
          value="
             if ($has-include-or-which-attr = true()) then
@@ -47,6 +47,13 @@
          value="($relevant-fatalities, $relevant-errors, $relevant-warnings)"/>
       <let name="relevant-items"
          value="($relevant-problems, $relevant-info, $help-offered)"/>
+      <let name="inclusion-errors"
+         value="
+            if ($this-name = 'inclusion') then
+               $this-checked-for-errors//(tan:fatal, tan:error, tan:warning)[not(@xml:id = $errors-to-squelch)]
+            else
+               ()"
+      />
       <let name="these-fixes"
          value="($this-checked-for-errors/(self::*, *[@attr])/tan:fix, $relevant-items/tan:fix)"/>
       <let name="self-replacements" value="$these-fixes[@type = 'replace-self']"/>
@@ -100,6 +107,9 @@
             select="tan:error-report($relevant-warnings)"/></report>
       <report test="exists($relevant-info) and not($doc-is-error-test)" role="info"><value-of
             select="$relevant-info/tan:message"/></report>
+      <report test="exists($inclusion-errors) and not($doc-is-error-test)" role="warning">Included
+         document has the following errors: <value-of
+            select="tan:error-report($inclusion-errors)"/></report>
       <report test="exists($help-offered) and not($doc-is-error-test)" role="warning" sqf:fix="tan-sqf">
          <value-of select="$help-offered/tan:message"/>
       </report>
@@ -118,7 +128,10 @@
                <sqf:title>Replace self with: <value-of
                      select="tan:xml-to-string($self-replacements[1]/node())"/></sqf:title>
             </sqf:description>
-            <sqf:replace select="$self-replacements[1]/node()"/>
+            <!--<sqf:replace select="$self-replacements[1]/node()"/>-->
+            <sqf:replace
+               select="tan:copy-indentation($self-replacements[1], .)/(node() except node()[1]/self::text())"
+            />
          </sqf:fix>
          <sqf:fix id="replace-self-and-next-sibling"
             use-when="exists($self-and-next-sibling-replacements)">
@@ -313,7 +326,6 @@
             </sqf:description>
             <sqf:replace match="(.//@*[name() = name($first-attribute)])[1]"
                select="$first-attribute"/>
-            <!--<sqf:replace match=""></sqf:replace>-->
          </sqf:fix>
          
          <sqf:fix id="self-deletion" use-when="exists($self-deletions)">

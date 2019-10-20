@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <TEI xml:lang="en" xmlns="http://www.tei-c.org/ns/1.0"
-  xmlns:rng="http://relaxng.org/ns/structure/1.0">
+  xmlns:rng="http://relaxng.org/ns/structure/1.0"
+  xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">
   <teiHeader>
     <fileDesc>
       <titleStmt>
@@ -10,11 +11,10 @@
       </titleStmt>
       <publicationStmt>
         <publisher>Joel Kalvesmaki</publisher>
-        <date>Revised 2017-01-09</date>
+        <date>Revised 2019-10-15</date>
         <availability status="free">
           <p>Insofar as this ODD file constitutes an original work (see below) all material is
-            released under a Creative Commons Attribution 4.0 International License:
-            http://creativecommons.org/licenses/by/4.0/ </p>
+            released under a GNU General Public License, https://opensource.org/licenses/GPL-3.0</p>
           <p>The notice in the next paragraph is preserved whole from the template upon which this
             ODD file is based.</p>
           <!-- original <p> -->
@@ -78,7 +78,13 @@
         <!-- CUSTOMIZATION BELOW -->
         <moduleRef url="incl/TAN-class-1.rng"/>
         <elementSpec mode="change" ident="TEI" module="textstructure">
-          <desc>Two headers are required, teiHeader and TAN's head, because the two heads are very different animals.</desc>
+          <desc>Two headers are required, teiHeader and TAN's head, because the two heads are very
+            different animals. The teiHeader is quite expansive, allowing you to spend time talking
+            about all sorts of things that may be only very loosely related to the body, and it is generally
+            designed to be written and read by humans. The TAN header on the other hand is restricted to 
+            metadata directly related to the data itself, and is designed on every level to be RDF-ready. See
+            the TAN guidelines for more.
+          </desc>
           <content>
             <rng:group>
               <rng:interleave>
@@ -103,7 +109,9 @@
           </content>
           <attList>
             <attDef mode="add" ident="id" usage="req">
-              <desc>A tag URN is required in the root element</desc>
+              <desc>A tag URN is required in the root element, uniquely identifying the document.
+                Revisions need not be renamed, since ISO-compliant dates will be checked to
+                determine the version of the document.</desc>
               <datatype>
                 <rng:data type="anyURI">
                   <rng:param name="pattern"
@@ -139,8 +147,56 @@
         </elementSpec>
         <elementSpec mode="change" ident="div" module="textstructure">
           <desc>Every &lt;div> either contains purely &lt;div>s / empty elements (like
-            &lt;milestone>) or it does not (leaf &lt;div>s).</desc>
+            &lt;milestone>) or it does not (leaf &lt;div>s). This element is redefined to be much more like
+          the HTML div, which may be any unit whatsover, even those that are inline stretches of text.
+          It does the job of &lt;ab>, &lt;p>, &lt;l>, and all other text segmentation elements, leaving to @type
+          the job of defining exactly what kind(s) of division is (are) intended.</desc>
+          <classes mode="change">
+            <memberOf key="att.global" mode="delete"/>
+            <memberOf key="att.divLike" mode="delete"/>
+            <memberOf key="att.typed" mode="delete"/>
+            <memberOf key="att.declaring" mode="delete"/>
+            <memberOf key="att.written" mode="delete"/>
+          </classes>
+          <!-- the following element is flagged as invalid because of the a:documentation element below,
+          which is permitted by rng. Because the ODD processor passes the <a:documentation> elements
+          along just fine into the target .rng and .rnc files, this should be retained, until the TEI council
+          sees fit to permit elements in the a: namespace -->
           <content>
+            <rng:optional>
+              <rng:attribute name="ed-who">
+                <a:documentation>Reference to agent or agents who have edited (added or modified) an
+                  element or its content</a:documentation>
+                <rng:data type="string">
+                  <rng:param name="pattern">.+</rng:param>
+                </rng:data>
+              </rng:attribute>
+            </rng:optional>
+            <rng:optional>
+              <rng:attribute name="ed-when">
+                <a:documentation>Reference to a date or time when an element or its content was
+                  edited (added or modified)</a:documentation>
+                <rng:choice>
+                  <rng:data type="date"/>
+                  <rng:data type="dateTime"/>
+                </rng:choice>
+              </rng:attribute>
+            </rng:optional>
+            <rng:choice>
+              <rng:attribute name="include">
+                <a:documentation>This attribute signals that the parent element is to be replaced by
+                  all elements of the same name found in the file referred to by the corresponding
+                  inclusion.</a:documentation>
+                <rng:data type="string"/>
+              </rng:attribute>
+              <rng:group>
+                <rng:ref name="att.global.attributes"/>
+                <rng:ref name="att.divLike.attributes"/>
+                <rng:ref name="att.typed.attributes"/>
+                <rng:ref name="att.declaring.attributes"/>
+                <rng:ref name="att.written.attributes"/>
+              </rng:group>
+            </rng:choice>
             <rng:choice>
               <rng:interleave>
                 <rng:oneOrMore>
@@ -150,6 +206,7 @@
                   <rng:ref name="model.milestoneLike"/>
                 </rng:zeroOrMore>
               </rng:interleave>
+              <!-- Comments below exempt some parts of the original, left here to document decisions made -->
               <!--<rng:oneOrMore>
                 <rng:group>
                   <rng:ref name="model.common"/>
@@ -208,45 +265,14 @@
               </rng:group>
             </rng:choice>
           </content>
-          <attList>
-            <!-- In the TAN model, a <div> should have either @include or the other attributes, 
-              but not both. That rule is enforced at the schematron level. -->
-            <attDef ident="include" usage="opt" mode="add">
-              <desc>This attribute signals that the parent element is to be replaced by all elements
-                of the same name found in the referred inclusion</desc>
-              <datatype>
-                <rng:data type="string"/>
-              </datatype>
-            </attDef>
-          </attList>
         </elementSpec>
-        <classSpec type="atts" ident="att.global.responsibility" mode="change">
-          <attList>
-            <attDef mode="add" ident="ed-who" usage="opt">
-              <desc>Reference to agent or agents who have edited (added or modified) an element or
-                its content</desc>
-              <datatype>
-                <rng:data type="string">
-                  <rng:param name="pattern">.+</rng:param>
-                </rng:data>
-              </datatype>
-            </attDef>
-            <attDef mode="add" ident="ed-when" usage="opt">
-              <desc>Reference to a date or time when an element or its content was edited (added or
-                modified)</desc>
-              <datatype>
-                <rng:choice>
-                  <rng:data type="date"/>
-                  <rng:data type="dateTime"/>
-                </rng:choice>
-              </datatype>
-            </attDef>
-          </attList>
-        </classSpec>
+
         <classSpec type="atts" ident="att.typed" mode="change">
           <attList>
             <attDef ident="type" mode="change">
-              <desc>Attribute may take multiple values, space delimited.</desc>
+              <desc>@type may take multiple values, space delimited. Each value is an idref or a
+                name, pointing to a vocabulary item that provides the IRIs, names, and descriptions
+                of the textual division.</desc>
               <datatype>
                 <rng:data type="string">
                   <rng:param name="pattern">.+</rng:param>
@@ -275,7 +301,7 @@
             </attDef>
           </attList>
         </classSpec>
-        
+
       </schemaSpec>
     </body>
   </text>

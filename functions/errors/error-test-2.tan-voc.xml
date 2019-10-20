@@ -14,7 +14,7 @@
                 License. The license is granted independent of rights and licenses associated with
                 the source. </desc>
         </license>
-        <!-- inc04 inc06 -->
+        <!-- inc06 wrn02 wrn07 -->
         <inclusion xml:id="test-1">
             <IRI>tag:textalign.net,2015:error-test</IRI>
             <name>Error test 1</name>

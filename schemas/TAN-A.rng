@@ -8,10 +8,10 @@
       </element>
     </start>
     <define name="source-list">
-      <a:documentation>TAN-A files must have one or more sources</a:documentation>
-      <oneOrMore>
+      <a:documentation>TAN-A files must have zero or more sources</a:documentation>
+      <zeroOrMore>
         <ref name="link-element-source"/>
-      </oneOrMore>
+      </zeroOrMore>
     </define>
     <define name="voc-element-non-class-2">
       <ref name="voc-element-tan-a"/>
@@ -39,7 +39,7 @@
   <define name="attr-in-lang">
     <attribute name="in-lang">
       <a:documentation>restricts a claim to a particular language; used with only certain verbs, e.g., "translates"</a:documentation>
-      <a:documentation>Verbs must explicitly allow this element in their definition, otherwise it is not permitted.</a:documentation>
+      <a:documentation>By default, this feature is disallowed. A verb's &lt;constrain&gt; must explicitly require or allow it.</a:documentation>
       <data type="language"/>
     </attribute>
   </define>
@@ -51,7 +51,7 @@
   </define>
   <define name="ptr-attr-object">
     <attribute name="object">
-      <a:documentation>takes one or more ID refs of entities defined in &lt;head&gt; that serve as the grammatical object of a claim. For example, if you wish to say that work A is a commentary on work B, then the object would have the ID ref for work B. If you wish to make more complex assertions, use &lt;object&gt;.</a:documentation>
+      <a:documentation>takes one or more ID refs of entities defined in &lt;head&gt; that serve as the grammatical object of a claim. For example, if you wish to say that work A is a commentary on work B, then @object would have the ID ref for work B. @object is used for idrefs; data content, textual references, or complex objects must be encoded with &lt;object&gt;.</a:documentation>
       <a:documentation> Multiple values of @object are interpreted to mean "and", resulting in distribution of the claim (e.g., object="x y" becomes "[subject] [verb] x" and "[subject] [verb] y...").</a:documentation>
       <a:documentation>In RDF, the concept of object (the third element of a triple) is required. In TAN-c, it is not required, since some &lt;verb&gt;s may be intransitive (e.g., "Charlie slept.").</a:documentation>
     </attribute>
@@ -64,7 +64,7 @@
   </define>
   <define name="ptr-attr-subject">
     <attribute name="subject">
-      <a:documentation>points to one or more ID refs of entities defined in &lt;head&gt; that serve as the grammatical subject of a claim. @subject within &lt;body&gt; indicates the default subject(s) for &lt;claim&gt;s. </a:documentation>
+      <a:documentation>points to one or more ID refs of entities defined in &lt;head&gt; that serve as the grammatical subject of a claim. @subject within &lt;body&gt; indicates the default subject(s) for &lt;claim&gt;s. @subject is used for idrefs; data content, textual references, or complex objects must be encoded with &lt;subject&gt;.</a:documentation>
       <a:documentation> Multiple values of @subject are interpreted to mean "and", resulting in distribution of the claim (e.g., subject="x y" becomes "x [verby]..." and "y [verb]...").</a:documentation>
     </attribute>
   </define>
@@ -95,6 +95,9 @@
         <group>
           <optional>
             <ref name="ed-stamp"/>
+          </optional>
+          <optional>
+            <ref name="attr-id-xml"/>
           </optional>
           <optional>
             <ref name="certainty-claim"/>
@@ -160,7 +163,7 @@
   <define name="element-in-lang">
     <element name="in-lang">
       <a:documentation>restricts a claim to a particular language; used with only certain verbs, e.g., "translates"</a:documentation>
-      <a:documentation>Verbs must explicitly allow this element in their definition, otherwise it is not permitted.</a:documentation>
+      <a:documentation>By default, this feature is disallowed. A verb's &lt;constrain&gt; must explicitly require or allow it.</a:documentation>
       <optional>
         <ref name="ed-stamp"/>
       </optional>
@@ -169,7 +172,9 @@
   </define>
   <define name="element-object">
     <element name="object">
-      <a:documentation>is similar to @object, but for complex content, mainly concepts that do not lend themselves to the IRI + name pattern, particularly languages and units or passages of text.</a:documentation>
+      <a:documentation>points to text references that act as the object of the claim.</a:documentation>
+      <a:documentation>Unlike @object, which points to any entity via idrefs, &lt;subject&gt; is intended exclusively to point to data content or a textual subject.</a:documentation>
+      <a:documentation> Each &lt;subject&gt; is interpreted as a single entity, with all textual references encoded by the element treated as a single, grouped passage.</a:documentation>
       <optional>
         <ref name="ed-stamp"/>
       </optional>
@@ -182,8 +187,8 @@
   <define name="element-subject">
     <element name="subject">
       <a:documentation>points to text references that act as the subject of the claim.</a:documentation>
-      <a:documentation>Unlike @subject, which can point to any entity, &lt;subject&gt; is intended exclusively to point to a textual subject.</a:documentation>
-      <a:documentation> Each &lt;subject&gt; is interpreted as a single entity, with all textual references treated as a single, grouped passage.</a:documentation>
+      <a:documentation>Unlike @subject, which points to any entity via idrefs, &lt;subject&gt; is intended exclusively to point to data content or a textual subject.</a:documentation>
+      <a:documentation> Each &lt;subject&gt; is interpreted as a single entity, with all textual references encoded by the element treated as a single, grouped passage.</a:documentation>
       <optional>
         <ref name="ed-stamp"/>
       </optional>
@@ -272,13 +277,6 @@
     <element name="unit">
       <a:documentation>contains an IRI + name pattern identifying a unit type (e.g., millimeters, seconds, Euros), to be used in conjunction with &lt;object&gt; to specify the meaning of a value</a:documentation>
       <ref name="entity-nondigital-id"/>
-    </element>
-  </define>
-  <define name="voc-element-verb">
-    <element name="verb">
-      <a:documentation>contains an IRI + name pattern identifying a property, relationship, action, or something else that is used to say something about something. </a:documentation>
-      <a:documentation>The preferred term "verb" is equivalent to RDF "predicate." The latter term is avoided as misleading, since in ordinary usage the term "predicate" designates both the verb and everything it governs.</a:documentation>
-      <ref name="entity-nondigital-constrained"/>
     </element>
   </define>
   <define name="voc-element-vers">

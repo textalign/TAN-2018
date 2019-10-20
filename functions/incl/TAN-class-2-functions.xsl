@@ -75,6 +75,7 @@
       mode="core-expansion-terse">
       <xsl:param name="is-tan-a-lm" tunnel="yes"/>
       <xsl:param name="is-for-lang" tunnel="yes"/>
+      <xsl:variable name="is-general-tok-claim" select="self::tan:tok[not(@ref)] and $is-tan-a-lm"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <!-- The <tok> in a TAN-A-lm file needs to have a <src> added if it is source-specific, and a <result> added if it is not -->
@@ -90,8 +91,9 @@
                </xsl:otherwise>
             </xsl:choose>
          </xsl:if>
-         <xsl:if test="not(exists(@pos))">
+         <xsl:if test="not(exists(@pos)) and not($is-general-tok-claim)">
             <!-- <pos> becomes the prime way to identify a <tok>'s @rgx/@val + @pos combo, so needs a @q -->
+            <!-- We exempt universal <tok>s found in TAN-A-lm files, those without @ref -->
             <pos attr="" q="{generate-id()}">1</pos>
          </xsl:if>
          <xsl:if test="not(exists(@val)) and not(exists(@rgx))">

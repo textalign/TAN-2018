@@ -60,7 +60,7 @@
   <define name="cond-attr-m-has-features">
     <attribute name="m-has-features">
       <a:documentation>specifies one or more features separated by spaces or the padded + (a plus sign with surrounding spaces). A plain space is treated  as meaning "or" and the padded + as meaning "and." If there is at least one match between the list and the value of the codes in an &lt;m&gt; then the condition will be treated as true. The padded plus sign specifies that all the items need to be found in the &lt;m&gt;. </a:documentation>
-      <a:documentation>For example, feature-test="A B + C D + E" means that the condition will be true for a given &lt;m&gt; only if that &lt;m&gt; has A or B and C or D and E present as values. This test is one of four tests for determining the truth value that will trigger the message in a &lt;report&gt; or &lt;assert&gt; </a:documentation>
+      <a:documentation>For example, feature-test="A B + C D + E" means that the condition will be true for a given &lt;m&gt; only if that &lt;m&gt; has A or (B and C) or (D and E) present as values. This test is one of four tests for determining the truth value that will trigger the message in a &lt;report&gt; or &lt;assert&gt; </a:documentation>
       <data type="string">
         <param name="pattern">[^\s\+]+(\s(\+\s)?[^\s\+]+)*</param>
       </data>

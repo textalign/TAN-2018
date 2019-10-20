@@ -39,6 +39,7 @@
             <name>Test 4</name>
             <location href="error-test-4.tan-tei.xml" accessed-when="2019-01-23"/>
         </source>
+        <!-- wrn02 -->
         <source xml:id="test-8">
             <IRI>tag:textalign.net,2015:error-test-8</IRI>
             <name>error test 8 tan-t</name>
@@ -152,6 +153,7 @@
                 <IRI>tag:textalign.net,2015:test:unit:inches</IRI>
                 <name>inches</name>
             </unit>
+            <!-- inc02 -->
             <organization include="test-6"/>
         </vocabulary-key>
         <resp who="person_1" roles="editor"/>

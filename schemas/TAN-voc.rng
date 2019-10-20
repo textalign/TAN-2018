@@ -37,7 +37,13 @@
       </interleave>
     </define>
     <define name="body-item">
-      <ref name="element-item"/>
+      <choice>
+        <ref name="element-item"/>
+        <ref name="voc-element-verb"/>
+      </choice>
+    </define>
+    <define name="extra-verb-attrs">
+      <ref name="ptr-attr-group"/>
     </define>
   </include>
   <!-- ATTRIBUTES -->
@@ -52,7 +58,8 @@
   <!-- ELEMENTS -->
   <define name="element-item">
     <element name="item">
-      <a:documentation>names an item that is being described. The item is assumed to be a species of the type of thing discussed by the TAN element that is affected.</a:documentation>
+      <a:documentation>names an item that is being described. The item is assumed to be a type of thing indicated by the closest @affects-attribute or @affects-element.</a:documentation>
+      <a:documentation>The term "item" implies something that can be more than one type of thing. Verbs are special, and cannot be assigned any other categories, so &lt;item&gt; should not be used of verbs. Use &lt;verb&gt; instead.</a:documentation>
       <optional>
         <ref name="ed-stamp"/>
       </optional>
@@ -65,12 +72,17 @@
           <optional>
             <ref name="ptr-attr-group"/>
           </optional>
-          <choice>
-            <ref name="entity-digital-tan-other-content"/>
-            <ref name="entity-nondigital-content"/>
-            <ref name="entity-nondigital-with-constraints-content"/>
-            <ref name="entity-tok-def"/>
-          </choice>
+          <interleave>
+            <zeroOrMore>
+              <ref name="element-comment"/>
+            </zeroOrMore>
+            <choice>
+              <ref name="entity-digital-tan-other-content"/>
+              <ref name="entity-nondigital-content"/>
+              <ref name="entity-nondigital-with-constraints-content"/>
+              <ref name="entity-tok-def"/>
+            </choice>
+          </interleave>
         </group>
       </choice>
     </element>

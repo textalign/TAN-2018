@@ -947,7 +947,7 @@
             <xsl:copy-of select="@*"/>
             <xsl:attribute name="class" select="string-join((@class, $class-values-to-add), ' ')"/>
             <xsl:if test="exists(parent::tan:group)">
-                <xsl:attribute name="draggable"/>
+                <xsl:attribute name="draggable" select="'true'"/>
             </xsl:if>
             <xsl:apply-templates mode="#current"/>
         </xsl:copy>
@@ -965,7 +965,7 @@
         </xsl:variable>
         <xsl:copy>
             <xsl:copy-of select="@*"/>
-            <xsl:attribute name="draggable"/>
+            <xsl:attribute name="draggable" select="'true'"/>
             <xsl:attribute name="class" select="string-join((@class, $extra-class-values), ' ')"/>
             <xsl:apply-templates mode="#current"/>
         </xsl:copy>

@@ -64,7 +64,8 @@
                 <name>Jenny Park</name>
             </person>
         </vocabulary-key>
-        <file-resp who="park"/>
+        <!-- verbose tan21 -->
+        <file-resp who="park Jenny_Park"/>
         <resp roles="creator" who="park"/>
         <change when="2014-08-13" who="park">Started file</change>
         <!-- tan02 -->
@@ -74,8 +75,8 @@
         <body xml:lang="eng">
             <!-- cl104 verbose cl107 verbose -->
             <div type="preface" n="preface"><p>This is a preface</p></div>
-            <!-- tei02 tei03 tan05 cl104 verbose cl107 verbose tan21 -->
-            <div type="line" n="1" include="test"><p>Line 1</p></div>
+            <!-- cl104 verbose cl107 -->
+            <div type="line" n="1"><p>Line 1</p></div>
             <div type="line" n="2">
                 <!-- cl115 verbose cl116 verbose cl104 verbose cl107 verbose -->
                 <div type="part" n="ii"><p>2. Line 2, non-leaf div</p></div>

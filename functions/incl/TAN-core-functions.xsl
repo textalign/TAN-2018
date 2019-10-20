@@ -308,8 +308,8 @@
    <!-- We do not have $TAN-vocabularies-resolved since tan:resolve-doc() depends upon standard vocabularies already prepared independently -->
    <!-- TAN vocabularies are already written so as to need minimal resolution or expansion -->
    <xsl:variable name="TAN-vocabularies" as="document-node()*">
-      <xsl:apply-templates select="$TAN-vocabulary-files" mode="expand-standard-tan-voc">
-         <xsl:with-param name="leave-breadcrumbs" tunnel="yes" select="false()"/>
+      <xsl:apply-templates select="$TAN-vocabulary-files[tan:TAN-voc]" mode="expand-standard-tan-voc">
+         <xsl:with-param name="add-q-ids" tunnel="yes" select="false()"/>
          <xsl:with-param name="is-reserved" select="true()" tunnel="yes"/>
       </xsl:apply-templates>
    </xsl:variable>
@@ -322,26 +322,38 @@
          return
             tan:get-1st-doc($i)"
    />
-   <xsl:variable name="doc-vocabulary" select="tan:vocabulary((), (), ($head, $self-resolved/tan:TAN-A/tan:body))"/>
+   <xsl:variable name="doc-vocabulary" select="tan:vocabulary((), (), ($head, $self-resolved/(tan:TAN-A, tan:TAN-voc)/tan:body))"/>
 
    <!-- sources -->
-   <xsl:variable name="sources-resolved"
+   <!--<xsl:variable name="sources-resolved"
       select="
          if ($is-validation) then
             tan:get-and-resolve-dependency($head/tan:source)
          else
             for $i in $head/tan:source
             return
-               tan:resolve-doc(tan:get-1st-doc($i), true(), 'src', ($i/@xml:id, '1')[1])"/>
+               tan:resolve-doc(tan:get-1st-doc($i), true(), 'src', ($i/@xml:id, '1')[1])"/>-->
+   <xsl:variable name="sources-resolved"
+      select="
+         for $i in $head/tan:source
+         return
+            tan:resolve-doc(tan:get-1st-doc($i), true(), tan:attr('src', ($i/@xml:id, '1')[1]))"
+   />
 
    <!-- morphologies -->
    <!--<xsl:variable name="morphologies-resolved"
       select="tan:get-and-resolve-dependency($head/tan:vocabulary-key/tan:morphology)"/>-->
-   <xsl:variable name="morphologies-resolved"
+   <!--<xsl:variable name="morphologies-resolved"
       select="
          for $i in $head/tan:vocabulary-key/tan:morphology
          return
             tan:resolve-doc(tan:get-1st-doc($i), true(), 'morphology', ($i/@xml:id, '1')[1])"
+   />-->
+   <xsl:variable name="morphologies-resolved"
+      select="
+         for $i in $head/tan:vocabulary-key/tan:morphology
+         return
+            tan:resolve-doc(tan:get-1st-doc($i), true(), tan:attr('morphology', ($i/@xml:id, '1')[1]))"
    />
 
    <!-- token definitions -->
@@ -1603,6 +1615,21 @@
          <xsl:value-of select="."/>
       </xsl:if>
    </xsl:template>
+   
+   <xsl:function name="tan:attr" as="attribute()?">
+      <!-- Input: two strings -->
+      <!-- Output: an attribute by the name of the first string, with the value of the second -->
+      <xsl:param name="attribute-name" as="xs:string?"/>
+      <xsl:param name="attribute-value" as="xs:string?"/>
+      <xsl:choose>
+         <xsl:when test="$attribute-name castable as xs:NCName">
+            <xsl:attribute name="{$attribute-name}" select="$attribute-value"/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:message select="$attribute-name, ' is not a legal attribute name'"/>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:function>
 
 
    <!-- FUNCTIONS: SEQUENCES, TAN-SPECIFIC (e.g., @ref, @pos, @chars, ...) -->
@@ -2136,6 +2163,15 @@
          <xsl:value-of select="replace(xs:string(tan:base-uri(.)), '.+/([^/]+\.\w+)$', '$1')"/>
       </xsl:for-each>
    </xsl:function>
+   <xsl:function name="tan:is-valid-uri" as="xs:boolean?">
+      <!-- Input: a string -->
+      <!-- Output: a boolean indicating whether the string is syntactically a valid uri -->
+      <!-- This assumes not only absolute but relative uris will be checked, which means that a wide 
+         variety of characters could be fed in, but not ones disallowed in pathnames, and the string must 
+         not be zero length. -->
+      <xsl:param name="uri-to-check" as="xs:string?"/>
+      <xsl:copy-of select="not(matches($uri-to-check, '[\{\}\|\\\^\[\]`]')) and (string-length($uri-to-check) gt 0)"/>
+   </xsl:function>
    <xsl:function name="tan:uri-directory" as="xs:string*">
       <!-- Input: any URIs, as strings -->
       <!-- Output: the file path -->
@@ -2173,14 +2209,34 @@
          select="($any-node/ancestor-or-self::*[@xml:base]/@xml:base, base-uri($any-node), root($any-node)/*/@xml:base)[string-length(.) gt 0][1]"
       />-->
    </xsl:function>
+   
    <xsl:function name="tan:uri-relative-to" as="xs:string?">
-      <!-- Input: two strings representing URIs -->
-      <!-- Output: the first string resolved relative to the second string -->
+      <!-- 2-parameter version of the one below -->
+      <xsl:param name="uri-to-revise" as="xs:string?"/>
+      <xsl:param name="uri-to-revise-against" as="xs:string?"/>
+      <xsl:copy-of select="tan:uri-relative-to($uri-to-revise, $uri-to-revise-against, $uri-to-revise-against)"/>
+   </xsl:function>
+   <xsl:function name="tan:uri-relative-to" as="xs:string?">
+      <!-- Input: two strings representing URIs; a third representing the base against which the first two should be resolved -->
+      <!-- Output: the first string in a form relative to the second string -->
       <!-- This function looks for common paths within two absolute URIs and tries to convert the first URI as a relative path -->
       <xsl:param name="uri-to-revise" as="xs:string?"/>
       <xsl:param name="uri-to-revise-against" as="xs:string?"/>
-      <xsl:variable name="uri-a-resolved" select="resolve-uri($uri-to-revise)"/>
-      <xsl:variable name="uri-b-resolved" select="resolve-uri($uri-to-revise-against)"/>
+      <xsl:param name="base-uri" as="xs:string?"/>
+      <xsl:variable name="uri-a-resolved"
+         select="
+            if (tan:is-valid-uri($uri-to-revise)) then
+               resolve-uri($uri-to-revise, $base-uri)
+            else
+               ()"
+      />
+      <xsl:variable name="uri-b-resolved"
+         select="
+            if (tan:is-valid-uri($uri-to-revise)) then
+               resolve-uri($uri-to-revise-against, $base-uri)
+            else
+               ()"
+      />
       <xsl:variable name="path-a" as="element()">
          <path-a>
             <xsl:if test="string-length($uri-a-resolved) gt 0">
@@ -2225,7 +2281,8 @@
             <xsl:copy-of select="$path-a/tan:step[position() gt $last-common-step]"/>
          </path-a>
       </xsl:variable>
-      <xsl:variable name="diagnostics-on" select="string-length($uri-to-revise) lt 1"/>
+      
+      <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'diagnostics on for tan:uri-relative-to()'"/>
          <xsl:message select="'uri to revise', $uri-to-revise"/>
@@ -2233,6 +2290,7 @@
          <xsl:message select="'path a: ', $path-a"/>
          <xsl:message select="'path b: ', $path-b"/>
       </xsl:if>
+      
       <xsl:choose>
          <xsl:when test="matches($uri-to-revise, '^https?://')">
             <xsl:value-of select="$uri-to-revise"/>
@@ -2257,6 +2315,15 @@
                tan:base-uri(.)"
       />
       <xsl:variable name="this-href-revised" select="tan:uri-relative-to(., $this-base-uri)"/>
+      
+      <xsl:variable name="diagnostics-on" select="false()"/>
+      <xsl:if test="$diagnostics-on">
+         <xsl:message select="'Diagnostics on, template mode uri-relative-to'"/>
+         <xsl:message select="'This @href:', ."/>
+         <xsl:message select="'This base uri: ', $this-base-uri"/>
+         <xsl:message select="'This href revised: ', $this-href-revised"/>
+      </xsl:if>
+      
       <xsl:attribute name="href" select="$this-href-revised"/>
    </xsl:template>
    
@@ -2291,7 +2358,7 @@
             <xsl:when test="$strip-bad-hrefs">
                <xsl:variable name="this-uri" select="."/>
                <xsl:variable name="this-doc" select="doc(.)"/>
-               <xsl:variable name="these-hrefs" select="$this-doc//@href"/>
+               <xsl:variable name="these-hrefs" select="$this-doc//@href[tan:is-valid-uri(.)]"/>
                <xsl:variable name="doc-check"
                   select="
                      for $i in $these-hrefs
@@ -2333,6 +2400,7 @@
    </xsl:template>
    <xsl:template match="doc" mode="cut-faulty-hrefs">
       <xsl:param name="base-uri" tunnel="yes"/>
+      
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:attribute name="href" select="resolve-uri(@href, $base-uri)"/>
@@ -2478,7 +2546,7 @@
       <xsl:apply-templates mode="#current"/>
    </xsl:template>
    <!-- We deeply skip anything that wasn't in the original -->
-   <xsl:template match="tan:tan-vocabulary" mode="get-doc-history"/>
+   <xsl:template match="tan:tan-vocabulary | tan:inclusion/tei:* | tan:inclusion/tan:TAN-T | tan:inclusion/tan:TAN-A | tan:inclusion/tan:TAN-A-tok | tan:inclusion/tan:TAN-A-lm | tan:inclusion/tan:TAN-mor | tan:inclusion/tan:TAN-voc" mode="get-doc-history"/>
    <xsl:template match="*[@when or @ed-when or @accessed-when or @claim-when]"
       mode="get-doc-history">
       <xsl:variable name="these-dates" as="xs:decimal*"
@@ -2897,8 +2965,10 @@
       </xsl:variable>
       <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
-         <xsl:message select="'Diagnostics on for function tan:vocabulary()'"/>
+         <xsl:message select="'Diagnostics on for tan:vocabulary()'"/>
          <xsl:message select="'Target element names: ', $target-element-names"/>
+         <xsl:message select="'Target values:', $target-values"/>
+         <xsl:message select="'Resolved vocabulary ancestors:', $resolved-vocabulary-ancestors"/>
          <xsl:message select="'Fetch elements no matter their name?', $fetch-elements-named-whatever"/>
          <xsl:message select="'Target all values?', $fetch-all-values"/>
          <xsl:message select="'Values space-normalized:', $values-space-normalized"/>
@@ -2914,6 +2984,9 @@
       <!-- vocab trawling shallow skips by default -->
       <xsl:apply-templates mode="#current"/>
    </xsl:template>
+   <!-- vocab trawling ignores nested inclusion documents (but not <inclusion> itself) -->
+   <xsl:template match="tan:inclusion/*/tan:head/tan:inclusion/*[tan:head]" priority="1"
+      mode="vocabulary-all-vals vocabulary-by-id vocabulary-by-name"/>
    
    <xsl:template match="text() | comment() | processing-instruction()"
       mode="vocabulary-all-vals vocabulary-by-id vocabulary-by-name"/>
@@ -2958,16 +3031,21 @@
          <xsl:message select="'Element name match?', $element-name-matches"/>
          <xsl:message select="'Matching idrefs:', $matching-idrefs"/>
       </xsl:if>
-      <xsl:if test="$element-name-matches and (not(exists($idrefs)) or exists($matching-idrefs))">
-         <match>
-            <xsl:for-each select="$matching-idrefs">
-               <idref>
-                  <xsl:value-of select="."/>
-               </idref>
-            </xsl:for-each>
-            <xsl:copy-of select="."/>
-         </match>
-      </xsl:if>
+      <xsl:choose>
+         <xsl:when test="$element-name-matches and (not(exists($idrefs)) or exists($matching-idrefs))">
+            <match>
+               <xsl:for-each select="$matching-idrefs">
+                  <idref>
+                     <xsl:value-of select="."/>
+                  </idref>
+               </xsl:for-each>
+               <xsl:copy-of select="."/>
+            </match>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:apply-templates mode="#current"/>
+         </xsl:otherwise>
+      </xsl:choose>
    </xsl:template>
    <xsl:template match="*[tan:IRI][tan:name] | tan:token-definition | tan:item[tan:token-definition]" mode="vocabulary-by-name">
       <xsl:param name="element-names" tunnel="yes" as="xs:string*"/>
@@ -3102,6 +3180,7 @@
             <xsl:message select="'first location available: ', $first-la"/>
          </xsl:if>
          <xsl:choose>
+            <xsl:when test="not(exists($these-hrefs))"/>
             <xsl:when test="string-length($first-la) lt 1">
                <xsl:variable name="this-base-uri" select="tan:base-uri(.)"/>
                <xsl:variable name="these-hrefs-resolved" select="tan:resolve-href(.)"/>
@@ -3222,7 +3301,7 @@
       <xsl:variable name="pre-merge-doc" as="document-node()">
          <!-- merging begins by creating a single document -->
          <xsl:document>
-            <xsl:element name="{concat($doc-types[1],'-merge')}">
+            <xsl:element name="{concat($doc-types[1],'_merge')}">
                <xsl:apply-templates select="$expanded-docs/tan:*/tan:head"
                   mode="merge-expanded-docs-prep"/>
                <body>
