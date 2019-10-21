@@ -195,7 +195,6 @@
 
     <xsl:template match="processing-instruction()" mode="input-pass-1"/>
     <xsl:template match="/" mode="input-pass-1">
-        <xsl:variable name="diagnostics" select="false()"/>
         <xsl:variable name="this-src-id" select="*/@src"/>
         <xsl:variable name="this-lang" select="*/tan:body/@xml:lang"/>
         <xsl:variable name="src-is-ok"
@@ -203,7 +202,8 @@
         <xsl:variable name="lang-is-ok"
             select="tan:satisfies-regexes($this-lang, $main-langs-must-match-regex, $main-langs-must-not-match-regex)"/>
         <xsl:variable name="this-class" select="tan:class-number(.)"/>
-        <xsl:if test="$diagnostics">
+        <xsl:variable name="diagnostics-on" select="true()"/>
+        <xsl:if test="$diagnostics-on">
             <xsl:message select="'src id: ', $this-src-id"/>
             <xsl:message select="'lang: ', $this-lang"/>
             <xsl:message select="'src is ok: ', $src-is-ok"/>

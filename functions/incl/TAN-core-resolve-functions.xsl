@@ -69,15 +69,15 @@
       <!-- Input: any TAN document and a variety of other parameters -->
       <!-- Output: the document resolved according to specifications -->
       <!-- $element-filters is sequence of elements specifying conditions for whether an element should be fetched, e.g.,:
-            <where>
+            <filter>
                <element-name>item</element-name>
                <element-name>verb</element-name>
                <name norm="">vocab name</name>
-            </where>
-            <where>
+            </filter>
+            <filter>
                 <element-name>license</element-name>
                 <element-name>div</element-name>
-            </where>
+            </filter>
       -->
       <xsl:param name="TAN-document" as="document-node()?"/>
       <xsl:param name="add-q-ids" as="xs:boolean"/>
@@ -169,15 +169,29 @@
             <!-- Step 2a: inclusion element filters -->
             <xsl:variable name="elements-with-attr-include" select="$doc-stamped//*[@include]"/>
             <xsl:variable name="element-filters-for-inclusions" as="element()*">
-               <xsl:for-each-group select="$elements-with-attr-include" group-by="tokenize(@include, '\s+')">
-                  <xsl:variable name="these-element-names" select="distinct-values(for $i in current-group() return name($i))"/>
-                  <filter inclusion="{current-grouping-key()}">
-                     <xsl:for-each select="$these-element-names">
-                        <element-name>
-                           <xsl:value-of select="."/>
-                        </element-name>
+               <xsl:for-each-group select="$elements-with-attr-include"
+                  group-by="tokenize(@include, '\s+')">
+                  <xsl:variable name="these-element-names"
+                     select="
+                        distinct-values(for $i in current-group()
+                        return
+                           name($i))"/>
+                  <xsl:variable name="this-inclusion" select="current-grouping-key()"/>
+                  <xsl:for-each-group select="current-group()" group-by="name(.)">
+                     <xsl:if test="exists(current-group()[not(tan:filter)])">
+                        <filter inclusion="{$this-inclusion}">
+                           <element-name>
+                              <xsl:value-of select="current-grouping-key()"/>
+                           </element-name>
+                        </filter>
+                     </xsl:if>
+                     <xsl:for-each select="current-group()/tan:filter">
+                        <xsl:copy>
+                           <xsl:attribute name="inclusion" select="$this-inclusion"/>
+                           <xsl:copy-of select="*"/>
+                        </xsl:copy>
                      </xsl:for-each>
-                  </filter>
+                  </xsl:for-each-group>
                </xsl:for-each-group> 
             </xsl:variable>
             <!-- Step 2b: vocabulary element filters -->
@@ -254,6 +268,13 @@
             <xsl:variable name="diagnostics-on" select="false()"/>
             <xsl:if test="$diagnostics-on">
                <xsl:message select="'Diagnostics on, tan:resolve-doc-loop()'"/>
+               <xsl:message select="'add @q ids?', $add-q-ids"/>
+               <xsl:message select="'attributes to add to root element:', $attributes-to-add-to-root-element"/>
+               <xsl:message select="'urls already visited:', $urls-already-visited"/>
+               <xsl:message select="'doc ids already visited:', $doc-ids-already-visited"/>
+               <xsl:message select="'relationship to previous doc:', $relationship-to-prev-doc"/>
+               <xsl:message select="'incoming element filters:', $element-filters"/>
+               <xsl:message select="'loop counter:', $loop-counter"/>
                <xsl:message select="'Doc stamped: ', $doc-stamped"/>
                <xsl:message select="'Element filters for inclusions:', $element-filters-for-inclusions"/>
                <xsl:message select="'Element filters for vocabularies pass 1:', $element-filters-for-vocabularies-pass-1"/>
@@ -363,6 +384,7 @@
    
    <xsl:template match="*" mode="first-stamp-shallow-skip">
       <xsl:param name="element-filters" as="element()+" tunnel="yes"/>
+      <xsl:variable name="this-attr-include" select="@include"/>
       <xsl:variable name="these-affects-elements" select="self::tan:item/ancestor-or-self::*[@affects-element][1]/@affects-element"/>
       <xsl:variable name="these-element-names" select="name(.), tokenize($these-affects-elements, '\s+')"/>
       <xsl:variable name="these-normalized-name-children"
@@ -375,7 +397,8 @@
          <xsl:for-each select="$element-filters">
             <xsl:choose>
                <xsl:when test="not(tan:element-name = $these-element-names)"/>
-               <xsl:when test="exists(tan:name) and not(tan:name = $these-normalized-name-children)"
+               <xsl:when test="exists(tan:name) and not(tan:name = $these-normalized-name-children)
+                  and not(exists($this-attr-include))"
                />
                <xsl:otherwise>
                   <xsl:sequence select="."/>
@@ -401,6 +424,7 @@
                   inserted into the relevant full vocabulary item
                -->
                <xsl:with-param name="children-to-append" select="$matching-element-filters/(tan:id, tan:alias)"/>
+               <xsl:with-param name="inclusion-filters" select="$matching-element-filters"/>
             </xsl:apply-templates>
          </xsl:when>
          <xsl:otherwise>
@@ -415,22 +439,31 @@
       <!-- This template prepares a special container for the vocabulary -->
       <xsl:variable name="this-is-inclusion-search" select="exists($element-filters/@inclusion)"/>
       <!-- If it is not an inclusion search (i.e., if it is a vocabulary search, which targets the body of a tan:TAN-voc file), we skip the head altogether -->
-      <xsl:if test="$this-is-inclusion-search">
-         <head vocabulary="">
-            <!-- keep a copy of the current head -->
-            <xsl:apply-templates mode="first-stamp-shallow-copy"/>
-            <!-- we must be certain to retain vocabulary items that are allowed in the body. -->
-            <xsl:apply-templates select="parent::tan:TAN-A/tan:body//tan:claim[@xml:id]"
-               mode="first-stamp-shallow-copy"/>
-            <xsl:apply-templates select="parent::tan:TAN-voc/tan:body//(tan:item, tan:verb)"
-               mode="first-stamp-shallow-copy"/>
-         </head>
-         <!-- With the special head in place, we can now continue shallow skipping, looking for desired elements, provided
-         that the filters are calling for elements to include. If this file is being searched purly for vocabulary, then the body,
-         not the head, is of primary interest.
-      -->
-         <xsl:apply-templates mode="#current"/>
-      </xsl:if>
+      <xsl:choose>
+         <xsl:when test="$this-is-inclusion-search">
+            <head vocabulary="">
+               <!-- keep a copy of the current head -->
+               <xsl:apply-templates mode="first-stamp-shallow-copy"/>
+               <!-- we must be certain to retain vocabulary items that are allowed in the body. -->
+               <xsl:apply-templates select="parent::tan:TAN-A/tan:body//tan:claim[@xml:id]"
+                  mode="first-stamp-shallow-copy"/>
+               <xsl:apply-templates select="parent::tan:TAN-voc/tan:body//(tan:item, tan:verb)"
+                  mode="first-stamp-shallow-copy"/>
+            </head>
+            <!-- With the special head in place, we can now continue shallow skipping, looking for desired elements, provided
+               that the filters are calling for elements to include. If this file is being searched purly for vocabulary, then the body,
+               not the head, is of primary interest.
+            -->
+            <xsl:apply-templates mode="#current"/>
+         </xsl:when>
+         <xsl:when test="exists(tan:inclusion)">
+            <!-- A file being fetched qua vocabulary might have inclusions that need to play a factor -->
+            <xsl:copy>
+               <xsl:copy-of select="@*"/>
+               <xsl:apply-templates select="tan:inclusion" mode="first-stamp-shallow-copy"/>
+            </xsl:copy>
+         </xsl:when>
+      </xsl:choose>
    </xsl:template>
    
    <!-- The following template works for both modes on the root element, because even with shallow skipping, we at least want a root element, so the document is well formed -->
@@ -481,6 +514,7 @@
       <xsl:param name="doc-base-uri" tunnel="yes"/>
       <xsl:param name="resolved-aliases" tunnel="yes" as="element()*"/>
       <xsl:param name="children-to-append" as="element()*"/>
+      <xsl:param name="inclusion-filters" as="element()*"/>
 
       <xsl:variable name="this-element-name" select="name(.)"/>
       <xsl:variable name="this-href" select="@href"/>
@@ -532,6 +566,10 @@
          </xsl:if>
          <xsl:apply-templates mode="#current"/>
          <xsl:copy-of select="$children-to-append"/>
+         <!-- An inclusion filter here will make sure that only certain elements get copied during the inclusion process -->
+         <xsl:if test="exists(@include)">
+            <xsl:copy-of select="$inclusion-filters"/>
+         </xsl:if>
       </xsl:copy>
    </xsl:template>
    
