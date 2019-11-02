@@ -3015,7 +3015,7 @@
       </xsl:if>
    </xsl:template>
    <!-- In the next template do not include *[tan:alias] in @match, as that will trip up on tan:vocabulary-key -->
-   <xsl:template match="*[tan:id]" mode="vocabulary-by-id">
+   <xsl:template match="*[tan:id][tan:IRI]" mode="vocabulary-by-id">
       <xsl:param name="element-names" tunnel="yes" as="xs:string*"/>
       <xsl:param name="idrefs" tunnel="yes" as="xs:string*"/>
       <xsl:variable name="this-element" select="."/>

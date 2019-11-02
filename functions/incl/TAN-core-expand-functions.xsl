@@ -1028,13 +1028,24 @@
                   <xsl:attribute name="attr"/>
                   <xsl:value-of select="$this-val"/>
                   <xsl:if test="$distribute-vocabulary = true()">
-                     <xsl:copy-of
+                     <xsl:variable name="this-item-vocabulary"
                         select="
                            if (exists($vocab-items-pointed-to-by-id)) then
                               $vocab-items-pointed-to-by-id
                            else
                               $vocab-items-pointed-to-by-name"
                      />
+                     <!-- we regularize item vocabulary to tan:item, so that an embedded vocabulary definition can be easily and consistently found -->
+                     <xsl:copy-of select="$this-item-vocabulary/self::tan:item"/>
+                     <xsl:for-each select="$this-item-vocabulary[not(self::tan:item)]">
+                        <item>
+                           <xsl:copy-of select="@*"/>
+                           <affects-element>
+                              <xsl:value-of select="name(.)"/>
+                           </affects-element>
+                           <xsl:copy-of select="node()"/>
+                        </item>
+                     </xsl:for-each>
                   </xsl:if>
                </xsl:element>
                

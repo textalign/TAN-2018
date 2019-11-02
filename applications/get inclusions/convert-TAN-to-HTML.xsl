@@ -17,7 +17,7 @@
         select="('type')"/>
     <xsl:param name="elements-to-be-labeled" as="xs:string*" select="()"/>
     <xsl:param name="elements-whose-children-should-be-grouped-and-labeled" as="xs:string*"
-        select="('teiHeader', 'head', 'vocabulary-key')"/>
+        select="('teiHeader', 'head', 'vocabulary-key', 'adjustments')"/>
     <xsl:param name="elements-who-should-not-be-grouped-and-labeled" as="xs:string*"
         select="('src')"/>
     <xsl:param name="elements-to-be-given-class-hidden" as="xs:string*" select="('rdg', 'note', 'add')"/>
