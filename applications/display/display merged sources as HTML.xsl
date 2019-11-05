@@ -13,7 +13,7 @@
 
     <!-- Parameters for input pass 1 -->
     <xsl:param name="src-ids-must-match-regex" as="xs:string?"><!--grc|eng-1934--></xsl:param>
-    <xsl:param name="src-or-alias-ids-must-not-match-regex" as="xs:string?">-eng$</xsl:param>
+    <xsl:param name="src-or-alias-ids-must-not-match-regex" as="xs:string?"><!---eng$--></xsl:param>
     <xsl:param name="main-langs-must-match-regex" as="xs:string?"/>
     <xsl:param name="main-langs-must-not-match-regex" as="xs:string?"/>
     <!-- For the following parameters, you may find the process more efficient if you code them at <adjustments> in the class 2 file -->
@@ -202,7 +202,7 @@
         <xsl:variable name="lang-is-ok"
             select="tan:satisfies-regexes($this-lang, $main-langs-must-match-regex, $main-langs-must-not-match-regex)"/>
         <xsl:variable name="this-class" select="tan:class-number(.)"/>
-        <xsl:variable name="diagnostics-on" select="true()"/>
+        <xsl:variable name="diagnostics-on" select="false()"/>
         <xsl:if test="$diagnostics-on">
             <xsl:message select="'src id: ', $this-src-id"/>
             <xsl:message select="'lang: ', $this-lang"/>
@@ -544,7 +544,7 @@
     </xsl:template>
 
     <!-- now start re-grouping and re-sorting -->
-    <xsl:template match="tan:TAN-T-merge" mode="input-pass-3">
+    <xsl:template match="tan:TAN-T_merge" mode="input-pass-3">
         <xsl:copy>
             <xsl:copy-of select="@*"/>
             <!-- control mechanism -->
@@ -754,10 +754,10 @@
     </xsl:function>
 
 
-    <xsl:template match="tan:TAN-T-merge" mode="tan-to-html-pass-2">
+    <xsl:template match="tan:TAN-T_merge" mode="tan-to-html-pass-2">
         <xsl:copy>
             <xsl:copy-of select="@*"/>
-            <xsl:apply-templates select="$self-resolved/*/tan:head/tan:name"
+            <xsl:apply-templates select="$self-resolved/*/tan:head/tan:name[not(@norm)]"
                 mode="tan-to-html-pass-2-title"/>
             <xsl:apply-templates select="$self-resolved/*/tan:head/tan:desc"
                 mode="tan-to-html-pass-2-title"/>
@@ -938,7 +938,7 @@
     <xsl:template match="tan:desc" mode="tan-to-html-pass-2">
         <div class="desc"><xsl:value-of select="."/></div>
     </xsl:template>
-    <xsl:template match="tan:TAN-T-merge/*[@class = 'control']//tan:group[not(tan:alias)]"
+    <xsl:template match="tan:TAN-T_merge/*[@class = 'control']//tan:group[not(tan:alias)]"
         mode="tan-to-html-pass-2">
         <xsl:variable name="class-values-to-add" as="xs:string+">
             <xsl:text>sortable</xsl:text>

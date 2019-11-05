@@ -448,7 +448,7 @@
                      <xsl:variable name="this-output"
                         select="$final-output[*/@xml:base = $distinct-output-base-uris[$this-pos]]"/>
                      <xsl:call-template name="tan:save-docx">
-                        <xsl:with-param name="docx-parts" select="$this-output"/>
+                        <xsl:with-param name="docx-components" select="$this-output"/>
                         <xsl:with-param name="resolved-uri" select="$this-target-uri"/>
                      </xsl:call-template>
                   </xsl:when>
