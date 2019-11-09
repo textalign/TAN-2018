@@ -770,7 +770,8 @@
    </xsl:function>
 
    <xsl:function name="tan:collate-sequences" as="xs:string*">
-      <!-- This version of the function takes a sequence of elements, each of which contains a sequences of shallow elements with text content -->
+      <!-- Input: a series of elements with child elements that have text nodes -->
+      <!-- Output: a series of strings representing the sequences, collated -->
       <xsl:param name="elements-with-elements" as="element()*"/>
       <!-- Start with the element that has the greatest number of elements; that will be the grid into which the other sequences will be fit -->
       <xsl:variable name="input-sorted" as="element()*">
@@ -791,12 +792,14 @@
             <xsl:value-of select="."/>
          </xsl:for-each>
       </xsl:variable>
-      <xsl:variable name="diagnostics-on" select="false()" as="xs:boolean"/>
+      
+      <xsl:variable name="diagnostics-on" select="true()" as="xs:boolean"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'diagnostics on for tan:collate-sequences()'"/>
          <xsl:message select="'input sorted: ', $input-sorted"/>
          <xsl:message select="'first sequence: ', $first-sequence"/>
       </xsl:if>
+      
       <xsl:choose>
          <xsl:when test="count($input-sorted) lt 2">
             <xsl:if test="$diagnostics-on">
@@ -810,6 +813,7 @@
          </xsl:otherwise>
       </xsl:choose>
    </xsl:function>
+   
    <xsl:function name="tan:collate-sequence-loop" as="xs:string*">
       <!-- This companion function to the one above takes a pair of sequences and merges them -->
       <xsl:param name="elements-with-elements" as="element()*"/>
@@ -864,7 +868,8 @@
             />
          </xsl:apply-templates>
       </xsl:variable>
-      <xsl:variable name="diagnostics-on" select="false()" as="xs:boolean?"/>
+      
+      <xsl:variable name="diagnostics-on" select="true()" as="xs:boolean?"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'diagnostics on for tan:collate-pair-of-sequences()'"/>
          <xsl:message select="'string sequence 1: ', $string-sequence-1"/>
@@ -874,6 +879,7 @@
          <xsl:message select="'results pass 1: ', $results-1"/>
          <xsl:message select="'results pass 2: ', $results-2"/>
       </xsl:if>
+      
       <xsl:choose>
          <xsl:when test="$exclude-unique">
             <xsl:copy-of select="$results-1/tan:common/text()"/>
@@ -1227,7 +1233,7 @@
       <!-- Input: a sequence of elements; an optional string representing the name of children in the elements -->
       <!-- Output: the same elements, but grouped in <group> according to whether the text contents of the child elements specified are equal -->
       <!-- Each <group> will have an @n stipulating the position of the first element put in the group. That way the results can be sorted in order of their original elements -->
-      <!-- Transitivity is assumed. If suppose elements X, Y, and Z have children values A and B; B and C; and C and D, respectively. All three elements will be grouped, even though Y and Z do not share children values directly.  -->
+      <!-- Transitivity is assumed. Suppose elements X, Y, and Z have children values A and B; B and C; and C and D, respectively. All three elements will be grouped, even though Y and Z do not directly share children values.  -->
       <xsl:param name="elements-to-group" as="element()*"/>
       <xsl:param name="regex-of-names-of-nodes-to-group-by" as="xs:string?"/>
       <xsl:param name="group-by-shallow-node-value" as="xs:boolean"/>
@@ -1277,6 +1283,7 @@
          </xsl:for-each>
       </xsl:variable> 
       <xsl:variable name="items-with-duplicatative-keys-grouped" select="tan:group-elements-by-shared-node-values-loop($elements-prepped-pass-2/self::tan:item, (), 0)"/>
+      
       <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'diagnostics on for tan:group-elements-by-shared-node-values()'"/>
@@ -1289,6 +1296,7 @@
          <xsl:message select="'pass 2 (pregrouped items that have unique keys): ', $elements-prepped-pass-2"/>
          <xsl:message select="'pass 3 (items with duplicative keys grouped): ', $items-with-duplicatative-keys-grouped"/>
       </xsl:if>
+      
       <xsl:for-each select="$elements-prepped-pass-2/self::tan:group, $items-with-duplicatative-keys-grouped">
          <xsl:sort select="number(@n)"/>
          <xsl:copy>
@@ -1313,6 +1321,7 @@
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
+   
    <xsl:function name="tan:group-elements-by-shared-node-values-loop" as="element()*">
       <!-- supporting loop for the function above -->
       <xsl:param name="items-to-group" as="element()*"/>
@@ -3291,7 +3300,37 @@
    <xsl:function name="tan:merge-expanded-docs" as="document-node()?">
       <!-- Input: Any TAN documents that have been expanded at least tersely -->
       <!-- Output: A document that is a collation of the documents. There is one <head> per source, but only one <body>, with contents merged. -->
-      <!-- Class 1 merging: All <div>s with the same <ref> values are grouped together. If the class 1 files are sources of a class 2 file, it is assumed that all actions in the <adjustments> have been performed. -->
+      <!-- Templates will be placed in the appropriate function file, e.g., class 1 merge templates are in TAN-class-1-functions.xsl -->
+      <!-- Class 1 merging: All <div>s with the same <ref> values are grouped together. If the class 1 files are sources of a class 2 file, it is assumed that all actions in the <adjustments> have already been performed. -->
+      <!-- Class 2 merging: TBD -->
+      <!-- Class 3 merging: TBD -->
+      <!-- NB: Class 1 files must have their hierarchies in proper order; use reset-hierarchy beforehand if you're unsure -->
+      <xsl:param name="expanded-docs" as="document-node()*"/>
+      <xsl:apply-templates select="$expanded-docs[1]" mode="merge-tan-docs">
+         <xsl:with-param name="documents-to-merge" select="$expanded-docs[position() gt 1]"/>
+      </xsl:apply-templates>
+   </xsl:function>
+   
+   <!-- As of November 2019, merging is not defined for class 2 or class 3 files. When they are developed, some of the
+   templates in TAN-class-1-functions.xsl may migrate here. -->
+   
+   <xsl:template match="document-node()" mode="merge-tan-docs">
+      <xsl:param name="documents-to-merge" as="document-node()*"/>
+      <xsl:document>
+         <xsl:copy-of select="$documents-to-merge/*/preceding-sibling::node()"/>
+         <xsl:apply-templates mode="#current">
+            <xsl:with-param name="elements-to-merge" select="$documents-to-merge/*"/>
+         </xsl:apply-templates>
+         <xsl:copy-of select="$documents-to-merge/*/following-sibling::node()"/>
+      </xsl:document>
+   </xsl:template>
+   
+   <!-- November 2019: the next function and connecting templates should be deleted -->
+   <xsl:function name="tan:merge-expanded-docs-old" as="document-node()?">
+      <!-- Input: Any TAN documents that have been expanded at least tersely -->
+      <!-- Output: A document that is a collation of the documents. There is one <head> per source, but only one <body>, with contents merged. -->
+      <!-- Templates will be placed in the appropriate function file, e.g., class 1 merge templates are in TAN-class-1-functions.xsl -->
+      <!-- Class 1 merging: All <div>s with the same <ref> values are grouped together. If the class 1 files are sources of a class 2 file, it is assumed that all actions in the <adjustments> have already been performed. -->
       <!-- Class 2 merging: TBD -->
       <!-- Class 3 merging: TBD -->
       <!-- NB: Class 1 files should have their hierarchies in proper order; use reset-hierarchy beforehand if you're unsure -->

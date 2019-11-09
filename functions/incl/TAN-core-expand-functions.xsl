@@ -118,7 +118,7 @@
                      select="$core-expansion-pass-2/*/tan:head/tan:adjustments/(tan:skip, tan:rename, tan:equate)"/>
 
                   <!-- The first pass of source expansion processes the first three steps of the <adjustments>: <skip>, <rename>, <equate> -->
-                  <!-- We almost always go through this pass even if there are no adjustments, because it also sets up <n> and <ref> elements in dependency <div>s that are essential for later references -->
+                  <!-- We almost always go through this first pass even if there are no adjustments, because it also sets up <n> and <ref> elements in dependency <div>s that are essential for later references -->
                   <!-- This process involves leaving a marker for each adjustment element's locator, to facilitate validation -->
                   <xsl:variable name="dependencies-adjusted-pass-1a" as="document-node()*">
                      <xsl:choose>

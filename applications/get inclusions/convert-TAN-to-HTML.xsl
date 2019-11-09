@@ -40,13 +40,11 @@
             <xsl:apply-templates select="$pass-2" mode="tan-to-html-pass-3"/>
         </xsl:variable>
         <xsl:variable name="diagnostics-on" as="xs:boolean" select="false()"/>
-        <xsl:if test="$diagnostics-on">
-            <xsl:message>diagnostics turned on for tan:tan-to-html()</xsl:message>
-        </xsl:if>
         <xsl:choose>
             <xsl:when test="$diagnostics-on">
-                <!--<xsl:copy-of select="$pass-1"/>-->
-                <xsl:copy-of select="$pass-2"/>
+                <xsl:message>diagnostics turned on for tan:tan-to-html()</xsl:message>
+                <pass-1><xsl:copy-of select="$pass-1"/></pass-1>
+                <pass-2><xsl:copy-of select="$pass-2"/></pass-2>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:copy-of select="$pass-3"/>
@@ -142,7 +140,7 @@
         </xsl:element>
     </xsl:template>
 
-    <!-- pass 2: reserved for individual situations (e.g., TAN-T-merge might need to untangle sources a bit) -->
+    <!-- pass 2: reserved for individual situations (e.g., processes that use TAN-T-merge might need to untangle sources a bit) -->
 
 
     <!-- pass 3: convert everything to html <div> -->
