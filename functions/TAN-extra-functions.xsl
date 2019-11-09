@@ -515,6 +515,100 @@
          </xsl:otherwise>
       </xsl:choose>
    </xsl:function>
+   
+   <xsl:function name="tan:blend-color-channel-value" as="xs:double?">
+      <!-- Input: two integers and a double between zero and 1 -->
+      <!-- Output: a double representing a blend between the first two numbers, interpreted as RGB values -->
+      <xsl:param name="color-a" as="xs:double"/>
+      <xsl:param name="color-b" as="xs:double"/>
+      <xsl:param name="blend-mid-point" as="xs:double"/>
+      <xsl:variable name="color-a-norm" select="$color-a mod 256"/>
+      <xsl:variable name="color-b-norm" select="$color-b mod 256"/>
+      <xsl:variable name="blend-mid-point-norm" select="abs($blend-mid-point) - floor($blend-mid-point)"/>
+      <xsl:variable name="pass-1" as="xs:double"
+         select="((1 - $blend-mid-point-norm) * math:pow($color-a-norm, 2)) + ($blend-mid-point-norm * math:pow($color-b-norm, 2))"
+      />
+      <xsl:variable name="diagnostics-on" select="false()"/>
+      <xsl:if test="$diagnostics-on">
+         <xsl:message select="'diagnostics on for tan:blend-color-channel-value()'"/>
+         <xsl:message select="'color a norm: ', $color-a-norm"/>
+         <xsl:message select="'color b norm: ', $color-b-norm"/>
+         <xsl:message select="'blend-mid-point-norm: ', $blend-mid-point-norm"/>
+         <xsl:message select="'pass 1: ', $pass-1"/>
+      </xsl:if>
+      <xsl:value-of select="math:sqrt($pass-1)"/>
+   </xsl:function>
+   
+   <xsl:function name="tan:blend-alpha-value" as="xs:double?">
+      <!-- Input: three doubles between zero and 1 -->
+      <!-- Output: the blend of the first two doubles, interpreted as alpha values and the third interpreted as a midpoint -->
+      <xsl:param name="alpha-a" as="xs:double"/>
+      <xsl:param name="alpha-b" as="xs:double"/>
+      <xsl:param name="blend-mid-point" as="xs:double"/>
+      <xsl:variable name="alpha-a-norm" select="abs($alpha-a) - floor($alpha-a)"/>
+      <xsl:variable name="alpha-b-norm" select="abs($alpha-b) - floor($alpha-b)"/>
+      <xsl:variable name="blend-mid-point-norm" select="abs($blend-mid-point) - floor($blend-mid-point)"/>
+      <xsl:value-of select="((1 - $blend-mid-point-norm) * $alpha-a-norm) + ($blend-mid-point-norm * $alpha-b-norm)"/>
+   </xsl:function>
+   
+   <xsl:function name="tan:blend-colors" as="xs:double*">
+      <!-- Input: two sequences of doubles (the first three items being from 0 through 255 and the fourth and last between 0 and 1); a double between zero and 1 -->
+      <!-- Output: a sequence of doubles representing a blend of the first two sequences, interpreted as RGB colors, and the last double as a desired midpoint -->
+      <xsl:param name="rgb-color-1" as="item()+"/>
+      <xsl:param name="rgb-color-2" as="item()+"/>
+      <xsl:param name="blend-mid-point" as="xs:double"/>
+      <xsl:variable name="blend-mid-point-norm" select="abs($blend-mid-point) - floor($blend-mid-point)"/>
+      <xsl:choose>
+         <xsl:when
+            test="
+               not(every $i in $rgb-color-1
+                  satisfies $i castable as xs:double)">
+            <xsl:message
+               select="'Every item in $rgb-color-1 must be a double or castable as a double'"/>
+         </xsl:when>
+         <xsl:when
+            test="
+               not(every $i in $rgb-color-2
+                  satisfies $i castable as xs:double)">
+            <xsl:message
+               select="'Every item in $rgb-color-2 must be a double or castable as a double'"/>
+         </xsl:when>
+         <xsl:when test="(count($rgb-color-1) lt 3) or (count($rgb-color-1) gt 4) or (count($rgb-color-2) lt 3) or (count($rgb-color-2) gt 4)">
+            <xsl:message select="'tan:blend-colors() expects as the first two parameters a sequence of three or four doubles'"/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:variable name="diagnostics-on" select="false()"/>
+            <xsl:if test="$diagnostics-on">
+               <xsl:message select="'diagnostics on for tan:blend-colors()'"/>
+            </xsl:if>
+            <xsl:for-each select="1 to 3">
+               <xsl:variable name="this-pos" select="."/>
+               <xsl:variable name="channel-1" select="xs:double($rgb-color-1[$this-pos])"/>
+               <xsl:variable name="channel-2" select="xs:double($rgb-color-2[$this-pos])"/>
+               <xsl:if test="$diagnostics-on">
+                  <xsl:message select="'this channel number: ', $this-pos"/>
+                  <xsl:message select="'channel 1 item: ', $rgb-color-1[$this-pos]"/>
+                  <xsl:message select="'channel 1 as double: ', $channel-1"/>
+                  <xsl:message select="'channel 2 item: ', $rgb-color-2[$this-pos]"/>
+                  <xsl:message select="'channel 2 as double: ', $channel-2"/>
+               </xsl:if>
+               <xsl:value-of select="tan:blend-color-channel-value($channel-1, $channel-2, $blend-mid-point-norm)"/>
+            </xsl:for-each>
+            <xsl:choose>
+               <xsl:when test="not(exists($rgb-color-1[4])) and not(exists($rgb-color-2[4]))"/>
+               <xsl:when test="not(exists($rgb-color-1[4]))">
+                  <xsl:value-of select="xs:double($rgb-color-2[4])"/>
+               </xsl:when>
+               <xsl:when test="not(exists($rgb-color-2[4]))">
+                  <xsl:value-of select="xs:double($rgb-color-1[4])"/>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:value-of select="tan:blend-alpha-value(xs:double($rgb-color-1[4]), xs:double($rgb-color-2[4]), $blend-mid-point-norm)"/>
+               </xsl:otherwise>
+            </xsl:choose>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:function>
 
 
    <!-- Functions: strings -->
