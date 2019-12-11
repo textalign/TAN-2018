@@ -1816,7 +1816,7 @@
          <xsl:with-param name="expand-ranges" select="$expand-ranges" tunnel="yes"/>
       </xsl:apply-templates>
    </xsl:function>
-   <xsl:template match="*[@from][text()]" mode="check-sequence"> </xsl:template>
+
    <xsl:template match="*[@from][text()]" mode="check-and-expand-ranges">
       <xsl:param name="expand-ranges" tunnel="yes" as="xs:boolean"/>
       <xsl:variable name="this-to" select="following-sibling::*[1][@to]"/>
@@ -3325,7 +3325,7 @@
       </xsl:document>
    </xsl:template>
    
-   <!-- November 2019: the next function and connecting templates should be deleted -->
+   <!-- November 2019: the next function and associated templates should be deleted -->
    <xsl:function name="tan:merge-expanded-docs-old" as="document-node()?">
       <!-- Input: Any TAN documents that have been expanded at least tersely -->
       <!-- Output: A document that is a collation of the documents. There is one <head> per source, but only one <body>, with contents merged. -->

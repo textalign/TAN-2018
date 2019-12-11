@@ -475,7 +475,7 @@
    </xsl:template>
    <xsl:template match="tan:algorithm | tan:TAN-T/tan:head/tan:source | tei:TEI/tan:head/tan:source"
       mode="check-referred-doc">
-      <!-- This part of the template mode is for non-TAN files -->
+      <!-- This component of the template mode is to check elements that point to non-TAN files -->
       <xsl:variable name="target-1st-da" select="tan:get-1st-doc(.)"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>

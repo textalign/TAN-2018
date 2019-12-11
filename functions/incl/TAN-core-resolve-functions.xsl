@@ -126,7 +126,7 @@
             <!-- If all is well, proceed -->
             
             <!-- Step 1: Stamp root element, resolve @hrefs, convert @xml:id to <id> and include alias names, normalize <name>, 
-               insert into <vocabulary> full IRI + name pattern (if missing),
+               insert into <vocabulary> full IRI + name pattern (if missing), add constructed IRI + name patterns for elements that imply them,
                if a TAN-voc file, make sure <item> and <verb> retain <affects-element>, <affects-attribute>, <group>
                if there are element filters, get rid of any element that does not match the filter, but retain a root element and a <head type="vocab"/> to contain vocabulary explaining the elements of interest.
             -->
@@ -520,6 +520,22 @@
       <xsl:variable name="this-href" select="@href"/>
       <xsl:variable name="this-id" select="(@xml:id, @id)[1]"/>
       
+      <!-- Some elements are the kind that would be suited to IRI + name patterns, but don't need them because
+      of native conventions used within the attributes. For those elements, we construct an IRI + name pattern,
+      to facilitate vocabulary searches. -->
+      <xsl:variable name="elements-to-insert" as="element()*">
+         <xsl:choose>
+            <xsl:when test="self::tan:period">
+               <IRI>
+                  <xsl:value-of select="concat('tag:textalign.net,2015:ns:period:from', @from, ':to', @to)"/>
+               </IRI>
+               <name>
+                  <xsl:value-of select="concat('From ', @from, ' to ', @to)"/>
+               </name>
+            </xsl:when>
+         </xsl:choose>
+      </xsl:variable>
+      
       <xsl:copy>
          <xsl:copy-of select="@* except @href"/>
          <xsl:if test="$add-q-ids">
@@ -565,6 +581,7 @@
             </xsl:for-each>
          </xsl:if>
          <xsl:apply-templates mode="#current"/>
+         <xsl:copy-of select="$elements-to-insert"/>
          <xsl:copy-of select="$children-to-append"/>
          <!-- An inclusion filter here will make sure that only certain elements get copied during the inclusion process -->
          <xsl:if test="exists(@include)">

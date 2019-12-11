@@ -58,6 +58,10 @@ ptr-attr-verb =
     
     ##  Multiple values of @verb are interpreted to mean "and", resulting in distribution of the claim (e.g., verb="x y" becomes "[subject] x ..." and "[subject] y...").
     attribute verb { text }
+ptr-attr-version =
+    
+    ## points to one or more versions of a scriptum referred to by a <subject> or <objec>.
+    attribute version { text }
 ptr-attr-work =
     
     ## refers to a work by means of a source ID as a proxy. The attribute will be treated as indicating all sources that share the same work as the one mentioned.
@@ -195,4 +199,4 @@ single-div-partial-textual-reference =
 # If a partial textual reference is a spans <div>s then @ref should be in the children elements
 multi-div-partial-textual-reference =
     (element-tok-for-claim-with-ref | text-passage-selector-with-ref)+
-scriptum-reference = ptr-attr-which, element-div*
+scriptum-reference = ptr-attr-which, ptr-attr-version?, element-div*

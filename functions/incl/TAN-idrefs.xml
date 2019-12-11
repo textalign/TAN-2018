@@ -122,6 +122,10 @@
         <element>div-type</element>
         <idrefs attribute="units"/>
     </id>
+    <id>
+        <element>version</element>
+        <idrefs attribute="version"/>
+    </id>
     <id cross-file="true">
         <element>div-type</element>
         <idrefs attribute="div-type"/>
