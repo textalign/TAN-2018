@@ -355,12 +355,6 @@
         </xsl:if>
     </xsl:template>
 
-    <!--<xsl:template match="tan:license" mode="input-pass-1">
-        <xsl:copy>
-            <xsl:copy-of select="@*"/>
-            <xsl:apply-templates mode="#current"/>
-        </xsl:copy>
-    </xsl:template>-->
     <xsl:template match="tei:*" mode="input-pass-1">
         <xsl:if test="not($tei-should-be-plain-text)">
             <xsl:copy>
@@ -481,7 +475,7 @@
     </xsl:template>
 
     <xsl:template match="tan:div[tan:div[@type = '#version']]" mode="input-pass-3">
-        <!-- This template finds a parent of a version, then groups and re-sorts the descendant versions -->
+        <!-- This template finds a parent of a version, then groups and re-sorts the descendant versions according to the master $source-group-and-sort-pattern -->
         <!-- Such a version wrapper will wind up being table-like or table-row-like, whether that is executed as 
             an html <table> or through CSS. That decision cannot be made at this point. -->
         <!-- This element wraps one or more versions, which are sorted and grouped in the predefined order. -->
@@ -629,7 +623,7 @@
         <xsl:param name="items-to-group-and-sort" tunnel="yes" as="element()*"/>
         <xsl:variable name="descendant-idrefs" select=".//tan:idref"/>
         <xsl:variable name="items-yet-to-place"
-            select="$items-to-group-and-sort[tan:src = $descendant-idrefs]"/>
+            select="$items-to-group-and-sort[(tan:src, @src) = $descendant-idrefs]"/>
         <xsl:if test="exists($items-yet-to-place) or $fill-defective-merges">
             <xsl:copy>
                 <xsl:if test="@alias-id">
@@ -659,7 +653,7 @@
     <xsl:template match="tan:idref" mode="regroup-and-re-sort-heads">
         <xsl:param name="items-to-group-and-sort" as="element()*" tunnel="yes"/>
         <xsl:variable name="this-idref" select="."/>
-        <xsl:variable name="those-items" select="$items-to-group-and-sort[tan:src = $this-idref]"/>
+        <xsl:variable name="those-items" select="$items-to-group-and-sort[(tan:src, @src) = $this-idref]"/>
         <xsl:variable name="filler-element" as="element()">
             <head type="#version" class="filler" xmlns="tag:textalign.net,2015:ns">
                 <src>
@@ -677,7 +671,7 @@
         <xsl:param name="items-to-group-and-sort" as="element()*" tunnel="yes"/>
         <xsl:param name="n-pattern" as="element()*" tunnel="yes"/>
         <xsl:variable name="this-idref" select="."/>
-        <xsl:variable name="those-divs" select="$items-to-group-and-sort[tan:src = $this-idref]"/>
+        <xsl:variable name="those-divs" select="$items-to-group-and-sort[(tan:src, @src) = $this-idref]"/>
         <xsl:variable name="filler-element" as="element()">
             <div type="#version" class="filler" xmlns="tag:textalign.net,2015:ns">
                 <src>
