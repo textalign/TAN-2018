@@ -199,4 +199,4 @@ single-div-partial-textual-reference =
 # If a partial textual reference is a spans <div>s then @ref should be in the children elements
 multi-div-partial-textual-reference =
     (element-tok-for-claim-with-ref | text-passage-selector-with-ref)+
-scriptum-reference = ptr-attr-which, ptr-attr-version?, element-div*
+scriptum-reference = ptr-attr-which, (ptr-attr-work, ptr-attr-version?)?, element-div*
