@@ -818,6 +818,37 @@
          <xsl:value-of select="string-join($pass-1)"/>
       </xsl:for-each>
    </xsl:function>
+   
+   <xsl:function name="tan:commas-and-ands" as="xs:string?">
+      <!-- One-parameter version of the full one below -->
+      <xsl:param name="input-strings" as="xs:string*"/>
+      <xsl:value-of select="tan:commas-and-ands($input-strings, true())"/>
+   </xsl:function>
+   <xsl:function name="tan:commas-and-ands" as="xs:string?">
+      <!-- Input: sequences of strings -->
+      <!-- Output: the strings joined together with , and 'and' -->
+      <xsl:param name="input-strings" as="xs:string*"/>
+      <xsl:param name="oxford-comma" as="xs:boolean"/>
+      <xsl:variable name="input-string-count" select="count($input-strings)"/>
+      <xsl:variable name="results" as="xs:string*">
+         <xsl:for-each select="$input-strings">
+            <xsl:variable name="this-pos" select="position()"/>
+            <xsl:value-of select="."/>
+            <xsl:if test="$input-string-count gt 2">
+               <xsl:choose>
+                  <xsl:when test="$this-pos lt ($input-string-count - 1)">,</xsl:when>
+                  <xsl:when test="$this-pos = ($input-string-count - 1) and $oxford-comma">,</xsl:when>
+               </xsl:choose>
+            </xsl:if>
+            <xsl:if test="$this-pos lt $input-string-count">
+               <xsl:text> </xsl:text>
+            </xsl:if>
+            <xsl:if test="$input-string-count gt 1 and $this-pos = ($input-string-count - 1)"
+               >and </xsl:if>
+         </xsl:for-each>
+      </xsl:variable>
+      <xsl:value-of select="string-join($results)"/>
+   </xsl:function>
 
 
    <!-- Functions: booleans -->

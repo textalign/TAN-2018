@@ -42,5 +42,10 @@
           <name>improbably</name>
           <desc>It is improbable that the claim is true.</desc>
        </item>
+       <item>
+          <IRI>tag:textalign.net,2015:modal:partially</IRI>
+          <name>partially</name>
+          <desc>The claim is true for only part of each object.</desc>
+       </item>
     </body>
 </TAN-voc>

@@ -196,6 +196,8 @@ tan:counts-to-firsts renamed `tan:lengths-to-positions()`
 
 `tan:title-case()`
 
+`tancommas-and-ands()` (series of strings with commas (including option for Oxford comma) and and inserted) 
+
 ## Extra variables
 
 $applications-uri-collection, $applications-collection
