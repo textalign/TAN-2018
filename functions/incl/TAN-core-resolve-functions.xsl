@@ -745,6 +745,8 @@
          <xsl:copy-of select="@*"/>
          <xsl:apply-templates mode="#current"/>
          <xsl:choose>
+            <!-- If an inclusion isn't invoked with @include then there's no need to process it. -->
+            <xsl:when test="not(exists($filters-chosen)) and $is-inclusion"/>
             <xsl:when test="not(exists($first-doc-available)) and $is-inclusion">
                <xsl:copy-of select="tan:error('inc04')"/>
             </xsl:when>
