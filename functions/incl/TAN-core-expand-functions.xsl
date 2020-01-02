@@ -963,6 +963,8 @@
                <xsl:variable name="diagnostics-on" select="false()"/>
                <xsl:if test="$diagnostics-on">
                   <xsl:message select="'Diagnostics on template mode core-expansion-terse-attributes, on individual value for attr', $this-attr-name"/>
+                  <xsl:message select="'This attribute name: ', $this-attr-name"/>
+                  <xsl:message select="'Target element names: ', $these-target-element-names"/>
                   <xsl:message select="'This value:', $this-val"/>
                   <xsl:message select="'Appropriate vocabulary nodes:', $appropriate-vocabulary-nodes"/>
                   <xsl:message select="'Vocab items available: ', $vocab-items-available"/>

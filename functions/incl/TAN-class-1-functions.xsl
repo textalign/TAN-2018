@@ -345,17 +345,23 @@
       </TAN-T>
    </xsl:template>
    <xsl:template match="tan:head" mode="dependency-adjustments-pass-1">
-      <xsl:choose>
-         <xsl:when test="$distribute-vocabulary">
-            <xsl:apply-templates select="." mode="core-expansion-terse-attributes">
-               <!-- The head should already be resolved, so should be good for expansion -->
-               <xsl:with-param name="vocabulary-nodes" tunnel="yes" select="."/>
-            </xsl:apply-templates>
-         </xsl:when>
-         <xsl:otherwise>
-            <xsl:copy-of select="."/>
-         </xsl:otherwise>
-      </xsl:choose>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:choose>
+            <xsl:when test="$distribute-vocabulary">
+               <xsl:variable name="this-head-expanded" as="element()">
+                  <xsl:apply-templates select="." mode="core-expansion-terse-attributes">
+                     <!-- The head should already be resolved, so should be good for expansion -->
+                     <xsl:with-param name="vocabulary-nodes" tunnel="yes" select="."/>
+                  </xsl:apply-templates>
+               </xsl:variable>
+               <xsl:apply-templates select="$this-head-expanded/*" mode="#current"/>
+            </xsl:when>
+            <xsl:otherwise>
+                  <xsl:apply-templates mode="#current"/>
+            </xsl:otherwise>
+         </xsl:choose>
+      </xsl:copy>
    </xsl:template>
    <xsl:template match="tei:body" mode="core-expansion-terse dependency-adjustments-pass-1">
       <body>
@@ -2155,9 +2161,10 @@
             else
                ()"
       />
-      <xsl:variable name="this-is-defective" select="not($matching-merged-div/tan:src = '2')"/>
+      <xsl:variable name="this-id" select="root()/*/@id"/>
+      <xsl:variable name="this-is-defective" select="count($matching-merged-div/tan:src) lt 2"/>
       <xsl:variable name="model-children-missing-here"
-         select="$matching-merged-div/tan:div[not(@type = '#version')][not(tan:src = '1')]"/>
+         select="$matching-merged-div/tan:div[not(@type = '#version')][not(tan:src = $this-id)]"/>
       <xsl:variable name="n-needs-help" select="exists(tan:n/@help)"/>
       <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">

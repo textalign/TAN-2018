@@ -2214,9 +2214,6 @@
             <xsl:sequence select="static-base-uri()"/>
          </xsl:otherwise>
       </xsl:choose>
-      <!--<xsl:sequence
-         select="($any-node/ancestor-or-self::*[@xml:base]/@xml:base, base-uri($any-node), root($any-node)/*/@xml:base)[string-length(.) gt 0][1]"
-      />-->
    </xsl:function>
    
    <xsl:function name="tan:uri-relative-to" as="xs:string?">
@@ -3014,7 +3011,7 @@
          <xsl:value-of select="."/>
       </xsl:copy>
    </xsl:template>
-   <xsl:template match="*[tan:IRI] | tan:token-definition | tan:item[tan:token-definition]" mode="vocabulary-all-vals">
+   <xsl:template match="*[tan:IRI] | tan:token-definition | tan:item[tan:token-definition] | tan:claim" mode="vocabulary-all-vals">
       <xsl:param name="element-names" tunnel="yes" as="xs:string*"/>
       <xsl:variable name="element-name-matches" select="not(exists($element-names)) or (name(.), tan:affects-element) = $element-names"/>
       <xsl:if test="$element-name-matches">
@@ -3024,7 +3021,7 @@
       </xsl:if>
    </xsl:template>
    <!-- In the next template do not include *[tan:alias] in @match, as that will trip up on tan:vocabulary-key -->
-   <xsl:template match="*[tan:id][tan:IRI]" mode="vocabulary-by-id">
+   <xsl:template match="*[tan:id][tan:IRI] | tan:claim[tan:id]" mode="vocabulary-by-id">
       <xsl:param name="element-names" tunnel="yes" as="xs:string*"/>
       <xsl:param name="idrefs" tunnel="yes" as="xs:string*"/>
       <xsl:variable name="this-element" select="."/>

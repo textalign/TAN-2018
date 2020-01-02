@@ -467,7 +467,7 @@
    </xsl:template>
    
    <!-- The following template works for both modes on the root element, because even with shallow skipping, we at least want a root element, so the document is well formed -->
-   <xsl:template match="/*" mode="first-stamp-shallow-skip first-stamp-shallow-copy expand-standard-tan-voc resolve-href">
+   <xsl:template match="/*" mode="first-stamp-shallow-skip first-stamp-shallow-copy resolve-href">
       <xsl:param name="add-q-ids" as="xs:boolean" tunnel="yes"/>
       <xsl:param name="root-element-attributes" as="attribute()*" tunnel="yes"/>
       <xsl:param name="doc-base-uri" tunnel="yes"/>
@@ -485,6 +485,16 @@
          <xsl:apply-templates mode="#current"/>
       </xsl:copy>
       
+   </xsl:template>
+   <xsl:template match="/*" mode="expand-standard-tan-voc">
+      <xsl:variable name="this-base-uri" select="base-uri(.)"/>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:attribute name="xml:base" select="$this-base-uri"/>
+         <xsl:apply-templates mode="#current">
+            <xsl:with-param name="base-uri" tunnel="yes" select="$this-base-uri"/>
+         </xsl:apply-templates>
+      </xsl:copy>
    </xsl:template>
    
    <!-- templates for retaining, stamping elements of interest -->
@@ -988,6 +998,7 @@
    <xsl:template match="*[@href]" mode="resolve-href expand-standard-tan-voc">
       <xsl:param name="base-uri" as="xs:anyURI?" tunnel="yes"/>
       <xsl:param name="add-q-ids" as="xs:boolean" tunnel="yes" select="true()"/>
+      <xsl:variable name="attr-href-is-absolute" select="@href = string(resolve-uri(@href, static-base-uri()))"/>
       <xsl:variable name="this-base-uri"
          select="
             if (exists($base-uri)) then
@@ -999,7 +1010,7 @@
       <xsl:copy>
          <xsl:copy-of select="@* except @href"/>
          <xsl:choose>
-            <xsl:when test="string-length($this-base-uri) gt 0">
+            <xsl:when test="$attr-href-is-absolute or (string-length($this-base-uri) gt 0)">
                <xsl:attribute name="href" select="$new-href"/>
                <xsl:if test="not($new-href = @href) and $add-q-ids">
                   <xsl:attribute name="orig-href" select="@href"/>
