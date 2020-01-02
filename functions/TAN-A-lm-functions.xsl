@@ -150,9 +150,11 @@
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:apply-templates mode="#current"/>
-         <id>
-            <xsl:value-of select="@xml:id"/>
-         </id>
+         <xsl:if test="not(exists(tan:ID))">
+            <id>
+               <xsl:value-of select="@xml:id"/>
+            </id>
+         </xsl:if>
          <xsl:if test="not(@xml:id = $this-id-lc)">
             <id>
                <xsl:value-of select="$this-id-lc"/>
