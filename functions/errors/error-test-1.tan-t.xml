@@ -64,7 +64,7 @@
             <IRI>http://lccn.loc.gov/12032709</IRI>
             <name>Kate Greenaway, Mother Goose, New York, G. Routledge and sons [1881]</name>
             <!-- wrn10 or wrn11 -->
-            <location accessed-when="2018-12-12" href="http://badurl.com/ring-o-roses.eng.1881.xml"/>
+            <location accessed-when="2018-12-12" href="http://badurl.com/ring-o-roses.eng.1881.xhtml"/>
             <!-- self-referential pointing -->
             <!-- tan17 whe02 -->
             <location href="error-test-1.tan-t.xml" accessed-when="3030-12-12"/>

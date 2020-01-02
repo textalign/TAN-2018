@@ -7,8 +7,9 @@
         <name>Error test tan-mor</name>
         <license which="by_4.0" licensor="person_1"/>
         <for-lang>eng</for-lang>
-        <!-- inc03 -->
+        <!-- inc03 loc02 (the target file's id was changed after generating the catalog, to trigger an error) -->
         <inclusion xml:id="test-3">
+            <!-- tan10 -->
             <IRI>tag:textalign.net,2015:error-test</IRI>
             <name>test 3</name>
             <location href="error-test-3.tan-a.xml" accessed-when="2019-02-20"/>

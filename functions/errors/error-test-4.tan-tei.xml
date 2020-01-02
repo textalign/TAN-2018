@@ -52,6 +52,7 @@
         <!-- wrn08 loc01 -->
         <predecessor>
             <IRI>tag:textalign.net,2015:error-test-2</IRI>
+            <IRI>tag:textalign.net,9999:error-test-2</IRI>
             <name>test 2</name>
             <!-- wrn01 -->
             <location href="error-test-2.tan-voc.xml-bad-url" accessed-when="2019-01-22"/>

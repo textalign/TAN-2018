@@ -73,7 +73,7 @@
             <name>Kate Greenaway, Mother Goose, New York, G. Routledge and sons [1881]</name>
             <!-- wrn10 or wrn11 -->
             <location accessed-when="2018-12-12"
-                   href="http://badurl.com/ring-o-roses.eng.1881.xml"/>
+                   href="http://badurl.com/ring-o-roses.eng.1881.xhtml"/>
             <!-- self-referential pointing -->
             <!-- tan17 whe02 -->
             <location accessed-when="3030-12-12"
@@ -246,7 +246,7 @@
    </doc>
    <doc href="error-test-4.tan-tei.xml"
         TAN-version="2020"
-        id="tag:textalign.net,2015:error-test-4"
+        id="tag:textalign.net,2015:error-test-4-bogus-id"
         root="TEI">
       <name xmlns="tag:textalign.net,2015:ns">TAN-TEI transcription of Ring a Ring o' Roses</name>
       <license xmlns="tag:textalign.net,2015:ns" which="by_4.0" licensor="park"/>
