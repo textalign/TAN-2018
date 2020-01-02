@@ -291,7 +291,7 @@
                        xmlns:svg="http://www.w3.org/2000/svg"
                        xmlns:tan="tag:textalign.net,2015:ns"
                        xmlns:math="http://www.w3.org/1998/Math/MathML"
-                       href="http://textalign.net/release/TAN-2019/examples/gomme.1989.ring-o-roses.xml"/>
+                       href="http://textalign.net/release/TAN-2020/examples/gomme.1989.ring-o-roses.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" licensor="park">
          <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
          <name>This data file is licensed under a Creative Commons Attribution 4.0 International
@@ -392,7 +392,7 @@
                        xmlns:svg="http://www.w3.org/2000/svg"
                        xmlns:tan="tag:textalign.net,2015:ns"
                        xmlns:math="http://www.w3.org/1998/Math/MathML"
-                       href="http://textalign.net/release/TAN-2019/examples/patricius.confessio.2003.eng.xml"/>
+                       href="http://textalign.net/release/TAN-2020/examples/patricius.confessio.2003.eng.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" licensor="park">
          <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
          <name>This data file is licensed under a Creative Commons Attribution 4.0 International
@@ -468,7 +468,7 @@
         root="TAN-T">
       <name xmlns="tag:textalign.net,2015:ns">TAN transcription of Ring a Ring o' Roses</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="http://textalign.net/release/TAN-2019/examples/ring-o-roses.eng.1881.xml"/>
+                       href="http://textalign.net/release/TAN-2020/examples/ring-o-roses.eng.1881.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" which="by_4.0" licensor="park"/>
       <work xmlns="tag:textalign.net,2015:ns">
             <IRI>http://dbpedia.org/resource/Ring_a_Ring_o%27_Roses</IRI>
@@ -493,7 +493,7 @@
         root="TAN-T">
       <name xmlns="tag:textalign.net,2015:ns">TAN transcription of Ring a Ring o' Roses</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="http://textalign.net/release/TAN-2019/examples/ring-o-roses.eng.1881.xml"/>
+                       href="http://textalign.net/release/TAN-2020/examples/ring-o-roses.eng.1881.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" which="by_4.0" licensor="park"/>
       <work xmlns="tag:textalign.net,2015:ns">
             <IRI>http://dbpedia.org/resource/Ring_a_Ring_o%27_Roses</IRI>
@@ -515,7 +515,7 @@
                        xmlns:svg="http://www.w3.org/2000/svg"
                        xmlns:tan="tag:textalign.net,2015:ns"
                        xmlns:math="http://www.w3.org/1998/Math/MathML"
-                       href="http://textalign.net/release/TAN-2019/examples/ring-o-roses.eng.1957.xml"/>
+                       href="http://textalign.net/release/TAN-2020/examples/ring-o-roses.eng.1957.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" licensor="park">
          <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
          <name>This data file is licensed under a Creative Commons Attribution 4.0 International
@@ -540,7 +540,7 @@
         root="TAN-T">
       <name xmlns="tag:textalign.net,2015:ns">TAN transcription of Ring around the Rosie</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="http://textalign.net/release/TAN-2019/examples/ring-o-roses.eng.1987.xml"/>
+                       href="http://textalign.net/release/TAN-2020/examples/ring-o-roses.eng.1987.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" licensor="park">
          <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
          <name>Creative Commons Attribution 4.0 International License</name>
@@ -610,7 +610,7 @@
         root="TAN-A">
       <name xmlns="tag:textalign.net,2015:ns">Comments and claims on Aristotle's Categories</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="http://textalign.net/release/TAN-2019/examples/TAN-A/ar.cat.tan-a.claims.xml"/>
+                       href="http://textalign.net/release/TAN-2020/examples/TAN-A/ar.cat.tan-a.claims.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" licensor="park">
             <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
             <name>Creative Commons Attribution 4.0 International License</name>
@@ -647,7 +647,7 @@
         root="TAN-A">
       <name xmlns="tag:textalign.net,2015:ns">Alignment of Aristotle's Categories</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="http://textalign.net/release/TAN-2019/examples/TAN-A/ar.cat.tan-a.xml"/>
+                       href="http://textalign.net/release/TAN-2020/examples/TAN-A/ar.cat.tan-a.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" licensor="park">
             <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
             <name>Creative Commons Attribution 4.0 International License</name>
@@ -689,7 +689,7 @@
         root="TAN-A">
       <name xmlns="tag:textalign.net,2015:ns">div-based alignment of multiple versions of Ring o Roses</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="http://textalign.net/release/TAN-2019/examples/TAN-A/ringoroses.div.1.xml"/>
+                       href="http://textalign.net/release/TAN-2020/examples/TAN-A/ringoroses.div.1.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" which="by_4.0" licensor="park"/>
       <token-definition xmlns="tag:textalign.net,2015:ns" src="eng-us" pattern="[-\w]+"/>
       <source xmlns="tag:textalign.net,2015:ns" xml:id="eng-uk">
@@ -766,7 +766,7 @@
         root="TAN-A-lm">
       <name xmlns="tag:textalign.net,2015:ns">Part-of-speech analysis of 1881 version of Ring a Ring o' Roses</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="http://textalign.net/release/TAN-2019/examples/TAN-A-lm/ring-o-roses.eng.1881.lm.xml"/>
+                       href="http://textalign.net/release/TAN-2020/examples/TAN-A-lm/ring-o-roses.eng.1881.lm.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" licensor="park">
             <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
             <name>Creative Commons Attribution 4.0 International License</name>
@@ -791,7 +791,7 @@
         root="TAN-A-tok">
       <name xmlns="tag:textalign.net,2015:ns">token-based alignment of two versions of Ring o Roses</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="http://textalign.net/release/TAN-2019/examples/TAN-A-tok/ringoroses.01+02.token.1.xml"/>
+                       href="http://textalign.net/release/TAN-2020/examples/TAN-A-tok/ringoroses.01+02.token.1.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" licensor="park">
             <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
             <name>Creative Commons Attribution 4.0 International License</name>
@@ -826,7 +826,7 @@
         root="TAN-A-tok">
       <name xmlns="tag:textalign.net,2015:ns">token-based alignment of two versions of Ring o Roses</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="http://textalign.net/release/TAN-2019/examples/TAN-A-tok/ringoroses.01+03.token.1.xml"/>
+                       href="http://textalign.net/release/TAN-2020/examples/TAN-A-tok/ringoroses.01+03.token.1.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" licensor="park">
             <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
             <name>Creative Commons Attribution 4.0 International License</name>
@@ -863,7 +863,7 @@
       <desc xmlns="tag:textalign.net,2015:ns">This takes the previous version (see see-also element below) and shows a simpler way
             to align tokens.</desc>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="http://textalign.net/release/TAN-2019/examples/TAN-A-tok/ringoroses.01+03.token.2.xml"/>
+                       href="http://textalign.net/release/TAN-2020/examples/TAN-A-tok/ringoroses.01+03.token.2.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" licensor="park">
             <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
             <name>Creative Commons Attribution 4.0 International License</name>

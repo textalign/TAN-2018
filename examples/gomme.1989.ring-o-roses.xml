@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../schemas/TAN-TEI.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="../schemas/TAN-TEI.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<!--<?xml-model href="http://textalign.net/release/TAN-2019/schemas/TAN-TEI.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="http://textalign.net/release/TAN-2019/schemas/TAN-TEI.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
+<!--<?xml-model href="http://textalign.net/release/TAN-2020/schemas/TAN-TEI.rnc" type="application/relax-ng-compact-syntax"?>
+<?xml-model href="http://textalign.net/release/TAN-2020/schemas/TAN-TEI.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
 <TEI xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:tan="tag:textalign.net,2015:ns" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns="http://www.tei-c.org/ns/1.0" TAN-version="2020" id="tag:parkj@textalign.net,2015:gomme.1898.ring-o-roses">
   <teiHeader>
     <fileDesc>
@@ -19,7 +19,7 @@
   </teiHeader>
   <head xmlns="tag:textalign.net,2015:ns">
     <name>Dictionary entry by Alice Bertha Gomme on Ring a Ring o' Roses</name>
-    <master-location href="http://textalign.net/release/TAN-2019/examples/gomme.1989.ring-o-roses.xml"/>
+    <master-location href="http://textalign.net/release/TAN-2020/examples/gomme.1989.ring-o-roses.xml"/>
     <license licensor="park">
       <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
       <name>This data file is licensed under a Creative Commons Attribution 4.0 International

@@ -7,7 +7,7 @@
       <name>Matthew's version of the Lord's Prayer, King James Version of the Bible, 1760
          edition</name>
       <master-location
-         href="https://raw.githubusercontent.com/textalign/TAN-2019/master/examples/lords-prayer.eng.kjv.1760.xml"/>
+         href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/lords-prayer.eng.kjv.1760.xml"/>
       <license which="by 4.0" licensor="park"/>
       <work>
          <IRI>http://dbpedia.org/resource/Lord%27s_Prayer</IRI>
