@@ -1,20 +1,28 @@
 # Changes made since last stable version
 
-The following changes have been made since the last stable version, and are not yet documented in these development guidelines. See the git log of the dev branch for a more comprehensive account of all changes.
+The following changes have been made since version 2018, and may not yet be documented in the current guidelines. See the git log of the dev branch for a more comprehensive account of all changes.
 
 ## General
 
 The directories `do things` and `TAN-key` have been renamed `applications` and `vocabularies` respectively. (This ensures grammatical consistency among top-level directory names.)
 
-The head has been revised. Better management of the `&lt;head>` was needed, and semantic and grammatical clarity in its parts. The `&lt;head>` is now conceived of as consisting of sequential parts: name/desc of the file; general declarations; links to other files; adjustments; abbreviations; credits; changes; and a to-do list.
+The head has been revised. Better management of the `&lt;head>` was needed, along with semantic and grammatical clarity in its parts. The `&lt;head>` is now conceived of as consisting of sequential parts:
+1. name/desc of the file
+1. general declarations
+1. links to other files
+1. adjustments
+1. vocabulary + ids
+1. credits
+1. change log
+1. pending work.
 
 For changes in standard vocabularies, see TAN-voc (olim TAN-key) below.
 
-* General declarations included `&lt;license>` and `&lt;licensor>`; they are now joined by `&lt;ambiguous-letter-numerals-are-roman>`; `&lt;token-definition>`; `&lt;work>` (class 1 files); `&lt;version>` (class 1 files); `&lt;for-lang>`, `&lt;tok-starts-with>`, `&lt;tok-is>` (class 3 files)
+* General declarations included `&lt;license>` and `&lt;licensor>`; the latter now becomes @licensor, attached to the former; they are now joined by `&lt;numerals>`; `&lt;token-definition>`; `&lt;work>` (class 1 files); `&lt;version>` (class 1 files); `&lt;for-lang>`, `&lt;tok-starts-with>`, `&lt;tok-is>` (class 2 files)
 * There may be more than one `&lt;license>` (since some things might be dual licensed). `&lt;licensor>` is removed and only `@licensor` in `&lt;license>` is allowed
 * `&lt;key>` has been changed to `&lt;vocabulary>`. The files being pointed to, after all, are not providing key-value pairs, or anything similar to what we think of when we speak of keys. Really those files provide IRI + name + desc + location values for individual things. (Hence TAN-key files are now being called TAN-voc.)
-* `&lt;definitions>` was strange, because what's happening there was not what we ordinarily mean by "define," which requires claims to be applied to sets of things. To assign IRIs and names to something is not to define it, but to label it. Furthermore, all the things that should populate this element are meant to resolve idrefs, and to supply extra vocabulary (note change above from `&lt;key>` to `&lt;vocabulary>`). So `&lt;definitions>` has been changed to `&lt;vocabulary-key>` (see change to other `&lt;key>` above) and any children that do not function as a way of resolving idrefs (the traditional function of a key) have been moved up into the general declarations. 
-* `&lt;alter>` was the only child of `&lt;head>` that was a verb. It has been changed to `&lt;adjustments>`, and because it seems to have priority over `&lt;vocabulary-key>` it has been placed ahead of it.
+* `&lt;definitions>` was strange, because what's happening there was not what we ordinarily mean by "define," which requires more than simply nomenclature. To assign IRIs and names to something is not to define it, but to label it. Furthermore, all the things that should populate this element are meant to resolve idrefs, and to supply extra vocabulary (note change above from `&lt;key>` to `&lt;vocabulary>`). So `&lt;definitions>` has been changed to `&lt;vocabulary-key>` (cf. comparable change mentioned above to `&lt;key>`) and any children that do not tether vocabulary items to idrefs (the traditional function of a key) have been moved up into the general declarations. 
+* `&lt;alter>` was the only child of `&lt;head>` that was a verb. It has been changed to `&lt;adjustments>`, and because it has logical priority, it preceds `&lt;vocabulary-key>`..
 * Required element `&lt;file-resp>` has been introduced. All TAN files have data that constitute a series of claims, and TAN requires all claims to be credited/blamed upon a claimant. This element specifies who, unless otherwise spcefied, should be treated as the claimant for the file.
 * A `&lt;to-do>` has been introduced in the last section of `&lt;head>`. This takes the place of `@in-progress,` and uses `&lt;comment>`s to itemize the things that still need to be done to the file. `&lt;to-do>` is required, but it can be empty – a possible sign that the file is no longer in progress. Thus, users of TAN files will be better informed exactly what is meant by a file being in progress, and the owner of the file can keep a list of things that remain to be done.
 
@@ -41,7 +49,7 @@ Files are now resolved differently.
 
 * The goal is to return a file that can be interpreted without reference to vocabularies (including standard TAN ones) or inclusions. (One would still need to fetch files referenced by class-2 `&lt;source>`s, or `&lt;redivision>`, `&lt;successor>`, `&lt;see-also>` etc.)
 * In resolving a file F, elements involved in inclusions are handled nearly at the very beginning. All inclusions are resolved recursively and returned to F as a set of `&lt;inclusion>`s that carry children errors, vocabulary items, and substitutions. The errors and vocabulary items are copied to F's `&lt;inclusion>` and individual substitutions are made in F. This means that inclusion now brings back not just specific elements, but the vocabulary upon which it depends. It also means ids/idrefs are qualified, with F's id/idrefs being distinct from any of F's inclusions' id/idrefs. This is important, because F might assign an id `foo` to a scriptum, but F's inclusion, to a person. This approach resolved other problems as well. Under the previous system, if you used `&lt;resp @include="incl1">` you would have to have also invoked `@include` for `&lt;role>` and `&lt;person>`. Previously, reference errors were reported not in the resolved file but only in terse expansion.
-* Another important change in file resolution is in numbering schemes. Changes have been made to the way class 1 files are resolved with regard to values of `@n` (see below), to help reconcile synonyms. This means that when a class 1 file is resolved, its vocabulary must be resolved before values of `@n` can be normalized. This technique provides great flexibility to creators of class 1 files. But it complicates TAN-A files, In the 2018 schema, every `@ref` in a class 2 file was resolved independent of what the sources were doing. But any claim that combines sources that have different systems of resolving ambiguous numerals (e.g., c as 3 in an alphabet system but 100 in Roman numerals), number resolution would require complexity in claim that is at present infeasible. In a future release, it is expected that TAN-A files will take `&lt;numeral>` specified for sources.
+* Another important change in file resolution is in numbering schemes. Changes have been made to the way class 1 files are resolved with regard to values of `@n` (see below), to help reconcile synonyms. This means that when a class 1 file is resolved, its vocabulary must be resolved before values of `@n` can be normalized. This technique provides great flexibility to creators of class 1 files. But it complicates TAN-A files, In the 2018 schema, every `@ref` in a class 2 file was resolved independent of what the sources were doing. But in any claim that combines sources that have different systems of resolving ambiguous numerals (e.g., c as 3 in an alphabet system but 100 in Roman numerals), number resolution would require a complexity that is at present infeasible. In a future release, it is expected that TAN-A files will take `&lt;numeral>` specified for sources.
 * Resolution of numbers now happens at the conclusion of `tan:resolve-doc()`, because it requires querying vocabulary..
 
 Expansion has been streamlined, to avoid summoning global or in-scope variables that do not matter. XSLT operations ignore such unused variables, but Schematron validation seems not to. Thoroughly revised the way a hierarchy is reset in the course of expanding the sources of a class 2 file, using `@reset` to mark elements that need to be moved and `@has-been-reset` to mark those that have. Resetting has been moved from class 2 functions to class 1 functions.
@@ -106,7 +114,7 @@ In the service of merging different sources, the new `tan:group-divs()` groups t
 
 If a leaf div ends in a special line-end character, the first `&lt;tok>` or `&lt;non-tok>`s with `@n=1` will be taken from the next leaf div and fused at the end. If the first element so moved matches in name the last element of the original leaf div, they will be fused together. That is, if the leaf div ends with `&lt;tok>` and the next one starts with a `&lt;tok>` (or, vice versa, both `&lt;non-tok>`) they will become one element. If they are different elements, then the transfer still happens, but no fusion takes place.
 
-Leaf Div Uniqueness Rule has been downgraded to a warning. The problem is that some non-leaf divs can through a transformation easily become leaf divs. Some scripta are encoded such that leaf divs are broken up (see Bodëús's edition of Aristotle's Categories, at 2a35, 2b5, and 2b6b). And some translations must be encoded so that leaf divs interleave. The final example that convinced me that the LDUR rule had to be downgraded was Migne's Patrology. One homily would have a final section that straddled the top of, say, columns 83 and 84, and the very next homily would begin with the remaining part of column 83, then go to 84. In this case, there were no subcolumn letters. If the two homilies were treated as component partst of a single work, then LDUR had to be violated, or on must be forced to include line numeration (very time consuming). The process also made me realize that the notion of leaf div is relative and arbitrary. A leaf might easily in another version contain leaves, or be dropped, to make its non-leaf parent a leaf div.
+Leaf Div Uniqueness Rule has been downgraded to a warning. The problem is that some non-leaf divs can through a transformation easily become leaf divs. Some scripta are encoded such that leaf divs are broken up (see Bodëús's edition of Aristotle's Categories, at 2a35, 2b5, and 2b6b). And some translations must be encoded so that leaf divs interleave. The final example that convinced me that the LDUR rule had to be downgraded was Migne's Patrology. One homily would have a final section that straddled the top of, say, columns 83 and 84, and the very next homily would begin with the remaining part of column 83, then go to 84. In this case, there were no subcolumn letters. If the two homilies were treated as component parts of a single work, then the LDUR had to be violated, or one must be forced to include line numeration (very time consuming). The process also made me realize that the notion of leaf div is relative and arbitrary. A leaf might easily in another version contain leaves, or be dropped, to make its non-leaf parent a leaf div.
 
 New `@n` alias method. There are some values of `@n` that are frustrating to use, e.g., ep, epi, and epilogue, or Mt, Matt, and Matthew. Now, any TAN-voc file may include `@affects-attribute="n,"` and the `&lt;name>`s in each item will be treated as synonyms. When the file is resolved, during the process that converts non-Arabic numerals to Arabic numerals, any specially invoked TAN-voc items will be checked, and matching values of `@n` will be converted to the normalized form of the first `&lt;name>` in the first `&lt;item>` found. That means that communities of practice can work with common TAN-voc files, and not worry about having to use the same abbreviations.
 
@@ -168,6 +176,8 @@ Claims may now take `@xml:id,` allowing them to be referenced as vocabulary, and
 
 `tan:node-type()`
 
+`tan:resolve-attr-which()` removed (no longer needed with new approach to vocabulary)
+
 template text-only
 
 `tan:element-fingerprint()`
@@ -212,7 +222,7 @@ Class 1 filenames should terminate in something that expresses the principal typ
 
 # Things to do
 
-Change TAN-T(EI) `&lt;source>` to `&lt;scriptum>`.
+Assign one or more IRIs to every TAN element.
 
 Define more precisely what TAN interpretation of SHY is, making reference to:
 
@@ -220,9 +230,9 @@ Define more precisely what TAN interpretation of SHY is, making reference to:
 * http://jkorpela.fi/shy.html
 * https://www.unicode.org/L2/L2002/02279-muller.htm
 
-Develop error messages for `&lt;predecessor>`, `&lt;successor>`, `&lt;redivision>`, `&lt;model>`, and `&lt;annotation>`.
+Develop, streamline error messages for `&lt;predecessor>`, `&lt;successor>`, `&lt;redivision>`, `&lt;model>`, and `&lt;annotation>`.
 
-We assume now that any sibling divs (or divs that inherit the same reference), whether a leaf or not, that share the same value of `@n` are parts of the same div. The real problems occur when duplicates are not the same div type – that's the flag for an error. For example, sibling elements `&lt;div type="title" n="1">` and `&lt;div type="chapter" n="1">` should raise a flag.
+We assume now that any sibling divs (or divs that inherit the same reference), whether a leaf or not, that share the same value of `@n` are parts of the same div. The real problems occur when divs with the same reference are not the same div type – that's the flag for an error. For example, sibling elements `&lt;div type="title" n="1">` and `&lt;div type="chapter" n="1">` should raise a flag.
 
 Add a README.md to each main directory.
 
