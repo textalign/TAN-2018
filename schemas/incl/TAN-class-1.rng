@@ -72,7 +72,7 @@
     <element name="normalization">
       <a:documentation>specifies an alteration made to a source file to bring the transcription into conformity with standards or common expectations. This element is used typically for minor corrections, e.g., suppression of discretionary hyphenation. You should declare every change you have made to the source.</a:documentation>
       <a:documentation>&lt;normalization&gt; is especially helpful in reference to nondigital sources, but it may be made also for digital sources, to declare global changes that would be cumbersome, difficult, or impossible to describe in &lt;replace&gt;. </a:documentation>
-      <a:documentation>See main.xml#vocabulary-normalization for suggested IRI + name values for normalizations. For general discussion see main.xml#normalizing_transcriptions </a:documentation>
+      <a:documentation>See main.xml#vocabularies-normalizations for suggested IRI + name values for normalizations. For general discussion see main.xml#normalizing_transcriptions </a:documentation>
       <ref name="entity-nondigital-no-id"/>
     </element>
   </define>

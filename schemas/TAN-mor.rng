@@ -137,7 +137,7 @@
   <define name="voc-element-feature">
     <element name="feature">
       <a:documentation>names, through its IRI + name pattern, a grammatical feature or concept (e.g., plural, subjunctive, 1st person) that is part of a language. In the context of &lt;feature&gt; a @code is always included. The first &lt;feature&gt; of a &lt;category&gt; never has @code, and refers to the grammatical feature that characterizes the category.</a:documentation>
-      <a:documentation>See main.xml#vocabulary-feature for a list of standard features, derived  from OLiA.</a:documentation>
+      <a:documentation>See main.xml#vocabularies-features for a list of standard features, derived  from OLiA.</a:documentation>
       <ref name="entity-nondigital-id"/>
     </element>
   </define>

@@ -13,7 +13,7 @@ include "TAN-core.rnc" inherit = ns1 {
 # ATTRIBUTES
 attr-by =
     
-    ## specifies an amount by which an series of @n values or the last component in a series of @ref values should be attr-byed or decremented.
+    ## specifies an amount by which an series of @n values or the last component in a series of @ref values should be incremented or decremented.
     attribute by { xsd:integer }
 attr-chars =
     
@@ -57,7 +57,7 @@ attr-ref-many =
     
     ## In a range with members of uneven depth, those <div>s that are closest to the shallowest member are retrieved. For example, 2 - 3 2 2 might fetch 2, 3 1, 3 2 1, 3 2 2 (and not 3 or 3 1 1).
     
-    ## For more, see main.xml#class_2_body 
+    ## For more, see main.xml#referencing-divisions 
     attribute ref { data-div-range-ref }
 attr-ref-one =
     
@@ -132,7 +132,7 @@ adj-element-skip =
     
     ## marks parts of a source that have been ignored or should be skipped, either shallowly (default) or deeply.
     
-    ## Note, the shallow skip of a <div> may result in the source with leaf divs that have the same reference, breaking the Leaf Div Uniqueness Rule (LDUR). See main.xml#leaf_div_uniqueness_rule
+    ## Note, the shallow skip of a <div> may result in the creation of empty <div>s.
     
     ## This element is useful for ignoring extraneous divs, e.g., where a source has introduced divs that do not exist in other versions of the same work. For example, a transcription may group the topmost divisions of a text into parts, or may adopt superfluous divisions (e.g., introducing a <div> for chapter in the New Testament book Philemon, which does not have more than one chapter, and can be identified purely by verse).  
     element skip {

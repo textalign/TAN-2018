@@ -10,6 +10,11 @@
           <data type="anyURI"/>
         </attribute>
       </optional>
+      <optional>
+        <attribute name="metadata-resolved">
+          <data type="boolean"/>
+        </attribute>
+      </optional>
       <oneOrMore>
         <element name="doc">
           <ref name="doc-attributes"/>

@@ -140,7 +140,7 @@
   </define>
   <define name="attr-id-tan">
     <attribute name="id">
-      <a:documentation>contains a tag URN that permanently and uniquely names the current file, the so-called IRI Name of the current file. See main.xml#iri_name for discussion.</a:documentation>
+      <a:documentation>contains a tag URN that permanently and uniquely names the current file.</a:documentation>
       <a:documentation>For more on the syntax of tag URNs see main.xml#tag_urn</a:documentation>
       <ref name="data-tag-uri"/>
     </attribute>
@@ -178,7 +178,7 @@
   </define>
   <define name="attr-pattern">
     <attribute name="pattern">
-      <a:documentation>specifies a regular expression pattern to be searched for or matched. TAN regular expressions include an extended syntax, most noted by the special escape character \k{}. </a:documentation>
+      <a:documentation>specifies a regular expression pattern to be searched for or matched. TAN regular expressions include an extended syntax, most noted by the special escape character \u{}. </a:documentation>
       <a:documentation>For more see main.xml#regular_expressions and https://www.w3.org/TR/xpath-functions-30/#regex-syntax</a:documentation>
     </attribute>
   </define>
@@ -506,7 +506,7 @@
     <element name="license">
       <a:documentation>states the license under which the data is distributed and the rights associated with it, EXCLUSIVE of any rights attached to the source.</a:documentation>
       <a:documentation>Diligently check to ensure that the license you have claimed respects the rights of your sources' rightsholders. It is recommended that you license your data under a license that is similar to or more liberal than the one under which your sources have been released.</a:documentation>
-      <a:documentation>For more discussion, see main.xml#license and for a list of standard vocabulary, main.xml#vocabulary-rights-excluding-sources</a:documentation>
+      <a:documentation>For more discussion, see main.xml#license and for a list of standard vocabulary, main.xml#vocabularies-licenses</a:documentation>
       <optional>
         <ref name="ed-stamp"/>
       </optional>
@@ -711,7 +711,7 @@
       <a:documentation>specifies a TAN file that is available for inclusion. An inclusion occurs whenever an element X points to this inclusion by means of @include. TAN-compliant validators and processors will find every X that is found in the included file (checked recursively, against any inclusions of X adopted by the inclusion) and insert them at that place in the main document.</a:documentation>
       <a:documentation>Only select elements will be included, not the entire inclusion file. Exactly which elements are included is dictated by @include.</a:documentation>
       <a:documentation>Invoking an &lt;inclusion&gt; does not require its use. </a:documentation>
-      <a:documentation>For more on this, see main.xml#inclusions-and-vocabulary</a:documentation>
+      <a:documentation>For more on this, see main.xml#inclusions-and-vocabularies</a:documentation>
       <optional>
         <ref name="ed-stamp"/>
       </optional>
@@ -769,7 +769,7 @@
   <define name="link-element-vocabulary">
     <element name="vocabulary">
       <a:documentation>specifies a TAN-voc file that defines concepts that may be invoked by @which.</a:documentation>
-      <a:documentation>For more discussion, see main.xml#tan-voc</a:documentation>
+      <a:documentation>For more discussion, see main.xml#TAN-voc</a:documentation>
       <ref name="entity-digital-tan-no-id"/>
     </element>
   </define>
@@ -783,8 +783,8 @@
   </define>
   <define name="voc-element-alias">
     <element name="alias">
-      <a:documentation>assigns a group of xml:id values to a single id, held by @xml:id or @id. The two attributes are equivalent, but the latter supports characters disallowed by the former.   </a:documentation>
-      <a:documentation>This feature is useful for referring succinctly to a group of agents, works, scripta, etc.</a:documentation>
+      <a:documentation>groups multiple items together by assigning their idrefs to a single id. That alias is assigned through @xml:id or @id. The two attributes are equivalent, but the latter supports characters disallowed by the former (e.g., colons).   </a:documentation>
+      <a:documentation>This feature is useful for referring succinctly to a group of agents, works, scripta, etc. It is inspired by the model of the critical edition, where multiple manuscripts, each of which have their own identifier, can be assigned a family that has its own special siglum. </a:documentation>
       <a:documentation>Because ids and idrefs are encapsulated within a single file, and because &lt;alias&gt; serves exclusively idrefs, this element may neither include nor be included.</a:documentation>
       <optional>
         <ref name="ed-stamp"/>
@@ -809,13 +809,13 @@
     <element name="div-type">
       <a:documentation>declares a type of textual division (e.g., title, paragraph, stanza). You may have as many &lt;div-types&gt; as you wish, and they need not all be used.</a:documentation>
       <a:documentation>For more information, see main.xml#reference_system</a:documentation>
-      <a:documentation>This element takes a reserved keyword or IRI + name pattern. See main.xml#vocabulary-div-type for suggested values. </a:documentation>
+      <a:documentation>This element takes a reserved keyword or IRI + name pattern. See main.xml#vocabularies-div-types for suggested values. </a:documentation>
       <ref name="entity-nondigital-id"/>
     </element>
   </define>
   <define name="voc-element-group-type">
     <element name="group-type">
-      <a:documentation>names types of &lt;group&gt;s. See main.xml#vocabulary-group-type</a:documentation>
+      <a:documentation>names types of &lt;group&gt;s. See main.xml#vocabularies-group-types</a:documentation>
       <ref name="entity-nondigital-id"/>
     </element>
   </define>
@@ -863,7 +863,6 @@
   <define name="voc-element-relationship">
     <element name="relationship">
       <a:documentation>specifies a relationship that one document has to another.</a:documentation>
-      <a:documentation>See main.xml#vocabulary-relationship for standardized vocabulary.</a:documentation>
       <ref name="entity-nondigital-id"/>
     </element>
   </define>

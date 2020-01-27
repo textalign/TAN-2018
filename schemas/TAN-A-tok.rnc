@@ -45,12 +45,12 @@ voc-element-brel =
     
     ## This element should not be used to describe any activities (e.g., translation, copying), reserved for <reuse-type>. 
     
-    ## For examples see main.xml#vocabulary-bitext-relation
+    ## For examples see main.xml#vocabularies-bitext-relations
     element bitext-relation { entity-nondigital-id }
 voc-element-reus =
     
     ## identifies a category of text reuse (e.g., translation, mistranslation, paraphrase, ridicule). See main.xml#tan-a-tok for theoretical background.
     
-    ## For examples see main.xml#vocabulary-reuse-type
+    ## For examples see main.xml#vocabularies-reuse-types
     element reuse-type { entity-nondigital-id }
 # PATTERNS

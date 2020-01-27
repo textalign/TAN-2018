@@ -5,7 +5,7 @@
          xmlns:teix="http://www.tei-c.org/ns/Examples"
          datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
          ns="http://www.tei-c.org/ns/1.0"><!--
-Schema generated from ODD source 2019-10-15T07:54:01Z. .
+Schema generated from ODD source 2020-01-27T08:49:45Z. .
 TEI Edition: Version 3.5.0. Last updated on
 	29th January 2019, revision 3c0c64ec4
 TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 3.5.0/
@@ -36,6 +36,62 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 3.5.0/
             <attribute name="cert2">
                <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">provides a second measure of certainty. The value is taken along with @cert as the range in which an editors certainty resides. </a:documentation>
                <ref name="data-certainty"/>
+            </attribute>
+         </define>
+         <define name="attr-content-datatype">
+            <attribute name="content-datatype">
+               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">specifies the type of data that the object must take. This attribute is intended to specify that a particular verb governs raw units, not entities definable by the IRI + name pattern. Use this attribute if and only if the verb may not govern objects defined as a TAN keyword.</a:documentation>
+               <choice>
+                  <value>string</value>
+                  <value>boolean</value>
+                  <value>decimal</value>
+                  <value>float</value>
+                  <value>double</value>
+                  <value>duration</value>
+                  <value>dateTime</value>
+                  <value>time</value>
+                  <value>date</value>
+                  <value>gYearMonth</value>
+                  <value>gYear</value>
+                  <value>gMonthDay</value>
+                  <value>gDay</value>
+                  <value>gMonth</value>
+                  <value>hexBinary</value>
+                  <value>base64Binary</value>
+                  <value>anyURI</value>
+                  <value>QName</value>
+                  <value>normalizedString</value>
+                  <value>token</value>
+                  <value>language</value>
+                  <value>NMTOKEN</value>
+                  <value>NMTOKENS</value>
+                  <value>Name</value>
+                  <value>NCName</value>
+                  <value>ID</value>
+                  <value>IDREF</value>
+                  <value>IDREFS</value>
+                  <value>ENTITY</value>
+                  <value>ENTITIES</value>
+                  <value>integer</value>
+                  <value>nonPositiveInteger</value>
+                  <value>negativeInteger</value>
+                  <value>long</value>
+                  <value>int</value>
+                  <value>short</value>
+                  <value>byte</value>
+                  <value>nonNegativeInteger</value>
+                  <value>unsignedLong</value>
+                  <value>unsignedInt</value>
+                  <value>unsignedShort</value>
+                  <value>unsignedByte</value>
+                  <value>positiveInteger</value>
+               </choice>
+            </attribute>
+         </define>
+         <define name="attr-content-lexical-constraint">
+            <attribute name="content-lexical-constraint">
+               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">specifies a regular expression that constrains the value of any &lt;object&gt;. </a:documentation>
+               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Note that the regular expression will be strictly followed, e.g., "\d+" will be satisfied by "a1" (because there is at least on digit). If you wish to constrain the entire value, be sure to use ^ and $, e.g., "^\d+$". </a:documentation>
             </attribute>
          </define>
          <define name="attr-ed-when">
@@ -95,6 +151,12 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 3.5.0/
                <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">identifies an entity described within an element. Must be unique within a given file. Must consist only of word characters.</a:documentation>
             </attribute>
          </define>
+         <define name="attr-item-type">
+            <attribute name="item-type">
+               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">specifies what type of item a verb's object or subject must be. Expected values are names of elements allowed in any vocabulary.</a:documentation>
+               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">To bind the type to a textual reference to a class-1 source, use 'ref', which would anticipate a claim with object/subject element with @ref (and either @src or @work).</a:documentation>
+            </attribute>
+         </define>
          <define name="attr-lang-xml">
             <attribute name="xml:lang">
                <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">specifies a language code that names the language of the text enclosed by the parent element. Values are inherited by all descendants except for those that have an @xml:lang and their descendants.  </a:documentation>
@@ -115,66 +177,20 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 3.5.0/
                </data>
             </attribute>
          </define>
-         <define name="attr-object-datatype">
-            <attribute name="object-datatype">
-               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">specifies the type of data that the object must take. This attribute is intended to specify that a particular verb governs raw units, not entities definable by the IRI + name pattern. Use this attribute if and only if the verb may not govern objects defined as a TAN keyword.</a:documentation>
-               <choice>
-                  <value>string</value>
-                  <value>boolean</value>
-                  <value>decimal</value>
-                  <value>float</value>
-                  <value>double</value>
-                  <value>duration</value>
-                  <value>dateTime</value>
-                  <value>time</value>
-                  <value>date</value>
-                  <value>gYearMonth</value>
-                  <value>gYear</value>
-                  <value>gMonthDay</value>
-                  <value>gDay</value>
-                  <value>gMonth</value>
-                  <value>hexBinary</value>
-                  <value>base64Binary</value>
-                  <value>anyURI</value>
-                  <value>QName</value>
-                  <value>normalizedString</value>
-                  <value>token</value>
-                  <value>language</value>
-                  <value>NMTOKEN</value>
-                  <value>NMTOKENS</value>
-                  <value>Name</value>
-                  <value>NCName</value>
-                  <value>ID</value>
-                  <value>IDREF</value>
-                  <value>IDREFS</value>
-                  <value>ENTITY</value>
-                  <value>ENTITIES</value>
-                  <value>integer</value>
-                  <value>nonPositiveInteger</value>
-                  <value>negativeInteger</value>
-                  <value>long</value>
-                  <value>int</value>
-                  <value>short</value>
-                  <value>byte</value>
-                  <value>nonNegativeInteger</value>
-                  <value>unsignedLong</value>
-                  <value>unsignedInt</value>
-                  <value>unsignedShort</value>
-                  <value>unsignedByte</value>
-                  <value>positiveInteger</value>
-               </choice>
-            </attribute>
-         </define>
-         <define name="attr-object-lexical-constraint">
-            <attribute name="object-lexical-constraint">
-               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">specifies a regular expression that constrains the value of any &lt;object&gt;. </a:documentation>
-               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Note that the regular expression will be strictly followed, e.g., "\d+" will be satisfied by "a1" (because there is at least on digit). If you wish to constrain the entire value, be sure to use ^ and $, e.g., "^\d+$". </a:documentation>
-            </attribute>
-         </define>
          <define name="attr-pattern">
             <attribute name="pattern">
-               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">specifies a regular expression pattern to be searched for or matched. TAN regular expressions include an extended syntax, most noted by the special escape character \k{}. </a:documentation>
+               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">specifies a regular expression pattern to be searched for or matched. TAN regular expressions include an extended syntax, most noted by the special escape character \u{}. </a:documentation>
                <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">For more see main.xml#regular_expressions and https://www.w3.org/TR/xpath-functions-30/#regex-syntax</a:documentation>
+            </attribute>
+         </define>
+         <define name="attr-status">
+            <attribute name="status">
+               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">specifies whether the item is required.</a:documentation>
+               <choice>
+                  <value>required</value>
+                  <value>allowed</value>
+                  <value>disallowed</value>
+               </choice>
             </attribute>
          </define>
          <define name="attr-when">
@@ -282,6 +298,15 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 3.5.0/
                      </interleave>
                   </group>
                </choice>
+            </element>
+         </define>
+         <define name="element-at-ref-constraint">
+            <element name="at-ref">
+               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">specifies whether a verb uses &lt;at-ref&gt; (default disallowed).</a:documentation>
+               <optional>
+                  <ref name="ed-stamp"/>
+               </optional>
+               <ref name="attr-status"/>
             </element>
          </define>
          <define name="element-body">
@@ -406,6 +431,15 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 3.5.0/
                </interleave>
             </element>
          </define>
+         <define name="element-in-lang-constraint">
+            <element name="in-lang">
+               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">specifies whether a verb uses &lt;in-lang&gt; (default disallowed).</a:documentation>
+               <optional>
+                  <ref name="ed-stamp"/>
+               </optional>
+               <ref name="attr-status"/>
+            </element>
+         </define>
          <define name="element-IRI">
             <element name="IRI">
                <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">contains an International Resource Identifier that serves as a name for the a concept, person, or thing referred to by the parent element. IRIs are explained at main.xml#IRIs_and_linked_data.</a:documentation>
@@ -424,7 +458,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 3.5.0/
             <element name="license">
                <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">states the license under which the data is distributed and the rights associated with it, EXCLUSIVE of any rights attached to the source.</a:documentation>
                <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Diligently check to ensure that the license you have claimed respects the rights of your sources' rightsholders. It is recommended that you license your data under a license that is similar to or more liberal than the one under which your sources have been released.</a:documentation>
-               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">For more discussion, see main.xml#license and for a list of standard vocabulary, main.xml#vocabulary-rights-excluding-sources</a:documentation>
+               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">For more discussion, see main.xml#license and for a list of standard vocabulary, main.xml#vocabularies-licenses</a:documentation>
                <optional>
                   <ref name="ed-stamp"/>
                </optional>
@@ -485,6 +519,39 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 3.5.0/
                </attribute>
             </element>
          </define>
+         <define name="element-object-constraint">
+            <element name="object">
+               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">specifies expectations on a verb's use of object. By default, an object is required.</a:documentation>
+               <optional>
+                  <ref name="ed-stamp"/>
+               </optional>
+               <ref name="attr-status"/>
+               <optional>
+                  <choice>
+                     <ref name="constraint-item-type"/>
+                     <ref name="constraint-content"/>
+                  </choice>
+               </optional>
+            </element>
+         </define>
+         <define name="element-period-constraint">
+            <element name="period">
+               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">specifies expectations on a verb's use of object. By default, an object is required.</a:documentation>
+               <optional>
+                  <ref name="ed-stamp"/>
+               </optional>
+               <ref name="attr-status"/>
+            </element>
+         </define>
+         <define name="element-place-constraint">
+            <element name="place">
+               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">specifies expectations on a verb's use of object. By default, an object is required.</a:documentation>
+               <optional>
+                  <ref name="ed-stamp"/>
+               </optional>
+               <ref name="attr-status"/>
+            </element>
+         </define>
          <define name="element-resp">
             <element name="resp">
                <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">specifies a role held by one or more persons, organizations, or algorithms, perhaps during a specified time period.</a:documentation>
@@ -501,6 +568,21 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 3.5.0/
                      </optional>
                   </group>
                </choice>
+            </element>
+         </define>
+         <define name="element-subject-constraint">
+            <element name="subject">
+               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">specifies expectations on a verb's use of subject. By default, a subject is required.</a:documentation>
+               <optional>
+                  <ref name="ed-stamp"/>
+               </optional>
+               <ref name="attr-status"/>
+               <optional>
+                  <choice>
+                     <ref name="constraint-item-type"/>
+                     <ref name="constraint-content"/>
+                  </choice>
+               </optional>
             </element>
          </define>
          <define name="element-tail">
@@ -580,7 +662,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 3.5.0/
                <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">specifies a TAN file that is available for inclusion. An inclusion occurs whenever an element X points to this inclusion by means of @include. TAN-compliant validators and processors will find every X that is found in the included file (checked recursively, against any inclusions of X adopted by the inclusion) and insert them at that place in the main document.</a:documentation>
                <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Only select elements will be included, not the entire inclusion file. Exactly which elements are included is dictated by @include.</a:documentation>
                <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Invoking an &lt;inclusion&gt; does not require its use. </a:documentation>
-               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">For more on this, see main.xml#inclusions-and-vocabulary</a:documentation>
+               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">For more on this, see main.xml#inclusions-and-vocabularies</a:documentation>
                <optional>
                   <ref name="ed-stamp"/>
                </optional>
@@ -638,7 +720,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 3.5.0/
          <define name="link-element-vocabulary">
             <element name="vocabulary">
                <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">specifies a TAN-voc file that defines concepts that may be invoked by @which.</a:documentation>
-               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">For more discussion, see main.xml#tan-voc</a:documentation>
+               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">For more discussion, see main.xml#TAN-voc</a:documentation>
                <ref name="entity-digital-tan-no-id"/>
             </element>
          </define>
@@ -651,21 +733,19 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 3.5.0/
          </define>
          <define name="voc-element-alias">
             <element name="alias">
-               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">assigns a group of xml:id values to a single xml:id.</a:documentation>
-               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">This feature is useful for referring repeatedly to a group of agents, works, scripta, etc. </a:documentation>
+               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">groups multiple items together by assigning their idrefs to a single id. That alias is assigned through @xml:id or @id. The two attributes are equivalent, but the latter supports characters disallowed by the former (e.g., colons).   </a:documentation>
+               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">This feature is useful for referring succinctly to a group of agents, works, scripta, etc. It is inspired by the model of the critical edition, where multiple manuscripts, each of which have their own identifier, can be assigned a family that has its own special siglum. </a:documentation>
+               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Because ids and idrefs are encapsulated within a single file, and because &lt;alias&gt; serves exclusively idrefs, this element may neither include nor be included.</a:documentation>
                <optional>
                   <ref name="ed-stamp"/>
                </optional>
-               <choice>
-                  <ref name="inclusion"/>
-                  <group>
-                     <choice>
-                        <ref name="attr-id-xml"/>
-                        <ref name="attr-id-alias"/>
-                     </choice>
-                     <ref name="ptr-attr-idrefs"/>
-                  </group>
-               </choice>
+               <group>
+                  <choice>
+                     <ref name="attr-id-xml"/>
+                     <ref name="attr-id-alias"/>
+                  </choice>
+                  <ref name="ptr-attr-idrefs"/>
+               </group>
             </element>
          </define>
          <define name="voc-element-alg">
@@ -679,13 +759,14 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 3.5.0/
             <element name="div-type">
                <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">declares a type of textual division (e.g., title, paragraph, stanza). You may have as many &lt;div-types&gt; as you wish, and they need not all be used.</a:documentation>
                <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">For more information, see main.xml#reference_system</a:documentation>
-               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">This element takes a reserved keyword or IRI + name pattern. See main.xml#vocabulary-div-type for suggested values. </a:documentation>
+               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">This element takes a reserved keyword or IRI + name pattern. See main.xml#vocabularies-div-types for suggested values. </a:documentation>
                <ref name="entity-nondigital-id"/>
             </element>
          </define>
          <define name="voc-element-org">
             <element name="organization">
                <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">contains an IRI + name pattern identifying an organization: a group of persons, whether formally incorporated or not.</a:documentation>
+               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">This term is taken in its loosest sense. "Organization" and "person" are treated as mutually exclusive and exhaustive categories of all human beings, real or fictive. Therefore a tribe or clan, which ordinarily might dislike being thought of as an organization, are nevertheless so classified here.</a:documentation>
                <ref name="entity-nondigital-id"/>
             </element>
          </define>
@@ -726,7 +807,6 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 3.5.0/
          <define name="voc-element-relationship">
             <element name="relationship">
                <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">specifies a relationship that one document has to another.</a:documentation>
-               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">See main.xml#vocabulary-relationship for standardized vocabulary.</a:documentation>
                <ref name="entity-nondigital-id"/>
             </element>
          </define>
@@ -788,14 +868,45 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 3.5.0/
          <define name="body-item">
             <empty/>
          </define>
-         <define name="constraints-on-entity">
-            <ref name="constraints-on-verb"/>
+         <define name="constraint-content">
+            <ref name="attr-content-datatype"/>
+            <optional>
+               <ref name="attr-content-lexical-constraint"/>
+            </optional>
+         </define>
+         <define name="constraint-item-type">
+            <ref name="attr-item-type"/>
          </define>
          <define name="constraints-on-verb">
-            <ref name="attr-object-datatype"/>
-            <optional>
-               <ref name="attr-object-lexical-constraint"/>
-            </optional>
+            <element name="constraints">
+               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">specifies the expectations for a given verb. Any verb without constraints is presumed to be transitive, requiring a subject and an object, allowing adverbs, but disallowing opt-in elements, e.g., &lt;in-lang&gt;.</a:documentation>
+               <optional>
+                  <ref name="ed-stamp"/>
+               </optional>
+               <interleave>
+                  <zeroOrMore>
+                     <ref name="element-comment"/>
+                  </zeroOrMore>
+                  <optional>
+                     <ref name="element-subject-constraint"/>
+                  </optional>
+                  <optional>
+                     <ref name="element-object-constraint"/>
+                  </optional>
+                  <optional>
+                     <ref name="element-at-ref-constraint"/>
+                  </optional>
+                  <optional>
+                     <ref name="element-in-lang-constraint"/>
+                  </optional>
+                  <optional>
+                     <ref name="element-period-constraint"/>
+                  </optional>
+                  <optional>
+                     <ref name="element-place-constraint"/>
+                  </optional>
+               </interleave>
+            </element>
          </define>
          <define name="declaration-list">
             <interleave>
@@ -935,6 +1046,20 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 3.5.0/
                   </zeroOrMore>
                   <ref name="entity-nondigital-content"/>
                </interleave>
+            </choice>
+         </define>
+         <define name="entity-nondigital-with-constraints-content">
+            <choice>
+               <group>
+                  <oneOrMore>
+                     <ref name="element-IRI"/>
+                  </oneOrMore>
+                  <ref name="metadata-human-readable"/>
+                  <optional>
+                     <ref name="constraints-on-verb"/>
+                  </optional>
+               </group>
+               <ref name="ptr-attr-which"/>
             </choice>
          </define>
          <define name="group-attributes">
@@ -1108,7 +1233,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 3.5.0/
          <element name="normalization">
             <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">specifies an alteration made to a source file to bring the transcription into conformity with standards or common expectations. This element is used typically for minor corrections, e.g., suppression of discretionary hyphenation. You should declare every change you have made to the source.</a:documentation>
             <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">&lt;normalization&gt; is especially helpful in reference to nondigital sources, but it may be made also for digital sources, to declare global changes that would be cumbersome, difficult, or impossible to describe in &lt;replace&gt;. </a:documentation>
-            <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">See main.xml#vocabulary-normalization for suggested IRI + name values for normalizations. For general discussion see main.xml#normalizing_transcriptions </a:documentation>
+            <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">See main.xml#vocabularies-normalizations for suggested IRI + name values for normalizations. For general discussion see main.xml#normalizing_transcriptions </a:documentation>
             <ref name="entity-nondigital-no-id"/>
          </element>
       </define>

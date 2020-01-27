@@ -142,9 +142,10 @@
   </define>
   <define name="element-at-ref">
     <element name="at-ref">
-      <a:documentation>restricts a claim to a particular abstract textual reference that does not exist in either the subject or the object. </a:documentation>
-      <a:documentation>It is used to restrict the scope of a claim when location cannot be tethered to either the object or subject, e.g., "Manuscript S reads 'abcd' at reference 1.2"</a:documentation>
-      <a:documentation>This element functions much like &lt;where&gt;, but the geography is textual rather than spatial.</a:documentation>
+      <a:documentation>restricts a claim to a particular abstract textual reference. </a:documentation>
+      <a:documentation>&lt;at-ref&gt; serves mainly claims related to apparatus critici. In traditional critical editions, the main text has an apparatus at the bottom of the page, indicating variations in the manuscript, e.g., "A om." or "A: γάρ". These terse statements can be expanded: "Manuscript A omits the passage at line X word Y" and "Manuscript A reads γάρ in place of the passage at line X word Y." In those statements, A is the subject, and the reading (or lack thereof) is the object. The qualifier "at line X word Y" is the phrase that corresponds to &lt;at-ref&gt;. It functions much like &lt;where&gt;, but the geography is textual rather than spatial. </a:documentation>
+      <a:documentation>This qualifier is special, and must be explicitly allowed or mandated by the &lt;verb&gt;'s definition. </a:documentation>
+      <a:documentation>&lt;at-ref&gt; contains a textual reference, and will look similar to a textual reference &lt;subject&gt; or &lt;object&gt;. </a:documentation>
       <optional>
         <ref name="ed-stamp"/>
       </optional>
@@ -256,7 +257,7 @@
   <define name="voc-element-mode">
     <element name="modal">
       <a:documentation>contains an IRI + name pattern identifying a modal or adverb that qualifies the verb of an assertion.</a:documentation>
-      <a:documentation>See main.xml#vocabulary-modal for standard vocabulary.</a:documentation>
+      <a:documentation>See main.xml#vocabularies-modals for standard vocabulary.</a:documentation>
       <ref name="entity-nondigital-id"/>
     </element>
   </define>

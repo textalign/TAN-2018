@@ -34,7 +34,7 @@ ptr-attr-lexicon =
     attribute lexicon { text }
 attr-tok-pop =
     
-    ## specifies the quantity of tokens that are the subject of the <ana>.. This attribute is useful for language-specific TAN-A-lm files, where the total number of tokens that formed the set might be lost. It is also usefor calculating the relative probability of token to lm combinations.
+    ## specifies the quantity of tokens that are the subject of the <ana>. This attribute is useful for language-specific TAN-A-lm files, where the total number of tokens that formed the set might be lost. It is also useful for calculating the relative probability of token-to-lm combinations.
     attribute tok-pop { xsd:integer }
 ptr-attr-morphology =
     

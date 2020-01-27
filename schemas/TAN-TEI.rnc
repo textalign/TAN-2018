@@ -8,7 +8,7 @@ namespace teix = "http://www.tei-c.org/ns/Examples"
 namespace xi = "http://www.w3.org/2001/XInclude"
 namespace xlink = "http://www.w3.org/1999/xlink"
 
-# Schema generated from ODD source 2019-10-15T07:54:07Z. .
+# Schema generated from ODD source 2020-01-27T08:49:39Z. .
 # TEI Edition: Version 3.5.0. Last updated on
 #	29th January 2019, revision 3c0c64ec4
 # TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 3.5.0/
@@ -35,74 +35,10 @@ div {
       
       ## provides a second measure of certainty. The value is taken along with @cert as the range in which an editors certainty resides. 
       attribute cert2 { data-certainty }
-    attr-ed-when =
-      
-      ## marks the date or time when an element or its content was edited (added or modified)
-      
-      ## The value of must always conform to an ISO date or dateTime pattern. See main.xml#date_and_datetime.
-      
-      ## Along with @ed-who, this forms the Edit Stamp pattern. See main.xml#edit_stamp
-      
-      ## This attribute is inheritable. See main.xml#inheritable_attributes
-      attribute ed-when { xsd:dateTime | xsd:date }
-    attr-flags-for-errors =
-      
-      ## indicates the level of error that should be flagged to any algorithm that uses the parent element . Similar to Schematron's @role, but under a different name, to avoid confusion with TAN @roles.
-      attribute flags { "warning" | "error" | "info" | "fatal" }
-    attr-flags-for-functions =
-      
-      ## specifies flags to be applied in an XPath function that uses regular expressions.
-      
-      ## s = dot-all mode; m = multi-line mode; i = case-insensitive mode; x = remove whitespace characters from regular expression; q = no metacharacters 
-      
-      ## For more see http://www.w3.org/TR/xpath-functions-30/#flags
-      attribute flags {
-        xsd:string { pattern = "[smixq]+" }
-      }
-    attr-help =
-      
-      ## requests help on the context element. This attribute is equivalent to the help requested string, ???, but is useful in cases where the string cannot be placed (e.g., elements with no content or few attributes)
-      attribute help { empty }
-    attr-href =
-      
-      ## points to the location of a file. In some contexts, this attribute is permitted only as a temporary measure, to invoke editing assistance by means of Schematron Quick Fixes.
-      attribute href { text }
-    attr-id-alias =
-      
-      ## identifies an entity described within an element. Must be unique within a given file. Must consist only of non-spacing characters.
-      attribute id {
-        xsd:string { pattern = "\S+" }
-      }
-    attr-id-xml =
-      
-      ## identifies an entity described within an element. Must be unique within a given file. Must consist only of word characters.
-      attribute xml:id { text }
-    attr-lang-xml =
-      
-      ## specifies a language code that names the language of the text enclosed by the parent element. Values are inherited by all descendants except for those that have an @xml:lang and their descendants.  
-      
-      ## Values should adhere to BCP (Best Common Practices) 47, http://www.rfc-editor.org/rfc/bcp/bcp47.txt. For more details see main.xml#language.
-      
-      ## Examples: 'eng' (English), 'grc' (classical Greek), 'lat' (Latin) 
-      attribute xml:lang { xsd:language }
-    attr-n =
-      
-      ## names a <div> or <group>, or refers to a <div>'s @n. 
-      
-      ## If @n is to be given more than one value, those items must be separated by a space or a comma. 
-      
-      ## A hyphen-minus, - (U+002D, the most common form of hyphen), always has special meaning, specifying a range. This feature is useful for cases where a <div> straddles more than one standard reference number (e.g., a translation of Aristotle that cannot be easily tied to Bekker numbers). 
-      
-      ## If you need to use a hyphen-like character in an @n that does not specify a range, consider ‐ (U+2010 HYPHEN), ‑ (U+2011 NON-BREAKING HYPHEN), ‒ (U+2012 FIGURE DASH), – (U+2013 EN DASH), or − (U+2212 MINUS SIGN).
-      
-      ## @n does not allow punctuation reserved for delimiting levels of a hierarchy such as the period/full stop or colon. Values of @n should be simple, and not combine different types of <div>s (or <group>s). Elements with such complex values of @n should be broken up into individual elements, one for each simple @n value.
-      attribute n {
-        xsd:string { pattern = "[\w_]+([\- ,]+[\w_]+)*" }
-      }
-    attr-object-datatype =
+    attr-content-datatype =
       
       ## specifies the type of data that the object must take. This attribute is intended to specify that a particular verb governs raw units, not entities definable by the IRI + name pattern. Use this attribute if and only if the verb may not govern objects defined as a TAN keyword.
-      attribute object-datatype {
+      attribute content-datatype {
         "string"
         | "boolean"
         | "decimal"
@@ -147,18 +83,92 @@ div {
         | "unsignedByte"
         | "positiveInteger"
       }
-    attr-object-lexical-constraint =
+    attr-content-lexical-constraint =
       
       ## specifies a regular expression that constrains the value of any <object>. 
       
       ## Note that the regular expression will be strictly followed, e.g., "\d+" will be satisfied by "a1" (because there is at least on digit). If you wish to constrain the entire value, be sure to use ^ and $, e.g., "^\d+$". 
-      attribute object-lexical-constraint { text }
+      attribute content-lexical-constraint { text }
+    attr-ed-when =
+      
+      ## marks the date or time when an element or its content was edited (added or modified)
+      
+      ## The value of must always conform to an ISO date or dateTime pattern. See main.xml#date_and_datetime.
+      
+      ## Along with @ed-who, this forms the Edit Stamp pattern. See main.xml#edit_stamp
+      
+      ## This attribute is inheritable. See main.xml#inheritable_attributes
+      attribute ed-when { xsd:dateTime | xsd:date }
+    attr-flags-for-errors =
+      
+      ## indicates the level of error that should be flagged to any algorithm that uses the parent element . Similar to Schematron's @role, but under a different name, to avoid confusion with TAN @roles.
+      attribute flags { "warning" | "error" | "info" | "fatal" }
+    attr-flags-for-functions =
+      
+      ## specifies flags to be applied in an XPath function that uses regular expressions.
+      
+      ## s = dot-all mode; m = multi-line mode; i = case-insensitive mode; x = remove whitespace characters from regular expression; q = no metacharacters 
+      
+      ## For more see http://www.w3.org/TR/xpath-functions-30/#flags
+      attribute flags {
+        xsd:string { pattern = "[smixq]+" }
+      }
+    attr-help =
+      
+      ## requests help on the context element. This attribute is equivalent to the help requested string, ???, but is useful in cases where the string cannot be placed (e.g., elements with no content or few attributes)
+      attribute help { empty }
+    attr-href =
+      
+      ## points to the location of a file. In some contexts, this attribute is permitted only as a temporary measure, to invoke editing assistance by means of Schematron Quick Fixes.
+      attribute href { text }
+    attr-id-alias =
+      
+      ## identifies an entity described within an element. Must be unique within a given file. Must consist only of non-spacing characters.
+      attribute id {
+        xsd:string { pattern = "\S+" }
+      }
+    attr-id-xml =
+      
+      ## identifies an entity described within an element. Must be unique within a given file. Must consist only of word characters.
+      attribute xml:id { text }
+    attr-item-type =
+      
+      ## specifies what type of item a verb's object or subject must be. Expected values are names of elements allowed in any vocabulary.
+      
+      ## To bind the type to a textual reference to a class-1 source, use 'ref', which would anticipate a claim with object/subject element with @ref (and either @src or @work).
+      attribute item-type { text }
+    attr-lang-xml =
+      
+      ## specifies a language code that names the language of the text enclosed by the parent element. Values are inherited by all descendants except for those that have an @xml:lang and their descendants.  
+      
+      ## Values should adhere to BCP (Best Common Practices) 47, http://www.rfc-editor.org/rfc/bcp/bcp47.txt. For more details see main.xml#language.
+      
+      ## Examples: 'eng' (English), 'grc' (classical Greek), 'lat' (Latin) 
+      attribute xml:lang { xsd:language }
+    attr-n =
+      
+      ## names a <div> or <group>, or refers to a <div>'s @n. 
+      
+      ## If @n is to be given more than one value, those items must be separated by a space or a comma. 
+      
+      ## A hyphen-minus, - (U+002D, the most common form of hyphen), always has special meaning, specifying a range. This feature is useful for cases where a <div> straddles more than one standard reference number (e.g., a translation of Aristotle that cannot be easily tied to Bekker numbers). 
+      
+      ## If you need to use a hyphen-like character in an @n that does not specify a range, consider ‐ (U+2010 HYPHEN), ‑ (U+2011 NON-BREAKING HYPHEN), ‒ (U+2012 FIGURE DASH), – (U+2013 EN DASH), or − (U+2212 MINUS SIGN).
+      
+      ## @n does not allow punctuation reserved for delimiting levels of a hierarchy such as the period/full stop or colon. Values of @n should be simple, and not combine different types of <div>s (or <group>s). Elements with such complex values of @n should be broken up into individual elements, one for each simple @n value.
+      attribute n {
+        xsd:string { pattern = "[\w_]+([\- ,]+[\w_]+)*" }
+      }
     attr-pattern =
       
-      ## specifies a regular expression pattern to be searched for or matched. TAN regular expressions include an extended syntax, most noted by the special escape character \k{}. 
+      ## specifies a regular expression pattern to be searched for or matched. TAN regular expressions include an extended syntax, most noted by the special escape character \u{}. 
       
       ## For more see main.xml#regular_expressions and https://www.w3.org/TR/xpath-functions-30/#regex-syntax
       attribute pattern { text }
+    attr-status =
+      
+      ## specifies whether the item is required.
+      attribute status { "required" | "allowed" | "disallowed" }
     attr-when =
       
       ## indicates a date or date and time
@@ -233,6 +243,10 @@ div {
          | (adjust-condition,
             (element-comment* & (adjust-core, adjust-non-core))))
       }
+    element-at-ref-constraint =
+      
+      ## specifies whether a verb uses <at-ref> (default disallowed).
+      element at-ref { ed-stamp?, attr-status }
     element-body =
       
       ## contains the data
@@ -304,6 +318,10 @@ div {
             element-change+,
             element-to-do))
       }
+    element-in-lang-constraint =
+      
+      ## specifies whether a verb uses <in-lang> (default disallowed).
+      element in-lang { ed-stamp?, attr-status }
     element-IRI =
       
       ## contains an International Resource Identifier that serves as a name for the a concept, person, or thing referred to by the parent element. IRIs are explained at main.xml#IRIs_and_linked_data.
@@ -324,7 +342,7 @@ div {
       
       ## Diligently check to ensure that the license you have claimed respects the rights of your sources' rightsholders. It is recommended that you license your data under a license that is similar to or more liberal than the one under which your sources have been released.
       
-      ## For more discussion, see main.xml#license and for a list of standard vocabulary, main.xml#vocabulary-rights-excluding-sources
+      ## For more discussion, see main.xml#license and for a list of standard vocabulary, main.xml#vocabularies-licenses
       element license {
         ed-stamp?,
         (inclusion
@@ -361,12 +379,36 @@ div {
         ## specifies whether roman numerals should have interpretive priority over letter numerals. For example, should "c" be interpreted as 3 or 100? Default is roman.
         attribute priority { "letters" | "roman" }
       }
+    element-object-constraint =
+      
+      ## specifies expectations on a verb's use of object. By default, an object is required.
+      element object {
+        ed-stamp?,
+        attr-status,
+        (constraint-item-type | constraint-content)?
+      }
+    element-period-constraint =
+      
+      ## specifies expectations on a verb's use of object. By default, an object is required.
+      element period { ed-stamp?, attr-status }
+    element-place-constraint =
+      
+      ## specifies expectations on a verb's use of object. By default, an object is required.
+      element place { ed-stamp?, attr-status }
     element-resp =
       
       ## specifies a role held by one or more persons, organizations, or algorithms, perhaps during a specified time period.
       element resp {
         ed-stamp?,
         (inclusion | (ptr-attr-who, ptr-attr-role, ptr-attr-period?))
+      }
+    element-subject-constraint =
+      
+      ## specifies expectations on a verb's use of subject. By default, a subject is required.
+      element subject {
+        ed-stamp?,
+        attr-status,
+        (constraint-item-type | constraint-content)?
       }
     element-tail =
       
@@ -410,7 +452,7 @@ div {
       
       ## Invoking an <inclusion> does not require its use. 
       
-      ## For more on this, see main.xml#inclusions-and-vocabulary
+      ## For more on this, see main.xml#inclusions-and-vocabularies
       element inclusion {
         ed-stamp?,
         attr-id-xml,
@@ -445,19 +487,20 @@ div {
       
       ## specifies a TAN-voc file that defines concepts that may be invoked by @which.
       
-      ## For more discussion, see main.xml#tan-voc
+      ## For more discussion, see main.xml#TAN-voc
       element vocabulary { entity-digital-tan-no-id }
     voc-element-agent =
       voc-element-person | voc-element-org | voc-element-alg
     voc-element-alias =
       
-      ## assigns a group of xml:id values to a single xml:id.
+      ## groups multiple items together by assigning their idrefs to a single id. That alias is assigned through @xml:id or @id. The two attributes are equivalent, but the latter supports characters disallowed by the former (e.g., colons).   
       
-      ## This feature is useful for referring repeatedly to a group of agents, works, scripta, etc. 
+      ## This feature is useful for referring succinctly to a group of agents, works, scripta, etc. It is inspired by the model of the critical edition, where multiple manuscripts, each of which have their own identifier, can be assigned a family that has its own special siglum. 
+      
+      ## Because ids and idrefs are encapsulated within a single file, and because <alias> serves exclusively idrefs, this element may neither include nor be included.
       element alias {
         ed-stamp?,
-        (inclusion
-         | ((attr-id-xml | attr-id-alias), ptr-attr-idrefs))
+        ((attr-id-xml | attr-id-alias), ptr-attr-idrefs)
       }
     voc-element-alg =
       
@@ -471,11 +514,13 @@ div {
       
       ## For more information, see main.xml#reference_system
       
-      ## This element takes a reserved keyword or IRI + name pattern. See main.xml#vocabulary-div-type for suggested values. 
+      ## This element takes a reserved keyword or IRI + name pattern. See main.xml#vocabularies-div-types for suggested values. 
       element div-type { entity-nondigital-id }
     voc-element-org =
       
       ## contains an IRI + name pattern identifying an organization: a group of persons, whether formally incorporated or not.
+      
+      ## This term is taken in its loosest sense. "Organization" and "person" are treated as mutually exclusive and exhaustive categories of all human beings, real or fictive. Therefore a tribe or clan, which ordinarily might dislike being thought of as an organization, are nevertheless so classified here.
       element organization { entity-nondigital-id }
     voc-element-period =
       
@@ -498,8 +543,6 @@ div {
     voc-element-relationship =
       
       ## specifies a relationship that one document has to another.
-      
-      ## See main.xml#vocabulary-relationship for standardized vocabulary.
       element relationship { entity-nondigital-id }
     voc-element-role =
       
@@ -517,9 +560,22 @@ div {
     body-attributes-non-core = empty
     body-content-core = element-comment*
     body-item = empty
-    constraints-on-entity = constraints-on-verb
+    constraint-content =
+      attr-content-datatype, attr-content-lexical-constraint?
+    constraint-item-type = attr-item-type
     constraints-on-verb =
-      attr-object-datatype, attr-object-lexical-constraint?
+      
+      ## specifies the expectations for a given verb. Any verb without constraints is presumed to be transitive, requiring a subject and an object, allowing adverbs, but disallowing opt-in elements, e.g., <in-lang>.
+      element constraints {
+        ed-stamp?,
+        (element-comment*
+         & element-subject-constraint?
+         & element-object-constraint?
+         & element-at-ref-constraint?
+         & element-in-lang-constraint?
+         & element-period-constraint?
+         & element-place-constraint?)
+      }
     declaration-list = declaration-core & declaration-non-core
     declaration-core = element-license+ & element-numerals?
     
@@ -556,6 +612,9 @@ div {
     entity-nondigital-no-id =
       ed-stamp?,
       (inclusion | (element-comment* & entity-nondigital-content))
+    entity-nondigital-with-constraints-content =
+      (element-IRI+, metadata-human-readable, constraints-on-verb?)
+      | ptr-attr-which
     group-attributes = group-attributes-core, group-attributes-non-core
     group-attributes-core = ptr-attr-type?, attr-n?
     group-attributes-non-core = empty
@@ -607,7 +666,7 @@ div {
     
     ## <normalization> is especially helpful in reference to nondigital sources, but it may be made also for digital sources, to declare global changes that would be cumbersome, difficult, or impossible to describe in <replace>. 
     
-    ## See main.xml#vocabulary-normalization for suggested IRI + name values for normalizations. For general discussion see main.xml#normalizing_transcriptions 
+    ## See main.xml#vocabularies-normalizations for suggested IRI + name values for normalizations. For general discussion see main.xml#normalizing_transcriptions 
     element normalization { entity-nondigital-no-id }
   element-replace =
     

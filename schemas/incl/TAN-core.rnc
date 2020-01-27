@@ -114,7 +114,7 @@ attr-id-alias =
     }
 attr-id-tan =
     
-    ## contains a tag URN that permanently and uniquely names the current file, the so-called IRI Name of the current file. See main.xml#iri_name for discussion.
+    ## contains a tag URN that permanently and uniquely names the current file.
     
     ## For more on the syntax of tag URNs see main.xml#tag_urn
     attribute id { data-tag-uri }
@@ -152,7 +152,7 @@ attr-n =
     }
 attr-pattern =
     
-    ## specifies a regular expression pattern to be searched for or matched. TAN regular expressions include an extended syntax, most noted by the special escape character \k{}. 
+    ## specifies a regular expression pattern to be searched for or matched. TAN regular expressions include an extended syntax, most noted by the special escape character \u{}. 
     
     ## For more see main.xml#regular_expressions and https://www.w3.org/TR/xpath-functions-30/#regex-syntax
     attribute pattern { text }
@@ -371,7 +371,7 @@ element-license =
     
     ## Diligently check to ensure that the license you have claimed respects the rights of your sources' rightsholders. It is recommended that you license your data under a license that is similar to or more liberal than the one under which your sources have been released.
     
-    ## For more discussion, see main.xml#license and for a list of standard vocabulary, main.xml#vocabulary-rights-excluding-sources
+    ## For more discussion, see main.xml#license and for a list of standard vocabulary, main.xml#vocabularies-licenses
     element license {
         ed-stamp?,
         (inclusion
@@ -470,7 +470,7 @@ link-element-inclusion =
     
     ## Invoking an <inclusion> does not require its use. 
     
-    ## For more on this, see main.xml#inclusions-and-vocabulary
+    ## For more on this, see main.xml#inclusions-and-vocabularies
     element inclusion {
         ed-stamp?, attr-id-xml, (element-comment* & entity-digital-tan-other-content)
     }
@@ -501,15 +501,15 @@ link-element-vocabulary =
     
     ## specifies a TAN-voc file that defines concepts that may be invoked by @which.
     
-    ## For more discussion, see main.xml#tan-voc
+    ## For more discussion, see main.xml#TAN-voc
     element vocabulary { entity-digital-tan-no-id }
 # Elements that stipulate the @xml:id, @id, IRI, name, and descriptions for vocabulary items
 voc-element-agent = voc-element-person | voc-element-org | voc-element-alg
 voc-element-alias =
     
-    ## assigns a group of xml:id values to a single id, held by @xml:id or @id. The two attributes are equivalent, but the latter supports characters disallowed by the former.   
+    ## groups multiple items together by assigning their idrefs to a single id. That alias is assigned through @xml:id or @id. The two attributes are equivalent, but the latter supports characters disallowed by the former (e.g., colons).   
     
-    ## This feature is useful for referring succinctly to a group of agents, works, scripta, etc.
+    ## This feature is useful for referring succinctly to a group of agents, works, scripta, etc. It is inspired by the model of the critical edition, where multiple manuscripts, each of which have their own identifier, can be assigned a family that has its own special siglum. 
     
     ## Because ids and idrefs are encapsulated within a single file, and because <alias> serves exclusively idrefs, this element may neither include nor be included.
     element alias {
@@ -528,11 +528,11 @@ voc-element-div-type =
     
     ## For more information, see main.xml#reference_system
     
-    ## This element takes a reserved keyword or IRI + name pattern. See main.xml#vocabulary-div-type for suggested values. 
+    ## This element takes a reserved keyword or IRI + name pattern. See main.xml#vocabularies-div-types for suggested values. 
     element div-type { entity-nondigital-id }
 voc-element-group-type =
     
-    ## names types of <group>s. See main.xml#vocabulary-group-type
+    ## names types of <group>s. See main.xml#vocabularies-group-types
     element group-type { entity-nondigital-id }
 voc-element-org =
     
@@ -561,8 +561,6 @@ voc-element-person =
 voc-element-relationship =
     
     ## specifies a relationship that one document has to another.
-    
-    ## See main.xml#vocabulary-relationship for standardized vocabulary.
     element relationship { entity-nondigital-id }
 voc-element-role =
     

@@ -26,7 +26,7 @@ element-normalization =
     
     ## <normalization> is especially helpful in reference to nondigital sources, but it may be made also for digital sources, to declare global changes that would be cumbersome, difficult, or impossible to describe in <replace>. 
     
-    ## See main.xml#vocabulary-normalization for suggested IRI + name values for normalizations. For general discussion see main.xml#normalizing_transcriptions 
+    ## See main.xml#vocabularies-normalizations for suggested IRI + name values for normalizations. For general discussion see main.xml#normalizing_transcriptions 
     element normalization { entity-nondigital-no-id }
 element-replace =
     

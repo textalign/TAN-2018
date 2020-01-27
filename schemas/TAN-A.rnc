@@ -86,11 +86,13 @@ element-claim =
     }
 element-at-ref =
     
-    ## restricts a claim to a particular abstract textual reference that does not exist in either the subject or the object. 
+    ## restricts a claim to a particular abstract textual reference. 
     
-    ## It is used to restrict the scope of a claim when location cannot be tethered to either the object or subject, e.g., "Manuscript S reads 'abcd' at reference 1.2"
+    ## <at-ref> serves mainly claims related to apparatus critici. In traditional critical editions, the main text has an apparatus at the bottom of the page, indicating variations in the manuscript, e.g., "A om." or "A: γάρ". These terse statements can be expanded: "Manuscript A omits the passage at line X word Y" and "Manuscript A reads γάρ in place of the passage at line X word Y." In those statements, A is the subject, and the reading (or lack thereof) is the object. The qualifier "at line X word Y" is the phrase that corresponds to <at-ref>. It functions much like <where>, but the geography is textual rather than spatial. 
     
-    ## This element functions much like <where>, but the geography is textual rather than spatial.
+    ## This qualifier is special, and must be explicitly allowed or mandated by the <verb>'s definition. 
+    
+    ## <at-ref> contains a textual reference, and will look similar to a textual reference <subject> or <object>. 
     element at-ref { ed-stamp?, textual-reference }
 element-div =
     
@@ -142,7 +144,7 @@ voc-element-mode =
     
     ## contains an IRI + name pattern identifying a modal or adverb that qualifies the verb of an assertion.
     
-    ## See main.xml#vocabulary-modal for standard vocabulary.
+    ## See main.xml#vocabularies-modals for standard vocabulary.
     element modal { entity-nondigital-id }
 voc-element-place =
     

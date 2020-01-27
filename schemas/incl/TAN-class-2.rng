@@ -94,7 +94,7 @@
       <a:documentation>lists references to one or more &lt;div&gt;s. It consists of one or more simple references joined by commas or hyphens. A simple reference is a string value that points to a single &lt;div&gt;, e.g., "1 1". </a:documentation>
       <a:documentation>Truncation is allowed. For example, 1 1 - 3 will be interpreted first as 1 1 through 1 3; if that is invalid, it will be interpeted as 1 1 through 3. Other examples: '2.4 - 7, 9', 'iv 7 - 9'</a:documentation>
       <a:documentation>In a range with members of uneven depth, those &lt;div&gt;s that are closest to the shallowest member are retrieved. For example, 2 - 3 2 2 might fetch 2, 3 1, 3 2 1, 3 2 2 (and not 3 or 3 1 1).</a:documentation>
-      <a:documentation>For more, see main.xml#class_2_body </a:documentation>
+      <a:documentation>For more, see main.xml#referencing-divisions </a:documentation>
       <ref name="data-div-range-ref"/>
     </attribute>
   </define>
@@ -199,7 +199,7 @@
   <define name="adj-element-skip">
     <element name="skip">
       <a:documentation>marks parts of a source that have been ignored or should be skipped, either shallowly (default) or deeply.</a:documentation>
-      <a:documentation>Note, the shallow skip of a &lt;div&gt; may result in the source with leaf divs that have the same reference, breaking the Leaf Div Uniqueness Rule (LDUR). See main.xml#leaf_div_uniqueness_rule</a:documentation>
+      <a:documentation>Note, the shallow skip of a &lt;div&gt; may result in the creation of empty &lt;div&gt;s.</a:documentation>
       <a:documentation>This element is useful for ignoring extraneous divs, e.g., where a source has introduced divs that do not exist in other versions of the same work. For example, a transcription may group the topmost divisions of a text into parts, or may adopt superfluous divisions (e.g., introducing a &lt;div&gt; for chapter in the New Testament book Philemon, which does not have more than one chapter, and can be identified purely by verse).  </a:documentation>
       <optional>
         <ref name="ed-stamp"/>

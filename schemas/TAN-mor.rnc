@@ -79,7 +79,7 @@ voc-element-feature =
     
     ## names, through its IRI + name pattern, a grammatical feature or concept (e.g., plural, subjunctive, 1st person) that is part of a language. In the context of <feature> a @code is always included. The first <feature> of a <category> never has @code, and refers to the grammatical feature that characterizes the category.
     
-    ## See main.xml#vocabulary-feature for a list of standard features, derived  from OLiA.
+    ## See main.xml#vocabularies-features for a list of standard features, derived  from OLiA.
     element feature { entity-nondigital-id }
 # PATTERNS
 condition-pattern = attr-flags-for-errors?, action-condition-attributes, text
