@@ -2,10 +2,10 @@
 <xsl:stylesheet xmlns="tag:textalign.net,2015:ns" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:tan="tag:textalign.net,2015:ns"
    xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="#all" version="2.0">
-   <!-- Intended to help other stylesheets interrogate the contents of an XSLT stylesheet -->
+   <!-- This stylesheet helps other stylesheets interrogate the contents of an XSLT stylesheet -->
 
    <xsl:variable name="component-syntax"
-      select="doc('../configure%20parameters/component%20syntax.xml')"/>
+      select="doc('../../parameters/component%20syntax.xml')"/>
 
    <xsl:function name="tan:string-representation-of-component" as="xs:string*">
       <!-- 2-param version of the full function, below -->

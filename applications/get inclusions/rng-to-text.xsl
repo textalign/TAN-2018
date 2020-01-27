@@ -212,7 +212,7 @@
                     $lf || $current-indent
                 else
                     ()"/>
-        <xsl:value-of select="@type || ' '"/>
+        <xsl:value-of select="@type || ' ' || string-join(text(), ' ')"/>
         <xsl:apply-templates mode="formaldef"/>
     </xsl:template>
     <xsl:template match="rng:text" mode="formaldef">

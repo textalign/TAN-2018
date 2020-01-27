@@ -12,12 +12,14 @@
         <!-- Used primarily to populate the TAN guidelines with examples -->
         <xsl:param name="element-or-attribute-name" as="xs:string?"/>
         <xsl:param name="is-attribute" as="xs:boolean?"/>
+        <xsl:param name="include-catalog-examples" as="xs:boolean"/>
         <xsl:variable name="example-elements" as="element()*"
             select="
                 (if ($is-attribute = true()) then
-                    $ex-collection//@*[name(.) = $element-or-attribute-name]/..
+                    $ex-collection[$include-catalog-examples or not(matches(base-uri(.), 'catalog'))]//@*[name(.) = $element-or-attribute-name]/..
                 else
-                    $ex-collection//tan:*[name(.) = $element-or-attribute-name])[position() le $max-examples]"/>
+                    $ex-collection[$include-catalog-examples or not(matches(base-uri(.), 'catalog'))]//tan:*[name(.) = $element-or-attribute-name])[position() le $max-examples]"
+        />
         <xsl:for-each-group select="$example-elements" group-by="root(.)">
             <xsl:variable name="text" select="tan:element-to-example-text(current-group())"/>
             <xsl:variable name="text-to-emphasize"
