@@ -62,7 +62,7 @@
         <change who="xslt2" when="2018-08-09T13:17:48.557-04:00">Converted from 2018 to 2019 schemas.</change>
         <to-do/>
     </head>
-    <body bitext-relation="B-descends-from-A" reuse-type="adaptation" claimant="xslt2">
+    <body bitext-relation="B-descends-from-A" reuse-type="adaptation">
         <!-- Examples of picking tokens by number -->
         <align>
             <tok src="ring1881" ref="1" pos="1"/>

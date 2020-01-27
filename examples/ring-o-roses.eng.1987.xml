@@ -22,6 +22,11 @@
          <IRI>http://lccn.loc.gov/87042504</IRI>
          <name>Mother Goose, from nursery to literature / by Gloria T. Delama, 1987.</name>
       </source>
+      <vocabulary>
+         <IRI>tag:parkj@textalign.net,2015:TAN-voc:standard</IRI>
+         <name>Vocabulary for TAN files edited by Jenny Park</name>
+         <location href="TAN-voc/park-projects.TAN-voc.xml" accessed-when="2020-01-10"/>
+      </vocabulary>
       <model>
          <IRI>tag:parkj@textalign.net,2015:ring04</IRI>
          <name>TAN transcription of 1790 version of Ring around the Rosie reported by Newell in
