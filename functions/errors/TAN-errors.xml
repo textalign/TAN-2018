@@ -113,7 +113,7 @@
         <warning xml:id="wrn09"><rule>If a target file points only to non-local locations and no internet is available, the following message will be returned.</rule><message>No internet available.</message></warning>
     </group>
     <group affects-element="location inclusion source vocabulary redivision model annotation predecessor successor">
-        <error xml:id="lnk07">If a linking element points to a file that must be resolved, that file must be a TAN file.</error>
+        <error xml:id="lnk07"><rule>If a linking element points to a file that must be resolved, that file must be a TAN file.</rule></error>
     </group>
     <group affects-element="location algorithm see-also">
         <warning xml:id="loc04"><rule>If an element not essential to validation has no &lt;location> that points to a document a warning should be returned.</rule></warning>

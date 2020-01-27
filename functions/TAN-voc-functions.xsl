@@ -12,15 +12,6 @@
 
    <!-- PROCESSING TAN-voc FILES: RESOLUTION -->
    
-   <!--<xsl:template match="tan:body" mode="imprint-vocabulary" priority="1">
-      <xsl:variable name="this-id" select="../@id"/>
-      <xsl:copy>
-         <xsl:copy-of select="@*"/>
-         <xsl:apply-templates select="." mode="reduce-tan-voc-files">
-            <xsl:with-param name="is-standard-tan-voc" tunnel="yes" select="$this-id = $TAN-vocabularies/*/@id"/>
-         </xsl:apply-templates>
-      </xsl:copy>
-   </xsl:template>-->
    <xsl:template match="tan:body | tan:group | tan:item" mode="imprint-vocabulary" priority="1">
       <xsl:param name="inherited-affects-elements" as="xs:string*" tunnel="yes"/>
       <xsl:variable name="these-affects-elements"

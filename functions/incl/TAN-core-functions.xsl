@@ -139,10 +139,21 @@
    <xsl:variable name="latin-letter-numeral-pattern"
       select="'a+|b+|c+|d+|e+|f+|g+|h+|i+|j+|k+|l+|m+|n+|o+|p+|q+|r+|s+|t+|u+|v+|w+|x+|y+|z+'"/>
    <xsl:variable name="arabic-indic-numeral-pattern" select="'[٠١٢٣٤٥٦٧٨٩]+'"/>
+   <xsl:variable name="greek-unit-regex" select="'[α-θΑ-ΘϛϚ]'"/>
+   <xsl:variable name="greek-tens-regex" select="'[ι-πΙ-ΠϘϙϞϟ]'"/>
+   <xsl:variable name="greek-hundreds-regex" select="'[ρ-ωΡ-ΩϠϡ]'"/>
    <xsl:variable name="greek-letter-numeral-pattern"
-      select="'͵?([α-θΑ-ΘϛϚ]?[ρ-ωΡ-ΩϠϡ]?[ι-πΙ-ΠϘϙϞϟ]?[α-θΑ-ΘϛϚ]|[α-θΑ-ΘϛϚ]?[ρ-ωΡ-ΩϠϡ]?[ι-πΙ-ΠϘϙϞϟ][α-θΑ-ΘϛϚ]?|[α-θΑ-ΘϛϚ]?[ρ-ωΡ-ΩϠϡ][ι-πΙ-ΠϘϙϞϟ]?[α-θΑ-ΘϛϚ]?)ʹ?'"/>
+      select="concat('͵',  $greek-unit-regex,  '?(?', $greek-hundreds-regex, '?',  $greek-tens-regex,  '?',  $greek-unit-regex,  '|',  $greek-unit-regex,  '?', $greek-hundreds-regex, '?',  
+      $greek-tens-regex,  $greek-unit-regex,  '?|',  $greek-unit-regex,  '?', $greek-hundreds-regex, '',  $greek-tens-regex,  '?',  $greek-unit-regex,  '?)ʹ?')"/>
+   <xsl:variable name="syriac-unit-regex" select="'[ܐܒܓܕܗܘܙܚܛ]'"/>
+   <xsl:variable name="syriac-tens-regex" select="'[ܝܟܠܡܢܣܥܦܨ]'"/>
+   <xsl:variable name="syriac-hundreds-regex" select="'ܬ?[ܩܪܫܬ]|[ܢܣܥܦܨ]'"/>
+   <!-- A Syriac numeral is either 1s/10s/100s/1000s, with other corresponding digits, perhaps with modifier marks inserted between digits -->
    <xsl:variable name="syriac-letter-numeral-pattern"
-      select="'[ܐܒܓܕܗܘܙܚܛ]?\p{Mc}?(ܬ?[ܩܪܫܬ]|[ܢܣܥܦܨ]\p{Mc})?\p{Mc}?[ܝܟܠܡܢܣܥܦܨ]?\p{Mc}?[ܐܒܓܕܗܘܙܚܛ]\p{Mc}?|[ܐܒܓܕܗܘܙܚܛ]?\p{Mc}?(ܬ?[ܩܪܫܬ]|[ܢܣܥܦܨ]\p{Mc})?\p{Mc}?[ܝܟܠܡܢܣܥܦܨ]\p{Mc}?[ܐܒܓܕܗܘܙܚܛ]?\p{Mc}?|[ܐܒܓܕܗܘܙܚܛ]?\p{Mc}?(ܬ?[ܩܪܫܬ]|[ܢܣܥܦܨ]\p{Mc})\p{Mc}?[ܝܟܠܡܢܣܥܦܨ]?\p{Mc}?[ܐܒܓܕܗܘܙܚܛ]?\p{Mc}?'"/>
+      select="concat($syriac-unit-regex, '?\p{Mc}?(', $syriac-hundreds-regex, '\p{Mc})?\p{Mc}?', $syriac-tens-regex, '?\p{Mc}?', $syriac-unit-regex, '\p{Mc}?|', 
+      $syriac-unit-regex, '?\p{Mc}?(', $syriac-hundreds-regex, '\p{Mc})?\p{Mc}?', $syriac-tens-regex, '\p{Mc}?', $syriac-unit-regex, '?\p{Mc}?|', 
+      $syriac-unit-regex, '?\p{Mc}?(', $syriac-hundreds-regex, '\p{Mc})\p{Mc}?', $syriac-tens-regex, '?\p{Mc}?', $syriac-unit-regex, '?\p{Mc}?')"
+   />
    <xsl:variable name="nonlatin-letter-numeral-pattern"
       select="string-join(($arabic-indic-numeral-pattern, $greek-letter-numeral-pattern, $syriac-letter-numeral-pattern), '|')"/>
    <xsl:variable name="n-type-pattern"
@@ -2743,8 +2754,8 @@
    </xsl:function>
 
    <xsl:function name="tan:target-element-names" as="xs:string*">
-      <!-- Input: any attributes or elements -->
-      <!-- Output: for any attribute or element that refers to other elements, the names of the elements to which they point -->
+      <!-- Input: any strings, attributes, or elements -->
+      <!-- Output: the names of the elements pointed to, if the name or the value of the input is the name of an element or attribute that takes idrefs -->
       <xsl:param name="items" as="item()*"/>
       <xsl:for-each select="$items">
          <xsl:variable name="this-item" select="."/>
@@ -2753,7 +2764,7 @@
             <xsl:when test="$this-item instance of xs:string and string-length($this-item-val-norm) gt 0">
                <xsl:variable name="this-idref-entry"
                   select="$id-idrefs/tan:id-idrefs/tan:id[tan:idrefs[(@element, @attribute) = $this-item-val-norm]]"/>
-               <xsl:copy-of select="., $this-idref-entry/tan:element/text()"/>
+               <xsl:copy-of select="$this-idref-entry/tan:element/text()"/>
             </xsl:when>
             <xsl:otherwise>
                <xsl:variable name="this-is-attribute" select=". instance of attribute()"/>
@@ -3322,44 +3333,5 @@
       </xsl:document>
    </xsl:template>
    
-   <!-- November 2019: the next function and associated templates should be deleted -->
-   <xsl:function name="tan:merge-expanded-docs-old" as="document-node()?">
-      <!-- Input: Any TAN documents that have been expanded at least tersely -->
-      <!-- Output: A document that is a collation of the documents. There is one <head> per source, but only one <body>, with contents merged. -->
-      <!-- Templates will be placed in the appropriate function file, e.g., class 1 merge templates are in TAN-class-1-functions.xsl -->
-      <!-- Class 1 merging: All <div>s with the same <ref> values are grouped together. If the class 1 files are sources of a class 2 file, it is assumed that all actions in the <adjustments> have already been performed. -->
-      <!-- Class 2 merging: TBD -->
-      <!-- Class 3 merging: TBD -->
-      <!-- NB: Class 1 files should have their hierarchies in proper order; use reset-hierarchy beforehand if you're unsure -->
-      <xsl:param name="expanded-docs" as="document-node()*"/>
-      <xsl:variable name="doc-types" select="tan:tan-type($expanded-docs)"/>
-      <xsl:variable name="merge-doc-ids" select="$expanded-docs/*/@id" as="xs:string*"/>
-      <xsl:variable name="pre-merge-doc" as="document-node()">
-         <!-- merging begins by creating a single document -->
-         <xsl:document>
-            <xsl:element name="{concat($doc-types[1],'_merge')}">
-               <xsl:apply-templates select="$expanded-docs/tan:*/tan:head"
-                  mode="merge-expanded-docs-prep"/>
-               <body>
-                  <xsl:apply-templates select="$expanded-docs/tan:*/tan:body"
-                     mode="merge-expanded-docs-prep">
-                     <xsl:with-param name="merge-doc-ids" select="$merge-doc-ids" tunnel="yes"/>
-                  </xsl:apply-templates>
-               </body>
-            </xsl:element>
-         </xsl:document>
-      </xsl:variable>
-      <xsl:variable name="merge-results" as="document-node()">
-         <xsl:apply-templates select="$pre-merge-doc" mode="merge-divs"/>
-      </xsl:variable>
-      <xsl:variable name="diagnostics-on" as="xs:boolean" select="false()"/>
-      <xsl:if test="$diagnostics-on">
-         <xsl:message select="'diagnostics on for tan:merge-expanded-docs()'"/>
-         <xsl:message select="'doc types: ', $doc-types"/>
-         <xsl:message select="'merge doc ids: ', $merge-doc-ids"/>
-         <xsl:message select="'pre-merge doc: ', $pre-merge-doc"/>
-      </xsl:if>
-      <xsl:copy-of select="$merge-results"/>
-   </xsl:function>
 
 </xsl:stylesheet>

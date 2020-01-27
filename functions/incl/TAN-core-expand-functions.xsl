@@ -819,7 +819,7 @@
          <xsl:copy-of select="@*"/>
          <xsl:apply-templates mode="#current">
             <xsl:with-param name="ambig-is-roman" select="$ambig-is-roman" tunnel="yes"/>
-            <xsl:with-param name="vocabulary-nodes" select="tan:head, self::tan:TAN-A/tan:body"
+            <xsl:with-param name="vocabulary-nodes" select="tan:head, self::tan:TAN-A/tan:body, self::tan:TAN-voc/tan:body"
                tunnel="yes"/>
          </xsl:apply-templates>
       </xsl:copy>

@@ -502,10 +502,10 @@
       <xsl:param name="base-uri" as="xs:anyURI?" tunnel="yes"/>
       <xsl:variable name="this-base-uri"
          select="
-         if (exists($base-uri)) then
-         $base-uri
-         else
-         tan:base-uri(.)"/>
+            if (exists($base-uri)) then
+               $base-uri
+            else
+               tan:base-uri(.)"/>
       <xsl:variable name="href-regex" as="xs:string">(href=['"])([^'"]+)(['"])</xsl:variable>
       <xsl:processing-instruction name="{name(.)}">
             <xsl:analyze-string select="." regex="{$href-regex}">
@@ -542,6 +542,17 @@
                <name>
                   <xsl:value-of select="concat('From ', @from, ' to ', @to)"/>
                </name>
+            </xsl:when>
+            <xsl:when test="self::tan:item[ancestor::tan:TAN-voc][tan:name]">
+               <!-- If it's a vocab item of a TAN-voc file, imprint any @xml:ids found in the <vocabulary-key> -->
+               <xsl:variable name="these-names-normalized" select="tan:normalize-name(tan:name)"/>
+               <xsl:variable name="this-vocabulary-key"
+                  select="root(.)/tan:TAN-voc/tan:head/tan:vocabulary-key"/>
+               <xsl:variable name="matching-vocab-items"
+                  select="$this-vocabulary-key/*[tan:normalize-name(@which) = $these-names-normalized]"/>
+               <id>
+                  <xsl:value-of select="$matching-vocab-items/@xml:id"/>
+               </id>
             </xsl:when>
          </xsl:choose>
       </xsl:variable>
@@ -654,6 +665,16 @@
          </xsl:if>
          <xsl:copy-of select="$resolved-aliases[tan:alias = $this-id]/*"/>
          <xsl:apply-templates mode="#current"/>
+      </xsl:copy>
+   </xsl:template>
+   
+   <xsl:template match="tan:TAN-voc/tan:body//tan:item" mode="first-stamp-shallow-copy-off">
+      <xsl:param name="add-q-ids" as="xs:boolean" tunnel="yes"/>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:if test="$add-q-ids">
+            <xsl:attribute name="q" select="generate-id(.)"/>
+         </xsl:if>
       </xsl:copy>
    </xsl:template>
    

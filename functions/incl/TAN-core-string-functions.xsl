@@ -407,7 +407,9 @@
                 </xsl:for-each>
             </xsl:when>
             <xsl:when test="$add-attr-q = true()">
-                <xsl:apply-templates select="$pass-2" mode="add-q-ref"/>
+                <xsl:apply-templates select="$pass-2" mode="first-stamp-shallow-copy">
+                    <xsl:with-param name="add-q-ids" select="true()" tunnel="yes"/>
+                </xsl:apply-templates>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:copy-of select="$pass-2"/>

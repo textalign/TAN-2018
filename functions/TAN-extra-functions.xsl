@@ -1338,67 +1338,6 @@
    <!-- FUNCTIONS: TAN FILES -->
    <!-- General TAN files -->
 
-   <xsl:function name="tan:resolve-attr-which" as="item()*">
-      <!-- Input: any items; any extra vocabularies -->
-      <!-- Output: the same items, but with elements with @which expanded into their full form, using the predefined TAN vocabulary and the extra vocabularies supplied -->
-      <xsl:param name="items" as="item()*"/>
-      <xsl:param name="extra-vocabularies" as="document-node()*"/>
-      <xsl:apply-templates select="$items" mode="resolve-attr-which">
-         <xsl:with-param name="extra-vocabularies" select="$extra-vocabularies" tunnel="yes"/>
-      </xsl:apply-templates>
-   </xsl:function>
-   
-   <xsl:variable name="orig-self-validated-new" as="document-node()">
-      <xsl:apply-templates select="$orig-self" mode="imitate-validation-new"/>
-   </xsl:variable>
-   <xsl:template match="*" mode="imitate-validation-new">
-      <xsl:variable name="these-q-refs"
-         select="
-            for $i in ancestor-or-self::*
-            return
-               (generate-id($i))"
-      />
-      <xsl:copy>
-         <xsl:copy-of select="@*"/>
-         <xsl:for-each select="$these-q-refs">
-            <q><xsl:value-of select="."/></q>
-         </xsl:for-each>
-         <xsl:apply-templates mode="#current"/>
-      </xsl:copy>
-   </xsl:template>
-   <xsl:function name="tan:get-via-q-ref-new" as="element()*">
-      <!-- Input: values of @q that identify elements in a document; a document with @q marking the originally generated id for the element -->
-      <!-- Output: the element (if any) that corresponds to the chain of @qs -->
-      <xsl:param name="q-values" as="xs:string+"/>
-      <xsl:param name="breadcrumbed-document" as="document-node()?"/>
-      <xsl:apply-templates select="$breadcrumbed-document" mode="get-q-new">
-         <xsl:with-param name="q-chain" select="$q-values"/>
-      </xsl:apply-templates>
-   </xsl:function>
-   <xsl:template match="comment() | processing-instruction() | text()"
-      mode="get-q-new"/>
-   <xsl:template match="document-node()" mode="get-q-new">
-      <xsl:param name="q-chain" as="xs:string+"/>
-      <xsl:apply-templates mode="#current">
-         <xsl:with-param name="q-chain" select="$q-chain"/>
-      </xsl:apply-templates>
-   </xsl:template>
-   <xsl:template match="*" mode="get-q-new">
-      <xsl:param name="q-chain" as="xs:string+"/>
-      <xsl:if test="(@q = $q-chain[1])">
-         <xsl:choose>
-            <xsl:when test="count($q-chain) = 1">
-               <xsl:sequence select="."/>
-            </xsl:when>
-            <xsl:otherwise>
-               <xsl:apply-templates mode="#current">
-                  <xsl:with-param name="q-chain" select="$q-chain[position() gt 1]"/>
-               </xsl:apply-templates>
-            </xsl:otherwise>
-         </xsl:choose>
-      </xsl:if>
-   </xsl:template>
-   
    <xsl:variable name="orig-self-validated" as="document-node()">
       <xsl:apply-templates select="$orig-self" mode="imitate-validation"/>
    </xsl:variable>
@@ -1410,8 +1349,6 @@
             return
                (generate-id($i))"
       />
-      <!--<xsl:variable name="this-checked-for-errors"
-         select="tan:get-via-q-ref-new($these-q-refs, $self-expanded[1])"/>-->
       
       <!-- This template imitates the process of validation, for testing on efficiency, etc. -->
       <xsl:variable name="this-q-ref" select="generate-id(.)"/>
