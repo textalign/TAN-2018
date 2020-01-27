@@ -18,8 +18,6 @@
             <group-type xml:id="column-end" which="new column end"/>
             <group-type xml:id="page-start" which="new page start"/>
             <group-type xml:id="page-end" which="new page end"/>
-            <group-type xml:id="logical" which="logical"/>
-            <group-type xml:id="scriptum" which="scriptum"/>
             <person xml:id="kalvesmaki">
                 <IRI>http://viaf.org/viaf/299582703</IRI>
                 <IRI>tag:textalign.net,2015:agent:kalvesmaki:joel</IRI>
@@ -30,6 +28,14 @@
         <resp roles="creator" who="kalvesmaki"/>
         <change when="2016-02-02" who="kalvesmaki">Started file</change>
         <change when="2018-09-14" who="kalvesmaki">Revised for 2019; added Quranic div types.</change>
+        <change when="2020-01-17" who="kalvesmaki">Added annotation group type.</change>
+        <comment when="2020-01-17" who="kalvesmaki">Groups are applied to div types where it seemed
+            clear that div types not falling under that group would be an aberration. Any div types
+            that seem part of a group are not included if a sizeable portion of those div types
+            would not be properly classed as being part of the group. For example, a comment is in
+            most cases a kind of annotation. But it is possible for a comment to be made without any
+            implied base text. Therefore the div type comment is not assigned the group
+            "annotation". </comment>
         <to-do/>
     </head>
     <body affects-element="div-type">
@@ -75,7 +81,7 @@
                 <IRI>tag:textalign.net,2015:div-type:amendment</IRI>
                 <name>amendment</name>
             </item>
-            <item>
+            <item group="annotation">
                 <IRI>tag:textalign.net,2015:div-type:apparatus_criticus</IRI>
                 <IRI>http://dbpedia.org/resource/Critical_apparatus</IRI>
                 <name>apparatus criticus</name>
@@ -83,7 +89,7 @@
                 <desc>Section of a critical edition, usually at the bottom of the page, indicating
                     variant readings in the manuscript tradition</desc>
             </item>
-            <item>
+            <item group="annotation">
                 <IRI>tag:textalign.net,2015:div-type:apparatus_fontium</IRI>
                 <name>apparatus fontium</name>
                 <desc>Section of a critical edition, usually at the bottom of the page, indicating
@@ -223,6 +229,10 @@
                 <name>column (table)</name>
             </item>
             <item>
+                <IRI>tag:textalign.net,2015:div-type:comment</IRI>
+                <name>comment</name>
+            </item>
+            <item>
                 <IRI>tag:textalign.net,2015:div-type:conclusion</IRI>
                 <IRI>http://dbpedia.org/resource/Conclusion_(book)</IRI>
                 <name>conclusion</name>
@@ -261,7 +271,7 @@
                 <name>distinctio</name>
                 <desc>Terminology used of medieval works, e.g., Gratian.</desc>
             </item>
-            <item group="line-start line-end">
+            <item group="line-start line-end annotation">
                 <IRI>tag:textalign.net,2015:div-type:endnote</IRI>
                 <name>endnote</name>
             </item>
@@ -282,7 +292,7 @@
                 <IRI>tag:textalign.net,2015:div-type:explicit</IRI>
                 <name>explicit</name>
             </item>
-            <item group="line-start line-end">
+            <item group="line-start line-end annotation">
                 <IRI>tag:textalign.net,2015:div-type:footnote</IRI>
                 <name>footnote</name>
             </item>
@@ -291,7 +301,7 @@
                 <name>footer</name>
                 <name>running footer</name>
             </item>
-            <item>
+            <item group="annotation">
                 <IRI>tag:textalign.net,2015:div-type:gloss</IRI>
                 <IRI>http://dbpedia.org/resource/Gloss_(annotation)</IRI>
                 <name>gloss</name>
@@ -424,7 +434,7 @@
                 <name>morpheme</name>
                 <name>tei m</name>
             </item>
-            <item group="line-start line-end">
+            <item group="line-start line-end annotation">
                 <IRI>tag:textalign.net,2015:div-type:note</IRI>
                 <IRI>tag:textalign.net,2015:div-type:equiv:tei:note</IRI>
                 <IRI>http://dbpedia.org/resource/Note_(typography)</IRI>
@@ -460,7 +470,7 @@
                 <name>tei p</name>
                 <name>xhtml p</name>
             </item>
-            <item group="inline-start inline-end">
+            <item group="inline-start inline-end annotation">
                 <IRI>tag:textalign.net,2015:div-type:gloss:parenthetical</IRI>
                 <name>parenthetical gloss</name>
                 <name>parenthetical aside</name>
@@ -546,7 +556,7 @@
                 <name>scene</name>
                 <desc>A unit of action, often a subdivision of an act</desc>
             </item>
-            <item>
+            <item group="annotation">
                 <IRI>tag:textalign.net,2015:div-type:scholium</IRI>
                 <IRI>http://dbpedia.org/resource/Scholia</IRI>
                 <name>scholium</name>

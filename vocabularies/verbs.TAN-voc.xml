@@ -21,7 +21,7 @@
         <change when="2017-03-07" who="kalvesmaki">Started file</change>
         <to-do/>
     </head>
-    <body>
+    <body affects-element="verb">
         <comment when="2019-09-02" who="kalvesmaki">Unless otherwise specified, all verbs are assumed to be asymmetrical and
             intransitive, and to make no implications about the chronological priority of the subject relative to the object.</comment>
         <!-- apparatus criticus -->

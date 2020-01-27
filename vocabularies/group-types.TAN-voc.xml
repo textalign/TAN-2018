@@ -21,6 +21,7 @@
         <change when="2016-04-23" who="kalvesmaki">Started file</change>
         <change when="2019-03-04" who="kalvesmaki">Added verb group types</change>
         <change when="2019-08-30" who="kalvesmaki">Added at-ref as a synonym for locus</change>
+        <change when="2020-01-17" who="kalvesmaki">Added annotation group type.</change>
         <to-do/>
     </head>
     <body affects-element="group-type">
@@ -142,6 +143,16 @@
                 <name>material</name>
                 <desc>Text division is based on a physical feature in the scriptum, e.g., page,
                     column, line. Contrasts with logical divisions.</desc>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:group-type:div:annotation</IRI>
+                <name>annotation</name>
+                <desc>Text division is an annotation. That is, it comments on (and therefore assumes
+                    the proximate existence of) some other text. Most annotations are connected with
+                    the commented text either by placement or some signalling device (e.g., footnote
+                    signals). Excluded from this category are texts that summarize another text.
+                    That is, an annotation either adds new material or attempts to make explicit one
+                    or more points that are deemed implicit.</desc>
             </item>
         </group>
         <group type="attr-n">
