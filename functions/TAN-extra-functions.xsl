@@ -885,6 +885,9 @@
             <xsl:when test=". instance of element()">element</xsl:when>
             <xsl:when test=". instance of attribute()">attribute</xsl:when>
             <xsl:when test=". instance of text()">text</xsl:when>
+            <xsl:when test=". instance of xs:boolean">boolean</xsl:when>
+            <xsl:when test=". instance of map(*)">map</xsl:when>
+            <xsl:when test=". instance of array(*)">array</xsl:when>
             <xsl:otherwise>undefined</xsl:otherwise>
          </xsl:choose>
       </xsl:for-each>

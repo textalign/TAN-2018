@@ -272,7 +272,7 @@
    <xsl:variable name="doc-type" select="name(/*)"/>
    <xsl:variable name="doc-class" select="tan:class-number($self-resolved)"/>
    <xsl:variable name="doc-uri" select="base-uri(/*)"/>
-   <xsl:variable name="doc-parent-directory" select="tan:uri-directory($doc-uri)"/>
+   <xsl:variable name="doc-parent-directory" select="tan:uri-directory(string($doc-uri))"/>
    <xsl:variable name="source-ids"
       select="
          if (exists($head/tan:source/@xml:id)) then
