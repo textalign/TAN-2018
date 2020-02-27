@@ -19,11 +19,14 @@
    <xsl:variable name="dependency-vocabulary-should-be-resolved" select="true()"/>
 
    <!-- redivisions -->
-   <xsl:variable name="redivisions-1st-da" select="tan:get-1st-doc($head/tan:redivision)"/>
-   <!--<xsl:variable name="redivisions-resolved"
-      select="tan:resolve-doc($redivisions-1st-da, false(), 'redivision', (), $dependency-vocabulary-should-be-resolved)"/>-->
-   <xsl:variable name="redivisions-resolved"
-      select="tan:resolve-doc($redivisions-1st-da, false(), tan:attr('relationship', 'redivision'))"/>
+   <xsl:variable name="redivisions-1st-da" select="tan:get-1st-doc($head/tan:redivision)"
+      as="document-node()*"/>
+   <xsl:variable name="redivisions-resolved" as="document-node()*"
+      select="
+         for $i in $redivisions-1st-da
+         return
+            tan:resolve-doc($i, false(), tan:attr('relationship', 'redivision'))"
+   />
 
    <!-- models -->
    <xsl:variable name="model-1st-da" select="tan:get-1st-doc($head/tan:model[1])"/>
@@ -578,6 +581,7 @@
                   <xsl:variable name="this-n-rename-locators"
                      select="$rename-locators-allowed[self::tan:n = $this-n]"/>
                   <xsl:variable name="first-rename-locator" select="$this-n-rename-locators[1]"/>
+                  <xsl:variable name="first-rename-locator-pos" select="count($first-rename-locator/preceding-sibling::tan:n) + 1"/>
                   <xsl:variable name="this-n-equate-locators" select="$equate-locators[. = $this-n]"/>
                   <xsl:variable name="these-n-equates" select="$this-n-equate-locators/parent::tan:equate"/>
                   <xsl:for-each select="$these-n-equates">
@@ -592,9 +596,9 @@
                         <xsl:copy-of select="."/>
                      </xsl:when>
                      <xsl:otherwise>
-                        <xsl:variable name="this-sibl-new" select="$first-rename-locator/../tan:new"/>
+                        <xsl:variable name="this-sibl-new-n" select="$first-rename-locator/../tan:new/tan:n[$first-rename-locator-pos]"/>
                         <xsl:variable name="this-sibl-by" select="$first-rename-locator/../tan:by"/>
-                        <xsl:copy-of select="$this-sibl-new/tan:n"/>
+                        <xsl:copy-of select="$this-sibl-new-n"/>
                         <xsl:if test="exists($this-sibl-by) and ($this-n castable as xs:integer)">
                            <xsl:variable name="incr" select="xs:integer($this-sibl-by)"/>
                            <n>
@@ -602,7 +606,7 @@
                            </n>
                         </xsl:if>
                         <xsl:variable name="first-rename-errors" as="element()*">
-                           <xsl:if test="$this-sibl-new = $this-n">
+                           <xsl:if test="$this-sibl-new-n = $this-n">
                               <xsl:copy-of select="tan:error('cl203')"/>
                            </xsl:if>
                            <xsl:if
@@ -649,14 +653,14 @@
                               </n>
                            </xsl:when>
                            <xsl:otherwise>
-                              <xsl:variable name="this-sibl-new"
-                                 select="$first-rename-locator/../tan:new"/>
+                              <xsl:variable name="this-sibl-new-ref"
+                                 select="$first-rename-locator/../tan:new/tan:ref[$first-rename-locator-pos]"/>
                               <xsl:variable name="this-sibl-by"
                                  select="$first-rename-locator/../tan:by"/>
                               <xsl:choose>
-                                 <xsl:when test="exists($this-sibl-new)">
+                                 <xsl:when test="exists($this-sibl-new-ref)">
                                     <xsl:variable name="these-new-parental-ns"
-                                       select="$this-sibl-new/tan:ref[$first-rename-locator-pos]/tan:n[not(position() = last())]"/>
+                                       select="$this-sibl-new-ref/tan:n[not(position() = last())]"/>
                                     <xsl:variable name="this-new-parental-ref"
                                        select="string-join($these-new-parental-ns, $separator-hierarchy)"/>
                                     <xsl:variable name="hierarchy-needs-to-be-reset"
@@ -666,20 +670,31 @@
                                     <xsl:if test="$hierarchy-needs-to-be-reset = true()">
                                        <xsl:attribute name="reset"/>
                                     </xsl:if>
-                                    <xsl:copy-of select="$this-sibl-new/tan:ref[$first-rename-locator-pos]/node()"/>
+                                    <xsl:copy-of select="$this-sibl-new-ref/node()"/>
                                  </xsl:when>
                                  <xsl:when
                                     test="exists($this-sibl-by) and ($this-n-val castable as xs:integer)">
                                     <xsl:variable name="incr" select="xs:integer($this-sibl-by)"/>
-                                    <xsl:value-of select="xs:integer($this-n-val) + $incr"/>
+                                    <xsl:variable name="this-new-val" select="xs:integer($this-n-val) + $incr"/>
+                                    <xsl:value-of select="string-join(($these-parental-ns, $this-new-val), $separator-hierarchy)"/>
+                                    <xsl:copy-of select="$these-parental-ns"/>
+                                    <n>
+                                       <xsl:value-of select="$this-new-val"/>
+                                    </n>
                                  </xsl:when>
                                  <xsl:otherwise>
-                                    <xsl:value-of select="$this-n-val"/>
+                                    <!-- This is a case of a rename that can't be processed, so it will be ignored -->
+                                    <xsl:message select="concat($this-ref, ' has a rename adjustment that cannot be processed: ', $first-rename-locator)"/>
+                                    <xsl:value-of select="$this-ref"/>
+                                    <xsl:copy-of select="$these-parental-ns"/>
+                                    <n>
+                                       <xsl:value-of select="$this-n-val"/>
+                                    </n>
                                  </xsl:otherwise>
                               </xsl:choose>
                               <!-- embed the first rename locator record -->
                               <xsl:variable name="first-rename-locator-errors" as="element()*">
-                                 <xsl:if test="$this-sibl-new/tan:ref/text() = $this-ref">
+                                 <xsl:if test="$this-sibl-new-ref/text() = $this-ref">
                                     <xsl:copy-of select="tan:error('cl203')"/>
                                  </xsl:if>
                                  <xsl:if

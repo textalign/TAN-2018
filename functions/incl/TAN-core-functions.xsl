@@ -55,7 +55,7 @@
 
    <!-- general -->
    <xsl:variable name="TAN-version" as="xs:string">2020</xsl:variable>
-   <xsl:variable name="TAN-version-is-under-development" as="xs:boolean" select="true()"/>
+   <xsl:variable name="TAN-version-is-under-development" as="xs:boolean" select="false()"/>
    <xsl:variable name="previous-TAN-versions" select="('1 dev', '2018')"/>
    <xsl:variable name="internet-available" as="xs:boolean">
       <xsl:choose>
@@ -142,9 +142,13 @@
    <xsl:variable name="greek-unit-regex" select="'[α-θΑ-ΘϛϚ]'"/>
    <xsl:variable name="greek-tens-regex" select="'[ι-πΙ-ΠϘϙϞϟ]'"/>
    <xsl:variable name="greek-hundreds-regex" select="'[ρ-ωΡ-ΩϠϡ]'"/>
-   <xsl:variable name="greek-letter-numeral-pattern"
+   <!--<xsl:variable name="greek-letter-numeral-pattern"
       select="concat('͵',  $greek-unit-regex,  '?(?', $greek-hundreds-regex, '?',  $greek-tens-regex,  '?',  $greek-unit-regex,  '|',  $greek-unit-regex,  '?', $greek-hundreds-regex, '?',  
-      $greek-tens-regex,  $greek-unit-regex,  '?|',  $greek-unit-regex,  '?', $greek-hundreds-regex, '',  $greek-tens-regex,  '?',  $greek-unit-regex,  '?)ʹ?')"/>
+      $greek-tens-regex,  $greek-unit-regex,  '?|',  $greek-unit-regex, '?', $greek-hundreds-regex, $greek-tens-regex,  '?', $greek-unit-regex, '?)ʹ?')"/>-->
+   <xsl:variable name="greek-letter-numeral-pattern"
+      select="concat('͵',  $greek-unit-regex,  '?(', $greek-hundreds-regex, '?',  $greek-tens-regex,  '?',  $greek-unit-regex,  '|',  $greek-unit-regex,  '?', $greek-hundreds-regex, '?',  
+      $greek-tens-regex,  $greek-unit-regex,  '?|',  $greek-unit-regex, '?', $greek-hundreds-regex, $greek-tens-regex,  '?', $greek-unit-regex, '?)ʹ?')"/>
+   
    <xsl:variable name="syriac-unit-regex" select="'[ܐܒܓܕܗܘܙܚܛ]'"/>
    <xsl:variable name="syriac-tens-regex" select="'[ܝܟܠܡܢܣܥܦܨ]'"/>
    <xsl:variable name="syriac-hundreds-regex" select="'ܬ?[ܩܪܫܬ]|[ܢܣܥܦܨ]'"/>
@@ -880,7 +884,7 @@
          </xsl:apply-templates>
       </xsl:variable>
       
-      <xsl:variable name="diagnostics-on" select="true()" as="xs:boolean?"/>
+      <xsl:variable name="diagnostics-on" select="false()" as="xs:boolean?"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'diagnostics on for tan:collate-pair-of-sequences()'"/>
          <xsl:message select="'string sequence 1: ', $string-sequence-1"/>
