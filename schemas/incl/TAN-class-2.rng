@@ -42,7 +42,7 @@
   <!-- ATTRIBUTES -->
   <define name="attr-by">
     <attribute name="by">
-      <a:documentation>specifies an amount by which an series of @n values or the last component in a series of @ref values should be attr-byed or decremented.</a:documentation>
+      <a:documentation>specifies an amount by which an series of @n values or the last component in a series of @ref values should be incremented or decremented.</a:documentation>
       <data type="integer"/>
     </attribute>
   </define>

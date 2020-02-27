@@ -197,7 +197,7 @@ div {
       
       ## specifies one or more <agent>s who hold the rights over the material specified by the parent element (either the data of the current file, or of the source that forms the basis for the data).
       
-      ## For more, see main.xml#license
+      ## For more, see main.xml#key_declarations
       attribute licensor { text }
     ptr-attr-period =
       
@@ -342,7 +342,7 @@ div {
       
       ## Diligently check to ensure that the license you have claimed respects the rights of your sources' rightsholders. It is recommended that you license your data under a license that is similar to or more liberal than the one under which your sources have been released.
       
-      ## For more discussion, see main.xml#license and for a list of standard vocabulary, main.xml#vocabularies-licenses
+      ## For more discussion, see main.xml#key_declarations and for a list of standard vocabulary, main.xml#vocabularies-licenses
       element license {
         ed-stamp?,
         (inclusion

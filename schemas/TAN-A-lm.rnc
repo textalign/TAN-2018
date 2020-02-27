@@ -60,11 +60,9 @@ element-ana =
     }
 element-l =
     
-    ## names a lexeme, by points to the main word entry in the lexicon defined by the element's inherited value of @lexicon. This element should not be used to point to roots, only to lexical headwords. 
+    ## names a lexeme, by pointing to the main word entry in the lexicon defined by the element's inherited value of @lexicon. This element should not be used to point to roots, only to lexical headwords. 
     
-    ## In many languages, especially those that are lightly inflected, this word will be identical to the word token itself. In those cases, <l> may be left empty, indicating that the value of <tok> is to be supplied.
-    
-    ## Because there is no TAN format for lexicons, values in this element will not be validated.
+    ## In many languages, especially those that are lightly inflected, the lexeme will be identical to the word token itself. If <l> is omitted, the value of <tok> is to be inferred.
     element l { ptr-attr-lexicon?, attr-def-ref?, certainty-stamp?, text }
 element-lm =
     

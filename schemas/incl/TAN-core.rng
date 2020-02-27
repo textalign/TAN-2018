@@ -238,7 +238,7 @@
   <define name="ptr-attr-licensor">
     <attribute name="licensor">
       <a:documentation>specifies one or more &lt;agent&gt;s who hold the rights over the material specified by the parent element (either the data of the current file, or of the source that forms the basis for the data).</a:documentation>
-      <a:documentation>For more, see main.xml#license</a:documentation>
+      <a:documentation>For more, see main.xml#key_declarations</a:documentation>
     </attribute>
   </define>
   <define name="ptr-attr-period">
@@ -506,7 +506,7 @@
     <element name="license">
       <a:documentation>states the license under which the data is distributed and the rights associated with it, EXCLUSIVE of any rights attached to the source.</a:documentation>
       <a:documentation>Diligently check to ensure that the license you have claimed respects the rights of your sources' rightsholders. It is recommended that you license your data under a license that is similar to or more liberal than the one under which your sources have been released.</a:documentation>
-      <a:documentation>For more discussion, see main.xml#license and for a list of standard vocabulary, main.xml#vocabularies-licenses</a:documentation>
+      <a:documentation>For more discussion, see main.xml#key_declarations and for a list of standard vocabulary, main.xml#vocabularies-licenses</a:documentation>
       <optional>
         <ref name="ed-stamp"/>
       </optional>
