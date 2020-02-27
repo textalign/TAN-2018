@@ -1081,8 +1081,7 @@
          <xsl:if test="exists(@from) and exists(@to) and ($this-from gt $this-to)">
             <xsl:copy-of select="tan:error('whe03')"/>
          </xsl:if>
-         <xsl:if
-            test="(@pattern, @matches-m, @matches-tok, @rgx)[matches(., '\\[^nrtpPsSiIcCdDuwW\\|.?*+(){}#x2D#x5B#x5D#x5E\]\[\^\-]')]">
+         <xsl:if test="(@pattern, @matches-m, @matches-tok, @rgx)[not(tan:regex-is-valid(.))]">
             <xsl:copy-of select="tan:error('tan07')"/>
          </xsl:if>
          <xsl:if
@@ -1155,7 +1154,7 @@
                <xsl:copy-of select="$this-attr-converted-to-elements"/>
             </new>
          </xsl:if>
-         <!-- default behavior for any other attributes left over -->
+         <!-- default behavior for any other attributes left over; we don't do every attribute, because not every one needs to be expanded into an element -->
          <xsl:apply-templates select="@code, @val, @rgx, @div-type, @affects-element, @affects-attribute, @by, @item-type, @in-lang"
             mode="#current"/>
          <xsl:apply-templates mode="#current">
@@ -1193,7 +1192,13 @@
             <xsl:if test="$add-q-id">
                <xsl:attribute name="q" select="$this-q-id"/>
             </xsl:if>
-            <xsl:value-of select="."/>
+            <xsl:choose>
+               <!-- a faulty regular expression will be flagged in the parent; its value should be suppressed, to avoid fatal errors -->
+               <xsl:when test="$this-name = 'rgx' and not(tan:regex-is-valid(.))"/>
+               <xsl:otherwise>
+                  <xsl:value-of select="."/>
+               </xsl:otherwise>
+            </xsl:choose>
          </xsl:element>
       </xsl:for-each>
    </xsl:template>
@@ -1492,7 +1497,7 @@
                   select="
                      for $i in $this-local-catalog
                      return
-                        collection($i)"/>
+                        tan:collection($i)"/>
                <xsl:if test="not(@id = $this-local-catalog/collection/doc/@id)">
                   <xsl:copy-of select="tan:error('cat06')"/>
                </xsl:if>

@@ -862,9 +862,9 @@
                select="tan:error('inc03', concat('TAN document at ', $doc-base-uri, ' should not attempt to include itself.'))"
             />
          </xsl:if>
-         <xsl:if test="$doc-base-uri = $urls-already-visited">
+         <xsl:if test="$href-resolved = $urls-already-visited">
             <xsl:copy-of
-               select="tan:error('inc03', concat('TAN document at ', $doc-base-uri, ' is already included by ', $href-resolved))"
+               select="tan:error('inc03', concat('TAN document at ', $href-resolved, ' has already been included'))"
             />
          </xsl:if>
          <xsl:apply-templates mode="#current"/>
@@ -1011,7 +1011,7 @@
       <xsl:param name="add-q-ids" as="xs:boolean"/>
       <xsl:param name="this-base-uri" as="xs:string"/>
       <xsl:apply-templates select="$xml-node" mode="resolve-href">
-         <xsl:with-param name="base-uri" select="$this-base-uri" tunnel="yes"/>
+         <xsl:with-param name="base-uri" select="xs:anyURI($this-base-uri)" tunnel="yes"/>
          <xsl:with-param name="add-q-ids" select="$add-q-ids" tunnel="yes"/>
       </xsl:apply-templates>
    </xsl:function>

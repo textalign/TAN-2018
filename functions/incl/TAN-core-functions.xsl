@@ -2390,8 +2390,10 @@
                      <xsl:variable name="bad-href-pos" select="index-of($doc-check, false())"/>
                      <xsl:variable name="bad-hrefs"
                         select="$these-hrefs[position() = $bad-href-pos]"/>
-                     <xsl:message
-                        select="concat('catalog at ', $this-uri, ' has faulty @hrefs: ', string-join($bad-hrefs, ', '))"/>
+                     <xsl:if test="not($is-validation)">
+                        <xsl:message
+                           select="concat('catalog at ', $this-uri, ' has faulty @hrefs: ', string-join($bad-hrefs, ', '))"/>
+                     </xsl:if>
                      <xsl:apply-templates select="$this-doc" mode="cut-faulty-hrefs">
                         <xsl:with-param name="base-uri" select="$this-uri" tunnel="yes"/>
                         <xsl:with-param name="bad-hrefs" select="$bad-hrefs" tunnel="yes"/>
