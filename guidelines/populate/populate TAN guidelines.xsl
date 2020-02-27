@@ -16,7 +16,7 @@
 
    <!-- Stylesheet to generate major parts of the official TAN guidelines -->
    
-   <!-- Input: any XML file (includin this one) -->
+   <!-- Input: any XML file (including this one) -->
    <!-- Primary output: none -->
    <!-- Secondary output: the files specified in the initial template (see end of this file) -->
 
