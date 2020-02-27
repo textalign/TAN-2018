@@ -238,6 +238,10 @@ Add a README.md to each main directory.
 
 Optimize TAN catalog files for discovery
 
+Modify rename action in class-2 adjustments. The current system is confusing because renames at one level cascade down, making the expansion phase dynamic rather than static. The present approach requires the reader to keep track from one hierarchical level to the next what changes have been made. When editors use `&lt;rename>` they mean it to apply to the file in a static state.
+
+@type should always be weakly inheritable, as it is clearly when part of &lt;div>. But it is strongly inheritable as a part of &lt;group>, which is inconsistent.
+
 ## Frameworks
 
 Support editing TAN-A-tok
