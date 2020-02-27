@@ -4,11 +4,15 @@
     xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:tan="tag:textalign.net,2015:ns"
     exclude-result-prefixes="#all" version="2.0">
 
-    <!-- Input: a class 1 file or a non-TAN XML file -->
-    <!-- Template: a TAN-T (not TAN-TEI) -->
-    <!-- Output: the text content of the input file proportionally divided up as the new content of the template -->
+    <!-- Catalyzing input: a class 1 file or a non-TAN XML file -->
+    <!-- Secondary input: a TAN-T (not TAN-TEI) that exemplifies a model reference system that the input should imitate -->
+    <!-- Output: the text content of the input file proportionally divided up as the new content of the template/secondary input -->
+    
+    <!-- This application is very helpful for cases where you must completely restructure a text, modeling it after some other text. -->
+    <!-- The output will likely be imperfect, so will require further editing. Editing tools to refine a remodelled TAN-T file are available
+    through the TAN oXygen project file, in author mode-->
 
-    <!-- If the input is not TAN, then there is no way for the algorithm to determine the correct metadata is for the output file. Errors are likely. -->
+    <!-- If the input is not TAN, then there is no way for the algorithm to determine the correct metadata for the output file. Errors are likely. -->
 
 
     <xsl:import href="../get%20inclusions/convert.xsl"/>
