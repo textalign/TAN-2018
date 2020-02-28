@@ -9,7 +9,7 @@
     <sch:title>Tests on the TAN error registry</sch:title>
     <sch:ns prefix="tan" uri="tag:textalign.net,2015:ns"/>
     <sch:ns uri="http://www.w3.org/1999/XSL/Transform" prefix="xsl"/>
-    
+    <xsl:param name="is-validation" select="true()"/>    
     <sch:phase id="missing-and-strays">
         <sch:active pattern="mark-missing"/>
         <sch:active pattern="mark-strays"/>

@@ -94,8 +94,11 @@
       
       <xsl:choose>
          <xsl:when test="exists($TAN-document/*) and not(namespace-uri($TAN-document/*) = ($TAN-namespace, $TEI-namespace)) and not($this-is-collection-document)">
-            <xsl:message
-               select="'Document namespace is', $quot, namespace-uri($TAN-document/*), $quot, ', which is not in the TAN or TEI namespaces so tan:resolve() returning only stamped version'"/>
+            <xsl:if test="not($is-validation)">
+               <xsl:message
+                  select="'Document namespace is', $quot, namespace-uri($TAN-document/*), $quot, ', which is not in the TAN or TEI namespaces so tan:resolve() returning only stamped version'"
+               />
+            </xsl:if>
             <xsl:sequence select="$TAN-document"/>
          </xsl:when>
          <xsl:when test="$loop-counter gt $loop-tolerance">

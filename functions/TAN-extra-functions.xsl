@@ -132,6 +132,7 @@
             <xsl:when test="doc-available(.)">
                <xsl:sequence select="doc(.)"/>
             </xsl:when>
+            <xsl:when test="$is-validation"/>
             <xsl:otherwise>
                <xsl:message select="'applications collection has bad entry for ', ."/>
             </xsl:otherwise>

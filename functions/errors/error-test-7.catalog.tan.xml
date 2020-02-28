@@ -10,6 +10,6 @@
    <doc id="oops" href="badurl.xml" root="TAN-T"/>
    <!-- cat02 cat04 -->
    <doc id="tag:textalign.net,2015:error-test" href="error-test-1.tan-t.xml" root="TAN-A"/>
-   <!-- cat03 cat04 -->
+   <!-- cat04 -->
    <doc id="tag:textalign.net,2015:error-test" href="error-test-3.tan-a.xml" root="TAN-A"/>
 </collection>

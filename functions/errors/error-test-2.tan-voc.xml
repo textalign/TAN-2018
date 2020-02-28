@@ -27,7 +27,7 @@
         </successor>
         <adjustments/>
         <vocabulary-key>
-            <!-- wrn09 or loc04 (if internet is available) -->
+            <!-- wrn09 or loc04 (only if internet is available) -->
             <algorithm xml:id="xslt3">
                 <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2019</IRI>
                 <name>Stylesheet to create a TAN file.</name>

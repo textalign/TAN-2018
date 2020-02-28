@@ -34,7 +34,7 @@
    <!-- What string in an attribute value should be interpreted as a request for help? -->
    <xsl:param name="help-trigger" select="'???'"/>
    
-   <!-- Schematron will override this value; setting it to false() ensures that non-validation algorithms using the function library get richer results -->
+   <!-- Schematron validation will override this value; setting it to false() ensures that non-validation algorithms using the function library get richer results -->
    <xsl:param name="is-validation" as="xs:boolean" select="false()"/>
    
    <!-- How many loops should be tolerated in a recursive function before exiting? -->

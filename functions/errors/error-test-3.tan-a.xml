@@ -31,7 +31,7 @@
         <source xml:id="test-1">
             <IRI>tag:textalign.net,2015:error-test</IRI>
             <name>error tan-t</name>
-            <location href="error-test-1.tan-t.xml" accessed-when="2019-01-07"/>
+            <location href="error-test-1.tan-t.xml" accessed-when="2020-02-27"/>
         </source>
         <!-- wrn02 -->
         <source xml:id="test-4">

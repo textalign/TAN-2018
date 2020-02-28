@@ -20,6 +20,7 @@
     
     <!-- CORE/GENERAL ERRORS -->
     <group affects-element="TAN-T TEI TAN-A TAN-A-tok TAN-A-lm TAN-voc TAN-mor">
+        <!-- The next element should be marked as an error under phase missing-and-strays, if the TAN version is being deployed for stable production -->
         <warning xml:id="wrn04"><rule>Users should be warned about versions of TAN that are under development.</rule><message>This version of TAN is under development, and is subject to change. Participants in developing the TAN schemas, functions, and guidelines are welcome. See http://textalign.net for details.</message></warning>
         <warning xml:id="wrn07"><rule>Users should be warned about TAN files whose last change was made by an algorithm.</rule></warning>
     </group>
