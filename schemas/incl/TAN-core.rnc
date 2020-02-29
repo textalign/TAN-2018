@@ -462,6 +462,15 @@ element-where =
     ## The condition must be true for each attribute, for at least one value in that attribute.
     element where { ed-stamp?, action-condition-attributes }+
 # Elements that link to other files
+link-element-companion-version =
+    
+    ## identifies a file closely associated with the current one. In a TAN-A file a <companion-version> must point only to another TAN-A file. 
+    
+    ## In a class 1 file, <companion-version> points to another class 1 file that has a different version of the same work found in the same scriptum.
+    
+    ## In class 2 and class 3 files, <companion-version> points to a file of the same type, but the nature of the relationship between the two files is not defined. It can be used to point to a continuation of a dataset, or to competing one.
+    element companion-version { entity-digital-tan-no-id }
+    
 link-element-inclusion =
     
     ## specifies a TAN file that is available for inclusion. An inclusion occurs whenever an element X points to this inclusion by means of @include. TAN-compliant validators and processors will find every X that is found in the included file (checked recursively, against any inclusions of X adopted by the inclusion) and insert them at that place in the main document.
@@ -670,6 +679,7 @@ networked-files-core =
     & link-element-see-also*
     & link-element-predecessor*
     & link-element-successor*
+     & link-element-companion-version*
 networked-files-non-core = empty
 resp-list = element-resp+ & element-file-resp
 source-content = empty

@@ -706,6 +706,14 @@
     </oneOrMore>
   </define>
   <!-- Elements that link to other files -->
+  <define name="link-element-companion-version">
+    <element name="companion-version">
+      <a:documentation>identifies a file closely associated with the current one. In a TAN-A file a &lt;companion-version&gt; must point only to another TAN-A file. </a:documentation>
+      <a:documentation>In a class 1 file, &lt;companion-version&gt; points to another class 1 file that has a different version of the same work found in the same scriptum.</a:documentation>
+      <a:documentation>In class 2 and class 3 files, &lt;companion-version&gt; points to a file of the same type, but the nature of the relationship between the two files is not defined. It can be used to point to a continuation of a dataset, or to competing one.</a:documentation>
+      <ref name="entity-digital-tan-no-id"/>
+    </element>
+  </define>
   <define name="link-element-inclusion">
     <element name="inclusion">
       <a:documentation>specifies a TAN file that is available for inclusion. An inclusion occurs whenever an element X points to this inclusion by means of @include. TAN-compliant validators and processors will find every X that is found in the included file (checked recursively, against any inclusions of X adopted by the inclusion) and insert them at that place in the main document.</a:documentation>
@@ -1279,6 +1287,9 @@
       </zeroOrMore>
       <zeroOrMore>
         <ref name="link-element-successor"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="link-element-companion-version"/>
       </zeroOrMore>
     </interleave>
   </define>
