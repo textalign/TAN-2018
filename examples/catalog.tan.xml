@@ -461,31 +461,6 @@
          </normalization>
       </adjustments>
    </doc>
-   <doc href="ring-o-roses.eng.1881%20-%20include%20test.xml"
-        TAN-version="2020"
-        id="tag:parkj@textalign.net,2015:ring01:includetest"
-        xml:lang="eng"
-        root="TAN-T">
-      <name xmlns="tag:textalign.net,2015:ns">TAN transcription of Ring a Ring o' Roses</name>
-      <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="http://textalign.net/release/TAN-2020/examples/ring-o-roses.eng.1881.xml"/>
-      <license xmlns="tag:textalign.net,2015:ns" which="by_4.0" licensor="park"/>
-      <work xmlns="tag:textalign.net,2015:ns">
-            <IRI>http://dbpedia.org/resource/Ring_a_Ring_o%27_Roses</IRI>
-            <name>"Ring a Ring o' Roses" or "Ring Around the Rosie"</name>
-        </work>
-      <source xmlns="tag:textalign.net,2015:ns">
-            <IRI>http://lccn.loc.gov/12032709</IRI>
-            <name>Kate Greenaway, Mother Goose, New York, G. Routledge and sons [1881]</name>
-        </source>
-      <inclusion xmlns="tag:textalign.net,2015:ns" xml:id="1881">
-            <IRI>tag:parkj@textalign.net,2015:ring01</IRI>
-            <name>TAN transcription of Ring a Ring o' Roses</name>
-            <location accessed-when="2019-10-07T21:58:55.59-04:00"
-                   href="ring-o-roses.eng.1881.xml"
-                   orig-href="ring-o-roses.eng.1881.xml"/>
-        </inclusion>
-   </doc>
    <doc href="ring-o-roses.eng.1881.xml"
         TAN-version="2020"
         id="tag:parkj@textalign.net,2015:ring01"
