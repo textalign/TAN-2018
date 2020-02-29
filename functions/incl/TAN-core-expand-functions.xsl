@@ -722,7 +722,7 @@
                   <xsl:copy-of select="tan:error('cl201')"/>
                </xsl:if>
             </xsl:when>
-            <xsl:when test="self::tan:successor or self::tan:precedessor">
+            <xsl:when test="self::tan:successor or self::tan:precedessor or self::tan:companion-version">
                <xsl:choose>
                   <xsl:when test="$this-class = 1 and $target-class = 1"/>
                   <xsl:when test="$this-tan-type = $target-tan-type"/>

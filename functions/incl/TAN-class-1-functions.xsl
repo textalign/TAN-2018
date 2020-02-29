@@ -197,7 +197,8 @@
 
    <!-- TERSE EXPANSION -->
 
-   <xsl:template match="tan:redivision" mode="core-expansion-terse">
+   <xsl:template match="tan:redivision | tan:TAN-T/tan:head/tan:companion-version | tei:TEI/tan:head/tan:companion-version" 
+      mode="core-expansion-terse">
       <xsl:variable name="these-iris" select="tan:IRI"/>
       <xsl:variable name="this-doc-work" select="/*/tan:head/tan:work"/>
       <xsl:variable name="this-doc-work-vocab"
@@ -222,7 +223,7 @@
          select="tan:vocabulary(('source', 'scriptum'), $target-doc-source/@which, $target-doc-resolved/*/tan:head)"/>
       <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
-         <xsl:message select="'Diagnostics on, tan:redivision, template mode core-expansion-terse'"/>
+         <xsl:message select="'Diagnostics on, tan:redivision or tan:companion-version, template mode core-expansion-terse'"/>
          <xsl:message select="'Target doc resolved (shallow:) ', tan:shallow-copy($target-doc-resolved/*)"/>
          <xsl:message select="'This work vocab:', $this-doc-work-vocab"/>
          <xsl:message select="'This source vocab:', $this-doc-source-vocab"/>
@@ -241,10 +242,20 @@
          </xsl:if>
          <xsl:if
             test="
+               not(self::tan:companion-version) and
                exists(root()/*/tan:head/tan:version) and
-               exists($target-doc-resolved/*/tan:head/tan:version) and
-               not(root()/*/tan:head/tan:version/tan:IRI = $target-doc-resolved/*/tan:head/tan:version/tan:IRI)">
-            <xsl:copy-of select="tan:error('cl103')"/>
+               exists($target-doc-resolved/*/tan:head/tan:version)">
+            <xsl:variable name="this-doc-version" select="/*/tan:head/tan:version"/>
+            <xsl:variable name="this-doc-version-vocab"
+               select="tan:vocabulary('version', $this-doc-version/@which, parent::tan:head)"/>
+            <xsl:variable name="target-doc-version"
+               select="$target-doc-resolved/*/tan:head/tan:version"/>
+            <xsl:variable name="target-doc-version-vocab"
+               select="tan:vocabulary('version', $target-doc-version/@which, $target-doc-resolved/*/tan:head)"/>
+            <xsl:if
+               test="not(($target-doc-version, $target-doc-version-vocab)//tan:IRI = ($this-doc-version, $this-doc-version-vocab)/tan:IRI)">
+               <xsl:copy-of select="tan:error('cl103')"/>
+            </xsl:if>
          </xsl:if>
          <xsl:apply-templates mode="#current"/>
       </xsl:copy>

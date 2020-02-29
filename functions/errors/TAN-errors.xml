@@ -76,8 +76,8 @@
     <group affects-element="inclusion">
         <error xml:id="lnk01"><rule>An inclusion must point to a TAN file</rule></error>
     </group>
-    <group affects-element="successor predecessor">
-        <error xml:id="lnk02"><rule>&lt;successor> and &lt;predecessor> must point to TAN files of the same type.</rule></error>
+    <group affects-element="successor predecessor companion-version">
+        <error xml:id="lnk02"><rule>&lt;successor>, &lt;predecessor>, and &lt;companion-version> must point to TAN files of the same type.</rule></error>
     </group>
     <group affects-element="model redivision">
         <error xml:id="lnk03"><rule>&lt;model> and &lt;redivision> must point to class 1 TAN files</rule></error>
@@ -145,16 +145,18 @@
     </group>
     
     <!-- CLASS 1 ERRORS -->
+    <group affects-element="redivision companion-version">
+        <error xml:id="cl101"><rule>Class 1 files must share the same source as any redivision or companion version.</rule></error>
+    </group>
     <group affects-element="redivision">
-        <error xml:id="cl101"><rule>Class 1 files must share the same source as any redivision.</rule></error>
         <error xml:id="cl103"><rule>Class 1 files must share the same work-version, if supplied, as any redivision.</rule></error>
         <error xml:id="cl104"><rule>Class 1 files must have identical transcriptions, after TAN normalization, as any redivision.</rule></error>
     </group>
     <group affects-element="model">
         <warning xml:id="cl107"><rule>If a class 1 file diverges from the structure of its model a warning will be generated specifying where differences exist.</rule></warning>
     </group>
-    <group affects-element="model redivision">
-        <error xml:id="cl102"><rule>Class 1 files must share the same work as any model or redivision.</rule></error>
+    <group affects-element="model redivision companion-version">
+        <error xml:id="cl102"><rule>Class 1 files must share the same work as any model, redivision, or companion version.</rule></error>
     </group>
     <group affects-attribute="n" affects-element="div">
         <warning xml:id="cl109"><rule>Most div references are unique.</rule></warning>
