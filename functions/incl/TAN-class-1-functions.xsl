@@ -204,7 +204,7 @@
          select="tan:vocabulary('work', $this-doc-work/@which, parent::tan:head)"/>
       <xsl:variable name="this-doc-source" select="/*/tan:head/tan:source"/>
       <xsl:variable name="this-doc-source-vocab"
-         select="tan:vocabulary('work', $this-doc-source/@which, parent::tan:head)"/>
+         select="tan:vocabulary(('source', 'scriptum'), $this-doc-source/@which, parent::tan:head)"/>
       <xsl:variable name="this-redivision-doc-resolved"
          select="$redivisions-resolved[*/@id = $these-iris]"/>
       <xsl:variable name="target-1st-da" select="tan:get-1st-doc(.)"/>
@@ -219,7 +219,7 @@
          select="tan:vocabulary('work', $target-doc-work/@which, $target-doc-resolved/*/tan:head)"/>
       <xsl:variable name="target-doc-source" select="$target-doc-resolved/*/tan:head/tan:source"/>
       <xsl:variable name="target-doc-source-vocab"
-         select="tan:vocabulary('source', $target-doc-source/@which, $target-doc-resolved/*/tan:head)"/>
+         select="tan:vocabulary(('source', 'scriptum'), $target-doc-source/@which, $target-doc-resolved/*/tan:head)"/>
       <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'Diagnostics on, tan:redivision, template mode core-expansion-terse'"/>
