@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href ="../../schemas/catalog.tan.rnc" type="application/relax-ng-compact-syntax"?>
+<?xml-model href ="../../schemas/catalog.tan.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<collection stable="true" metadata-resolved="false"/>
