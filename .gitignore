@@ -12,6 +12,7 @@ private*
 .DS_Store
 *- Copy*
 output/*
+desktop.ini
 
 # Directories
 functions/tests/
