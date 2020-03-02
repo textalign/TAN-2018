@@ -782,6 +782,11 @@
                 <name>page</name>
                 <name>tei pb</name>
             </item>
+            <item group="page-start page-end">
+                <IRI>tag:textalign.net,2015:div-type:side</IRI>
+                <name>side</name>
+                <desc>A side of a scriptum, such for a folio.</desc>
+            </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:subcolumn</IRI>
                 <name>subcolumn</name>
