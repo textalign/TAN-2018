@@ -14,6 +14,7 @@
                 License. The license is granted independent of rights and licenses associated with
                 the source. </desc>
         </license>
+        <token-definition src="*" which="letters only"/>
         <vocabulary>
             <IRI>tag:parkj@textalign.net,2015:TAN-key:ar.cat</IRI>
             <name>Keywords for Aristotle's Categories</name>

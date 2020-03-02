@@ -406,7 +406,6 @@
                         tan:matches(., $this-rgx)][1]"
                />
                <xsl:if test="not(exists($first-source-match))">
-                  <xsl:variable name="examples-maximum" select="50"/>
                   <xsl:variable name="rgx-adjusted" select="replace($this-rgx, '^\^(.+)\$$', '$1')"/>
                   <xsl:variable name="this-message" as="xs:string*">
                      <xsl:text>try: </xsl:text>
@@ -415,12 +414,15 @@
                            select="tan:matches(., string-join(($this-val, $rgx-adjusted), '|'))"
                            order="descending"/>
                         <xsl:sort select="count(current-group())" order="descending"/>
-                        <xsl:if test="not(position() = 1) and not(position() gt $examples-maximum)">
+                        <xsl:if test="not(position() = 1) and not(position() gt $help-suggestions-maximum)">
                            <xsl:text>, </xsl:text>
                         </xsl:if>
-                        <xsl:if test="position() le $examples-maximum">
+                        <xsl:if test="position() le $help-suggestions-maximum">
                            <xsl:value-of select="current-grouping-key()"/>
                            <xsl:value-of select="concat(' (', string(count(current-group())), ')')"/>
+                        </xsl:if>
+                        <xsl:if test="position() - 1 eq $help-suggestions-maximum">
+                           <xsl:value-of select="', ...'"/>
                         </xsl:if>
                      </xsl:for-each-group>
                   </xsl:variable>

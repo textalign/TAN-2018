@@ -575,7 +575,7 @@
             if (exists(@attr)) then
                text()
             else
-               @which"
+               (@which, @scriptum)"
       />
       <xsl:variable name="this-vocabulary"
          select="
@@ -593,7 +593,8 @@
       <xsl:for-each select="$these-item-type-constraints">
          <xsl:variable name="these-types-allowed" select="tokenize(normalize-space(@item-type), ' ')"/>
          <xsl:variable name="ref-allowed-and-found" select="exists($this-ref) and $these-types-allowed = 'ref'"/>
-         <xsl:variable name="acceptable-vocabulary" select="tan:vocabulary($these-types-allowed, '*', $vocabulary-parents)"/>
+         <xsl:variable name="acceptable-vocabulary" as="element()*"
+            select="tan:vocabulary($these-types-allowed, '*', $vocabulary-parents)"/>
          <xsl:if test="not($these-types-allowed = '*') and not($ref-allowed-and-found) and not($these-types-allowed = $target-element-names)">
             <xsl:copy-of
                select="
@@ -602,7 +603,7 @@
                      concat('; ', $this-idref, ' is a ', string-join(distinct-values($target-element-names[not(. = 'item')]), ', '))
                   else
                      (), if (exists($acceptable-vocabulary)) then
-                     (concat('; try: ', string-join($acceptable-vocabulary/*/(tan:id, tan:name[1])[1], ', ')))
+                     (concat('; try: ', string-join($acceptable-vocabulary/*/(tan:id/text(), tan:name[1])[1], ', ')))
                   else
                      concat('; no vocabulary is available for ', string-join($these-types-allowed, ', '))))"
             />

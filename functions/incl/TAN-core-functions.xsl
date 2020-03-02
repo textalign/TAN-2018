@@ -1836,7 +1836,7 @@
       <xsl:param name="expand-ranges" tunnel="yes" as="xs:boolean"/>
       <xsl:variable name="this-to" select="following-sibling::*[1][@to]"/>
       <xsl:variable name="this-element-name" select="name(.)"/>
-      <xsl:variable name="from-and-to-are-integers" select=". castable as xs:integer and $this-to castable as xs:integer"/>
+      <xsl:variable name="from-and-to-are-integers" select="text() castable as xs:integer and $this-to/text() castable as xs:integer"/>
       <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'diagnostics on template mode check-and-expand-ranges for: ', ."/>

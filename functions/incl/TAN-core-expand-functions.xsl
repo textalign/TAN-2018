@@ -1015,7 +1015,7 @@
                   <xsl:copy-of select="tan:help($this-message, $this-fix, 'copy-attributes')"/>
                </xsl:if>
                
-               <xsl:if test="$this-is-joker">
+               <!--<xsl:if test="$this-is-joker">
                   <xsl:variable name="unique-ids" select="distinct-values($vocab-items-available/tan:id[1])"/>
                   <xsl:for-each select="$unique-ids">
                      <xsl:variable name="this-id" select="."/>
@@ -1027,7 +1027,7 @@
                         </xsl:if>
                      </xsl:element>
                   </xsl:for-each>
-               </xsl:if>
+               </xsl:if>-->
                <xsl:element name="{$this-attr-name}">
                   <xsl:attribute name="attr"/>
                   <xsl:value-of select="$this-val"/>
