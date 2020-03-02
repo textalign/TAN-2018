@@ -325,7 +325,7 @@
       <xsl:param name="inherited-subjects" tunnel="yes"/>
       <xsl:param name="inherited-verbs" tunnel="yes"/>
       <xsl:variable name="vocabulary-parents" select="root()/*/*"/>
-      <xsl:variable name="immediate-subject-refs" select="tan:subject[@attr]/text(), tan:subject[@src or @work or @which]"/>
+      <xsl:variable name="immediate-subject-refs" select="tan:subject"/>
       <xsl:variable name="immediate-verb-refs" select="tan:verb/text()"/>
 
       <!-- subjects -->
@@ -335,7 +335,7 @@
                $immediate-subject-refs
             else
                $inherited-subjects"/>
-      <xsl:variable name="these-entity-subject-refs" select="$these-subject-refs[@attr]"/>
+      <xsl:variable name="these-entity-subject-refs" select="$these-subject-refs[@attr]/text(), $these-subject-refs/(@work, @src, @scriptum, @which)"/>
       <xsl:variable name="these-textual-passage-subject-refs"
          select="$these-subject-refs[@ref]"/>
       <xsl:variable name="this-entity-subject-vocab"

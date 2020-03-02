@@ -1299,7 +1299,7 @@
 
    <xsl:template match="tan:head" mode="core-expansion-terse">
       <xsl:variable name="token-definition-source-duplicates"
-         select="tan:duplicate-items(tan:token-definition/tan:src)"/>
+         select="tan:duplicate-items(tan:token-definition/tan:src[text()])"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:apply-templates mode="#current">
@@ -1362,7 +1362,7 @@
          <xsl:copy-of select="@*"/>
          <xsl:copy-of select="$this-vocabulary//tan:token-definition/@*"/>
          <xsl:if test="$token-definition-errors = tan:src">
-            <xsl:copy-of select="tan:error('cl202')"/>
+            <xsl:copy-of select="tan:error('cl202', concat('Duplicates: ', string-join($token-definition-errors, ', ')))"/>
          </xsl:if>
          <xsl:if test="not(exists(@src))">
             <xsl:for-each select="../tan:source">
