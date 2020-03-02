@@ -1016,12 +1016,14 @@
                </xsl:if>
                
                <xsl:if test="$this-is-joker">
-                  <xsl:for-each select="$vocab-items-available">
+                  <xsl:variable name="unique-ids" select="distinct-values($vocab-items-available/tan:id[1])"/>
+                  <xsl:for-each select="$unique-ids">
+                     <xsl:variable name="this-id" select="."/>
                      <xsl:element name="{$this-attr-name}">
                         <xsl:attribute name="attr"/>
-                        <xsl:value-of select="tan:id[1]"/>
+                        <xsl:value-of select="$this-id"/>
                         <xsl:if test="$distribute-vocabulary = true()">
-                           <xsl:copy-of select="."/>
+                           <xsl:copy-of select="$vocab-items-available[tan:id[1] = $this-id][1]"/>
                         </xsl:if>
                      </xsl:element>
                   </xsl:for-each>

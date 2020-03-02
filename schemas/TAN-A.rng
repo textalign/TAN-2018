@@ -39,7 +39,7 @@
   <define name="attr-in-lang">
     <attribute name="in-lang">
       <a:documentation>restricts a claim to a particular language; used with only certain verbs, e.g., "translates"</a:documentation>
-      <a:documentation>By default, this feature is disallowed. A verb's &lt;constrain&gt; must explicitly require or allow it.</a:documentation>
+      <a:documentation>By default, this feature is disallowed. A verb's &lt;constraint&gt; must explicitly require or allow it.</a:documentation>
       <data type="language"/>
     </attribute>
   </define>
@@ -60,6 +60,12 @@
     <attribute name="where">
       <a:documentation>restricts the &lt;claim&gt; to a specific &lt;place&gt;.
  Multiple values of @where are interpreted to mean "or" with union. No distribution takes place (e.g., where="x y" means "[subject] x or y [verby]...", not "[subject] x [verb]..." and "[subject] y [verb]...").</a:documentation>
+    </attribute>
+  </define>
+  <define name="ptr-attr-scriptum">
+    <attribute name="scriptum">
+      <a:documentation>points to one or more ID refs of entities defined in &lt;head&gt; that are scripta (text-bearing objects).</a:documentation>
+      <a:documentation> Multiple values of @scriptum are interpreted to mean "and", resulting in distribution of the claim.</a:documentation>
     </attribute>
   </define>
   <define name="ptr-attr-subject">
@@ -387,7 +393,10 @@
     </oneOrMore>
   </define>
   <define name="scriptum-reference">
-    <ref name="ptr-attr-which"/>
+    <choice>
+      <ref name="ptr-attr-scriptum"/>
+      <ref name="ptr-attr-which"/>
+    </choice>
     <optional>
       <ref name="ptr-attr-work"/>
       <optional>

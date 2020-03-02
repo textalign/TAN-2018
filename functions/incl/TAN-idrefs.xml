@@ -126,6 +126,10 @@
         <element>version</element>
         <idrefs attribute="version"/>
     </id>
+    <id>
+        <element>scriptum</element>
+        <idrefs attribute="scriptum"/>
+    </id>
     <id cross-file="true">
         <element>div-type</element>
         <idrefs attribute="div-type"/>

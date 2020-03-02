@@ -19,7 +19,7 @@ attr-in-lang =
     
     ## restricts a claim to a particular language; used with only certain verbs, e.g., "translates"
     
-    ## By default, this feature is disallowed. A verb's <constrain> must explicitly require or allow it.
+    ## By default, this feature is disallowed. A verb's <constraint> must explicitly require or allow it.
     attribute in-lang { xsd:language }
 ptr-attr-modal =
     
@@ -40,6 +40,12 @@ ptr-attr-place =
     ## restricts the <claim> to a specific <place>.
     ##  Multiple values of @where are interpreted to mean "or" with union. No distribution takes place (e.g., where="x y" means "[subject] x or y [verby]...", not "[subject] x [verb]..." and "[subject] y [verb]...").
     attribute where { text }
+ptr-attr-scriptum =
+    
+    ## points to one or more ID refs of entities defined in <head> that are scripta (text-bearing objects).
+    
+    ##  Multiple values of @scriptum are interpreted to mean "and", resulting in distribution of the claim.
+    attribute scriptum { text }
 ptr-attr-subject =
     
     ## points to one or more ID refs of entities defined in <head> that serve as the grammatical subject of a claim. @subject within <body> indicates the default subject(s) for <claim>s. @subject is used for idrefs; data content, textual references, or complex objects must be encoded with <subject>.
@@ -201,4 +207,4 @@ single-div-partial-textual-reference =
 # If a partial textual reference is a spans <div>s then @ref should be in the children elements
 multi-div-partial-textual-reference =
     (element-tok-for-claim-with-ref | text-passage-selector-with-ref)+
-scriptum-reference = ptr-attr-which, (ptr-attr-work, ptr-attr-version?)?, element-div*
+scriptum-reference = (ptr-attr-scriptum | ptr-attr-which), (ptr-attr-work, ptr-attr-version?)?, element-div*
