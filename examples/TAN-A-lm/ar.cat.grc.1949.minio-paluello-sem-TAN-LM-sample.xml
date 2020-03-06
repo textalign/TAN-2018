@@ -84,7 +84,7 @@
             <m>n e - s - - - f a -</m>
          </lm>
       </ana>
-      <!--<ana>
+      <ana>
          <tok ref="10 6 3 2" pos="4"/>
          <tok ref="10 6 3 3" pos="15"/>
          <tok ref="10 6 4 2" pos="37"/>
@@ -5545,6 +5545,6 @@
             <l>ὥσπερ</l>
             <m>d r - - - - - - - -</m>
          </lm>
-      </ana>-->
+      </ana>
    </body>
 </TAN-A-lm>
