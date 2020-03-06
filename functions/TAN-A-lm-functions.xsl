@@ -29,7 +29,7 @@
       <xsl:param name="context" tunnel="yes"/>
       <xsl:variable name="this-val" select="tan:expand-numerical-sequence(., 999)"/>
       <xsl:attribute name="{name()}">
-         <xsl:value-of select="count($context/tan:f) = $this-val"/>
+         <xsl:value-of select="count($context/tan:f[text()]) = $this-val"/>
       </xsl:attribute>
    </xsl:template>
    <xsl:template match="@m-has-features" mode="evaluate-conditions">
@@ -168,8 +168,20 @@
       </xsl:copy>
    </xsl:template>
    
+   <xsl:template match="tan:body" mode="class-2-expansion-terse">
+      <xsl:variable name="is-lang-specific"
+         select="not(../tan:head/tan:source) and ../tan:head/tan:for-lang"/>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:apply-templates mode="#current">
+            <xsl:with-param name="is-lang-specific" tunnel="yes" select="$is-lang-specific"/>
+         </xsl:apply-templates>
+      </xsl:copy>
+   </xsl:template>
    <xsl:template match="tan:tok[not(@ref)]" mode="class-2-expansion-terse">
+      <xsl:param name="is-lang-specific" tunnel="yes" as="xs:boolean"/>
       <xsl:param name="dependencies-adjusted-and-marked" as="document-node()*" tunnel="yes"/>
+      
       <xsl:variable name="this-q" select="@q"/>
       <xsl:variable name="these-tok-markers"
          select="
@@ -180,6 +192,7 @@
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:choose>
+            <xsl:when test="$is-lang-specific"/>
             <xsl:when test="exists($these-tok-markers)">
                <xsl:copy-of select="$these-tok-markers"/>
             </xsl:when>

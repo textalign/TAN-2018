@@ -3165,6 +3165,7 @@
       <xsl:param name="TAN-elements" as="element()*"/>
       <xsl:for-each select="$TAN-elements">
          <xsl:variable name="this-element" select="."/>
+         <xsl:variable name="this-element-name" select="name(.)"/>
          <xsl:variable name="this-base-uri" select="tan:base-uri(.)"/>
          <xsl:variable name="this-element-resolved" as="element()?">
             <xsl:choose>
@@ -3181,8 +3182,8 @@
                <xsl:with-param name="base-uri" tunnel="yes" select="$this-base-uri"/>
             </xsl:apply-templates>
          </xsl:variable>
-         <xsl:variable name="is-master-location" select="exists(self::tan:master-location)"/>
-         <xsl:variable name="is-see-also" select="exists(self::tan:see-also)"/>
+         <xsl:variable name="is-master-location" select="$this-element-name = ('master-location')"/>
+         <xsl:variable name="is-different-version" select="$this-element-name = ('successor', 'predecessor')"/>
          <xsl:variable name="this-class" select="tan:class-number(.)"/>
          <xsl:variable name="first-la" select="tan:first-loc-available($this-element-norm)"/>
          <xsl:variable name="this-id" select="root(.)/*/@id"/>
@@ -3284,7 +3285,7 @@
                <xsl:variable name="this-doc" select="doc($first-la)"/>
                <xsl:choose>
                   <xsl:when
-                     test="($this-doc/*/@id = $this-id) and not($is-master-location or $is-see-also)">
+                     test="($this-doc/*/@id = $this-id) and not($is-master-location or $is-different-version)">
                      <!-- If the @id is identical, something is terribly wrong; to avoid possible endless recursion, the document is not returned -->
                      <xsl:document>
                         <error>

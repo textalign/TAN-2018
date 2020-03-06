@@ -242,6 +242,10 @@ Modify rename action in class-2 adjustments. The current system is confusing bec
 
 @type should always be weakly inheritable, as it is clearly when part of &lt;div>. But it is strongly inheritable as a part of &lt;group>, which is inconsistent.
 
+Ensure SQF help is available on @href, and is limited to the number of examples specified by parameters
+
+Introduce Schematron phase "sample" to do quicker runs on long files.
+
 ## Frameworks
 
 Support editing TAN-A-tok

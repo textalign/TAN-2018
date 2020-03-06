@@ -121,14 +121,6 @@
    
    <!-- class 2 -->
    
-   <xsl:template match="tan:body" mode="class-2-expansion-terse">
-      <xsl:param name="dependencies-adjusted-and-marked" as="document-node()*" tunnel="yes"/>
-      <xsl:copy>
-         <xsl:copy-of select="@*"/>
-         <xsl:apply-templates mode="#current"/>
-      </xsl:copy>
-   </xsl:template>
-   
    <xsl:template match="tan:skip/tan:div-type | tan:skip/tan:n | tan:rename/tan:n | tan:passage
       | tan:from-tok | tan:through-tok"
       mode="class-2-expansion-terse">
