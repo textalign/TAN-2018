@@ -1,6 +1,7 @@
 default namespace = "tag:textalign.net,2015:ns"
 namespace a = "http://relaxng.org/ns/compatibility/annotations/1.0"
-namespace ns1 = "http://www.isocat.org/ns/dcr"
+namespace ns1 = "http://www.w3.org/1999/xhtml"
+namespace ns2 = "http://www.isocat.org/ns/dcr"
 namespace rng = "http://relaxng.org/ns/structure/1.0"
 namespace sch = "http://purl.oclc.org/dsdl/schematron"
 namespace tei = "http://www.tei-c.org/ns/1.0"
@@ -8,10 +9,10 @@ namespace teix = "http://www.tei-c.org/ns/Examples"
 namespace xi = "http://www.w3.org/2001/XInclude"
 namespace xlink = "http://www.w3.org/1999/xlink"
 
-# Schema generated from ODD source 2020-01-27T08:49:39Z. .
-# TEI Edition: Version 3.5.0. Last updated on
-#	29th January 2019, revision 3c0c64ec4
-# TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 3.5.0/
+# Schema generated from ODD source 2020-03-08T11:13:08Z. .
+# TEI Edition: Version 3.6.0. Last updated on
+#	16th July 2019, revision daa3cc0b9
+# TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 3.6.0/
 #
 
 # Insofar as this ODD file constitutes an original work (see below) all material is released under a GNU General Public License, https://opensource.org/licenses/GPL-3.0 The notice in the next paragraph is preserved whole from the template upon which this ODD file is based.  TEI material can be licensed differently depending on the use you intend to make of it. Hence it is made available under both the CC+BY and BSD-2 licences. The CC+BY licence is generally appropriate for usages which treat TEI content as data or documentation. The BSD-2 licence is generally appropriate for usage of TEI content in a software environment. For further information or clarification, please contact the TEI Consortium (info@tei-c.org).
@@ -444,6 +445,14 @@ div {
       
       ## The condition must be true for each attribute, for at least one value in that attribute.
       element where { ed-stamp?, action-condition-attributes }+
+    link-element-companion-version =
+      
+      ## identifies a file closely associated with the current one. In a TAN-A file a <companion-version> must point only to another TAN-A file. 
+      
+      ## In a class 1 file, <companion-version> points to another class 1 file that has a different version of the same work found in the same scriptum.
+      
+      ## In class 2 and class 3 files, <companion-version> points to a file of the same type, but the nature of the relationship between the two files is not defined. It can be used to point to a continuation of a dataset, or to competing one.
+      element companion-version { entity-digital-tan-no-id }
     link-element-inclusion =
       
       ## specifies a TAN file that is available for inclusion. An inclusion occurs whenever an element X points to this inclusion by means of @include. TAN-compliant validators and processors will find every X that is found in the included file (checked recursively, against any inclusions of X adopted by the inclusion) and insert them at that place in the main document.
@@ -629,6 +638,7 @@ div {
       & link-element-see-also*
       & link-element-predecessor*
       & link-element-successor*
+      & link-element-companion-version*
     resp-list = element-resp+ & element-file-resp
     source-list = link-element-source
     token-definition-attributes = empty
@@ -645,7 +655,6 @@ div {
     link-element-redivision*
     & link-element-model?
     & link-element-annotation*
-    & link-element-companion-version*
   declaration-non-core = decl-class-1 & decl-non-class-1
   voc-key-non-core = voc-element-class-1 & voc-element-non-class-1
   adjust-non-core = element-normalization* & adjust-repl*
@@ -719,10 +728,6 @@ div {
     
     ## The normalized transcriptions of redivided texts must be identical
     element redivision { entity-digital-tan-no-id }
-  link-element-companion-version =
-    
-    ## identifies a class 1 file that transcribes a different version of the same work found in the same scriptum.
-    element companion-version { entity-digital-tan-no-id }
   adjust-repl = element-replace
   body-content-class-1 = empty
   body-content-non-class-1 = empty
@@ -771,7 +776,7 @@ anyElement-content =
     (text | anyElement-content)*
   }
   >> sch:pattern [
-       id = "d9e119892-constraint"
+       id = "d9e112022-constraint"
        "\x{a}" ~
        "         "
        sch:rule [
@@ -802,7 +807,7 @@ anyElement-datatype =
     (text | anyElement-datatype)*
   }
   >> sch:pattern [
-       id = "d9e121177-constraint"
+       id = "d9e113227-constraint"
        "\x{a}" ~
        "         "
        sch:rule [
@@ -888,8 +893,15 @@ att.ranging.attribute.max =
     | xsd:decimal
   }?
 att.ranging.attribute.confidence =
-  
-  ## specifies the degree of statistical confidence (between zero and one) that a value falls within the range specified by min and max, or the proportion of observed values that fall within that range.
+  [
+    a:documentation [
+      "specifies the degree of statistical confidence (between zero and one) that a value falls within the range specified by "
+      ns1:code [ "@min" ]
+      " and "
+      ns1:code [ "@max" ]
+      ", or the proportion of observed values that fall within that range."
+    ]
+  ]
   attribute confidence { xsd:double }?
 att.dimensions.attributes =
   att.ranging.attributes,
@@ -901,7 +913,7 @@ att.dimensions.attributes =
 att.dimensions.attribute.unit =
   
   ## names the unit used for the measurement
-  ## Suggested values include: 1] cm (centimetres) ; 2] mm (millimetres) ; 3] in (inches) ; 4] lines; 5] chars (characters) 
+  ## Suggested values include: 1] cm (centimetres); 2] mm (millimetres); 3] in (inches); 4] line; 5] char (characters)
   attribute unit {
     
     ## (centimetres) 
@@ -914,10 +926,10 @@ att.dimensions.attribute.unit =
       "in"
     | 
       ## lines of text
-      "lines"
+      "line"
     | 
       ## (characters) characters of text
-      "chars"
+      "char"
     | xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
   }?
 att.dimensions.attribute.quantity =
@@ -958,8 +970,13 @@ att.dimensions.attribute.scope =
   }?
 att.written.attributes = att.written.attribute.hand
 att.written.attribute.hand =
-  
-  ## points to a handNote element describing the hand considered responsible for the content of the element concerned.
+  [
+    a:documentation [
+      "points to a "
+      ns1:code [ "<handNote>" ]
+      " element describing the hand considered responsible for the content of the element concerned."
+    ]
+  ]
   attribute hand { xsd:anyURI }?
 att.damaged.attributes =
   att.dimensions.attributes,
@@ -975,8 +992,17 @@ att.damaged.attribute.agent =
     xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
   }?
 att.damaged.attribute.degree =
-  
-  ## provides a coded representation of the degree of damage, either as a number between 0 (undamaged) and 1 (very extensively damaged), or as one of the codes high, medium, low, or unknown. The damage element with the degree attribute should only be used where the text may be read with some confidence; text supplied from other sources should be tagged as supplied.
+  [
+    a:documentation [
+      "provides a coded representation of the degree of damage, either as a number between 0 (undamaged) and 1 (very extensively damaged), or as one of the codes high, medium, low, or unknown. The "
+      ns1:code [ "<damage>" ]
+      " element with the "
+      ns1:code [ "@degree" ]
+      " attribute should only be used where the text may be read with some confidence; text supplied from other sources should be tagged as "
+      ns1:code [ "<supplied>" ]
+      "."
+    ]
+  ]
   attribute degree {
     xsd:double
     | (
@@ -1005,8 +1031,13 @@ att.breaking.attribute.break =
   }?
 att.cReferencing.attributes = att.cReferencing.attribute.cRef
 att.cReferencing.attribute.cRef =
-  
-  ## (canonical reference) specifies the destination of the pointer by supplying a canonical reference expressed using the scheme defined in a refsDecl element in the TEI header
+  [
+    a:documentation [
+      "(canonical reference) specifies the destination of the pointer by supplying a canonical reference expressed using the scheme defined in a "
+      ns1:code [ "<refsDecl>" ]
+      " element in the TEI header"
+    ]
+  ]
   attribute cRef { xsd:string }?
 att.datable.w3c.attributes =
   att.datable.w3c.attribute.when,
@@ -1086,7 +1117,7 @@ sch:pattern [
   sch:rule [
     context = "tei:*[@when]"
     "\x{a}" ~
-    "        "
+    "         "
     sch:report [
       test = "@notBefore|@notAfter|@from|@to"
       role = "nonfatal"
@@ -1105,7 +1136,7 @@ sch:pattern [
   sch:rule [
     context = "tei:*[@from]"
     "\x{a}" ~
-    "        "
+    "         "
     sch:report [
       test = "@notBefore"
       role = "nonfatal"
@@ -1124,7 +1155,7 @@ sch:pattern [
   sch:rule [
     context = "tei:*[@to]"
     "\x{a}" ~
-    "        "
+    "         "
     sch:report [
       test = "@notAfter"
       role = "nonfatal"
@@ -1153,17 +1184,17 @@ sch:pattern [
   sch:rule [
     context = "tei:*[@calendar]"
     "\x{a}" ~
-    "            "
+    "         "
     sch:assert [
       test = "string-length(.) gt 0"
-      "\x{a}" ~
-      "@calendar indicates the system or calendar to which the date represented by the content of this element\x{a}" ~
-      "belongs, but this "
+      " @calendar indicates the system or calendar to\x{a}" ~
+      "              which the date represented by the content of this element belongs, but this\x{a}" ~
+      "              "
       sch:name [ ]
       " element has no textual content."
     ]
     "\x{a}" ~
-    "          "
+    "      "
   ]
   "\x{a}" ~
   "   "
@@ -1177,13 +1208,13 @@ att.datcat.attributes =
 att.datcat.attribute.datcat =
   
   ## contains a PID (persistent identifier) that aligns the given element with the appropriate Data Category (or categories) in ISOcat.
-  attribute ns1:datcat {
+  attribute ns2:datcat {
     list { xsd:anyURI+ }
   }?
 att.datcat.attribute.valueDatcat =
   
   ## contains a PID (persistent identifier) that aligns the content of the given element or the value of the given attribute with the appropriate simple Data Category (or categories) in ISOcat.
-  attribute ns1:valueDatcat {
+  attribute ns2:valueDatcat {
     list { xsd:anyURI+ }
   }?
 att.declarable.attributes = att.declarable.attribute.default
@@ -1393,8 +1424,16 @@ att.global.attribute.n =
     xsd:string { pattern = "[\w\._]+([\- ,]+[\w\._]+)*" }
   }?
 att.global.attribute.xmllang =
-  
-  ## (language) indicates the language of the element content using a tag generated according to BCP 47.
+  [
+    a:documentation [
+      "(language) indicates the language of the element content using a tag generated according to "
+      ns1:a [
+        href = "http://www.rfc-editor.org/rfc/bcp/bcp47.txt"
+        "BCP 47"
+      ]
+      "."
+    ]
+  ]
   attribute xml:lang {
     xsd:language
     | (
@@ -1428,8 +1467,13 @@ att.handFeatures.attribute.scribe =
   ## gives a name or other identifier for the scribe believed to be responsible for this hand.
   attribute scribe { xsd:Name }?
 att.handFeatures.attribute.scribeRef =
-  
-  ## points to a full description of the scribe concerned, typically supplied by a person element elsewhere in the description.
+  [
+    a:documentation [
+      "points to a full description of the scribe concerned, typically supplied by a "
+      ns1:code [ "<person>" ]
+      " element elsewhere in the description."
+    ]
+  ]
   attribute scribeRef {
     list { xsd:anyURI+ }
   }?
@@ -1440,8 +1484,13 @@ att.handFeatures.attribute.script =
     list { xsd:Name+ }
   }?
 att.handFeatures.attribute.scriptRef =
-  
-  ## points to a full description of the script or writing style used by this hand, typically supplied by a scriptNote element elsewhere in the description.
+  [
+    a:documentation [
+      "points to a full description of the script or writing style used by this hand, typically supplied by a "
+      ns1:code [ "<scriptNote>" ]
+      " element elsewhere in the description."
+    ]
+  ]
   attribute scriptRef {
     list { xsd:anyURI+ }
   }?
@@ -1529,12 +1578,13 @@ att.interpLike.attribute.inst =
   }?
 att.measurement.attributes =
   att.measurement.attribute.unit,
+  att.measurement.attribute.unitRef,
   att.measurement.attribute.quantity,
   att.measurement.attribute.commodity
 att.measurement.attribute.unit =
   
   ## indicates the units used for the measurement, usually using the standard symbol for the desired units.
-  ## Suggested values include: 1] m (metre) ; 2] kg (kilogram) ; 3] s (second) ; 4] Hz (hertz) ; 5] Pa (pascal) ; 6] Ω (ohm) ; 7] L (litre) ; 8] t (tonne) ; 9] ha (hectare) ; 10] Å (ångström) ; 11] mL (millilitre) ; 12] cm (centimetre) ; 13] dB (decibel) ; 14] kbit (kilobit) ; 15] Kibit (kibibit) ; 16] kB (kilobyte) ; 17] KiB (kibibyte) ; 18] MB (megabyte) ; 19] MiB (mebibyte) 
+  ## Suggested values include: 1] m (metre); 2] kg (kilogram); 3] s (second); 4] Hz (hertz); 5] Pa (pascal); 6] Ω (ohm); 7] L (litre); 8] t (tonne); 9] ha (hectare); 10] Å (ångström); 11] mL (millilitre); 12] cm (centimetre); 13] dB (decibel); 14] kbit (kilobit); 15] Kibit (kibibit); 16] kB (kilobyte); 17] KiB (kibibyte); 18] MB (megabyte); 19] MiB (mebibyte)
   attribute unit {
     
     ## (metre) SI base unit of length
@@ -1595,6 +1645,17 @@ att.measurement.attribute.unit =
       "MiB"
     | xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
   }?
+att.measurement.attribute.unitRef =
+  [
+    a:documentation [
+      "points to a unique identifier stored in the "
+      ns1:code [ "@xml:id" ]
+      " of a "
+      ns1:code [ "<unitDef>" ]
+      " element that defines a unit of measure."
+    ]
+  ]
+  attribute unitRef { xsd:anyURI }?
 att.measurement.attribute.quantity =
   
   ## specifies the number of the specified units that comprise the measurement
@@ -1611,6 +1672,26 @@ att.measurement.attribute.commodity =
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }+
     }
   }?
+sch:pattern [
+  id =
+    "tei_all-att.measurement-att-measurement-unitRef-constraint-rule-5"
+  "\x{a}" ~
+  "      "
+  sch:rule [
+    context = "tei:*[@unitRef]"
+    "\x{a}" ~
+    "         "
+    sch:report [
+      test = "@unit"
+      role = "info"
+      "The @unit attribute may be unnecessary when @unitRef is present."
+    ]
+    "\x{a}" ~
+    "      "
+  ]
+  "\x{a}" ~
+  "   "
+]
 att.naming.attributes =
   att.canonical.attributes,
   att.naming.attribute.role,
@@ -1691,13 +1772,13 @@ att.typed.attribute.subtype =
     xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
   }?
 sch:pattern [
-  id = "tei_all-att.typed-subtypeTyped-constraint-rule-5"
+  id = "tei_all-att.typed-subtypeTyped-constraint-rule-6"
   "\x{a}" ~
   "      "
   sch:rule [
     context = "tei:*[@subtype]"
     "\x{a}" ~
-    "        "
+    "         "
     sch:assert [
       test = "@type"
       "The "
@@ -1715,8 +1796,18 @@ att.pointing.attributes =
   att.pointing.attribute.target,
   att.pointing.attribute.evaluate
 att.pointing.attribute.targetLang =
-  
-  ## specifies the language of the content to be found at the destination referenced by target, using a language tag generated according to BCP 47.
+  [
+    a:documentation [
+      "specifies the language of the content to be found at the destination referenced by "
+      ns1:code [ "@target" ]
+      ", using a language tag generated according to "
+      ns1:a [
+        href = "http://www.rfc-editor.org/rfc/bcp/bcp47.txt"
+        "BCP 47"
+      ]
+      "."
+    ]
+  ]
   attribute targetLang {
     xsd:language
     | (
@@ -1724,13 +1815,13 @@ att.pointing.attribute.targetLang =
        "")
   }?
 sch:pattern [
-  id = "tei_all-att.pointing-targetLang-targetLang-constraint-rule-6"
+  id = "tei_all-att.pointing-targetLang-targetLang-constraint-rule-7"
   "\x{a}" ~
   "      "
   sch:rule [
     context = "tei:*[not(self::tei:schemaSpec)][@targetLang]"
     "\x{a}" ~
-    "            "
+    "         "
     sch:assert [
       test = "@target"
       "@targetLang should only be used on "
@@ -1738,7 +1829,7 @@ sch:pattern [
       " if @target is specified."
     ]
     "\x{a}" ~
-    "          "
+    "      "
   ]
   "\x{a}" ~
   "   "
@@ -1775,8 +1866,19 @@ att.pointing.group.attribute.domains =
     list { xsd:anyURI, xsd:anyURI, xsd:anyURI* }
   }?
 att.pointing.group.attribute.targFunc =
-  
-  ## (target function) describes the function of each of the values of the target attribute of the enclosed link, join, or alt tags.
+  [
+    a:documentation [
+      "(target function) describes the function of each of the values of the "
+      ns1:code [ "@target" ]
+      " attribute of the enclosed "
+      ns1:code [ "<link>" ]
+      ", "
+      ns1:code [ "<join>" ]
+      ", or "
+      ns1:code [ "<alt>" ]
+      " tags."
+    ]
+  ]
   attribute targFunc {
     list {
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" },
@@ -1793,8 +1895,13 @@ att.scoping.attribute.target =
     list { xsd:anyURI+ }
   }?
 att.scoping.attribute.match =
-  
-  ## supplies an arbitrary XPath expression using the syntax defined in  which identifies a set of nodes, selected within the context identified by the target attribute if this is supplied, or within the context of the parent element if it is not.
+  [
+    a:documentation [
+      "supplies an arbitrary XPath expression using the syntax defined in  which identifies a set of nodes, selected within the context identified by the "
+      ns1:code [ "@target" ]
+      " attribute if this is supplied, or within the context of the parent element if it is not."
+    ]
+  ]
   attribute match { text }?
 att.segLike.attributes =
   att.metrical.attributes,
@@ -1836,13 +1943,13 @@ att.spanning.attribute.spanTo =
   ## indicates the end of a span initiated by the element bearing this attribute.
   attribute spanTo { xsd:anyURI }?
 sch:pattern [
-  id = "tei_all-att.spanning-spanTo-spanTo-2-constraint-rule-7"
+  id = "tei_all-att.spanning-spanTo-spanTo-2-constraint-rule-8"
   "\x{a}" ~
   "      "
   sch:rule [
     context = "tei:*[@spanTo]"
     "\x{a}" ~
-    "            "
+    "         "
     sch:assert [
       test =
         "id(substring(@spanTo,2)) and following::*[@xml:id=substring(current()/@spanTo,2)]"
@@ -1852,10 +1959,10 @@ sch:pattern [
       ") must follow the current element "
       sch:name [ ]
       "\x{a}" ~
-      "                  "
+      "         "
     ]
     "\x{a}" ~
-    "          "
+    "      "
   ]
   "\x{a}" ~
   "   "
@@ -1880,20 +1987,25 @@ att.styleDef.attribute.scheme =
       "other"
   }?
 att.styleDef.attribute.schemeVersion =
-  
-  ## supplies a version number for the style language provided in scheme.
+  [
+    a:documentation [
+      "supplies a version number for the style language provided in "
+      ns1:code [ "@scheme" ]
+      "."
+    ]
+  ]
   attribute schemeVersion {
     xsd:token { pattern = "[\d]+[a-z]*[\d]*(\.[\d]+[a-z]*[\d]*){0,3}" }
   }?
 sch:pattern [
   id =
-    "tei_all-att.styleDef-schemeVersion-schemeVersionRequiresScheme-constraint-rule-8"
+    "tei_all-att.styleDef-schemeVersion-schemeVersionRequiresScheme-constraint-rule-9"
   "\x{a}" ~
   "      "
   sch:rule [
     context = "tei:*[@schemeVersion]"
     "\x{a}" ~
-    "            "
+    "         "
     sch:assert [
       test = "@scheme and not(@scheme = 'free')"
       "\x{a}" ~
@@ -1901,7 +2013,7 @@ sch:pattern [
       "            "
     ]
     "\x{a}" ~
-    "          "
+    "      "
   ]
   "\x{a}" ~
   "   "
@@ -1992,14 +2104,24 @@ att.citing.attribute.unit =
     | xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
   }?
 att.citing.attribute.from =
-  
-  ## specifies the starting point of the range of units indicated by the unit attribute.
+  [
+    a:documentation [
+      "specifies the starting point of the range of units indicated by the "
+      ns1:code [ "@unit" ]
+      " attribute."
+    ]
+  ]
   attribute from {
     xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
   }?
 att.citing.attribute.to =
-  
-  ## specifies the end-point of the range of units indicated by the unit attribute.
+  [
+    a:documentation [
+      "specifies the end-point of the range of units indicated by the "
+      ns1:code [ "@unit" ]
+      " attribute."
+    ]
+  ]
   attribute to {
     xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
   }?
@@ -2528,7 +2650,17 @@ model.entryPart =
   | xr
   | re
 model.entryPart.top =
-  cit | dictScrap | form | gramGrp | def | etym | usg | lbl | xr | re
+  cit
+  | entry
+  | dictScrap
+  | form
+  | gramGrp
+  | def
+  | etym
+  | usg
+  | lbl
+  | xr
+  | re
 model.eventLike = event | listEvent
 model.global.edit =
   gap | app | witDetail | addSpan | damageSpan | delSpan | space
@@ -2888,6 +3020,7 @@ model.encodingDescPart =
   | listPrefixDef
   | classDecl
   | geoDecl
+  | unitDecl
   | appInfo
   | fsdDecl
   | transcriptionDesc
@@ -2915,6 +3048,16 @@ model.profileDescPart =
   | correspDesc
   | handNotes
   | listTranspose
+att.formula.attributes = att.formula.attribute.formula
+att.formula.attribute.formula =
+  [
+    a:documentation [
+      "An "
+      ns1:code [ "@formula" ]
+      " is provided to describe a mathematical calculation such as a conversion between measurement systems."
+    ]
+  ]
+  attribute formula { text }?
 model.correspActionPart =
   model.dateLike | model.addressLike | model.nameLike | note
 model.correspContextPart = model.ptrLike | model.pLike | note
@@ -2923,7 +3066,7 @@ att.partials.attributes = att.partials.attribute.extent
 att.partials.attribute.extent =
   
   ## indicates whether the pronunciation or orthography applies to all or part of a word.
-  ## Suggested values include: 1] full (full form) ; 2] pref (prefix) ; 3] suff (suffix) ; 4] inf (infix) ; 5] part (partial) 
+  ## Suggested values include: 1] full (full form); 2] pref (prefix); 3] suff (suffix); 4] inf (infix); 5] part (partial)
   attribute extent {
     
     ## (full form) 
@@ -2981,14 +3124,24 @@ att.milestoneUnit.attribute.unit =
   ## provides a conventional name for the kind of section changing at this milestone.
   ## Suggested values include: 1] page; 2] column; 3] line; 4] book; 5] poem; 6] canto; 7] speaker; 8] stanza; 9] act; 10] scene; 11] section; 12] absent; 13] unnumbered
   attribute unit {
-    
-    ## physical page breaks (synonymous with the pb element).
+    [
+      a:documentation [
+        "physical page breaks (synonymous with the "
+        ns1:code [ "<pb>" ]
+        " element)."
+      ]
+    ]
     "page"
     | 
       ## column breaks.
       "column"
-    | 
-      ## line breaks (synonymous with the lb element).
+    | [
+        a:documentation [
+          "line breaks (synonymous with the "
+          ns1:code [ "<lb>" ]
+          " element)."
+        ]
+      ]
       "line"
     | 
       ## any units termed book, liber, etc.
@@ -3236,7 +3389,7 @@ desc =
          sch:rule [
            context = "tei:desc[ @type eq 'deprecationInfo']"
            "\x{a}" ~
-           "	              "
+           "               "
            sch:assert [
              test = "../@validUntil"
              "Information about a\x{a}" ~
@@ -3574,6 +3727,7 @@ time =
     (text | model.gLike | model.phrase | model.global)*,
     att.global.attributes,
     att.datable.attributes,
+    att.canonical.attributes,
     att.duration.attributes,
     att.editLike.attributes,
     att.dimensions.attributes,
@@ -3677,7 +3831,7 @@ ref =
   
   ## contains any sequence of items organized as a list. [3.7. Lists]
   element tei:list {
-    ((model.divTop | model.global)*,
+    ((model.divTop | model.global | desc*)*,
      ((item, model.global*)+
       | (headLabel?,
          headItem?,
@@ -3691,7 +3845,7 @@ ref =
          sch:rule [
            context = "tei:list[@type='gloss']"
            "\x{a}" ~
-           "	              "
+           "               "
            sch:assert [
              test = "tei:label"
              'The content of a "gloss" list should include a sequence of one or more pairs of a label element followed by an item element'
@@ -3709,8 +3863,13 @@ ref =
     ## describes the nature of the items in the list.
     ## Suggested values include: 1] gloss; 2] index; 3] instructions; 4] litany; 5] syllogism
     attribute type {
-      
-      ## each list item glosses some term or concept, which is given by a label element preceding the list item.
+      [
+        a:documentation [
+          "each list item glosses some term or concept, which is given by a "
+          ns1:code [ "<label>" ]
+          " element preceding the list item."
+        ]
+      ]
       "gloss"
       | 
         ## each list item is an entry in an index such as the alphabetical topical index at the back of a print volume.
@@ -3849,8 +4008,13 @@ binaryObject =
     att.media.attributes,
     att.timed.attributes,
     att.typed.attributes,
-    
-    ## The encoding used to encode the binary data. If not specified, this is assumed to be Base64.
+    [
+      a:documentation [
+        "The encoding used to encode the binary data. If not specified, this is assumed to be "
+        ns1:a [ href = "http://en.wikipedia.org/wiki/Base64" "Base64" ]
+        "."
+      ]
+    ]
     attribute encoding {
       list {
         xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }+
@@ -4021,7 +4185,7 @@ title =
     att.datable.attributes,
     
     ## classifies the title according to some convenient typology.
-    ## Sample values include: 1] main; 2] sub (subordinate) ; 3] alt (alternate) ; 4] short; 5] desc (descriptive) 
+    ## Sample values include: 1] main; 2] sub (subordinate); 3] alt (alternate); 4] short; 5] desc (descriptive)
     attribute type {
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
     }?,
@@ -4134,6 +4298,7 @@ listBibl =
   ## (citation list) contains a list of bibliographic citations of any kind. [3.11.1. Methods of Encoding Bibliographic References and Lists of References 2.2.7. The Source Description 15.3.2. Declarable Elements]
   element tei:listBibl {
     (model.headLike*,
+     desc*,
      (model.biblLike | model.milestoneLike)+,
      (relation | listRelation)*),
     att.global.attributes,
@@ -4251,7 +4416,7 @@ lg =
              test =
                "count(descendant::tei:lg|descendant::tei:l|descendant::tei:gap) > 0"
              "An lg element\x{a}" ~
-             "        must contain at least one child l, lg or gap element."
+             "        must contain at least one child l, lg, or gap element."
            ]
            "\x{a}" ~
            "            "
@@ -4354,8 +4519,13 @@ stage =
     empty
   }
 teiCorpus =
-  
-  ## contains the whole of a TEI encoded corpus, comprising a single corpus header and one or more TEI elements, each containing a single text header and a text. [4. Default Text Structure 15.1. Varieties of Composite Text]
+  [
+    a:documentation [
+      "contains the whole of a TEI encoded corpus, comprising a single corpus header and one or more "
+      ns1:code [ "<TEI>" ]
+      " elements, each containing a single text header and a text. [4. Default Text Structure 15.1. Varieties of Composite Text]"
+    ]
+  ]
   element tei:teiCorpus {
     (teiHeader,
      ((model.resourceLike+, (TEI | teiCorpus)*)
@@ -4428,8 +4598,22 @@ att.linguistic.attribute.pos =
   ## (part of speech) indicates the part of speech assigned to a token (i.e. information on whether it is a noun, adjective, or verb), usually according to some official reference vocabulary (e.g. for German: STTS, for English: CLAWS, for Polish: NKJP, etc.).
   attribute pos { xsd:string }?
 att.linguistic.attribute.msd =
-  
-  ## (morphosyntactic description) supplies morphosyntactic information for a token, usually according to some official reference vocabulary (e.g. for German: STTS-large tagset; for a feature description system designed as (pragmatically) universal, see Universal Features).
+  [
+    a:documentation [
+      "(morphosyntactic description) supplies morphosyntactic information for a token, usually according to some official reference vocabulary (e.g. for German: "
+      ns1:a [
+        href =
+          "http://www.ims.uni-stuttgart.de/forschung/ressourcen/lexika/TagSets/stts-1999.pdf"
+        "STTS-large tagset"
+      ]
+      "; for a feature description system designed as (pragmatically) universal, see "
+      ns1:a [
+        href = "http://universaldependencies.org/u/feat/index.html"
+        "Universal Features"
+      ]
+      ")."
+    ]
+  ]
   attribute msd { xsd:string }?
 att.linguistic.attribute.join =
   
@@ -4453,8 +4637,13 @@ att.linguistic.attribute.join =
   }?
 att.global.analytic.attributes = att.global.analytic.attribute.ana
 att.global.analytic.attribute.ana =
-  
-  ## (analysis) indicates one or more elements containing interpretations of the element on which the ana attribute appears.
+  [
+    a:documentation [
+      "(analysis) indicates one or more elements containing interpretations of the element on which the "
+      ns1:code [ "@ana" ]
+      " attribute appears."
+    ]
+  ]
   attribute ana {
     list { xsd:anyURI+ }
   }?
@@ -4686,8 +4875,13 @@ span =
     att.global.attributes,
     att.interpLike.attributes,
     att.pointing.attributes,
-    
-    ## gives the identifier of the node which is the starting point of the span of text being annotated; if not accompanied by a to attribute, gives the identifier of the node of the entire span of text being annotated.
+    [
+      a:documentation [
+        "gives the identifier of the node which is the starting point of the span of text being annotated; if not accompanied by a "
+        ns1:code [ "@to" ]
+        " attribute, gives the identifier of the node of the entire span of text being annotated."
+      ]
+    ]
     attribute from { xsd:anyURI }?,
     
     ## gives the identifier of the node which is the end-point of the span of text being annotated.
@@ -4727,8 +4921,13 @@ precision =
     att.scoping.attributes,
     att.ranging.attributes,
     att.datable.attributes,
-    
-    ## characterizes the precision of the element or attribute pointed to by the precision element.
+    [
+      a:documentation [
+        "characterizes the precision of the element or attribute pointed to by the "
+        ns1:code [ "<precision>" ]
+        " element."
+      ]
+    ]
     attribute precision {
       
       ##
@@ -4779,8 +4978,13 @@ certainty =
     att.global.responsibility.attribute.resp,
     att.global.source.attribute.source,
     att.scoping.attributes,
-    
-    ## (certainty) signifies the degree of certainty associated with the object pointed to by the certainty element.
+    [
+      a:documentation [
+        "(certainty) signifies the degree of certainty associated with the object pointed to by the "
+        ns1:code [ "<certainty>" ]
+        " element."
+      ]
+    ]
     attribute cert {
       
       ##
@@ -4814,8 +5018,19 @@ certainty =
         ## uncertainty concerns the content (for an element) or the value (for an attribute)
         "value"
     },
-    
-    ## provides an alternative value for the aspect of the markup in question—an alternative generic identifier, transcription, or attribute value, or the identifier of an anchor element (to indicate an alternative starting or ending location). If an assertedValue is given, the confidence level specified by degree applies to the alternative markup specified by assertedValue; if none is given, it applies to the markup in the text.
+    [
+      a:documentation [
+        "provides an alternative value for the aspect of the markup in question—an alternative generic identifier, transcription, or attribute value, or the identifier of an "
+        ns1:code [ "<anchor>" ]
+        " element (to indicate an alternative starting or ending location). If an "
+        ns1:code [ "@assertedValue" ]
+        " is given, the confidence level specified by "
+        ns1:code [ "@degree" ]
+        " applies to the alternative markup specified by "
+        ns1:code [ "@assertedValue" ]
+        "; if none is given, it applies to the markup in the text."
+      ]
+    ]
     attribute assertedValue {
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
     }?,
@@ -4824,8 +5039,13 @@ certainty =
     attribute given {
       list { xsd:anyURI+ }
     }?,
-    
-    ## indicates the degree of confidence assigned to the aspect of the markup named by the locus attribute.
+    [
+      a:documentation [
+        "indicates the degree of confidence assigned to the aspect of the markup named by the "
+        ns1:code [ "@locus" ]
+        " attribute."
+      ]
+    ]
     attribute degree { xsd:double }?,
     empty
   }
@@ -4971,7 +5191,7 @@ domain =
     att.global.attributes,
     
     ## categorizes the domain of use.
-    ## Sample values include: 1] art; 2] domestic; 3] religious; 4] business; 5] education; 6] govt (government) ; 7] public
+    ## Sample values include: 1] art; 2] domestic; 3] religious; 4] business; 5] education; 6] govt (government); 7] public
     attribute type {
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
     }?,
@@ -5148,7 +5368,7 @@ att.entryLike.attributes =
 att.entryLike.attribute.type =
   
   ## indicates type of entry, in dictionaries with multiple types.
-  ## Suggested values include: 1] main; 2] hom (homograph) ; 3] xref (cross reference) ; 4] affix; 5] abbr (abbreviation) ; 6] supplemental; 7] foreign
+  ## Suggested values include: 1] main; 2] hom (homograph); 3] xref (cross reference); 4] affix; 5] abbr (abbreviation); 6] supplemental; 7] foreign
   [ a:defaultValue = "main" ]
   attribute type {
     
@@ -5205,8 +5425,13 @@ att.lexicographic.attribute.orig =
   ## (original) gives the original string or is the empty string when the element does not appear in the source text.
   attribute orig { xsd:string }?
 att.lexicographic.attribute.location =
-  
-  ## indicates an anchor element typically elsewhere in the document, but possibly in another document, which is the original location of this component.
+  [
+    a:documentation [
+      "indicates an "
+      ns1:code [ "<anchor>" ]
+      " element typically elsewhere in the document, but possibly in another document, which is the original location of this component."
+    ]
+  ]
   attribute location { xsd:anyURI }?
 att.lexicographic.attribute.mergedIn =
   
@@ -5428,9 +5653,14 @@ gram =
     macro.paraContent,
     att.global.attributes,
     att.lexicographic.attributes,
-    
-    ## classifies the grammatical information given according to some convenient typology—in the case of terminological information, preferably the dictionary of data element types specified in ISO 12620.
-    ## Sample values include: 1] pos (part of speech) ; 2] gen (gender) ; 3] num (number) ; 4] animate; 5] proper
+    [
+      a:documentation [
+        "classifies the grammatical information given according to some convenient typology—in the case of terminological information, preferably the dictionary of data element types specified in "
+        ns1:a [ href = "http://www.isocat.org/" "ISO 12620" ]
+        ".\x{a}" ~
+        "Sample values include: 1] pos (part of speech); 2] gen (gender); 3] num (number); 4] animate; 5] proper"
+      ]
+    ]
     attribute type {
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
     }?,
@@ -5506,8 +5736,21 @@ iType =
     empty
   }
 gramGrp =
-  
-  ## (grammatical information group) groups morpho-syntactic information about a lexical item, e.g. pos, gen, number, case, or iType (inflectional class). [9.3.2. Grammatical Information]
+  [
+    a:documentation [
+      "(grammatical information group) groups morpho-syntactic information about a lexical item, e.g. "
+      ns1:code [ "<pos>" ]
+      ", "
+      ns1:code [ "<gen>" ]
+      ", "
+      ns1:code [ "<number>" ]
+      ", "
+      ns1:code [ "<case>" ]
+      ", or "
+      ns1:code [ "<iType>" ]
+      " (inflectional class). [9.3.2. Grammatical Information]"
+    ]
+  ]
   element tei:gramGrp {
     (text
      | model.gLike
@@ -5595,7 +5838,7 @@ usg =
     att.lexicographic.attributes,
     
     ## classifies the usage information using any convenient typology.
-    ## Sample values include: 1] geo (geographic) ; 2] time; 3] dom (domain) ; 4] register; 5] style; 6] plev (preference level) ; 7] lang (language) ; 8] gram (grammatical) ; 9] syn (synonym) ; 10] hyper (hypernym) ; 11] colloc (collocation) ; 12] comp (complement) ; 13] obj (object) ; 14] subj (subject) ; 15] verb; 16] hint
+    ## Sample values include: 1] geo (geographic); 2] time; 3] dom (domain); 4] register; 5] style; 6] plev (preference level); 7] lang (language); 8] gram (grammatical); 9] syn (synonym); 10] hyper (hypernym); 11] colloc (collocation); 12] comp (complement); 13] obj (object); 14] subj (subject); 15] verb; 16] hint
     attribute type {
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
     }?,
@@ -5630,7 +5873,7 @@ xr =
     att.lexicographic.attributes,
     
     ## indicates the type of cross reference, using any convenient typology.
-    ## Sample values include: 1] syn (synonym) ; 2] etym (etymological) ; 3] cf (compare or consult) ; 4] illus (illustration) 
+    ## Sample values include: 1] syn (synonym); 2] etym (etymological); 3] cf (compare or consult); 4] illus (illustration)
     attribute type {
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
     }?,
@@ -5662,7 +5905,7 @@ oRef =
     att.notated.attributes,
     
     ## indicates the kind of typographic modification made to the headword in the reference.
-    ## Sample values include: 1] cap (capital) ; 2] noHyph (no hyphen) 
+    ## Sample values include: 1] cap (capital); 2] noHyph (no hyphen)
     attribute type {
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
     }?,
@@ -5734,8 +5977,13 @@ castList =
     empty
   }
 castGroup =
-  
-  ## (cast list grouping) groups one or more individual castItem elements within a cast list. [7.1.4. Cast Lists]
+  [
+    a:documentation [
+      "(cast list grouping) groups one or more individual "
+      ns1:code [ "<castItem>" ]
+      " elements within a cast list. [7.1.4. Cast Lists]"
+    ]
+  ]
   element tei:castGroup {
     ((model.global | model.headLike)*,
      ((castItem | castGroup | roleDesc), model.global*)+,
@@ -5817,14 +6065,19 @@ move =
     }?,
     
     ## specifies the direction of a stage movement.
-    ## Sample values include: 1] L (left) ; 2] R (right) ; 3] C (center) 
+    ## Sample values include: 1] L (left); 2] R (right); 3] C (center)
     attribute where {
       list {
         xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }+
       }
     }?,
-    
-    ## (performance) identifies the performance or performances in which this movement occurred as specified by pointing to one or more performance elements.
+    [
+      a:documentation [
+        "(performance) identifies the performance or performances in which this movement occurred as specified by pointing to one or more "
+        ns1:code [ "<performance>" ]
+        " elements."
+      ]
+    ]
     attribute perf {
       list { xsd:anyURI+ }
     }?,
@@ -5897,8 +6150,13 @@ tech =
         "block"
       | xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
     }?,
-    
-    ## (performance) points to one or more performance elements documenting the performance or performances to which this technical direction applies.
+    [
+      a:documentation [
+        "(performance) points to one or more "
+        ns1:code [ "<performance>" ]
+        " elements documenting the performance or performances to which this technical direction applies."
+      ]
+    ]
     attribute perf {
       list { xsd:anyURI+ }
     }?,
@@ -6073,8 +6331,13 @@ localName =
   ## (locally-defined property name) contains a locally defined name for some property. [5.2.1. Character Properties]
   element tei:localName { text, att.global.attributes, empty }
 mapping =
-  
-  ## (character mapping) contains one or more characters which are related to the parent character or glyph in some respect, as specified by the type attribute. [5.2. Markup Constructs for Representation of Characters and Glyphs]
+  [
+    a:documentation [
+      "(character mapping) contains one or more characters which are related to the parent character or glyph in some respect, as specified by the "
+      ns1:code [ "@type" ]
+      " attribute. [5.2. Markup Constructs for Representation of Characters and Glyphs]"
+    ]
+  ]
   element tei:mapping {
     macro.xtext, att.global.attributes, att.typed.attributes, empty
   }
@@ -6103,8 +6366,13 @@ att.patternReplacement.attribute.matchPattern =
   ## specifies a regular expression against which the values of other attributes can be matched.
   attribute matchPattern { xsd:token }
 att.patternReplacement.attribute.replacementPattern =
-  
-  ## specifies a replacement pattern, that is, the skeleton of a relative or absolute URI containing references to groups in the matchPattern which, once subpattern substitution has been performed, complete the URI.
+  [
+    a:documentation [
+      "specifies a replacement pattern, that is, the skeleton of a relative or absolute URI containing references to groups in the "
+      ns1:code [ "@matchPattern" ]
+      " which, once subpattern substitution has been performed, complete the URI."
+    ]
+  ]
   attribute replacementPattern { text }
 teiHeader =
   
@@ -6207,7 +6475,7 @@ authority =
   }
 idno =
   
-  ## (identifier) supplies any form of identifier used to identify some object, such as a bibliographic item, a person, a title, an organization, etc. in a standardized way. [2.2.4. Publication, Distribution, Licensing, etc. 2.2.5. The Series Statement 3.11.2.4. Imprint, Size of a Document, and Reprint Information]
+  ## (identifier) supplies any form of identifier used to identify some object, such as a bibliographic item, a person, a title, an organization, etc. in a standardized way. [13.3.1. Basic Principles 2.2.4. Publication, Distribution, Licensing, etc. 2.2.5. The Series Statement 3.11.2.4. Imprint, Size of a Document, and Reprint Information]
   element tei:idno {
     (text | model.gLike | idno)*,
     att.global.attributes,
@@ -6218,8 +6486,17 @@ idno =
     ## categorizes the identifier, for example as an ISBN, Social Security number, etc.
     ## Suggested values include: 1] ISBN; 2] ISSN; 3] DOI; 4] URI; 5] VIAF; 6] ESTC; 7] OCLC
     attribute type {
-      
-      ## International Standard Book Number: a 13- or (if assigned prior to 2007) 10-digit identifying number assigned by the publishing industry to a published book or similar item, registered with the International ISBN Agency.
+      [
+        a:documentation [
+          "International Standard Book Number: a 13- or (if assigned prior to 2007) 10-digit identifying number assigned by the publishing industry to a published book or similar item, registered with the "
+          ns1:a [
+            href = "https://www.isbn-international.org"
+            " International ISBN Agency."
+          ]
+          "\x{a}" ~
+          "                  "
+        ]
+      ]
       "ISBN"
       | 
         ## International Standard Serial Number: an eight-digit number to uniquely identify a serial publication.
@@ -6328,7 +6605,7 @@ encodingDesc =
   }
 schemaRef =
   
-  ## (schema reference) describes or points to a related customization or schema file [2.3.9. The Schema Specification]
+  ## (schema reference) describes or points to a related customization or schema file [2.3.10. The Schema Specification]
   element tei:schemaRef {
     model.descLike?,
     att.global.attributes,
@@ -6556,8 +6833,13 @@ tagsDecl =
   element tei:tagsDecl {
     (rendition*, \namespace*),
     att.global.attributes,
-    
-    ## indicates whether the element types listed exhaustively include all those found within text, or represent only a subset.
+    [
+      a:documentation [
+        "indicates whether the element types listed exhaustively include all those found within "
+        ns1:code [ "<text>" ]
+        ", or represent only a subset."
+      ]
+    ]
     attribute partial { xsd:boolean }?,
     empty
   }
@@ -6567,14 +6849,24 @@ tagUsage =
   element tei:tagUsage {
     macro.limitedContent,
     att.global.attributes,
-    
-    ## (generic identifier) specifies the name (generic identifier) of the element indicated by the tag, within the namespace indicated by the parent namespace element.
+    [
+      a:documentation [
+        "(generic identifier) specifies the name (generic identifier) of the element indicated by the tag, within the namespace indicated by the parent "
+        ns1:code [ "<namespace>" ]
+        " element."
+      ]
+    ]
     attribute gi { xsd:Name },
     
     ## specifies the number of occurrences of this element within the text.
     attribute occurs { xsd:nonNegativeInteger }?,
-    
-    ## (with unique identifier) specifies the number of occurrences of this element within the text which bear a distinct value for the global xml:id attribute.
+    [
+      a:documentation [
+        "(with unique identifier) specifies the number of occurrences of this element within the text which bear a distinct value for the global "
+        ns1:code [ "@xml:id" ]
+        " attribute."
+      ]
+    ]
     attribute withId { xsd:nonNegativeInteger }?,
     empty
   }
@@ -6602,8 +6894,13 @@ rendition =
     attribute scope {
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
     }?,
-    
-    ## contains a selector or series of selectors specifying the elements to which the contained style description applies, expressed in the language specified in the scheme attribute.
+    [
+      a:documentation [
+        "contains a selector or series of selectors specifying the elements to which the contained style description applies, expressed in the language specified in the "
+        ns1:code [ "@scheme" ]
+        " attribute."
+      ]
+    ]
     attribute selector { xsd:string }?,
     empty
   }
@@ -6653,7 +6950,9 @@ listPrefixDef =
   
   ## (list of prefix definitions) contains a list of definitions of prefixing schemes used in data.pointer values, showing how abbreviated URIs using each scheme may be expanded into full URIs. [16.2.3. Using Abbreviated Pointers]
   element tei:listPrefixDef {
-    (prefixDef | listPrefixDef)+, att.global.attributes, empty
+    (desc*, (prefixDef | listPrefixDef)+),
+    att.global.attributes,
+    empty
   }
 refState =
   
@@ -6695,23 +6994,33 @@ category =
     empty
   }
 catDesc =
-  
-  ## (category description) describes some category within a taxonomy or text typology, either in the form of a brief prose description or in terms of the situational parameters used by the TEI formal textDesc. [2.3.7. The Classification Declaration]
+  [
+    a:documentation [
+      "(category description) describes some category within a taxonomy or text typology, either in the form of a brief prose description or in terms of the situational parameters used by the TEI formal "
+      ns1:code [ "<textDesc>" ]
+      ". [2.3.7. The Classification Declaration]"
+    ]
+  ]
   element tei:catDesc {
     (text | model.limitedPhrase | model.catDescPart)*,
     att.global.attributes,
     empty
   }
 geoDecl =
-  
-  ## (geographic coordinates declaration) documents the notation and the datum used for geographic coordinates expressed as content of the geo element elsewhere within the document. [2.3.8. The Geographic Coordinates Declaration]
+  [
+    a:documentation [
+      "(geographic coordinates declaration) documents the notation and the datum used for geographic coordinates expressed as content of the "
+      ns1:code [ "<geo>" ]
+      " element elsewhere within the document. [2.3.8. The Geographic Coordinates Declaration]"
+    ]
+  ]
   element tei:geoDecl {
     macro.phraseSeq,
     att.global.attributes,
     att.declarable.attributes,
     
     ## supplies a commonly used code name for the datum employed.
-    ## Suggested values include: 1] WGS84 (World Geodetic System) ; 2] MGRS (Military Grid Reference System) ; 3] OSGB36 (ordnance survey great britain) ; 4] ED50 (European Datum coordinate system) 
+    ## Suggested values include: 1] WGS84 (World Geodetic System); 2] MGRS (Military Grid Reference System); 3] OSGB36 (ordnance survey great britain); 4] ED50 (European Datum coordinate system)
     [ a:defaultValue = "WGS84" ]
     attribute datum {
       
@@ -6730,15 +7039,62 @@ geoDecl =
     }?,
     empty
   }
+unitDecl =
+  
+  ## (unit declarations) provides information about units of measurement that are not members of the International System of Units. [2.3.9. The Unit Declaration]
+  element tei:unitDecl {
+    unitDef+,
+    att.canonical.attributes,
+    att.datable.attributes,
+    att.global.attributes,
+    empty
+  }
+unitDef =
+  
+  ## (unit definition) contains descriptive information related to a specific unit of measurement. [2.3.9. The Unit Declaration]
+  element tei:unitDef {
+    (model.labelLike | model.placeNamePart? | conversion? | unit?)+,
+    att.global.attributes,
+    att.datable.attributes,
+    att.canonical.attributes,
+    att.typed.attributes,
+    empty
+  }
+conversion =
+  
+  ## defines how to calculate one unit of measure in terms of another. [2.3.9. The Unit Declaration]
+  element tei:conversion {
+    empty,
+    att.global.attributes,
+    att.datable.attributes,
+    att.formula.attributes,
+    [
+      a:documentation [
+        "indicates a source unit of measure that is to be converted into another unit indicated in "
+        ns1:code [ "@toUnit" ]
+        "."
+      ]
+    ]
+    attribute fromUnit { xsd:anyURI },
+    [
+      a:documentation [
+        "the target unit of measurement for a conversion from a source unit referenced in "
+        ns1:code [ "@fromUnit" ]
+        "."
+      ]
+    ]
+    attribute toUnit { xsd:anyURI },
+    empty
+  }
 appInfo =
   
-  ## (application information) records information about an application which has edited the TEI file. [2.3.10. The Application Information Element]
+  ## (application information) records information about an application which has edited the TEI file. [2.3.11. The Application Information Element]
   element tei:appInfo {
     model.applicationLike+, att.global.attributes, empty
   }
 application =
   
-  ## provides information about an application which has acted upon the document. [2.3.10. The Application Information Element]
+  ## provides information about an application which has acted upon the document. [2.3.11. The Application Information Element]
   element tei:application {
     (model.labelLike+, (model.ptrLike* | model.pLike*)),
     att.global.attributes,
@@ -6801,8 +7157,15 @@ language =
   element tei:language {
     macro.phraseSeq.limited,
     att.global.attributes,
-    
-    ## (identifier) Supplies a language code constructed as defined in BCP 47 which is used to identify the language documented by this element, and which is referenced by the global xml:lang attribute.
+    [
+      a:documentation [
+        "(identifier) Supplies a language code constructed as defined in "
+        ns1:a [ href = "https://tools.ietf.org/html/bcp47" "BCP 47" ]
+        " which is used to identify the language documented by this element, and which is referenced by the global "
+        ns1:code [ "@xml:lang" ]
+        " attribute."
+      ]
+    ]
     attribute ident {
       xsd:language
       | (
@@ -6829,8 +7192,13 @@ keywords =
   element tei:keywords {
     (term+ | \list),
     att.global.attributes,
-    
-    ## identifies the controlled vocabulary within which the set of keywords concerned is defined, for example by a taxonomy element, or by some other resource.
+    [
+      a:documentation [
+        "identifies the controlled vocabulary within which the set of keywords concerned is defined, for example by a "
+        ns1:code [ "<taxonomy>" ]
+        " element, or by some other resource."
+      ]
+    ]
     attribute scheme { xsd:anyURI }?,
     empty
   }
@@ -6840,8 +7208,13 @@ classCode =
   element tei:classCode {
     macro.phraseSeq.limited,
     att.global.attributes,
-    
-    ## identifies the classification system in use, as defined by, e.g. a taxonomy element, or some other resource.
+    [
+      a:documentation [
+        "identifies the classification system in use, as defined by, e.g. a "
+        ns1:code [ "<taxonomy>" ]
+        " element, or some other resource."
+      ]
+    ]
     attribute scheme { xsd:anyURI },
     empty
   }
@@ -6852,8 +7225,13 @@ catRef =
     empty,
     att.global.attributes,
     att.pointing.attributes,
-    
-    ## identifies the classification scheme within which the set of categories concerned is defined, for example by a taxonomy element, or by some other resource.
+    [
+      a:documentation [
+        "identifies the classification scheme within which the set of categories concerned is defined, for example by a "
+        ns1:code [ "<taxonomy>" ]
+        " element, or by some other resource."
+      ]
+    ]
     attribute scheme { xsd:anyURI }?,
     empty
   }
@@ -6965,20 +7343,27 @@ listChange =
   
   ## groups a number of change descriptions associated with either the creation of a source text or the revision of an encoded text. [2.6. The Revision Description 11.7. Identifying Changes and Revisions]
   element tei:listChange {
-    (listChange | change)+,
+    (desc*, (listChange | change)+),
     att.global.attributes,
     att.sortable.attributes,
     att.typed.attributes,
-    
-    ## indicates whether the ordering of its child change elements is to be considered significant or not
-    [ a:defaultValue = "true" ] attribute ordered { xsd:boolean }?,
+    [
+      a:defaultValue = "true"
+      a:documentation [
+        "indicates whether the ordering of its child "
+        ns1:code [ "<change>" ]
+        " elements is to be considered significant or not"
+      ]
+    ]
+    attribute ordered { xsd:boolean }?,
     empty
   }
+model.fsdDeclPart = fsDecl | fsdLink | fLib | fvLib
 fsdDecl =
   
   ## (feature system declaration) provides a feature system declaration comprising one or more feature structure declarations or feature structure declaration links. [18.11. Feature System Declaration]
   element tei:fsdDecl {
-    (fsDecl | fsdLink)+, att.global.attributes, empty
+    model.fsdDeclPart+, att.global.attributes, empty
   }
 fsDecl =
   
@@ -6991,8 +7376,15 @@ fsDecl =
     attribute type {
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
     },
-    
-    ## gives the name of one or more typed feature structures from which this type inherits feature specifications and constraints; if this type includes a feature specification with the same name as that of any of those specified by this attribute, or if more than one specification of the same name is inherited, then the set of possible values is defined by unification. Similarly, the set of constraints applicable is derived by combining those specified explicitly within this element with those implied by the baseTypes attribute. When no baseTypes attribute is specified, no feature specification or constraint is inherited.
+    [
+      a:documentation [
+        "gives the name of one or more typed feature structures from which this type inherits feature specifications and constraints; if this type includes a feature specification with the same name as that of any of those specified by this attribute, or if more than one specification of the same name is inherited, then the set of possible values is defined by unification. Similarly, the set of constraints applicable is derived by combining those specified explicitly within this element with those implied by the "
+        ns1:code [ "@baseTypes" ]
+        " attribute. When no "
+        ns1:code [ "@baseTypes" ]
+        " attribute is specified, no feature specification or constraint is inherited."
+      ]
+    ]
     attribute baseTypes {
       list { xsd:Name+ }
     }?,
@@ -7010,13 +7402,23 @@ fsdLink =
   element tei:fsdLink {
     empty,
     att.global.attributes,
-    
-    ## identifies the type of feature structure to be documented; this will be the value of the type attribute on at least one feature structure.
+    [
+      a:documentation [
+        "identifies the type of feature structure to be documented; this will be the value of the "
+        ns1:code [ "@type" ]
+        " attribute on at least one feature structure."
+      ]
+    ]
     attribute type {
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
     },
-    
-    ## supplies a pointer to a feature structure declaration (fsDecl) element within the current document or elsewhere.
+    [
+      a:documentation [
+        "supplies a pointer to a feature structure declaration ("
+        ns1:code [ "<fsDecl>" ]
+        ") element within the current document or elsewhere."
+      ]
+    ]
     attribute target { xsd:anyURI },
     empty
   }
@@ -7026,8 +7428,15 @@ fDecl =
   element tei:fDecl {
     (fDescr?, vRange, vDefault?),
     att.global.attributes,
-    
-    ## a single word which follows the rules defining a legal XML name (see ), indicating the name of the feature being declared; matches the name attribute of f elements in the text.
+    [
+      a:documentation [
+        "a single word which follows the rules defining a legal XML name (see ), indicating the name of the feature being declared; matches the "
+        ns1:code [ "@name" ]
+        " attribute of "
+        ns1:code [ "<f>" ]
+        " elements in the text."
+      ]
+    ]
     attribute name { xsd:Name },
     
     ## indicates whether or not the value of this feature may be present.
@@ -7041,12 +7450,40 @@ fDescr =
     macro.limitedContent, att.global.attributes, empty
   }
 vRange =
-  
-  ## (value range) defines the range of allowed values for a feature, in the form of an fs, vAlt, or primitive value; for the value of an f to be valid, it must be subsumed by the specified range; if the f contains multiple values (as sanctioned by the org attribute), then each value must be subsumed by the vRange. [18.11. Feature System Declaration]
+  [
+    a:documentation [
+      "(value range) defines the range of allowed values for a feature, in the form of an "
+      ns1:code [ "<fs>" ]
+      ", "
+      ns1:code [ "<vAlt>" ]
+      ", or primitive value; for the value of an "
+      ns1:code [ "<f>" ]
+      " to be valid, it must be subsumed by the specified range; if the "
+      ns1:code [ "<f>" ]
+      " contains multiple values (as sanctioned by the "
+      ns1:code [ "@org" ]
+      " attribute), then each value must be subsumed by the "
+      ns1:code [ "<vRange>" ]
+      ". [18.11. Feature System Declaration]"
+    ]
+  ]
   element tei:vRange { model.featureVal, att.global.attributes, empty }
 vDefault =
-  
-  ## (value default) declares the default value to be supplied when a feature structure does not contain an instance of f for this name; if unconditional, it is specified as one (or, depending on the value of the org attribute of the enclosing fDecl) more fs elements or primitive values; if conditional, it is specified as one or more if elements; if no default is specified, or no condition matches, the value none is assumed. [18.11. Feature System Declaration]
+  [
+    a:documentation [
+      "(value default) declares the default value to be supplied when a feature structure does not contain an instance of "
+      ns1:code [ "<f>" ]
+      " for this name; if unconditional, it is specified as one (or, depending on the value of the "
+      ns1:code [ "@org" ]
+      " attribute of the enclosing "
+      ns1:code [ "<fDecl>" ]
+      ") more "
+      ns1:code [ "<fs>" ]
+      " elements or primitive values; if conditional, it is specified as one or more "
+      ns1:code [ "<if>" ]
+      " elements; if no default is specified, or no condition matches, the value none is assumed. [18.11. Feature System Declaration]"
+    ]
+  ]
   element tei:vDefault {
     (model.featureVal+ | if+), att.global.attributes, empty
   }
@@ -7059,8 +7496,15 @@ if =
     empty
   }
 then =
-  
-  ## separates the condition from the default in an if, or the antecedent and the consequent in a cond element. [18.11. Feature System Declaration]
+  [
+    a:documentation [
+      "separates the condition from the default in an "
+      ns1:code [ "<if>" ]
+      ", or the antecedent and the consequent in a "
+      ns1:code [ "<cond>" ]
+      " element. [18.11. Feature System Declaration]"
+    ]
+  ]
   element tei:then { empty, att.global.attributes, empty }
 fsConstraints =
   
@@ -7085,8 +7529,13 @@ bicond =
     empty
   }
 iff =
-  
-  ## (if and only if) separates the condition from the consequence in a bicond element. [18.11. Feature System Declaration]
+  [
+    a:documentation [
+      "(if and only if) separates the condition from the consequence in a "
+      ns1:code [ "<bicond>" ]
+      " element. [18.11. Feature System Declaration]"
+    ]
+  ]
   element tei:iff { empty, att.global.attributes, empty }
 fs =
   
@@ -7158,8 +7607,13 @@ numeric =
     empty,
     att.global.attributes,
     att.datcat.attributes,
-    
-    ## supplies a lower bound for the numeric value represented, and also (if max is not supplied) its upper bound.
+    [
+      a:documentation [
+        "supplies a lower bound for the numeric value represented, and also (if "
+        ns1:code [ "@max" ]
+        " is not supplied) its upper bound."
+      ]
+    ]
     attribute value {
       xsd:double
       | xsd:token { pattern = "(\-?[\d]+/\-?[\d]+)" }
@@ -7232,8 +7686,13 @@ vNot =
   ## (value negation) represents a feature value which is the negation of its content. [18.8.2. Negation]
   element tei:vNot { model.featureVal, att.global.attributes, empty }
 vMerge =
-  
-  ## (merged collection of values) represents a feature value which is the result of merging together the feature values contained by its children, using the organization specified by the org attribute. [18.8.3. Collection of Values]
+  [
+    a:documentation [
+      "(merged collection of values) represents a feature value which is the result of merging together the feature values contained by its children, using the organization specified by the "
+      ns1:code [ "@org" ]
+      " attribute. [18.8.3. Collection of Values]"
+    ]
+  ]
   element tei:vMerge {
     model.featureVal+,
     att.global.attributes,
@@ -7253,8 +7712,13 @@ vMerge =
     empty
   }
 fLib =
-  
-  ## (feature library) assembles a library of f (feature) elements. [18.4. Feature Libraries and Feature-Value Libraries]
+  [
+    a:documentation [
+      "(feature library) assembles a library of "
+      ns1:code [ "<f>" ]
+      " (feature) elements. [18.4. Feature Libraries and Feature-Value Libraries]"
+    ]
+  ]
   element tei:fLib { f+, att.global.attributes, empty }
 fvLib =
   
@@ -7440,9 +7904,16 @@ when =
       | xsd:time
       | xsd:dateTime
     }?,
-    
-    ## specifies the unit of time in which the interval value is expressed, if this is not inherited from the parent timeline.
-    ## Suggested values include: 1] d (days) ; 2] h (hours) ; 3] min (minutes) ; 4] s (seconds) ; 5] ms (milliseconds) 
+    [
+      a:documentation [
+        "specifies the unit of time in which the "
+        ns1:code [ "@interval" ]
+        " value is expressed, if this is not inherited from the parent "
+        ns1:code [ "<timeline>" ]
+        ".\x{a}" ~
+        "Suggested values include: 1] d (days); 2] h (hours); 3] min (minutes); 4] s (seconds); 5] ms (milliseconds)"
+      ]
+    ]
     attribute unit {
       
       ## (days) 
@@ -7475,8 +7946,13 @@ when =
            ##
            "unknown")
     }?,
-    
-    ## identifies the reference point for determining the time of the current when element, which is obtained by adding the interval to the time of the reference point.
+    [
+      a:documentation [
+        "identifies the reference point for determining the time of the current "
+        ns1:code [ "<when>" ]
+        " element, which is obtained by adding the interval to the time of the reference point."
+      ]
+    ]
     attribute since { xsd:anyURI }?,
     empty
   }
@@ -7489,9 +7965,14 @@ timeline =
     
     ## designates the origin of the timeline, i.e. the time at which it begins.
     attribute origin { xsd:anyURI }?,
-    
-    ## specifies the unit of time corresponding to the interval value of the timeline or of its constituent points in time.
-    ## Suggested values include: 1] d (days) ; 2] h (hours) ; 3] min (minutes) ; 4] s (seconds) ; 5] ms (milliseconds) 
+    [
+      a:documentation [
+        "specifies the unit of time corresponding to the "
+        ns1:code [ "@interval" ]
+        " value of the timeline or of its constituent points in time.\x{a}" ~
+        "Suggested values include: 1] d (days); 2] h (hours); 3] min (minutes); 4] s (seconds); 5] ms (milliseconds)"
+      ]
+    ]
     attribute unit {
       
       ## (days) 
@@ -7563,24 +8044,46 @@ join =
     ## indicates whether the targets to be joined include the entire element indicated (the entire subtree including its root), or just the children of the target (the branches of the subtree).
     [ a:defaultValue = "root" ]
     attribute scope {
-      
-      ## the rooted subtrees indicated by the target attribute are joined, each subtree become a child of the virtual element created by the join
+      [
+        a:documentation [
+          "the rooted subtrees indicated by the "
+          ns1:code [ "@target" ]
+          " attribute are joined, each subtree become a child of the virtual element created by the join"
+        ]
+      ]
       "root"
-      | 
-        ## the children of the subtrees indicated by the target attribute become the children of the virtual element (i.e. the roots of the subtrees are discarded)
+      | [
+          a:documentation [
+            "the children of the subtrees indicated by the "
+            ns1:code [ "@target" ]
+            " attribute become the children of the virtual element (i.e. the roots of the subtrees are discarded)"
+          ]
+        ]
         "branches"
     }?,
     empty
   }
 joinGrp =
-  
-  ## (join group) groups a collection of join elements and possibly pointers. [16.7. Aggregation]
+  [
+    a:documentation [
+      "(join group) groups a collection of "
+      ns1:code [ "<join>" ]
+      " elements and possibly pointers. [16.7. Aggregation]"
+    ]
+  ]
   element tei:joinGrp {
     (model.glossLike*, (join | ptr)+),
     att.global.attributes,
     att.pointing.group.attributes,
-    
-    ## supplies the default value for the result on each join included within the group.
+    [
+      a:documentation [
+        "supplies the default value for the "
+        ns1:code [ "@result" ]
+        " on each "
+        ns1:code [ "<join>" ]
+        " included within the group."
+      ]
+    ]
     attribute result { xsd:Name }?,
     empty
   }
@@ -7608,16 +8111,28 @@ alt =
         ## (inclusive) indicates that the alternation is not exclusive, i.e. that one or more of the alternatives occur.
         "incl"
     }?,
-    
-    ## If mode is excl, each weight states the probability that the corresponding alternative occurs. If mode is incl each weight states the probability that the corresponding alternative occurs given that at least one of the other alternatives occurs.
+    [
+      a:documentation [
+        "If "
+        ns1:code [ "@mode" ]
+        " is excl, each weight states the probability that the corresponding alternative occurs. If "
+        ns1:code [ "@mode" ]
+        " is incl each weight states the probability that the corresponding alternative occurs given that at least one of the other alternatives occurs."
+      ]
+    ]
     attribute weights {
       list { xsd:double, xsd:double, xsd:double* }
     }?,
     empty
   }
 altGrp =
-  
-  ## (alternation group) groups a collection of alt elements and possibly pointers. [16.8. Alternation]
+  [
+    a:documentation [
+      "(alternation group) groups a collection of "
+      ns1:code [ "<alt>" ]
+      " elements and possibly pointers. [16.8. Alternation]"
+    ]
+  ]
   element tei:altGrp {
     (alt | ptr)*,
     att.global.attributes,
@@ -7796,19 +8311,24 @@ dim =
   }
 height =
   
-  ## contains a measurement measured along the axis at right angles to the bottom of the written surface, i.e. parallel to the spine for a codex or book. [10.3.4. Dimensions]
+  ## contains a measurement measured along the axis at a right angle to the bottom of the object. [10.3.4. Dimensions]
   element tei:height {
     macro.xtext, att.global.attributes, att.dimensions.attributes, empty
   }
 depth =
-  
-  ## contains a measurement measured across the spine of a book or codex, or (for other text-bearing objects) perpendicular to the measurement given by the width element. [10.3.4. Dimensions]
+  [
+    a:documentation [
+      "contains a measurement from the front to the back of an object, perpendicular to the measurement given by the "
+      ns1:code [ "<width>" ]
+      " element. [10.3.4. Dimensions]"
+    ]
+  ]
   element tei:depth {
     macro.xtext, att.global.attributes, att.dimensions.attributes, empty
   }
 width =
   
-  ## contains a measurement measured along the axis parallel to the bottom of the written surface, i.e. perpendicular to the spine of a book or codex. [10.3.4. Dimensions]
+  ## contains a measurement of an object along the axis parallel to its bottom, e.g. perpendicular to the spine of a book or codex. [10.3.4. Dimensions]
   element tei:width {
     macro.xtext, att.global.attributes, att.dimensions.attributes, empty
   }
@@ -7824,8 +8344,13 @@ locus =
     att.global.attributes,
     att.pointing.attributes,
     att.typed.attributes,
-    
-    ## identifies the foliation scheme in terms of which the location is being specified by pointing to some foliation element defining it, or to some other equivalent resource.
+    [
+      a:documentation [
+        "identifies the foliation scheme in terms of which the location is being specified by pointing to some "
+        ns1:code [ "<foliation>" ]
+        " element defining it, or to some other equivalent resource."
+      ]
+    ]
     attribute scheme { xsd:anyURI }?,
     
     ## specifies the starting point of the location in a normalized form, typically a page number.
@@ -7845,8 +8370,13 @@ locusGrp =
   element tei:locusGrp {
     locus+,
     att.global.attributes,
-    
-    ## identifies the foliation scheme in terms of which all the locations contained by the group are specified by pointing to some foliation element defining it, or to some other equivalent resource.
+    [
+      a:documentation [
+        "identifies the foliation scheme in terms of which all the locations contained by the group are specified by pointing to some "
+        ns1:code [ "<foliation>" ]
+        " element defining it, or to some other equivalent resource."
+      ]
+    ]
     attribute scheme { xsd:anyURI }?,
     empty
   }
@@ -8207,7 +8737,7 @@ supportDesc =
     att.global.attributes,
     
     ## a short project-defined name for the material composing the majority of the support
-    ## Suggested values include: 1] paper; 2] parch (parchment) ; 3] mixed
+    ## Suggested values include: 1] paper; 2] parch (parchment); 3] mixed
     attribute material {
       
       ##
@@ -8325,8 +8855,13 @@ musicNotation =
     macro.specialPara, att.global.attributes, empty
   }
 decoDesc =
-  
-  ## (decoration description) contains a description of the decoration of a manuscript or other object, either as in paragraphs, or as one or more decoNote elements. [10.7.3. Bindings, Seals, and Additional Material]
+  [
+    a:documentation [
+      "(decoration description) contains a description of the decoration of a manuscript or other object, either as in paragraphs, or as one or more "
+      ns1:code [ "<decoNote>" ]
+      " elements. [10.7.3. Bindings, Seals, and Additional Material]"
+    ]
+  ]
   element tei:decoDesc {
     (model.pLike+ | (summary?, decoNote+)),
     att.global.attributes,
@@ -8348,8 +8883,13 @@ additions =
     macro.specialPara, att.global.attributes, empty
   }
 bindingDesc =
-  
-  ## (binding description) describes the present and former bindings of a manuscript or other object, either as a series of paragraphs or as a series of distinct binding elements, one for each binding of the manuscript. [10.7.3.1. Binding Descriptions]
+  [
+    a:documentation [
+      "(binding description) describes the present and former bindings of a manuscript or other object, either as a series of paragraphs or as a series of distinct "
+      ns1:code [ "<binding>" ]
+      " elements, one for each binding of the manuscript. [10.7.3.1. Binding Descriptions]"
+    ]
+  ]
   element tei:bindingDesc {
     ((model.pLike | decoNote | condition)+ | binding+),
     att.global.attributes,
@@ -8376,8 +8916,13 @@ binding =
     empty
   }
 sealDesc =
-  
-  ## (seal description) describes the seals or similar items related to the object described, either as a series of paragraphs or as a series of seal elements. [10.7.3.2. Seals]
+  [
+    a:documentation [
+      "(seal description) describes the seals or similar items related to the object described, either as a series of paragraphs or as a series of "
+      ns1:code [ "<seal>" ]
+      " elements. [10.7.3.2. Seals]"
+    ]
+  ]
   element tei:sealDesc {
     (model.pLike+
      | (summary?, (decoNote | seal | condition)+)),
@@ -8513,7 +9058,7 @@ msPart =
   }
 msFrag =
   
-  ## (manuscript fragment) contains information about a fragment of a scattered manuscript now held as a single unit or bound into a larger manuscript. [10.11. Manuscript Fragments]
+  ## (manuscript fragment) contains information about a fragment described in relation to a prior context, typically as a description of a virtual reconstruction of a manuscript or other object whose fragments were catalogued separately [10.11. Manuscript Fragments]
   element tei:msFrag {
     ((altIdentifier | msIdentifier),
      model.headLike*,
@@ -8575,8 +9120,13 @@ att.datable.custom.attribute.datingPoint =
   ## supplies a pointer to some location defining a named point in time with reference to which the datable item is understood to have occurred
   attribute datingPoint { xsd:anyURI }?
 att.datable.custom.attribute.datingMethod =
-  
-  ## supplies a pointer to a calendar element or other means of interpreting the values of the custom dating attributes.
+  [
+    a:documentation [
+      "supplies a pointer to a "
+      ns1:code [ "<calendar>" ]
+      " element or other means of interpreting the values of the custom dating attributes."
+    ]
+  ]
   attribute datingMethod { xsd:anyURI }?
 model.persNamePart =
   surname | forename | genName | nameLink | addName | roleName
@@ -8881,7 +9431,7 @@ age =
     att.dimensions.attributes,
     
     ## @type may take multiple values, space delimited. Each value is an idref or a name, pointing to a vocabulary item that provides the IRIs, names, and descriptions of the textual division.
-    ## Sample values include: 1] western; 2] sui; 3] subjective; 4] objective; 5] inWorld (in world) ; 6] chronological; 7] biological; 8] psychological; 9] functional
+    ## Sample values include: 1] western; 2] sui; 3] subjective; 4] objective; 5] inWorld (in world); 6] chronological; 7] biological; 8] psychological; 9] functional
     attribute type {
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
     }?,
@@ -8903,7 +9453,7 @@ birth =
     att.typed.attribute.subtype,
     
     ## @type may take multiple values, space delimited. Each value is an idref or a name, pointing to a vocabulary item that provides the IRIs, names, and descriptions of the textual division.
-    ## Sample values include: 1] caesarean (caesarean section) ; 2] vaginal (vaginal delivery) ; 3] exNihilo (ex nihilo) ; 4] incorporated; 5] founded; 6] established
+    ## Sample values include: 1] caesarean (caesarean section); 2] vaginal (vaginal delivery); 3] exNihilo (ex nihilo); 4] incorporated; 5] founded; 6] established
     attribute type {
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
     }?,
@@ -8966,9 +9516,10 @@ event =
   
   ## contains data relating to any kind of significant event associated with a person, place, or organization. [13.3.1. Basic Principles]
   element tei:event {
-    (model.headLike*,
+    (idno*,
+     model.headLike*,
      (model.pLike+ | model.labelLike+),
-     (model.noteLike | model.biblLike | linkGrp | link)*,
+     (model.noteLike | model.biblLike | linkGrp | link | idno | ptr)*,
      event*),
     att.global.attributes,
     att.datable.attributes,
@@ -8976,8 +9527,13 @@ event =
     att.typed.attributes,
     att.naming.attributes,
     att.sortable.attributes,
-    
-    ## indicates the location of an event by pointing to a place element
+    [
+      a:documentation [
+        "indicates the location of an event by pointing to a "
+        ns1:code [ "<place>" ]
+        " element"
+      ]
+    ]
     attribute where { xsd:anyURI }?,
     empty
   }
@@ -9017,8 +9573,13 @@ geo =
     text, att.global.attributes, att.declaring.attributes, empty
   }
 langKnowledge =
-  
-  ## (language knowledge) summarizes the state of a person's linguistic knowledge, either as prose or by a list of langKnown elements. [13.3.2.1. Personal Characteristics]
+  [
+    a:documentation [
+      "(language knowledge) summarizes the state of a person's linguistic knowledge, either as prose or by a list of "
+      ns1:code [ "<langKnown>" ]
+      " elements. [13.3.2.1. Personal Characteristics]"
+    ]
+  ]
   element tei:langKnowledge {
     (precision*, (model.pLike | langKnown+)),
     att.global.attributes,
@@ -9070,7 +9631,10 @@ listOrg =
   
   ## (list of organizations) contains a list of elements, each of which provides information about an identifiable organization. [13.2.2. Organizational Names]
   element tei:listOrg {
-    (model.headLike*, (org | listOrg)+, (relation | listRelation)*),
+    (model.headLike*,
+     desc*,
+     (org | listOrg)+,
+     (relation | listRelation)*),
     att.global.attributes,
     att.typed.attributes,
     att.declarable.attributes,
@@ -9081,7 +9645,10 @@ listEvent =
   
   ## (list of events) contains a list of descriptions, each of which provides information about an identifiable event. [13.3.1. Basic Principles]
   element tei:listEvent {
-    (model.headLike*, model.eventLike+, (relation | listRelation)*),
+    (model.headLike*,
+     desc*,
+     model.eventLike+,
+     (relation | listRelation)*),
     att.global.attributes,
     att.typed.attributes,
     att.declarable.attributes,
@@ -9093,6 +9660,7 @@ listPerson =
   ## (list of persons) contains a list of descriptions, each of which provides information about an identifiable person or a group of people, for example the participants in a language interaction, or the people referred to in a historical source. [13.3.2. The Person Element 15.2. Contextual Information 2.4. The Profile Description 15.3.2. Declarable Elements]
   element tei:listPerson {
     (model.headLike*,
+     desc*,
      (model.personLike | listPerson)+,
      (relation | listRelation)*),
     att.global.attributes,
@@ -9106,6 +9674,7 @@ listPlace =
   ## (list of places) contains a list of places, optionally followed by a list of relationships (other than containment) defined amongst them. [2.2.7. The Source Description 13.3.4. Places]
   element tei:listPlace {
     (model.headLike*,
+     desc*,
      (model.placeLike | listPlace)+,
      (relation | listRelation)*),
     att.global.attributes,
@@ -9166,11 +9735,21 @@ occupation =
     attribute type {
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
     }?,
-    
-    ## indicates the classification system or taxonomy in use, for example by supplying the identifier of a taxonomy element, or pointing to some other resource.
+    [
+      a:documentation [
+        "indicates the classification system or taxonomy in use, for example by supplying the identifier of a "
+        ns1:code [ "<taxonomy>" ]
+        " element, or pointing to some other resource."
+      ]
+    ]
     attribute scheme { xsd:anyURI }?,
-    
-    ## identifies an occupation code defined within the classification system or taxonomy defined by the scheme attribute.
+    [
+      a:documentation [
+        "identifies an occupation code defined within the classification system or taxonomy defined by the "
+        ns1:code [ "@scheme" ]
+        " attribute."
+      ]
+    ]
     attribute code { xsd:anyURI }?,
     empty
   }
@@ -9185,7 +9764,7 @@ org =
          | model.placeLike
          | model.orgPart
          | model.milestoneLike)*),
-     (model.noteLike | model.biblLike | linkGrp | link)*,
+     (model.noteLike | model.biblLike | linkGrp | link | ptr)*,
      model.personLike*),
     att.global.attributes,
     att.typed.attributes,
@@ -9205,6 +9784,7 @@ listRelation =
   ## provides information about relationships identified amongst people, places, and organizations, either informally as prose or as formally expressed relation links. [13.3.2.3. Personal Relationships]
   element tei:listRelation {
     (model.headLike*,
+     desc*,
      (model.pLike | (relation | listRelation)+)),
     att.global.attributes,
     att.typed.attributes,
@@ -9215,7 +9795,7 @@ person =
   
   ## provides information about an identifiable individual, for example a participant in a language interaction, or a person referred to in a historical source. [13.3.2. The Person Element 15.2.2. The Participant Description]
   element tei:person {
-    (model.pLike+ | (model.personPart | model.global)*),
+    (model.pLike+ | (model.personPart | model.global | ptr)*),
     att.global.attributes,
     att.editLike.attributes,
     att.sortable.attributes,
@@ -9309,7 +9889,7 @@ place =
     (model.headLike*,
      (model.pLike*
       | (model.labelLike | model.placeStateLike | model.eventLike)*),
-     (model.noteLike | model.biblLike | idno | linkGrp | link)*,
+     (model.noteLike | model.biblLike | idno | ptr | linkGrp | link)*,
      (model.placeLike | listPlace)*),
     att.global.attributes,
     att.typed.attributes,
@@ -9479,11 +10059,21 @@ socecStatus =
     attribute type {
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
     }?,
-    
-    ## identifies the classification system or taxonomy in use, for example by pointing to a locally-defined taxonomy element or by supplying a URI for an externally-defined system.
+    [
+      a:documentation [
+        "identifies the classification system or taxonomy in use, for example by pointing to a locally-defined "
+        ns1:code [ "<taxonomy>" ]
+        " element or by supplying a URI for an externally-defined system."
+      ]
+    ]
     attribute scheme { xsd:anyURI }?,
-    
-    ## identifies a status code defined within the classification system or taxonomy defined by the scheme attribute.
+    [
+      a:documentation [
+        "identifies a status code defined within the classification system or taxonomy defined by the "
+        ns1:code [ "@scheme" ]
+        " attribute."
+      ]
+    ]
     attribute code { xsd:anyURI }?,
     empty
   }
@@ -9572,7 +10162,10 @@ listObject =
   
   ## (list of objects) contains a list of descriptions, each of which provides information about an identifiable physical object. [13.3.5. Objects]
   element tei:listObject {
-    (model.headLike*, model.objectLike+, (relation | listRelation)*),
+    (model.headLike*,
+     desc*,
+     model.objectLike+,
+     (relation | listRelation)*),
     att.global.attributes,
     att.typed.attributes,
     att.declarable.attributes,
@@ -9618,7 +10211,7 @@ nym =
   
   ## (canonical name) contains the definition for a canonical name or name component of any kind. [13.3.6. Names and Nyms]
   element tei:nym {
-    (model.entryPart*, model.pLike*, nym*),
+    (idno*, model.entryPart*, model.pLike*, nym*),
     att.global.attributes,
     att.typed.attributes,
     att.sortable.attributes,
@@ -9633,7 +10226,10 @@ listNym =
   
   ## (list of canonical names) contains a list of nyms, that is, standardized names for any thing. [13.3.6. Names and Nyms]
   element tei:listNym {
-    (model.headLike*, (nym | listNym)+, (relation | listRelation)*),
+    (model.headLike*,
+     desc*,
+     (nym | listNym)+,
+     (relation | listRelation)*),
     att.global.attributes,
     att.typed.attributes,
     att.declarable.attributes,
@@ -9847,8 +10443,13 @@ leaf =
     empty
   }
 eTree =
-  
-  ## (embedding tree) provides an alternative to the tree element for representing ordered rooted tree structures. [19.3. Another Tree Notation]
+  [
+    a:documentation [
+      "(embedding tree) provides an alternative to the "
+      ns1:code [ "<tree>" ]
+      " element for representing ordered rooted tree structures. [19.3. Another Tree Notation]"
+    ]
+  ]
   element tei:eTree {
     (label?, (eTree | triangle | eLeaf | model.ptrLike)*),
     att.global.attributes,
@@ -9859,9 +10460,16 @@ eTree =
     empty
   }
 triangle =
-  
-  ## (underspecified embedding tree, so called because of its
-  ##   characteristic shape when drawn) provides for an underspecified eTree, that is, an eTree with information left out. [19.3. Another Tree Notation]
+  [
+    a:documentation [
+      "(underspecified embedding tree, so called because of its\x{a}" ~
+      "  characteristic shape when drawn) provides for an underspecified "
+      ns1:code [ "<eTree>" ]
+      ", that is, an "
+      ns1:code [ "<eTree>" ]
+      " with information left out. [19.3. Another Tree Notation]"
+    ]
+  ]
   element tei:triangle {
     (label?, (eTree | triangle | eLeaf)*),
     att.global.attributes,
@@ -9871,8 +10479,13 @@ triangle =
     empty
   }
 eLeaf =
-  
-  ## (leaf or terminal node of an embedding tree) provides explicitly for a leaf of an embedding tree, which may also be encoded with the eTree element. [19.3. Another Tree Notation]
+  [
+    a:documentation [
+      "(leaf or terminal node of an embedding tree) provides explicitly for a leaf of an embedding tree, which may also be encoded with the "
+      ns1:code [ "<eTree>" ]
+      " element. [19.3. Another Tree Notation]"
+    ]
+  ]
   element tei:eLeaf {
     (label?, model.ptrLike?),
     att.global.attributes,
@@ -9895,7 +10508,7 @@ listForest =
   
   ## provides for lists of forests. [19.3. Another Tree Notation]
   element tei:listForest {
-    forest+,
+    (desc*, forest+),
     att.global.attributes,
     
     ## identifies the type of the forest group.
@@ -10200,7 +10813,8 @@ att.textCritical.attributes =
   att.textCritical.attribute.type,
   att.textCritical.attribute.cause,
   att.textCritical.attribute.varSeq,
-  att.textCritical.attribute.require
+  att.textCritical.attribute.require,
+  att.typed.attribute.subtype
 att.textCritical.attribute.type =
   
   ## classifies the reading according to some useful typology.
@@ -10256,7 +10870,7 @@ listApp =
   
   ## (list of apparatus entries) contains a list of apparatus entries. [12.2. Linking the Apparatus to the Text]
   element tei:listApp {
-    (model.headLike*, (app | listApp)+),
+    (model.headLike*, desc*, (app | listApp)+),
     att.global.attributes,
     att.sortable.attributes,
     att.declarable.attributes,
@@ -10301,10 +10915,7 @@ rdgGrp =
   
   ## (reading group) within a textual variation, groups two or more readings perceived to have a genetic relationship or other affinity. [12.1. The Apparatus Entry, Readings, and Witnesses]
   element tei:rdgGrp {
-    (((rdgGrp, wit?)
-      | ((lem, wit?)?, (model.rdgLike, wit?))*
-      | model.noteLike*
-      | witDetail*)+)
+    (lem?, (model.rdgLike | model.noteLike | witDetail | wit | rdgGrp)*)
     >> sch:pattern [
          id = "tei_all-rdgGrp-only1lem-constraint-assert-17"
          "\x{a}" ~
@@ -10360,7 +10971,7 @@ listWit =
   
   ## (witness list) lists definitions for all the witnesses referred to by a critical apparatus, optionally grouped hierarchically. [12.1. The Apparatus Entry, Readings, and Witnesses]
   element tei:listWit {
-    (model.headLike?, (witness | listWit)+),
+    (model.headLike?, desc*, (witness | listWit)+),
     att.global.attributes,
     att.sortable.attributes,
     empty
@@ -10369,7 +10980,7 @@ witness =
   
   ## contains either a description of a single witness referred to within the critical apparatus, or a list of witnesses which is to be referred to by a single sigil. [12.1. The Apparatus Entry, Readings, and Witnesses]
   element tei:witness {
-    macro.limitedContent,
+    (text | model.limitedPhrase | model.inter | note)*,
     att.global.attributes,
     att.sortable.attributes,
     empty
@@ -10528,8 +11139,16 @@ body =
     att.global.responsibility.attribute.resp,
     att.global.source.attribute.source,
     att.declaring.attributes,
-    
-    ## (language) indicates the language of the element content using a tag generated according to BCP 47.
+    [
+      a:documentation [
+        "(language) indicates the language of the element content using a tag generated according to "
+        ns1:a [
+          href = "http://www.rfc-editor.org/rfc/bcp/bcp47.txt"
+          "BCP 47"
+        ]
+        "."
+      ]
+    ]
     attribute xml:lang {
       xsd:language
       | (
@@ -10744,6 +11363,8 @@ trailer =
      | model.global)*,
     att.global.attributes,
     att.typed.attributes,
+    att.placement.attributes,
+    att.written.attributes,
     empty
   }
 byline =
@@ -10871,7 +11492,7 @@ titlePart =
     att.global.attributes,
     
     ## specifies the role of this subdivision of the title.
-    ## Suggested values include: 1] main; 2] sub (subordinate) ; 3] alt (alternate) ; 4] short; 5] desc (descriptive) 
+    ## Suggested values include: 1] main; 2] sub (subordinate); 3] alt (alternate); 4] short; 5] desc (descriptive)
     [ a:defaultValue = "main" ]
     attribute type {
       
@@ -10992,8 +11613,13 @@ att.global.facs.attribute.facs =
   }?
 att.global.change.attributes = att.global.change.attribute.change
 att.global.change.attribute.change =
-  
-  ## points to one or more change elements documenting a state or revision campaign to which the element bearing this attribute and its children have been assigned by the encoder.
+  [
+    a:documentation [
+      "points to one or more "
+      ns1:code [ "<change>" ]
+      " elements documenting a state or revision campaign to which the element bearing this attribute and its children have been assigned by the encoder."
+    ]
+  ]
   attribute change {
     list { xsd:anyURI+ }
   }?
@@ -11045,10 +11671,18 @@ att.coordinated.attribute.points =
   ## identifies a two dimensional area within the bounding box specified by the other attributes by means of a series of pairs of numbers, each of which gives the x,y coordinates of a point on a line enclosing the area.
   attribute points {
     list {
-      xsd:token { pattern = "(\-?[0-9]+\.?[0-9]*,\-?[0-9]+\.?[0-9]*)" },
-      xsd:token { pattern = "(\-?[0-9]+\.?[0-9]*,\-?[0-9]+\.?[0-9]*)" },
-      xsd:token { pattern = "(\-?[0-9]+\.?[0-9]*,\-?[0-9]+\.?[0-9]*)" },
-      xsd:token { pattern = "(\-?[0-9]+\.?[0-9]*,\-?[0-9]+\.?[0-9]*)" }*
+      xsd:token {
+        pattern = "(-?[0-9]+(\.[0-9]+)?,-?[0-9]+(\.[0-9]+)?)"
+      },
+      xsd:token {
+        pattern = "(-?[0-9]+(\.[0-9]+)?,-?[0-9]+(\.[0-9]+)?)"
+      },
+      xsd:token {
+        pattern = "(-?[0-9]+(\.[0-9]+)?,-?[0-9]+(\.[0-9]+)?)"
+      },
+      xsd:token {
+        pattern = "(-?[0-9]+(\.[0-9]+)?,-?[0-9]+(\.[0-9]+)?)"
+      }*
     }
   }?
 facsimile =
@@ -11101,8 +11735,13 @@ surfaceGrp =
     empty
   }
 zone =
-  
-  ## defines any two-dimensional area within a surface element. [11.1. Digital Facsimiles 11.2.2. Embedded Transcription]
+  [
+    a:documentation [
+      "defines any two-dimensional area within a "
+      ns1:code [ "<surface>" ]
+      " element. [11.1. Digital Facsimiles 11.2.2. Embedded Transcription]"
+    ]
+  ]
   element tei:zone {
     (text
      | model.graphicLike
@@ -11113,15 +11752,29 @@ zone =
     att.coordinated.attributes,
     att.typed.attributes,
     att.written.attributes,
-    
-    ## indicates the amount by which this zone has been rotated clockwise, with respect to the normal orientation of the parent surface element as implied by the dimensions given in the msDesc element or by the coordinates of the surface itself. The orientation is expressed in arc degrees.
-    [ a:defaultValue = "0" ]
+    [
+      a:defaultValue = "0"
+      a:documentation [
+        "indicates the amount by which this zone has been rotated clockwise, with respect to the normal orientation of the parent "
+        ns1:code [ "<surface>" ]
+        " element as implied by the dimensions given in the "
+        ns1:code [ "<msDesc>" ]
+        " element or by the coordinates of the "
+        ns1:code [ "<surface>" ]
+        " itself. The orientation is expressed in arc degrees."
+      ]
+    ]
     attribute rotate { xsd:nonNegativeInteger }?,
     empty
   }
 path =
-  
-  ## defines any line passing through two or more points within a surface element. [11.1. Digital Facsimiles 11.2.2. Embedded Transcription]
+  [
+    a:documentation [
+      "defines any line passing through two or more points within a "
+      ns1:code [ "<surface>" ]
+      " element. [11.1. Digital Facsimiles 11.2.2. Embedded Transcription]"
+    ]
+  ]
   element tei:path {
     empty
     >> sch:pattern [
@@ -11131,7 +11784,6 @@ path =
          sch:rule [
            context = "tei:path[@points]"
            "\x{a}" ~
-           "        \x{a}" ~
            "               "
            sch:let [
              name = "firstPair"
@@ -11195,21 +11847,26 @@ path =
     attribute points {
       list {
         xsd:token {
-          pattern = "(\-?[0-9]+\.?[0-9]*,\-?[0-9]+\.?[0-9]*)"
+          pattern = "(-?[0-9]+(\.[0-9]+)?,-?[0-9]+(\.[0-9]+)?)"
         },
         xsd:token {
-          pattern = "(\-?[0-9]+\.?[0-9]*,\-?[0-9]+\.?[0-9]*)"
+          pattern = "(-?[0-9]+(\.[0-9]+)?,-?[0-9]+(\.[0-9]+)?)"
         },
         xsd:token {
-          pattern = "(\-?[0-9]+\.?[0-9]*,\-?[0-9]+\.?[0-9]*)"
+          pattern = "(-?[0-9]+(\.[0-9]+)?,-?[0-9]+(\.[0-9]+)?)"
         }*
       }
     }?,
     empty
   }
 addSpan =
-  
-  ## (added span of text) marks the beginning of a longer sequence of text added by an author, scribe, annotator or corrector (see also add). [11.3.1.4. Additions and Deletions]
+  [
+    a:documentation [
+      "(added span of text) marks the beginning of a longer sequence of text added by an author, scribe, annotator or corrector (see also "
+      ns1:code [ "<add>" ]
+      "). [11.3.1.4. Additions and Deletions]"
+    ]
+  ]
   element tei:addSpan {
     empty
     >> sch:pattern [
@@ -11388,15 +12045,20 @@ fw =
     att.written.attributes,
     
     ## classifies the material encoded according to some useful typology.
-    ## Sample values include: 1] header; 2] footer; 3] pageNum (page number) ; 4] lineNum (line number) ; 5] sig (signature) ; 6] catch (catchword) 
+    ## Sample values include: 1] header; 2] footer; 3] pageNum (page number); 4] lineNum (line number); 5] sig (signature); 6] catch (catchword)
     attribute type {
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
     }?,
     empty
   }
 handNotes =
-  
-  ## contains one or more handNote elements documenting the different hands identified within the source texts. [11.3.2.1. Document Hands]
+  [
+    a:documentation [
+      "contains one or more "
+      ns1:code [ "<handNote>" ]
+      " elements documenting the different hands identified within the source texts. [11.3.2.1. Document Hands]"
+    ]
+  ]
   element tei:handNotes { handNote+, att.global.attributes, empty }
 handShift =
   
@@ -11405,8 +12067,13 @@ handShift =
     empty,
     att.global.attributes,
     att.handFeatures.attributes,
-    
-    ## indicates a handNote element describing the hand concerned.
+    [
+      a:documentation [
+        "indicates a "
+        ns1:code [ "<handNote>" ]
+        " element describing the hand concerned."
+      ]
+    ]
     attribute new { xsd:anyURI }?,
     empty
   }
@@ -11583,7 +12250,9 @@ line =
 listTranspose =
   
   ## supplies a list of transpositions, each of which is indicated at some point in a document typically by means of metamarks. [11.3.4.5. Transpositions]
-  element tei:listTranspose { transpose+, att.global.attributes, empty }
+  element tei:listTranspose {
+    (desc*, transpose+), att.global.attributes, empty
+  }
 metamark =
   
   ## contains or describes any kind of graphic or written signal within a document the function of which is to determine how it should be read rather than forming part of the actual content of the document. [11.3.4.2. Metamarks]
@@ -11688,8 +12357,23 @@ att.enjamb.attribute.enjamb =
     xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
   }?
 metDecl =
-  
-  ## (metrical notation declaration) documents the notation employed to represent a metrical pattern when this is specified as the value of a met, real, or rhyme attribute on any structural element of a metrical text (e.g. lg, l, or seg). [6.6. Metrical Notation Declaration 6.4. Rhyme and Metrical Analysis]
+  [
+    a:documentation [
+      "(metrical notation declaration) documents the notation employed to represent a metrical pattern when this is specified as the value of a "
+      ns1:code [ "@met" ]
+      ", "
+      ns1:code [ "@real" ]
+      ", or "
+      ns1:code [ "@rhyme" ]
+      " attribute on any structural element of a metrical text (e.g. "
+      ns1:code [ "<lg>" ]
+      ", "
+      ns1:code [ "<l>" ]
+      ", or "
+      ns1:code [ "<seg>" ]
+      "). [6.6. Metrical Notation Declaration 6.4. Rhyme and Metrical Analysis]"
+    ]
+  ]
   element tei:metDecl {
     ((model.pLike | model.noteLike)+ | metSym+),
     att.global.attributes,
@@ -11699,32 +12383,77 @@ metDecl =
     [ a:defaultValue = "met real" ]
     attribute type {
       list {
-        (
-         ## (met attribute) declaration applies to the abstract metrical form recorded on the met attribute
+        ([
+           a:documentation [
+             "(met attribute) declaration applies to the abstract metrical form recorded on the "
+             ns1:code [ "@met" ]
+             " attribute"
+           ]
+         ]
          "met"
-         | 
-           ## (real attribute) declaration applies to the actual realization of the conventional metrical structure recorded on the real attribute
+         | [
+             a:documentation [
+               "(real attribute) declaration applies to the actual realization of the conventional metrical structure recorded on the "
+               ns1:code [ "@real" ]
+               " attribute"
+             ]
+           ]
            "real"
-         | 
-           ## declaration applies to the rhyme scheme recorded on the rhyme attribute
+         | [
+             a:documentation [
+               "declaration applies to the rhyme scheme recorded on the "
+               ns1:code [ "@rhyme" ]
+               " attribute"
+             ]
+           ]
            "rhyme"),
-        (
-         ## (met attribute) declaration applies to the abstract metrical form recorded on the met attribute
+        ([
+           a:documentation [
+             "(met attribute) declaration applies to the abstract metrical form recorded on the "
+             ns1:code [ "@met" ]
+             " attribute"
+           ]
+         ]
          "met"
-         | 
-           ## (real attribute) declaration applies to the actual realization of the conventional metrical structure recorded on the real attribute
+         | [
+             a:documentation [
+               "(real attribute) declaration applies to the actual realization of the conventional metrical structure recorded on the "
+               ns1:code [ "@real" ]
+               " attribute"
+             ]
+           ]
            "real"
-         | 
-           ## declaration applies to the rhyme scheme recorded on the rhyme attribute
+         | [
+             a:documentation [
+               "declaration applies to the rhyme scheme recorded on the "
+               ns1:code [ "@rhyme" ]
+               " attribute"
+             ]
+           ]
            "rhyme")?,
-        (
-         ## (met attribute) declaration applies to the abstract metrical form recorded on the met attribute
+        ([
+           a:documentation [
+             "(met attribute) declaration applies to the abstract metrical form recorded on the "
+             ns1:code [ "@met" ]
+             " attribute"
+           ]
+         ]
          "met"
-         | 
-           ## (real attribute) declaration applies to the actual realization of the conventional metrical structure recorded on the real attribute
+         | [
+             a:documentation [
+               "(real attribute) declaration applies to the actual realization of the conventional metrical structure recorded on the "
+               ns1:code [ "@real" ]
+               " attribute"
+             ]
+           ]
            "real"
-         | 
-           ## declaration applies to the rhyme scheme recorded on the rhyme attribute
+         | [
+             a:documentation [
+               "declaration applies to the rhyme scheme recorded on the "
+               ns1:code [ "@rhyme" ]
+               " attribute"
+             ]
+           ]
            "rhyme")?
       }
     }?,
@@ -11734,8 +12463,15 @@ metDecl =
     empty
   }
 metSym =
-  
-  ## (metrical notation symbol) documents the intended significance of a particular character or character sequence within a metrical notation, either explicitly or in terms of other metSym elements in the same metDecl. [6.6. Metrical Notation Declaration]
+  [
+    a:documentation [
+      "(metrical notation symbol) documents the intended significance of a particular character or character sequence within a metrical notation, either explicitly or in terms of other "
+      ns1:code [ "<metSym>" ]
+      " elements in the same "
+      ns1:code [ "<metDecl>" ]
+      ". [6.6. Metrical Notation Declaration]"
+    ]
+  ]
   element tei:metSym {
     macro.phraseSeq.limited,
     att.global.attributes,
@@ -11746,9 +12482,17 @@ metSym =
         xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }+
       }
     },
-    
-    ## specifies whether the symbol is defined in terms of other symbols (terminal is set to false) or in prose (terminal is set to true).
-    [ a:defaultValue = "true" ] attribute terminal { xsd:boolean }?,
+    [
+      a:defaultValue = "true"
+      a:documentation [
+        "specifies whether the symbol is defined in terms of other symbols ("
+        ns1:code [ "@terminal" ]
+        " is set to false) or in prose ("
+        ns1:code [ "@terminal" ]
+        " is set to true)."
+      ]
+    ]
+    attribute terminal { xsd:boolean }?,
     empty
   }
 caesura =
@@ -11793,17 +12537,17 @@ sch:pattern [
   sch:rule [
     context = "*[ @minOccurs  and  @maxOccurs ]"
     "\x{a}" ~
-    "        "
+    "         "
     sch:let [ name = "min" value = "@minOccurs cast as xs:integer" ]
     "\x{a}" ~
-    "        "
+    "         "
     sch:let [
       name = "max"
       value =
         "if ( normalize-space( @maxOccurs ) eq 'unbounded')                         then -1                         else @maxOccurs cast as xs:integer"
     ]
     "\x{a}" ~
-    "        "
+    "         "
     sch:assert [
       test = "$max eq -1  or  $max ge $min"
       "@maxOccurs should be greater than or equal to @minOccurs"
@@ -11821,7 +12565,7 @@ sch:pattern [
   sch:rule [
     context = "*[ @minOccurs  and  not( @maxOccurs ) ]"
     "\x{a}" ~
-    "        "
+    "         "
     sch:assert [
       test = "@minOccurs cast as xs:integer lt 2"
       "When @maxOccurs is not specified, @minOccurs must be 0 or 1"
@@ -11888,7 +12632,7 @@ sch:pattern [
     context =
       "tei:elementSpec[@module]|tei:classSpec[@module]|tei:macroSpec[@module]"
     "\x{a}" ~
-    "        "
+    "         "
     sch:assert [
       test =
         "         (not(ancestor::tei:schemaSpec | ancestor::tei:TEI | ancestor::tei:teiCorpus)) or         (not(@module) or          (not(//tei:moduleSpec) and not(//tei:moduleRef))  or         (//tei:moduleSpec[@ident = current()/@module]) or          (//tei:moduleRef[@key = current()/@module]))         "
@@ -11920,24 +12664,24 @@ sch:pattern [
   sch:rule [
     context = "tei:*[@validUntil]"
     "\x{a}" ~
-    "            "
+    "         "
     sch:let [
       name = "advance_warning_period"
       value = "current-date() + xs:dayTimeDuration('P60D')"
     ]
     "\x{a}" ~
-    "            "
+    "         "
     sch:let [
       name = "me_phrase"
       value =
         "if (@ident)                                                then concat('The ', @ident )                                                else concat('This ',                                                            local-name(.),                                                            ' of ',                                                            ancestor::tei:*[@ident][1]/@ident )"
     ]
     "\x{a}" ~
-    "            "
+    "         "
     sch:assert [
       test = "@validUntil cast as xs:date  ge  current-date()"
       "\x{a}" ~
-      "              "
+      "            "
       sch:value-of [
         select =
           "                  concat( $me_phrase,                          'construct is outdated (as of ',                          @validUntil,                          '); ODD processors may ignore it, and its use is no longer supported'                        )"
@@ -11946,21 +12690,21 @@ sch:pattern [
       "         "
     ]
     "\x{a}" ~
-    "              "
+    "         "
     sch:assert [
       role = "nonfatal"
       test = "@validUntil cast as xs:date  ge  $advance_warning_period"
       "\x{a}" ~
-      "                "
+      "            "
       sch:value-of [
         select =
           "concat( $me_phrase, ' construct becomes outdated on ', @validUntil )"
       ]
       "\x{a}" ~
-      "              "
+      "         "
     ]
     "\x{a}" ~
-    "          "
+    "      "
   ]
   "\x{a}" ~
   "   "
@@ -11974,7 +12718,7 @@ sch:pattern [
     context =
       "tei:*[@validUntil][ not( self::valDesc | self::valList | self::defaultVal )]"
     "\x{a}" ~
-    "            "
+    "         "
     sch:assert [
       test = "child::tei:desc[ @type eq 'deprecationInfo']"
       "\x{a}" ~
@@ -11983,7 +12727,7 @@ sch:pattern [
       ' does not have a child <desc type="deprecationInfo">'
     ]
     "\x{a}" ~
-    "          "
+    "      "
   ]
   "\x{a}" ~
   "   "
@@ -12002,7 +12746,7 @@ att =
     att.global.attributes,
     
     ## supplies an identifier for the scheme in which this name is defined.
-    ## Sample values include: 1] TEI (Text Encoding Initiative) ; 2] DBK (Docbook) ; 3] XX (unknown) ; 4] imaginary; 5] XHTML; 6] XML; 7] XI
+    ## Sample values include: 1] TEI (Text Encoding Initiative); 2] DBK (Docbook); 3] XX (unknown); 4] imaginary; 5] XHTML; 6] XML; 7] XI
     [ a:defaultValue = "TEI" ]
     attribute scheme {
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
@@ -12027,8 +12771,13 @@ eg =
   ## (example) contains any kind of illustrative example. [22.5. Element Specifications 22.5.3. Attribute List Specification]
   element tei:eg { macro.phraseSeq, att.global.attributes, empty }
 egXML =
-  
-  ## (example of XML) a single XML fragment demonstrating the use of some XML, such as elements, attributes, or processing instructions, etc., in which the egXML element functions as the root element. [22.1.1. Phrase Level Terms]
+  [
+    a:documentation [
+      "(example of XML) a single XML fragment demonstrating the use of some XML, such as elements, attributes, or processing instructions, etc., in which the "
+      ns1:code [ "<egXML>" ]
+      " element functions as the root element. [22.1.1. Phrase Level Terms]"
+    ]
+  ]
   element teix:egXML {
     (text | anyElement-egXML)*,
     att.global.attributes,
@@ -12056,7 +12805,7 @@ gi =
     att.global.attributes,
     
     ## supplies the name of the scheme in which this name is defined.
-    ## Sample values include: 1] TEI; 2] DBK (docbook) ; 3] XX (unknown) ; 4] Schematron; 5] HTML
+    ## Sample values include: 1] TEI; 2] DBK (docbook); 3] XX (unknown); 4] Schematron; 5] HTML
     [ a:defaultValue = "TEI" ]
     attribute scheme {
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
@@ -12064,8 +12813,13 @@ gi =
     empty
   }
 ident =
-  
-  ## (identifier) contains an identifier or name for an object of some kind in a formal language. ident is used for tokens such as variable names, class names, type names, function names etc. in formal programming languages. [22.1.1. Phrase Level Terms]
+  [
+    a:documentation [
+      "(identifier) contains an identifier or name for an object of some kind in a formal language. "
+      ns1:code [ "<ident>" ]
+      " is used for tokens such as variable names, class names, type names, function names etc. in formal programming languages. [22.1.1. Phrase Level Terms]"
+    ]
+  ]
   element tei:ident {
     text, att.global.attributes, att.typed.attributes, empty
   }
@@ -12099,7 +12853,7 @@ tag =
     }?,
     
     ## supplies the name of the schema in which this tag is defined.
-    ## Sample values include: 1] TEI (text encoding initiative) ; 2] DBK (docbook) ; 3] XX (unknown) ; 4] Schematron; 5] HTML
+    ## Sample values include: 1] TEI (text encoding initiative); 2] DBK (docbook); 3] XX (unknown); 4] Schematron; 5] HTML
     [ a:defaultValue = "TEI" ]
     attribute scheme {
       xsd:token { pattern = "(\p{L}|\p{N}|\p{P}|\p{S})+" }
@@ -12145,7 +12899,7 @@ classRef =
     attribute expand {
       
       ## any one member of the class may appear
-      "alternate"
+      "alternation"
       | 
         ## a single occurrence of all members of the class may appear in sequence
         "sequence"
@@ -12337,8 +13091,13 @@ specGrp =
     empty
   }
 specGrpRef =
-  
-  ## (reference to a specification group) indicates that the declarations contained by the specGrp referenced should be inserted at this point. [22.2. Modules and Schemas]
+  [
+    a:documentation [
+      "(reference to a specification group) indicates that the declarations contained by the "
+      ns1:code [ "<specGrp>" ]
+      " referenced should be inserted at this point. [22.2. Modules and Schemas]"
+    ]
+  ]
   element tei:specGrpRef {
     empty,
     att.global.attributes,
@@ -12515,7 +13274,12 @@ remarks =
 listRef =
   
   ## (list of references) supplies a list of significant references to places where this element is discussed, in the current document or elsewhere.
-  element tei:listRef { model.ptrLike+, att.global.attributes, empty }
+  element tei:listRef {
+    (desc*, model.ptrLike+),
+    att.global.attributes,
+    att.typed.attributes,
+    empty
+  }
 exemplum =
   
   ## groups an example demonstrating the use of an element along with optional paragraphs of commentary. [22.5. Element Specifications]
@@ -12792,8 +13556,13 @@ model =
     empty
   }
 modelSequence =
-  
-  ## any sequence of model or modelSequence elements which is to be processed as a single set of actions [22.5.4.7. Model sequence]
+  [
+    a:documentation [
+      "any sequence of model or "
+      ns1:code [ "<modelSequence>" ]
+      " elements which is to be processed as a single set of actions [22.5.4.7. Model sequence]"
+    ]
+  ]
   element tei:modelSequence {
     ((model.glossLike | model.descLike)*, (model, model, model*))
     >> sch:pattern [
@@ -12843,8 +13612,15 @@ modelSequence =
     empty
   }
 modelGrp =
-  
-  ## any grouping of model or modelSequence elements with a common output method [22.5.4.4. Model Contexts and Outputs]
+  [
+    a:documentation [
+      "any grouping of "
+      ns1:code [ "<model>" ]
+      " or "
+      ns1:code [ "<modelSequence>" ]
+      " elements with a common output method [22.5.4.4. Model Contexts and Outputs]"
+    ]
+  ]
   element tei:modelGrp {
     ((model.glossLike | model.descLike)*,
      outputRendition?,
@@ -12907,11 +13683,21 @@ param =
     ## a name for the parameter being supplied
     ## Suggested values include: 1] alternate; 2] default; 3] height; 4] id; 5] label; 6] level; 7] link; 8] place; 9] type; 10] url; 11] width
     attribute name {
-      
-      ## when used with behaviour alternate, a parameter of this name supplies one of the pair of possible values; for example the regularized form rather than the original form within a choice element.
+      [
+        a:documentation [
+          "when used with behaviour alternate, a parameter of this name supplies one of the pair of possible values; for example the regularized form rather than the original form within a "
+          ns1:code [ "<choice>" ]
+          " element."
+        ]
+      ]
       "alternate"
-      | 
-        ## when used with behaviour alternate, a parameter of this name supplies one of the pair of possible values; for example the original form rather than the regularized form within a choice element.
+      | [
+          a:documentation [
+            "when used with behaviour alternate, a parameter of this name supplies one of the pair of possible values; for example the original form rather than the regularized form within a "
+            ns1:code [ "<choice>" ]
+            " element."
+          ]
+        ]
         "default"
       | 
         ## when used with behaviour graphic, a parameter of this name supplies a value for the height of the graphic e.g. "300px", "50%".
@@ -12980,11 +13766,28 @@ content =
     ## controls whether or not pattern names generated in the corresponding RELAX NG schema source are automatically prefixed to avoid potential nameclashes.
     [ a:defaultValue = "true" ]
     attribute autoPrefix {
-      
-      ## Each name referenced in e.g. a rng:ref element within a content model is automatically prefixed by the value of the prefix attribute on the current schemaSpec
+      [
+        a:documentation [
+          "Each name referenced in e.g. a "
+          ns1:code [ "<rng:ref>" ]
+          " element within a content model is automatically prefixed by the value of the "
+          ns1:code [ "@prefix" ]
+          " attribute on the current "
+          ns1:code [ "<schemaSpec>" ]
+          "\x{a}" ~
+          "                  "
+        ]
+      ]
       "true"
-      | 
-        ## No prefixes are added: any prefix required by the value of the prefix attribute on the current schemaSpec must therefore be supplied explicitly, as appropriate.
+      | [
+          a:documentation [
+            "No prefixes are added: any prefix required by the value of the "
+            ns1:code [ "@prefix" ]
+            " attribute on the current "
+            ns1:code [ "<schemaSpec>" ]
+            " must therefore be supplied explicitly, as appropriate."
+          ]
+        ]
         "false"
     }?,
     empty
@@ -13135,9 +13938,16 @@ constraintSpec =
     att.global.attributes,
     att.identified.attributes,
     att.typed.attribute.subtype,
-    
-    ## characterizes the constraintSpec element in some sense; used to indicate when a constraintSpec warns about a deprecated construct.
-    ## Suggested values include: 1] deprecationWarning
+    [
+      a:documentation [
+        "characterizes the "
+        ns1:code [ "<constraintSpec>" ]
+        " element in some sense; used to indicate when a "
+        ns1:code [ "<constraintSpec>" ]
+        " warns about a deprecated construct.\x{a}" ~
+        "Suggested values include: 1] deprecationWarning"
+      ]
+    ]
     attribute type {
       
       ## Indicates that this constraint specification warns that some other construct in the schema is deprecated.
@@ -13146,7 +13956,7 @@ constraintSpec =
     }?,
     
     ## supplies the name of the language in which the constraints are defined
-    ## Suggested values include: 1] schematron (ISO Schematron) 
+    ## Suggested values include: 1] schematron (ISO Schematron)
     attribute scheme {
       
       ## (ISO Schematron) 
@@ -13156,8 +13966,13 @@ constraintSpec =
     empty
   }
 attList =
-  
-  ## contains documentation for all the attributes associated with this element, as a series of attDef elements. [22.5. Element Specifications 22.6. Class Specifications]
+  [
+    a:documentation [
+      "contains documentation for all the attributes associated with this element, as a series of "
+      ns1:code [ "<attDef>" ]
+      " elements. [22.5. Element Specifications 22.6. Class Specifications]"
+    ]
+  ]
   element tei:attList {
     (attRef | attDef | attList)+,
     att.global.attributes,
@@ -13414,8 +14229,14 @@ dataRef =
     (
      ## the identifier used for this datatype specification
      attribute key { xsd:NCName }?
-     | 
-       ## the name of a datatype in the list provided by XML Schemas: Part 2: Datatypes
+     | [
+         a:documentation [
+           "the name of a datatype in the list provided by "
+           ns1:a [ href = "#XSD2" "XML Schemas: Part 2: Datatypes" ]
+           "\x{a}" ~
+           "                  "
+         ]
+       ]
        attribute name { xsd:NCName }?
      | 
        ## a pointer to a datatype defined in some datatype library
@@ -13426,8 +14247,13 @@ dataRef =
     empty
   }
 dataFacet =
-  
-  ## Restricts the value of the strings used to represent values of a datatype, according to XML Schemas: Part 2: Datatypes. [22.5.3.1. Datatypes]
+  [
+    a:documentation [
+      "Restricts the value of the strings used to represent values of a datatype, according to "
+      ns1:a [ href = "#XSD2" "XML Schemas: Part 2: Datatypes" ]
+      ". [22.5.3.1. Datatypes]"
+    ]
+  ]
   element tei:dataFacet {
     empty,
     att.global.attributes,
@@ -13483,8 +14309,13 @@ defaultVal =
     text, att.global.attributes, att.deprecated.attributes, empty
   }
 valDesc =
-  
-  ## (value description) specifies any semantic or syntactic constraint on the value that an attribute may take, additional to the information carried by the datatype element. [22.5.3. Attribute List Specification]
+  [
+    a:documentation [
+      "(value description) specifies any semantic or syntactic constraint on the value that an attribute may take, additional to the information carried by the "
+      ns1:code [ "<datatype>" ]
+      " element. [22.5.3. Attribute List Specification]"
+    ]
+  ]
   element tei:valDesc {
     macro.phraseSeq.limited,
     att.global.attributes,
@@ -13507,8 +14338,13 @@ valItem =
     empty
   }
 valList =
-  
-  ## (value list) contains one or more valItem elements defining possible values. [22.5.3. Attribute List Specification]
+  [
+    a:documentation [
+      "(value list) contains one or more "
+      ns1:code [ "<valItem>" ]
+      " elements defining possible values. [22.5.3. Attribute List Specification]"
+    ]
+  ]
   element tei:valList {
     valItem*,
     att.global.attributes,
