@@ -4,7 +4,7 @@
    xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xs="http://www.w3.org/2001/XMLSchema"
    xmlns:tei="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="#all" version="2.0">
    
-   <!-- templates for stamping documents to be saved, and for saving them as well -->
+   <!-- templates for marking documents to be saved, and for saving them as well -->
    
    <xsl:function name="tan:generate-save-uris" as="xs:string*">
       <!-- 3-param version of fuller one, below -->

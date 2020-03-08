@@ -783,19 +783,6 @@
         </xsl:copy>
     </xsl:template>
 
-    <!--<xsl:function name="tan:merge-adjacent-elements" as="element()*">
-        <!-\- Input: any sequence of elements -\->
-        <!-\- Output: the same elements, but adjacent elements of the same name merged -\->
-        <xsl:param name="elements" as="element()*"/>
-        <xsl:for-each-group select="$elements" group-adjacent="name()">
-            <xsl:element name="{current-grouping-key()}">
-                <xsl:copy-of select="current-group()/@*"/>
-                <xsl:value-of select="string-join(current-group()/text(),'')"/>
-            </xsl:element>
-            <!-\-<xsl:copy-of select="current-group()"/>-\->
-        </xsl:for-each-group>
-    </xsl:function>-->
-
     <xsl:template match="tan:common" mode="snap-to-word-pass-1">
         <xsl:variable name="preceding-diff"
             select="preceding-sibling::*[1][self::tan:a or self::tan:b]"/>
@@ -1093,10 +1080,6 @@
                         <xsl:value-of select="string-join($this-analysis-tail, '')"/>
                     </xsl:element>
                 </xsl:if>
-                <!--<xsl:if test="not(exists($this-analysis/self::tan:common))">
-                    <xsl:copy-of select="$short-string"/>
-                </xsl:if>-->
-                <!--<xsl:copy-of select="$this-analysis"/>-->
             </xsl:when>
             <xsl:when test="$loop-counter ge $loop-tolerance">
                 <xsl:message

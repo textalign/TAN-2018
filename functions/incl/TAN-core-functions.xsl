@@ -22,7 +22,7 @@
    </xsl:character-map>
 
    <!-- DEFAULT TEMPLATE RULES -->
-   <!-- Standard TAN templates will restrict themselves to priority levels -5 through 0 (default) -->
+   <!-- Standard TAN templates will restrict themselves to priority levels -5 through 2 (0 = default) -->
    <xsl:template priority="-5" match="document-node()" mode="#all">
       <xsl:document>
          <xsl:apply-templates mode="#current"/>
@@ -142,9 +142,6 @@
    <xsl:variable name="greek-unit-regex" select="'[α-θΑ-ΘϛϚ]'"/>
    <xsl:variable name="greek-tens-regex" select="'[ι-πΙ-ΠϘϙϞϟ]'"/>
    <xsl:variable name="greek-hundreds-regex" select="'[ρ-ωΡ-ΩϠϡ]'"/>
-   <!--<xsl:variable name="greek-letter-numeral-pattern"
-      select="concat('͵',  $greek-unit-regex,  '?(?', $greek-hundreds-regex, '?',  $greek-tens-regex,  '?',  $greek-unit-regex,  '|',  $greek-unit-regex,  '?', $greek-hundreds-regex, '?',  
-      $greek-tens-regex,  $greek-unit-regex,  '?|',  $greek-unit-regex, '?', $greek-hundreds-regex, $greek-tens-regex,  '?', $greek-unit-regex, '?)ʹ?')"/>-->
    <xsl:variable name="greek-letter-numeral-pattern"
       select="concat('͵',  $greek-unit-regex,  '?(', $greek-hundreds-regex, '?',  $greek-tens-regex,  '?',  $greek-unit-regex,  '|',  $greek-unit-regex,  '?', $greek-hundreds-regex, '?',  
       $greek-tens-regex,  $greek-unit-regex,  '?|',  $greek-unit-regex, '?', $greek-hundreds-regex, $greek-tens-regex,  '?', $greek-unit-regex, '?)ʹ?')"/>
@@ -356,14 +353,6 @@
    />
 
    <!-- morphologies -->
-   <!--<xsl:variable name="morphologies-resolved"
-      select="tan:get-and-resolve-dependency($head/tan:vocabulary-key/tan:morphology)"/>-->
-   <!--<xsl:variable name="morphologies-resolved"
-      select="
-         for $i in $head/tan:vocabulary-key/tan:morphology
-         return
-            tan:resolve-doc(tan:get-1st-doc($i), true(), 'morphology', ($i/@xml:id, '1')[1])"
-   />-->
    <xsl:variable name="morphologies-resolved"
       select="
          for $i in $head/tan:vocabulary-key/tan:morphology

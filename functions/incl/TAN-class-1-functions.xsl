@@ -81,16 +81,10 @@
                <xsl:value-of select="normalize-space(string-join(descendant::tei:*/text(), ''))"/>
             </xsl:when>
             <xsl:when test="exists($nonspace-text-nodes)">
-               <!--<xsl:variable name="text-nodes" select="text()"/>-->
-               <!--<xsl:variable name="text-node-count" select="count($text-nodes)"/>-->
-               <!--<xsl:value-of select="string-join($text-nodes, '')"/>-->
                <xsl:sequence select="text()"/>
-               <!--<xsl:value-of select="normalize-space(string-join(text(), ''))"/>-->
             </xsl:when>
          </xsl:choose>
       </xsl:variable>
-      <!--<xsl:if test="exists($text-nodes-to-process) and (@type = ('s','par','ic'))">
-         <xsl:message select="., $is-not-last-leaf-div"/></xsl:if>-->
       <xsl:value-of select="tan:normalize-div-text($text-nodes-to-process, $is-not-last-leaf-div)"/>
    </xsl:template>
 
@@ -1263,19 +1257,13 @@
                      <xsl:when test="$do-not-reassign">
                         <xsl:copy-of select="$this-div/(* except (tan:tok, tan:non-tok))"/>
                         <xsl:apply-templates select="current-group()" mode="unmark-tokens"/>
-                        <!--<xsl:copy-of select="tan:copy-of-except(current-group(), 'reassign', (), ())"/>-->
                      </xsl:when>
                      <xsl:otherwise>
                         <xsl:variable name="this-reassign-q-val" select="current-grouping-key()"/>
-                        <!--<xsl:variable name="this-reassign-passage" select="$actionable-passages[@q = $this-reassign-q-val]"/>-->
                         <xsl:variable name="this-reassign"
                            select="$actionable-passages/parent::tan:reassign[@q = $this-reassign-q-val]"/>
-                        <!--<xsl:copy-of
-                           select="tan:imprint-adjustment-locator($this-reassign-passage/tan:ref)"/>-->
                         <xsl:copy-of select="$this-reassign/tan:to/tan:ref"/>
                         <xsl:copy-of select="current-group()"/>
-                        <!--<xsl:apply-templates select="current-group()" mode="unmark-tokens"/>-->
-                        <!--<xsl:copy-of select="tan:copy-of-except(current-group(), 'reassign', (), ())"/>-->
                      </xsl:otherwise>
                   </xsl:choose>
                </div>
@@ -1402,7 +1390,6 @@
       <xsl:variable name="this-src-id" select="*/@src"/>
       <xsl:variable name="this-token-definition"
          select="$class-2-doc/*/tan:head/tan:token-definition[tan:src = $this-src-id][1]"/>
-      <!--<xsl:variable name="this-token-definition-attr-which-norm" select="replace($this-token-definition/@which, '\s+', '_')"/>-->
       <xsl:variable name="this-token-definition-vocabulary" select="tan:vocabulary('token-definition', $this-token-definition/@which, $class-2-doc/*/tan:head)"/>
       <xsl:variable name="this-token-definition-resolved" as="element()">
          <xsl:choose>
@@ -2187,12 +2174,7 @@
                select="$matching-merged-div/(preceding-sibling::tan:div, following-sibling::tan:div)[@type = '#version'][tan:src = '2']"/>
             <xsl:variable name="unmatched-model-non-leaf-siblings-in-model"
                select="$matching-merged-div/(preceding-sibling::tan:div, following-sibling::tan:div)[not(@type = '#version')][not(tan:src = '1')]"/>
-            <!--<xsl:variable name="this-message"
-               select="
-                  if (not(exists($unmatched-model-non-leaf-siblings-in-model))) then
-                     'no siblings in the model suggest themselves as alternatives'
-                  else
-                     concat('the model has siblings not yet used here: ', string-join($unmatched-model-non-leaf-siblings-in-model/tan:ref/tan:n[last()], ', '))"/>-->
+            
             <xsl:variable name="this-message">
                <xsl:choose>
                   <xsl:when test="exists($unmatched-model-leaf-siblings-in-model)">
@@ -2479,19 +2461,8 @@
          <xsl:apply-templates select="tan:body, $mergable-elements/tan:body"
             mode="prep-div-refs-pass-1"/>
       </xsl:variable>
-      <!--<xsl:variable name="pre-merge-bodies-pass-2" as="element()*">
-         <xsl:apply-templates select="$pre-merge-bodies-pass-1"
-            mode="prep-div-refs-pass-2"/>
-      </xsl:variable>-->
       <xsl:element name="{concat($this-root-name, '_merge')}">
-         <!--<xsl:apply-templates select="@*, $mergable-elements/@*" mode="#current"/>-->
          <xsl:apply-templates select="tan:head, $mergable-elements/tan:head" mode="#current"/>
-         <!--<xsl:apply-templates select="tan:body" mode="#current">
-                <xsl:with-param name="elements-to-merge" select="$mergable-elements/tan:body"/>
-            </xsl:apply-templates>-->
-         <!--<test26a><xsl:copy-of select="tan:body, $mergable-elements/tan:body"/></test26a>-->
-         <!--<test26c><xsl:copy-of select="$pre-merge-bodies-pass-1"/></test26c>-->
-         <!--<test08d><xsl:copy-of select="$pre-merge-bodies-pass-2"/></test08d>-->
          <xsl:apply-templates select="$pre-merge-bodies-pass-1[1]" mode="#current">
             <xsl:with-param name="elements-to-merge" select="$pre-merge-bodies-pass-1[position() gt 1]"/>
          </xsl:apply-templates>
@@ -2509,70 +2480,17 @@
       </xsl:copy>
    </xsl:template>
    
-   <!--<xsl:template match="@*" mode="stamp-with-src-attr">
-      <!-\- normally, attributes get copied; but if one wishes to run the template on an attribute, it is
-      under the assumption that it should be converted to an element, so that it can take a copy of 
-      the root @src or @id -\->
-      <xsl:variable name="this-src-or-id-attr" select="root(.)/*/(@src, @id)[1]"/>
-      <xsl:element name="{name(.)}">
-         <xsl:attribute name="attr"/>
-         <xsl:copy-of select="$this-src-or-id-attr"/>
-         <xsl:value-of select="."/>
-      </xsl:element>
-   </xsl:template>-->
-   <!--<xsl:template match="*" mode="stamp-with-src-attr">
-      <!-\- This template is used in merges, to stamp an element with a source id, to distinguish it from sibling elements copied from other sources -\->
-      <xsl:variable name="this-src-or-id-attr" select="root(.)/*[1]/(@src, @id)[1]"/>
-      <xsl:copy>
-         <xsl:copy-of select="@*"/>
-         <xsl:attribute name="src" select="$this-src-or-id-attr"/>
-         <xsl:copy-of select="node()"/>
-      </xsl:copy>
-   </xsl:template>-->
-   
-   <!--<xsl:function name="tan:get-ref-weight" as="xs:double">
-      <!-\- Input: elements with children tan:_weight, tan:_rel-pos, and tan:_n-pos -\->
-      <!-\- Output: a double representing the weighted position average -\->
-      <xsl:param name="rel-elements" as="element(tan:ref)*"/>
-      <xsl:value-of
-         select="
-            avg(for $i in $rel-elements,
-               $j in $i/tan:_weight,
-               $k in $i/(tan:_n-pos/text(), tan:_rel-pos/text())[1],
-               $l in (1 to (xs:integer($j) * xs:integer($j)))
-            return
-               xs:double($k))"
-      />
-   </xsl:function>-->
    <xsl:template match="tan:body | tan:div" mode="merge-tan-docs">
       <xsl:param name="elements-to-merge" as="element()*"/>
       <!-- We assume that the current context element is the primary/first element, whose children divs should be merged with the children divs of the elements to merge -->
       <!-- Any child element that is not a div will get copied first, and stamped with @src, to specify the source -->
       <!-- Any host attributes, which are source-specific, will be lost -->
 
-      <!--<xsl:variable name="this-element-name" select="name(.)"/>-->
-      <!--<xsl:variable name="mergable-elements"
-            select="$elements-to-merge[name(.) = $this-element-name]"/>-->
-      <!--<xsl:variable name="divs-grouped"
-         select="tan:group-divs-by-ref((tan:div, $elements-to-merge/tan:div))"/>-->
-      <!--<xsl:variable name="divs-weighted" as="element()*">
-            <xsl:apply-templates select="tan:div, $elements-to-merge/tan:div" mode="weight-div-refs"
-            />
-        </xsl:variable>-->
       <xsl:variable name="non-numbered-children-divs" select="tan:div[tan:non-numbered], $elements-to-merge/tan:div[tan:non-numbered]"/>
       <xsl:variable name="non-numbered-children-divs-grouped" select="tan:group-divs-by-ref($non-numbered-children-divs)"/>
       <xsl:variable name="numbered-children-divs" select="tan:div[not(tan:non-numbered)], $elements-to-merge/tan:div[not(tan:non-numbered)]"/>
       <xsl:copy>
-         <!--<test26a><xsl:copy-of select="$non-numbered-divs"/></test26a>-->
-         <!--<test26b><xsl:copy-of select="$non-numbered-divs-grouped"/></test26b>-->
-         <!--<xsl:apply-templates select="* except tan:div" mode="stamp-with-src-attr"/>-->
-         <!--<xsl:apply-templates select="* except tan:div" mode="#current"/>-->
-         <!--<xsl:apply-templates select="$elements-to-merge/(* except tan:div)"
-            mode="stamp-with-src-attr"/>-->
-         <!--<xsl:apply-templates select="$elements-to-merge/(* except tan:div)"
-            mode="#current"/>-->
-         <!--<xsl:apply-templates mode="#current"
-            select="tan:distinct-items((* except tan:div, $elements-to-merge/(* except tan:div)))"/>-->
+
          <!-- leave a copy of distinct n values -->
          <xsl:copy-of select="tan:distinct-items((tan:n, $elements-to-merge/tan:n))"/>
          <!-- leave a copy of the ref that synthesizes the refs of all the other versions -->
@@ -2595,10 +2513,7 @@
          <!-- This or elements to merge that are leaf divs should be processed before their children are grouped -->
          <xsl:apply-templates select="self::tan:div[not(tan:div)], $elements-to-merge[not(tan:div)]"
             mode="merge-tan-doc-leaf-divs"/>
-         <!--<test08a>
-                <xsl:copy-of select="$divs-grouped"/>
-            </test08a>-->
-         <!--<test08b><xsl:copy-of select="$divs-weighted"/></test08b>-->
+
          <xsl:for-each-group select="$non-numbered-children-divs-grouped/tan:div, $numbered-children-divs"
             group-by="
                if (exists(parent::tan:group)) then
@@ -2623,35 +2538,8 @@
                   else
                      xs:integer(tokenize(current-grouping-key(), '#')[2])"
             />
-            <!--<xsl:sort select="xs:integer(tokenize(current-grouping-key(), '#')[2])"/>-->
-            <!--<xsl:sort select="tan:get-ref-weight(current-group()/tan:ref)"/>-->
-            <!--<xsl:sort
-               select="
-               avg(for $i in current-group()/tan:ref[1]/*:_pos
-               return
-               number($i))"/>-->
-            <!--<xsl:variable name="leaf-divs" select="current-group()[not(tan:div)]"/>-->
-            <!--<xsl:variable name="non-leaf-divs" select="current-group()[tan:div]"/>-->
-            
-               <!--<xsl:attribute name="weighted-pos"
-                  select="tan:get-ref-weight(current-group()/tan:ref)"/>-->
-               <!--<xsl:attribute name="weighted-pos"
-                  select="
-                  avg(for $i in current-group()/tan:ref[1]/*:_pos
-                  return
-                  number($i))"/>-->
-               <!--<xsl:copy-of select="current-group()[1]/(@* except @xml:lang)"/>-->
-               <!--<xsl:copy-of select="current-group()"/>-->
-               <!--<cgk><xsl:copy-of select="current-grouping-key()"/></cgk>-->
-               <!--<xsl:copy-of select="tan:distinct-items(current-group()/tan:n)"/>-->
-               <!--<xsl:copy-of select="current-group()/tan:ref"/>-->
-               <!--<xsl:apply-templates select="current-group()/(* except tan:div)" mode="#current"/>-->
-               <!--<xsl:apply-templates select="$leaf-divs" mode="#current"/>-->
-               <!--<xsl:apply-templates select="$non-leaf-divs[1]" mode="#current">
-                  <xsl:with-param name="elements-to-merge" select="$non-leaf-divs[position() gt 1]"
-                  />
-               </xsl:apply-templates>-->
-               <xsl:apply-templates select="current-group()[1]" mode="#current">
+
+            <xsl:apply-templates select="current-group()[1]" mode="#current">
                   <xsl:with-param name="elements-to-merge" select="current-group()[position() gt 1]"/>
                </xsl:apply-templates>
          </xsl:for-each-group>
@@ -2679,41 +2567,6 @@
    <xsl:template match="tan:_weight | tan:_rel-pos | tan:_n-pos | tan:_n-integer | tan:non-numbered"
       mode="merge-tan-docs merge-tan-doc-leaf-divs stamp-with-src-attr"/>
    
-   <!--<xsl:template match="tan:body" mode="prep-div-refs-pass-1">
-      <xsl:variable name="these-numeral-ns"
-         select="
-            for $i in tan:div/tan:n[. castable as xs:integer]
-            return
-               xs:integer($i)"
-      />
-      <xsl:copy>
-         <xsl:copy-of select="@*"/>
-         <xsl:apply-templates mode="#current">
-            <xsl:with-param name="max-n" select="max($these-numeral-ns)"/>
-         </xsl:apply-templates>
-      </xsl:copy>
-   </xsl:template>-->
-   <!--<xsl:template match="tan:div" mode="prep-div-refs-pass-1">
-      <xsl:param name="max-n" as="xs:integer?"/>
-      <xsl:variable name="this-src-or-id-attr" select="root(.)/*/(@src, @id)[1]"/>
-      <xsl:variable name="these-numeral-ns"
-         select="
-            for $i in tan:div/tan:n[. castable as xs:integer]
-            return
-               xs:integer($i)"
-      />
-      <xsl:copy>
-         <xsl:copy-of select="@*"/>
-         <xsl:attribute name="src" select="$this-src-or-id-attr"/>
-         <xsl:apply-templates mode="#current">
-            <xsl:with-param name="div-count" select="count(../tan:div)"/>
-            <xsl:with-param name="div-position" select="position()"/>
-            <!-\- we move the inherited max-n into a parameter children <ref>s can handle, and reset $max-n with the upcoming ns -\->
-            <xsl:with-param name="max-n" select="max($these-numeral-ns)"/>
-            <xsl:with-param name="div-n-by" select="$max-n"/>
-         </xsl:apply-templates>
-      </xsl:copy>
-   </xsl:template>-->
    <xsl:template match="tan:div" mode="prep-div-refs-pass-1">
       <xsl:variable name="numbered-ns" select="tan:n[matches(., '^\d+(#\d+)?$')]"/>
       <xsl:variable name="this-src-or-id-attr" select="root(.)/*[1]/(@src, @id)[1]"/>
@@ -2751,36 +2604,11 @@
       </xsl:copy>
    </xsl:template>
    <xsl:template match="tan:ref" mode="prep-div-refs-pass-1">
-      <!--<xsl:param name="div-n-by" as="xs:integer?"/>
-      <xsl:param name="div-count" as="xs:integer"/>
-      <xsl:param name="div-position" as="xs:integer"/>-->
-      <!--<xsl:variable name="this-n" select="tan:n[last()]"/>-->
       <xsl:variable name="this-src-or-id-attr" select="root(.)/*[1]/(@src, @id)[1]"/>
-      <!--<xsl:variable name="these-n-integers"
-         select="
-            if (matches($this-n, '^\d+(#\d+)?$')) then
-               (for $i in tokenize($this-n, '#')
-               return
-                  xs:integer($i))
-            else
-               ()"
-      />-->
-      <!-- We add one, so that singlets divs are given 50%, neither close to the beginning nor close to the end. -->
-      <!--<xsl:variable name="this-relative-pos" select="$div-position div ($div-count + 1)"/>-->
-      <!--<xsl:variable name="this-n-pos" select="$this-n-val div ($div-n-by + 1)"/>-->
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:attribute name="src" select="$this-src-or-id-attr"/>
          <xsl:apply-templates mode="#current"/>
-         <!--<xsl:copy-of select="node()"/>-->
-         <!--<_weight><xsl:value-of select="$div-count"/></_weight>-->
-         <!--<_rel-pos><xsl:value-of select="$this-relative-pos"/></_rel-pos>-->
-         <!--<_n-pos><xsl:value-of select="$this-n-pos"/></_n-pos>-->
-         <!--<xsl:for-each select="$these-n-integers">
-            <_n-integer>
-               <xsl:value-of select="."/>
-            </_n-integer>
-         </xsl:for-each>-->
       </xsl:copy>
    </xsl:template>
    
@@ -2958,16 +2786,7 @@
          <xsl:copy-of select="$children-divs/(@* except @xml:lang)"/>
          <xsl:copy-of
             select="$children-divs/(* except (tan:div, tan:tok, tan:non-tok, tan:ref, tei:*))"/>
-         <!--<xsl:choose>
-            <xsl:when test="$itemize-leaf-divs">
-               <xsl:copy-of select="$children-divs/tan:src"/>
-            </xsl:when>
-            <xsl:otherwise>
-               <xsl:copy-of
-                  select="$children-divs/(* except (tan:div, tan:tok, tan:non-tok, tan:ref, tei:*))"
-               />
-            </xsl:otherwise>
-         </xsl:choose>-->
+         
          <xsl:for-each-group select="$children-divs/tan:ref" group-by="text()">
             <ref>
                <xsl:copy-of select="current-group()[1]/tan:n"/>
@@ -2978,10 +2797,6 @@
          <xsl:for-each-group select="$children-divs" group-by="exists(tan:div)">
             <xsl:choose>
                <xsl:when test="current-grouping-key()">
-                  <!-- if children divs are not leaf divs, then continue the process -->
-                  <!--<xsl:apply-templates
-                     select="tan:group-elements-by-shared-node-values(current-group()/tan:div, '^ref$')"
-                     mode="#current"/>-->
                   <xsl:apply-templates select="tan:group-divs(current-group()/tan:div)"
                      mode="#current"/>
                </xsl:when>
@@ -3115,11 +2930,13 @@
             <xsl:with-param name="bad-ks" select="$ks-to-ditch" tunnel="yes"/>
          </xsl:apply-templates>
       </xsl:variable>
-      <!-- diagnostics, results -->
-      <!--<xsl:message>Diagnostics on</xsl:message>-->
-      <!--<xsl:copy-of select="$mold-infused"/>-->
-      <!--<xsl:copy-of select="$ks-to-ditch"/>-->
-      <!--<xsl:copy-of select="$mold-with-unique-ks/*"/>-->
+      <xsl:variable name="diagnostics-on" select="false()"/>
+      <xsl:if test="$diagnostics-on">
+         <xsl:message select="'Diagnostics on tan:infuse-div()'"/>
+         <xsl:message select="'Mold infused: ', $mold-infused"/>
+         <xsl:message select="'Ks to ditch: ', $ks-to-ditch"/>
+         <xsl:message select="'Mold with unique ks: ', $mold-with-unique-ks"/>
+      </xsl:if>
       <xsl:apply-templates select="$mold-with-unique-ks" mode="infuse-tokenized-div-end-check">
          <xsl:with-param name="bad-ks" select="$ks-to-ditch" tunnel="yes"/>
       </xsl:apply-templates>
