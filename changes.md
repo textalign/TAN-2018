@@ -220,39 +220,3 @@ $TAN-feature-vocabulary
 
 Class 1 filenames should terminate in something that expresses the principal type of reference system (logical or scriptum-based) followed by a string indicating whether the reference system is native to the scriptum or if it follows some other reference system. Example: ar.cat.fra.1844.saint-hilaire.ref-logical-native.xml indicates that the logical (i.e., non-scriptum-based) reference system is native to the French edition. But ar.cat.fra.1844.saint-hilaire.ref-logical-after-grc.xml indicates that the transcription has been divided and labeled following the Greek archetype.
 
-# Things to do
-
-Assign one or more IRIs to every TAN element.
-
-Define more precisely what TAN interpretation of SHY is, making reference to:
-
-* https://www.balisage.net/Proceedings/vol17/html/Bauman01/BalisageVol17-Bauman01.html# d280348e101
-* http://jkorpela.fi/shy.html
-* https://www.unicode.org/L2/L2002/02279-muller.htm
-
-Develop, streamline error messages for `&lt;predecessor>`, `&lt;successor>`, `&lt;redivision>`, `&lt;model>`, and `&lt;annotation>`.
-
-We assume now that any sibling divs (or divs that inherit the same reference), whether a leaf or not, that share the same value of `@n` are parts of the same div. The real problems occur when divs with the same reference are not the same div type – that's the flag for an error. For example, sibling elements `&lt;div type="title" n="1">` and `&lt;div type="chapter" n="1">` should raise a flag.
-
-Add a README.md to each main directory.
-
-Optimize TAN catalog files for discovery
-
-Modify rename action in class-2 adjustments. The current system is confusing because renames at one level cascade down, making the expansion phase dynamic rather than static. The present approach requires the reader to keep track from one hierarchical level to the next what changes have been made. When editors use `&lt;rename>` they mean it to apply to the file in a static state.
-
-@type should always be weakly inheritable, as it is clearly when part of &lt;div>. But it is strongly inheritable as a part of &lt;group>, which is inconsistent.
-
-Ensure SQF help is available on @href, and is limited to the number of examples specified by parameters
-
-Introduce Schematron phase "sample" to do quicker runs on long files.
-
-## Frameworks
-
-Support editing TAN-A-tok
-
-Support editing TAN-A-lm
-
-## Applications
-
-Create TAN-A-tok, perhaps with options for IBM Model, but more importantly with contextual data (esp. lexicomorphology).
-
