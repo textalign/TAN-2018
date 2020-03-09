@@ -785,7 +785,7 @@
       </xsl:copy>
    </xsl:template>
 
-   <xsl:template match="tei:teiHeader | tan:head/tan:vocabulary | tan:head/tan:tan-vocabulary"
+   <xsl:template match="tei:teiHeader | tan:head/tan:vocabulary[tan:location] | tan:head/tan:tan-vocabulary"
       mode="core-expansion-terse-attributes">
       <!-- we just deep copy the teiHeader, whose attribute constructions cannot be predicted, and any 
          vocabulary brought in from resolving the document, since the attributes should have already been
@@ -1112,6 +1112,7 @@
          </xsl:apply-templates>
       </xsl:copy>
    </xsl:template>
+   
    <xsl:template match="@*" mode="core-expansion-terse-attributes">
       <xsl:param name="add-q-id" as="xs:boolean?"/>
       <xsl:variable name="this-name" select="name(.)"/>

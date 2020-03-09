@@ -738,7 +738,7 @@
    
    <!-- Resolving, step 3 templates -->
    
-   <xsl:template match="tan:inclusion | tan:vocabulary" mode="resolve-critical-dependencies">
+   <xsl:template match="tan:inclusion[tan:location] | tan:vocabulary[tan:location]" mode="resolve-critical-dependencies">
       <xsl:param name="inclusion-element-filters" tunnel="yes"/>
       <xsl:param name="vocabulary-element-filters" tunnel="yes"/>
       <xsl:param name="doc-id" tunnel="yes"/>
