@@ -2,7 +2,7 @@
 <?xml-model href="../../schemas/TAN-A.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="../../schemas/TAN-A.sch" type="application/xml" phase="verbose" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <!-- this test file primed for verbose validation -->
-<!-- verbose: cat01 cat03 cat04 cat07 -->
+<!-- verbose: cat01 cat04 cat07 -->
 <TAN-A xmlns="tag:textalign.net,2015:ns" id="tag:textalign.net,2015:error-test" TAN-version="2020">
     <head>
         <name>Error test tan-a</name>
