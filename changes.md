@@ -52,6 +52,8 @@ Files are now resolved differently.
 * Another important change in file resolution is in numbering schemes. Changes have been made to the way class 1 files are resolved with regard to values of `@n` (see below), to help reconcile synonyms. This means that when a class 1 file is resolved, its vocabulary must be resolved before values of `@n` can be normalized. This technique provides great flexibility to creators of class 1 files. But it complicates TAN-A files, In the 2018 schema, every `@ref` in a class 2 file was resolved independent of what the sources were doing. But in any claim that combines sources that have different systems of resolving ambiguous numerals (e.g., c as 3 in an alphabet system but 100 in Roman numerals), number resolution would require a complexity that is at present infeasible. In a future release, it is expected that TAN-A files will take `&lt;numeral>` specified for sources.
 * Resolution of numbers now happens at the conclusion of `tan:resolve-doc()`, because it requires querying vocabulary..
 
+The above treats default resolution of a TAN file. But sometimes we are interested in only a portion of the resolved file, not the whole thing. This requirement is especially important in dependencies of class 2 files. Normally only a portion of the file is of interest, so to resolve an entire class 1 dependent file is a waste of time. There are two points in validation when one must resolve a dependent file: expansion and template mode check-referred-doc.
+
 Expansion has been streamlined, to avoid summoning global or in-scope variables that do not matter. XSLT operations ignore such unused variables, but Schematron validation seems not to. Thoroughly revised the way a hierarchy is reset in the course of expanding the sources of a class 2 file, using `@reset` to mark elements that need to be moved and `@has-been-reset` to mark those that have. Resetting has been moved from class 2 functions to class 1 functions.
 
 New errors introduced: wrn07, wrn08, inc05, tan21, inc06, whi05, voc06, loc04, lnk07
@@ -60,7 +62,7 @@ Deleted errors: tan13 (an `&lt;alias>` should be able to combine different eleme
 
 Errors named tky... are now renamed voc...
 
-New elements: `&lt;predecessor>` and `&lt;successor>`, to indicate how files have been revised.
+New elements: `&lt;predecessor>` and `&lt;successor>`, to leave a sequence of file revisions.
 
 New attributes: `@claim-when`
 

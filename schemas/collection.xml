@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <collection stable="true">
    <doc href="catalog.tan.sch"/>
+   <doc href="catalog.sch"/>
    <doc href="collection.sch"/>
    <doc href="TAN-A-lm.sch"/>
    <doc href="TAN-A-tok.sch"/>
@@ -11,6 +12,7 @@
    <doc href="TAN-voc.sch"/>
    <doc href="TEI.sch"/>
    <doc href="catalog.tan.rng"/>
+   <doc href="catalog.rng"/>
    <doc href="collection.rng"/>
    <doc href="TAN-A-lm.rng"/>
    <doc href="TAN-A-tok.rng"/>
