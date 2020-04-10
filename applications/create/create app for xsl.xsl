@@ -35,6 +35,12 @@
         original. A new batch file will appear alongside the copy. 
         
         The process should work as will for NIR (no input required) XSLT stylesheets.
+        
+        If you find that you want to create several apps for the same XSLT stylesheet, each with slightly different
+        parameters, you will find it easiest to use this Create App for XSL to generate the primary batch file, and
+        then make versions of that batch file, editing the contents as needed. That will give you more control over
+        the customization process. 
+            Advanced users may wish to change the parameter pointing to the batch file template. 
     -->
     
     <!-- Catalyzing input: any XML file (including this one) -->
@@ -66,6 +72,10 @@
     <!-- Parameters part 2: values that will populate the batch file. The values below are the default. But if you want to overwrite
     them, you may do so in the input XSLT file with identically named parameters. Note, however, that those parameters
     should be simple strings and not set as XPath expressions, unless you can run this through Saxon PE or EE. -->
+    
+    <!-- Where is the template batch file that should be used? Normally it is in the same path as this stylesheet, i.e., create app for xsl.bat -->
+    <xsl:param name="batch-template-path-relative-to-this-stylesheet" as="xs:string"
+        >create%20app%20for%20xsl.bat</xsl:param>
     
     <!-- Where is the Saxon XSLT processor relative to the stylesheet that declares this parameter? If left blank, the target will point to the Saxon processor used by Create App for XSL -->
     <xsl:param name="processor-path-relative-to-this-stylesheet" as="xs:string"
@@ -117,9 +127,8 @@
     <xsl:variable name="processor-path-resolved" as="xs:string"
         select="resolve-uri($processor-path-relative-to-this-stylesheet, static-base-uri())"/>
     
-    <!-- The template is the same name as this stylesheet, but with a .bat extension -->
-    <xsl:variable name="batch-file-template" as="xs:string"
-        select="unparsed-text(replace(string(static-base-uri()), '\.xsl$', '.bat'))"/>
+    <xsl:variable name="batch-template-path-resolved" as="xs:string"
+        select="resolve-uri($batch-template-path-relative-to-this-stylesheet, static-base-uri())"/>
     
     
     <xsl:function name="tan:get-xslt" as="document-node()*">
@@ -223,6 +232,7 @@
     <xsl:function name="tan:adjust-batch-content" as="xs:string">
         <!-- Input: a template batch file, assorted parameters -->
         <!-- Output: a copy of the batch file revised according to the parameters specified by the input XSLT file -->
+        <xsl:param name="batch-file-template" as="xs:string"/>
         <xsl:param name="target-uri-resolved" as="xs:string"/>
         <xsl:param name="override-params" as="element()*"/>
         <xsl:param name="relative-path-from-batch-to-xslt" as="xs:string?"/>
@@ -445,6 +455,30 @@
                         '%_thisBatchName:.bat=.xsl%'"
             />
             
+            <xsl:variable name="batch-template-path-relative-to-this-stylesheet-override"
+                as="xs:string?"
+                select="
+                    (for $i in $these-params[@name = 'batch-template-path-relative-to-this-stylesheet'],
+                        $j in tan:evaluate-param($i)
+                    return
+                        $j)[1]"
+            />
+            <xsl:variable name="new-batch-template-path-relative-to-this-stylesheet"
+                select="
+                    if (matches($batch-template-path-relative-to-this-stylesheet-override, '\S')) then
+                        resolve-uri($batch-template-path-relative-to-this-stylesheet-override, $this-uri)
+                    else
+                        $batch-template-path-resolved"
+            />
+            <xsl:variable name="batch-template-content" as="xs:string"
+                select="
+                    if (unparsed-text-available($new-batch-template-path-relative-to-this-stylesheet)) then
+                        unparsed-text($new-batch-template-path-relative-to-this-stylesheet)
+                    else
+                        unparsed-text($batch-template-path-resolved)"
+            />
+            
+            
             <xsl:variable name="these-params-for-strings" select="$these-params[not(@as) or (@as = ('xs:string+', 'xs:string*'))]"/>
             <xsl:variable name="these-params-correctly-named" select="$these-params[@name = $key-parameter-name]"/>
             <xsl:variable name="this-valid-key-param"
@@ -453,7 +487,7 @@
             <xsl:choose>
                 <xsl:when test="exists($this-valid-key-param)">
                     <xsl:variable name="new-batch-file"
-                        select="tan:adjust-batch-content($target-batch-href, $these-params, $relative-path-from-batch-to-xslt)"
+                        select="tan:adjust-batch-content($batch-template-content, $target-batch-href, $these-params, $relative-path-from-batch-to-xslt)"
                     />
                     <xsl:message select="'Saving batch file at ' || $target-batch-href"/>
                     <xsl:result-document method="text" href="{$target-batch-href}">
