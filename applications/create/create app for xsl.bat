@@ -18,6 +18,9 @@ if [%1]==[] goto about
 REM Switch to the batch file directory.
 pushd "%~dp0"
 
+REM Bind numeral-only date + time to variable, if needed
+for /f "skip=1" %%x in ('wmic os get localdatetime') do if not defined _now set _now=%%x
+set _todayIso=%_now:~0,4%-%_now:~4,2%-%_now:~6,2%
 REM Place-holder for filenames
 set _fn=
 REM Set to 1 if you want feedback on the command line
@@ -42,7 +45,7 @@ set _saxonPath=../../processors/saxon9he.jar
 REM what command-line options should be set for Saxon? For details see https://saxonica.com/documentation/index.html#!using-xsl/commandline
 set _saxonOptions= 
 REM What is the name of the one parameter that is expecting the sequence of resolved URLs?
-set _keyParameter=main-input-resolved-uri-lists
+set _keyParameter=resolved-uris-to-lists-of-main-input-resolved-uris
 REM What other parameters declared by the stylesheet if any should be provided? Follow the syntax of [params] at  For details see https://saxonica.com/documentation/index.html#!using-xsl/commandline
 set _otherParameters=
 
@@ -102,7 +105,7 @@ for %%G in (%_allBatchParamsRevised%) do (
 )
 
 REM build the command line that will be sent to Saxon 
-set _saxonComLine=java -cp "%_saxonPath%" net.sf.saxon.Transform -s:%_xslPath% -xsl:%_xslPath% %_saxonOptions% %_otherParameters% %_keyParameter%=%_miruList%
+set _saxonComLine=java -cp %_saxonPath% net.sf.saxon.Transform -s:%_xslPath% -o:%_xslOutput% -xsl:%_xslPath% %_saxonOptions% %_otherParameters% %_keyParameter%=%_miruList%
 
 if %_diagnostics% == 1 (
     echo Number of parameters: %_argCount%
@@ -130,7 +133,7 @@ exit /B
 
 :about
 
-echo %0
+echo %~n0
 echo To use this batch file: From Windows Explorer drag onto it any files or directories you want to be processed
 echo.
 REM additional documentation

@@ -2224,7 +2224,7 @@
       <!-- 2-parameter version of the one below -->
       <xsl:param name="uri-to-revise" as="xs:string?"/>
       <xsl:param name="uri-to-revise-against" as="xs:string?"/>
-      <xsl:copy-of select="tan:uri-relative-to($uri-to-revise, $uri-to-revise-against, $uri-to-revise-against)"/>
+      <xsl:copy-of select="tan:uri-relative-to($uri-to-revise, $uri-to-revise-against, string(resolve-uri($uri-to-revise-against)))"/>
    </xsl:function>
    <xsl:function name="tan:uri-relative-to" as="xs:string?">
       <!-- Input: two strings representing URIs; a third representing the base against which the first two should be resolved -->
@@ -2242,7 +2242,7 @@
       />
       <xsl:variable name="uri-b-resolved"
          select="
-            if (tan:is-valid-uri($uri-to-revise)) then
+            if (tan:is-valid-uri($uri-to-revise-against)) then
                resolve-uri($uri-to-revise-against, $base-uri)
             else
                ()"
@@ -2295,8 +2295,11 @@
       <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'diagnostics on for tan:uri-relative-to()'"/>
-         <xsl:message select="'uri to revise', $uri-to-revise"/>
-         <xsl:message select="'uri to revise against', $uri-to-revise-against"/>
+         <xsl:message select="'uri to revise (a)', $uri-to-revise"/>
+         <xsl:message select="'uri to revise against (b)', $uri-to-revise-against"/>
+         <xsl:message select="'base uri: ', $base-uri"/>
+         <xsl:message select="'uri a resolved: ', $uri-a-resolved"/>
+         <xsl:message select="'uri b resolved: ', $uri-b-resolved"/>
          <xsl:message select="'path a: ', $path-a"/>
          <xsl:message select="'path b: ', $path-b"/>
       </xsl:if>

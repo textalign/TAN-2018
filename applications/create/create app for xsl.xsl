@@ -42,6 +42,9 @@
         the customization process. 
             Advanced users may wish to change the parameter pointing to the batch file template. 
     -->
+
+    <!-- There are numerous other adjustments you can make to the batch file itself. When you are finished,
+    you will want to pay careful attention to the relative paths of various files. -->
     
     <!-- Catalyzing input: any XML file (including this one) -->
     <!-- Main input: one or more resolved uris pointing to XSLT stylesheets -->
@@ -49,68 +52,25 @@
     <!-- Secondary output: a batch file with the same name as the main input -->
     <!-- Adjust parameters below, as needed -->
     
-    
+    <!-- The following file has parameters that may be overwritten by an input xsl file. See
+    the file for documentation, instructions -->
+    <xsl:include href="create%20app%20for%20xsl%20parameters.xsl"/>
+
+    <!-- Some TAN functions help this process -->
     <xsl:import href="../../functions/TAN-A-functions.xsl"/>
     
     <!-- Static parameter to see if advanced Saxon functions are available -->
     <xsl:param name="function-saxon-evaluate-available" static="yes" select="function-available('saxon:evaluate')"/>
     
-    <!-- + + + + + + + + + + + + + + -->
-    <!-- START OF NON-STATIC PARAMETERS -->
-
-
-    <!-- Parameters part 1: where are the input XSLT files -->
-
     <!-- What are the resolved uris for the XSLT files that should have an app created? -->
     <xsl:param name="main-input-resolved-uris" as="xs:string*"/>
     
     <!-- Alternatively, you might provide resolved URIs pointing to a plain-text list of resolved URIs, each on a separate line -->
-    <xsl:param name="main-input-resolved-uri-lists" as="xs:string*"/>
-    
-
-
-    <!-- Parameters part 2: values that will populate the batch file. The values below are the default. But if you want to overwrite
-    them, you may do so in the input XSLT file with identically named parameters. Note, however, that those parameters
-    should be simple strings and not set as XPath expressions, unless you can run this through Saxon PE or EE. -->
-    
-    <!-- Where is the template batch file that should be used? Normally it is in the same path as this stylesheet, i.e., create app for xsl.bat -->
-    <xsl:param name="batch-template-path-relative-to-this-stylesheet" as="xs:string"
-        >create%20app%20for%20xsl.bat</xsl:param>
-    
-    <!-- Where is the Saxon XSLT processor relative to the stylesheet that declares this parameter? If left blank, the target will point to the Saxon processor used by Create App for XSL -->
-    <xsl:param name="processor-path-relative-to-this-stylesheet" as="xs:string"
-        >../../processors/saxon9he.jar</xsl:param>
-
-    <!-- What are the standard Saxon options you want to include? See https://saxonica.com/documentation/index.html#!using-xsl/commandline -->
-    <xsl:param name="default-saxon-options" as="xs:string?"/>
-    
-    <!-- Where should the app be saved relative to the input XSLT? If the value is empty, the batch file will have the same name as the input XSLT, but with a .bat extension -->
-    <xsl:param name="target-batch-uri-relative-to-input-xslt" as="xs:string?"/>
-    
-    <!-- What should be the filename of the target app's primary output (if any)? Note, this value populates the -o parameter, and does not dictate whether there will be any primary output, or the handling of secondary output via xsl:result-document -->
-    <xsl:param name="primary-output-target-uri" as="xs:string">%_xslPath%.output.xml</xsl:param>
-    
-    <!-- What is the name of the key parameter in the stylesheet? It must be anticipating a sequence of strings representing resolved uris -->
-    <xsl:param name="key-parameter-name" as="xs:string">main-input-resolved-uri-lists</xsl:param>
-    
-    <!-- What other parameters should be set in the stylesheet? It must follow the syntax laid out in [params] here: https://saxonica.com/documentation/index.html#!using-xsl/commandline  -->
-    <xsl:param name="other-parameters" as="xs:string?"/>
-    
-    <!-- Do you want to turn diagnostics on? This parameter does not affect the content of the output file(s). -->
-    <xsl:param name="diagnostics-on" as="xs:string?">1</xsl:param>
-    
-    <!-- What additional documentation if any do you want to add to the app? If you can run this through Saxon PE or EE, try select="root()/*/*[1]/preceding-sibling::comment()" to insert all initial comments -->
-    <xsl:param name="additional-documentation" as="xs:string?"/>
-    
-    <!-- There are numerous other adjustments you can make to the batch file itself. When you are finished,
-    you will want to pay careful attention to the relative paths of various files. -->
-
-    <!-- END OF PARAMETERS -->
-    <!-- + + + + + + + + + + + + + + -->
+    <xsl:param name="resolved-uris-to-lists-of-main-input-resolved-uris" as="xs:string*"/>
     
     <!-- If resolved uris point to a list of uris, get them -->
     <xsl:variable name="miru-lists-parsed" as="xs:string*">
-        <xsl:for-each select="distinct-values($main-input-resolved-uri-lists)">
+        <xsl:for-each select="distinct-values($resolved-uris-to-lists-of-main-input-resolved-uris)">
             <xsl:choose>
                 <xsl:when test="unparsed-text-available(.)">
                     <!-- get text lines that have text -->
@@ -137,6 +97,18 @@
         <xsl:param name="resolved-uris-to-check" as="xs:string*"/>
         <xsl:param name="resolved-uris-already-checked" as="xs:string*"/>
         <xsl:param name="loop-counter" as="xs:integer"/>
+        
+        <xsl:variable name="diagnostics-on" select="true()"/>
+        <xsl:if test="$diagnostics-on">
+            <xsl:if test="$loop-counter lt 2"><xsl:message select="'Diagnostics on for tan:get-xslt()'"/></xsl:if>
+            <xsl:message select="'Loop ' || string($loop-counter)"/>
+            <xsl:message
+                select="string(count($resolved-uris-to-check)) || ' uris to check: ' || string-join($resolved-uris-to-check, ', ')"
+            />
+            <xsl:message
+                select="string(count($resolved-uris-already-checked)) || ' uris already checked: ' || string-join($resolved-uris-already-checked, ', ')"
+            />
+        </xsl:if>
         <xsl:choose>
             <xsl:when test="$loop-counter gt $loop-tolerance">
                 <xsl:message select="'tan:get-xslt() has exceeded loop tolerance'"/>
@@ -156,8 +128,11 @@
                         <!-- In this case the uri has already been checked, so we move on. There are cases
                             where tracing a stylesheet might lead to repetition of a resolved uri to an
                             included or imported stylesheet. -->
+                        <xsl:if test="$diagnostics-on">
+                            <xsl:message select="$next-uri || ' has already been checked.'"/>
+                        </xsl:if>
                         <xsl:sequence
-                            select="tan:get-xslt($resolved-uris-to-check[position() gt 1], ($resolved-uris-to-check, $next-uri), $loop-counter + 1)"
+                            select="tan:get-xslt($resolved-uris-to-check[position() gt 1], ($resolved-uris-already-checked, $next-uri), $loop-counter + 1)"
                         />
                     </xsl:when>
                     <xsl:when test="not(exists($this-doc/(xsl:stylesheet, xsl:transform)))">
@@ -165,7 +140,7 @@
                             <xsl:message select="'Target of ' || $next-uri || ' is not XSLT'"/>
                         </xsl:if>
                         <xsl:sequence
-                            select="tan:get-xslt($resolved-uris-to-check[position() gt 1], ($resolved-uris-to-check, $next-uri), $loop-counter + 1)"
+                            select="tan:get-xslt($resolved-uris-to-check[position() gt 1], ($resolved-uris-already-checked, $next-uri), $loop-counter + 1)"
                         />
                     </xsl:when>
                     <xsl:otherwise>
@@ -179,7 +154,7 @@
                         />
                         <xsl:sequence select="$this-doc"/>
                         <xsl:sequence
-                            select="tan:get-xslt(($resolved-uris-to-check[position() gt 1], $new-uris-to-check), ($resolved-uris-to-check, $next-uri), $loop-counter + 1)"
+                            select="tan:get-xslt(($resolved-uris-to-check[position() gt 1], $new-uris-to-check), ($resolved-uris-already-checked, $next-uri), $loop-counter + 1)"
                         />
                     </xsl:otherwise>
                 </xsl:choose>
@@ -187,45 +162,89 @@
         </xsl:choose>
     </xsl:function>
     
+    <xsl:function name="tan:uri-to-batch-path" as="xs:string*">
+        <!-- Input: a sequence of string uris to be converted to batch syntax; a parameter indicating whether path separators should be switched -->
+        <!-- Output: the sequence converted to batch syntax -->
+        <xsl:param name="uris" as="xs:string*"/>
+        <xsl:param name="convert-path-separators" as="xs:boolean"/>
+        <xsl:for-each select="$uris">
+            <xsl:variable name="pass-1"
+                select="
+                    if (matches(., '%20')) then
+                        ($quot || replace(., '%20', ' ') || $quot)
+                    else
+                        ."
+            />
+            <xsl:variable name="pass-2"
+                select="
+                    if ($convert-path-separators) then
+                        replace($pass-1, '/', '\\')
+                    else
+                        $pass-1"
+            />
+            <xsl:sequence select="$pass-2"/>
+        </xsl:for-each>
+    </xsl:function>
+    
     <xsl:function name="tan:evaluate-param" as="xs:string?">
         <!-- Input: elements (xsl:params) -->
         <!-- Output: the value of the first param that can be evaluated -->
         <xsl:param name="param-to-evaluate" as="element()?"/>
         <xsl:variable name="open-and-close-quote-regex" as="xs:string">^['"]|['"]$</xsl:variable>
-        <xsl:if test="$diagnostics-on">
+        <xsl:variable name="diagnostics-on" select="true()"/>
+        <xsl:variable name="output" as="xs:string?">
+            <xsl:choose>
+                <xsl:when test="exists($param-to-evaluate/@select)"
+                    use-when="$function-saxon-evaluate-available">
+                    <!-- We work only with saxon:evaluate and not xsl:evaluate because the latter (for security reasons) must
+                be pegged to parameters in this stylesheet. -->
+                    <xsl:try>
+                        <xsl:if test="$diagnostics-on">
+                            <xsl:message select="'Using saxon:evaluate() on @select ' || string($param-to-evaluate/@select)"/>
+                        </xsl:if>
+                        <xsl:for-each select="$param-to-evaluate">
+                            <xsl:variable name="this-evaluation" select="saxon:evaluate(@select)"/>
+                            <xsl:value-of select="string-join($this-evaluation, '&#xd;&#xa;')"/>
+                        </xsl:for-each>
+                        <xsl:catch>
+                            <xsl:message
+                                select="'Could not use saxon:evaluate on @select in parameter ' || $param-to-evaluate/@name"
+                            />
+                        </xsl:catch>
+                    </xsl:try>
+                </xsl:when>
+                <xsl:when test="matches($param-to-evaluate/@select, $open-and-close-quote-regex)">
+                    <xsl:if test="$diagnostics-on">
+                        <xsl:message
+                            select="'Evaluating param ' || $param-to-evaluate/@name || '@select ' || string($param-to-evaluate/@select) || ' as a string'"
+                        />
+                    </xsl:if>
+                    <xsl:value-of
+                        select="replace($param-to-evaluate/@select, $open-and-close-quote-regex, '')"
+                    />
+                </xsl:when>
+                <xsl:when test="not(exists($param-to-evaluate/*))">
+                    <xsl:if test="$diagnostics-on">
+                        <xsl:message select="'Evaluating plain text content of param ' || $param-to-evaluate/@name"/>
+                    </xsl:if>
+                    <xsl:value-of select="$param-to-evaluate"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <!-- This is a case where @select either doesn't have a string value or it has children elements, and
+                cannot be evaluated -->
+                    <xsl:message
+                        select="'Could not evaluate complex parameter ' || $param-to-evaluate/@name"
+                    />
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        
+        <xsl:if test="$app-diagnostics-on">
             <xsl:message
-                select="'Evaluating param ' || $param-to-evaluate/@name || ' (parent ' || name($param-to-evaluate/parent::*) || ')'"
+                select="'Evaluating param ' || $param-to-evaluate/@name || ' (parent ' || name($param-to-evaluate/parent::*) || ') as: ' || $output"
             />
         </xsl:if>
-        <xsl:choose>
-            <xsl:when test="exists($param-to-evaluate/@select)"
-                use-when="$function-saxon-evaluate-available">
-                <!-- We work only with saxon:evaluate and not xsl:evaluate because the latter (for security reasons) must
-                be pegged to parameters in this stylesheet. -->
-                <xsl:try>
-                    <xsl:for-each select="$param-to-evaluate">
-                        <xsl:variable name="this-evaluation" select="saxon:evaluate(@select)"/>
-                        <xsl:value-of select="string-join($this-evaluation, '&#xd;&#xa;')"/>
-                    </xsl:for-each>
-                    <xsl:catch>
-                        <xsl:message
-                            select="'Could not use saxon:evaluate on @select in parameter ' || $param-to-evaluate/@name"
-                        />
-                    </xsl:catch>
-                </xsl:try>
-            </xsl:when>
-            <xsl:when test="matches($param-to-evaluate/@select, $open-and-close-quote-regex)">
-                <xsl:value-of select="replace($param-to-evaluate/@select, $open-and-close-quote-regex, '')"/>
-            </xsl:when>
-            <xsl:when test="not(exists($param-to-evaluate/*))">
-                <xsl:value-of select="$param-to-evaluate"/>
-            </xsl:when>
-            <xsl:otherwise>
-                <!-- This is a case where @select either doesn't have a string value or it has children elements, and
-                cannot be evaluated -->
-                <xsl:message select="'Could not evaluate complex parameter ' || $param-to-evaluate/@name"/>
-            </xsl:otherwise>
-        </xsl:choose>
+        <xsl:sequence select="$output"/>
     </xsl:function>
     
 
@@ -233,9 +252,12 @@
         <!-- Input: a template batch file, assorted parameters -->
         <!-- Output: a copy of the batch file revised according to the parameters specified by the input XSLT file -->
         <xsl:param name="batch-file-template" as="xs:string"/>
-        <xsl:param name="target-uri-resolved" as="xs:string"/>
+        <xsl:param name="target-batch-uri-resolved" as="xs:string"/>
         <xsl:param name="override-params" as="element()*"/>
         <xsl:param name="relative-path-from-batch-to-xslt" as="xs:string?"/>
+        
+        <xsl:variable name="this-xslt-uri-resolved"
+            select="resolve-uri($relative-path-from-batch-to-xslt, $target-batch-uri-resolved)"/>
         
         <xsl:variable name="saxon-path-override" as="xs:string?"
             select="
@@ -244,8 +266,15 @@
                 return
                     $j)[1]"
         />
+        <!-- the Saxon path is declared in the XSLT stylesheet, not the batch file, so relative paths must
+        be calculated first against the former, then relativized against the latter. Further, Java allows
+        multiple classpaths to be provided, semicolon-delimited, so we tokenize on the ; -->
         <xsl:variable name="new-saxon-path"
-            select="tan:uri-relative-to(($saxon-path-override, $processor-path-resolved)[1], $target-uri-resolved)"
+            select="
+                string-join((for $i in tokenize(($saxon-path-override, $processor-path-resolved)[1], ';'),
+                $j in resolve-uri($i, $this-xslt-uri-resolved)
+                return
+                    tan:uri-relative-to($j, $target-batch-uri-resolved)), ';')"
         />
 
         <xsl:variable name="default-saxon-options-override" as="xs:string?"
@@ -263,7 +292,7 @@
             <!-- set up the path to the Saxon engine and its options (other than -xsl:, -o:, and -s:) -->
             <xsl:analyze-string select="$batch-file-template" regex="(set _saxonPath=)\S*">
                 <xsl:matching-substring>
-                    <xsl:value-of select="regex-group(1) || $new-saxon-path"/>
+                    <xsl:value-of select="regex-group(1) || tan:uri-to-batch-path($new-saxon-path, false())"/>
                 </xsl:matching-substring>
                 <xsl:non-matching-substring>
                     <xsl:analyze-string select="." regex="(set _saxonOptions=)\S*">
@@ -301,15 +330,15 @@
         
         <xsl:variable name="output-pass-2" as="xs:string+">
             <!-- set up option -o: and the key parameter -->
-            <xsl:analyze-string select="string-join($output-pass-1)" regex="(set _keyParameter=)\S+">
+            <xsl:analyze-string select="string-join($output-pass-1)" regex="(set _keyParameter=)\S*">
                 <xsl:matching-substring>
                     <xsl:value-of select="regex-group(1) || $new-key-parameter-name"/>
                 </xsl:matching-substring>
                 <xsl:non-matching-substring>
                     <!-- set up the primary output target uri -->
-                    <xsl:analyze-string select="." regex="(set _xslOutput=)\S+">
+                    <xsl:analyze-string select="." regex="(set _xslOutput=)\S*">
                         <xsl:matching-substring>
-                            <xsl:value-of select="regex-group(1) || $new-primary-output-target-uri"/>
+                            <xsl:value-of select="regex-group(1) || tan:uri-to-batch-path($new-primary-output-target-uri, false())"/>
                         </xsl:matching-substring>
                         <xsl:non-matching-substring>
                             <xsl:value-of select="."/>
@@ -321,15 +350,15 @@
         
         
         
-        <xsl:variable name="diagnostics-on-override" as="xs:string?"
+        <xsl:variable name="app-diagnostics-on-override" as="xs:string?"
             select="
                 (for $i in $override-params[@name = 'diagnostics-on'],
                     $j in tan:evaluate-param($i)
                 return
                     $j)[1]"
         />
-        <xsl:variable name="new-diagnostics-on"
-            select="($diagnostics-on-override, $diagnostics-on)[1]"/>
+        <xsl:variable name="new-app-diagnostics-on"
+            select="($app-diagnostics-on-override, $app-diagnostics-on)[1]"/>
 
         <xsl:variable name="additional-documentation-override" as="xs:string?"
             select="
@@ -343,9 +372,9 @@
         
         <xsl:variable name="output-pass-3" as="xs:string+">
             <!-- set up diagnostics option -->
-            <xsl:analyze-string select="string-join($output-pass-2)" regex="(set _diagnostics=)\S+">
+            <xsl:analyze-string select="string-join($output-pass-2)" regex="(set _diagnostics=)\S*">
                 <xsl:matching-substring>
-                    <xsl:value-of select="regex-group(1) || $new-diagnostics-on"/>
+                    <xsl:value-of select="regex-group(1) || $new-app-diagnostics-on"/>
                 </xsl:matching-substring>
                 <xsl:non-matching-substring>
                     <!-- add additional documentation -->
@@ -398,7 +427,7 @@
                     <!-- adjust the path to the XSLT file -->
                     <xsl:analyze-string select="." regex="(set _xslPath=)\S+">
                         <xsl:matching-substring>
-                            <xsl:value-of select="regex-group(1) || $relative-path-from-batch-to-xslt"/>
+                            <xsl:value-of select="regex-group(1) || tan:uri-to-batch-path($relative-path-from-batch-to-xslt, false())"/>
                         </xsl:matching-substring>
                         <xsl:non-matching-substring>
                             <xsl:value-of select="."/>
@@ -415,7 +444,7 @@
     <xsl:output indent="yes"/>
     
     <xsl:template match="/">
-        <xsl:if test="$diagnostics-on">
+        <xsl:if test="$app-diagnostics-on">
             <diagnostics>
                 <main-input-uris-resolved count="{count($main-input-resolved-uris) + count($miru-lists-parsed)}">
                     <xsl:for-each select="$main-input-resolved-uris, $miru-lists-parsed">
