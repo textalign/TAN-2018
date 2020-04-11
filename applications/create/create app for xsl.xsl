@@ -4,47 +4,57 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tan="tag:textalign.net,2015:ns"
     exclude-result-prefixes="#all" version="3.0">
     
-    <!-- Create App for XSL -->
+    <!-- Create MIRU XSL App -->
     <!-- author: Joel Kalvesmaki -->
-    <!-- updated: 2020-04-08 -->
+    <!-- updated: 2020-04-11 -->
     <!-- To do: 
         refine, test batch process
         develop parallel process for shell (.sh)
     -->
     
-    <!-- This stylesheet creates a batch file for each of one or more input XSLT stylesheets, to make
-        it easier for someone to use an XSLT stylesheet like a traditional application. A user needs 
-        merely to use the File Explorer to drag files onto the batch file, and run the stylesheet. 
+    <!-- This stylesheet creates a batch or (pending) shell file for each of one or more input 
+        XSLT stylesheets, to let them use used like a traditional application. A user needs 
+        merely to use the File Explorer (Windows) or Finder (Mac) to drag files onto the 
+        batch or shell file, and run the stylesheet.
+            Currently in development, this stylesheet supports batch files only. Shell files will be
+        supported after kinks have been worked out of the batch process.
         
-        This process will not serve every type of XSLT application. It targets a significant subset of XSLT
-        that we will call here MIRU stylesheets: Main Input via Resolved URIs.
-        In a MIRU stylesheet:
-          - the initial, catalyzing input is irrelevant; any XML file, including stylesheet itself, can be the catalyzing input.
-          - the main input is determined by a single parameter that takes a sequence of strings for resolved 
-            uris; those files are either input files or plain-text lists of input files.
-        In a MIRU stylesheet, the catalyzing XML input is of no consequence, and so the MIRU stylesheet can be its own
-        catalyzing input. The main input is drawn from files fetched from the resolved uris. 
+        Create MIRU XSL App does not serve every type of XSLT application. It targets a 
+        significant subset of XSLT that we will call here MIRU stylesheets: Main Input via Resolved 
+        URIs. In a MIRU stylesheet:
+          - the initial, catalyzing input is irrelevant; any XML file, including stylesheet itself, can be 
+          the catalyzing input.
+          - the main input is determined by a single parameter that takes a sequence of strings for 
+          resolved uris; those files are either input files or plain-text lists of input files.
         
-        The advantage of a MIRU stylesheet is that anything can be input, including non-XML, binary files. In many 
-        MIRU stylesheets the primary output (the output determined by the default or initial template) is of no or 
-        little consequence, perhaps providing a diagnostic report or a log. The more important output files are generated 
-        by xsl:result-document, either iterating over the input and saving each output file somewhere relative to the input,
-        the stylesheet, or some other location. 
+        MIRU stylesheets have some benefits:
+        - the main input is opened up to anything, including non-XML, binary files. 
+        - because they iterate over many (perhaps thousands) of files, they can be developed as
+        pipeline processes (XProc is oftentimes not needed). 
         
-        The file you are reading is an example of a MIRU stylesheet. To test it, copy this file, and drag the copy atop the 
-        original. A new batch file will appear alongside the copy. 
+        MIRU stylesheets should be written with robust error handling. The input URIs might 
+        point to resources that are not available or are not the expected input. Authors of MIRU 
+        stylesheets should be liberal in their use of messages, and clear in their documentation 
+        about how output will be handled. In many MIRU stylesheets the primary output (the 
+        output determined by the default or initial template) is of no or little consequence, 
+        perhaps just a diagnostic report or a log. The more important output files are generated 
+        by xsl:result-document, iterating over the input. It is advised that authors of MIRU 
+        stylesheets include messages for both primary and secondary output. In the case of the
+        latter, messages should report the value of @href in each <xsl:result-document>. 
         
-        The process should work as will for NIR (no input required) XSLT stylesheets.
+        The file you are reading is an example of a MIRU stylesheet, and it works on itself. To test 
+        it, copy it, and drag the copy atop create MIRU XSL app.bat/sh. New application file(s) will 
+        appear alongside the copy. 
         
-        If you find that you want to create several apps for the same XSLT stylesheet, each with slightly different
-        parameters, you will find it easiest to use this Create App for XSL to generate the primary batch file, and
-        then make versions of that batch file, editing the contents as needed. That will give you more control over
-        the customization process. 
-            Advanced users may wish to change the parameter pointing to the batch file template. 
-    -->
-
-    <!-- There are numerous other adjustments you can make to the batch file itself. When you are finished,
-    you will want to pay careful attention to the relative paths of various files. -->
+        The process should work as well for NIR (no input required) XSLT stylesheets.
+        
+        You can customize the application via the MIRU stylesheet itself, by redefining select 
+        parameters. See create%20miru%20xsl%20app%parameters.xsl for documentation. 
+        
+        You do not even need this stylesheet to develop your applications. Simply copy the template
+        batch or shell programs and place them where you want, then edit the code to suit your
+        MIRU XSLT. Pay careful attention to the relative paths of various files, and to the 
+        peculiarities of shell or batch syntax. -->
     
     <!-- Catalyzing input: any XML file (including this one) -->
     <!-- Main input: one or more resolved uris pointing to XSLT stylesheets -->
@@ -56,8 +66,9 @@
     the file for documentation, instructions -->
     <xsl:include href="create%20app%20for%20xsl%20parameters.xsl"/>
 
-    <!-- Some TAN functions help this process -->
+    <!-- Some TAN functions help this process. They also allow target MIRU XSLT files to populate parameters with dynamically evaluated values. -->
     <xsl:import href="../../functions/TAN-A-functions.xsl"/>
+    <xsl:import href="../../functions/TAN-extra-functions.xsl"/>
     
     <!-- Static parameter to see if advanced Saxon functions are available -->
     <xsl:param name="function-saxon-evaluate-available" static="yes" select="function-available('saxon:evaluate')"/>
@@ -360,15 +371,15 @@
         <xsl:variable name="new-app-diagnostics-on"
             select="($app-diagnostics-on-override, $app-diagnostics-on)[1]"/>
 
-        <xsl:variable name="additional-documentation-override" as="xs:string?"
+        <xsl:variable name="app-documentation-override" as="xs:string?"
             select="
-                (for $i in $override-params[@name = 'additional-documentation'],
+                (for $i in $override-params[@name = 'app-documentation'],
                     $j in tan:evaluate-param($i)
                 return
                     $j)[1]"
         />
-        <xsl:variable name="new-additional-documentation"
-            select="($additional-documentation-override, $additional-documentation)[1]"/>
+        <xsl:variable name="new-app-documentation"
+            select="($app-documentation-override, $app-documentation)[1]"/>
         
         <xsl:variable name="output-pass-3" as="xs:string+">
             <!-- set up diagnostics option -->
@@ -378,10 +389,11 @@
                 </xsl:matching-substring>
                 <xsl:non-matching-substring>
                     <!-- add additional documentation -->
-                    <xsl:analyze-string select="." regex="REM additional documentation">
+                    <xsl:analyze-string select="." regex="(REM documentation start).+(REM documentation end)">
                         <xsl:matching-substring>
                             <xsl:message select="'Escaping new documentation for batch syntax. Check results for errors.'"/>
-                            <xsl:for-each select="tokenize($new-additional-documentation, '\r?\n')">
+                            <xsl:value-of select="regex-group(1) || '&#xd;&#xa;'"/>
+                            <xsl:for-each select="tokenize($new-app-documentation, '\r?\n')">
                                 <xsl:choose>
                                     <xsl:when test="matches(., '\S')">
                                         <!-- Escape parentheses. -->
@@ -396,6 +408,7 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </xsl:for-each>
+                            <xsl:value-of select="regex-group(2) || '&#xd;&#xa;'"/>
                         </xsl:matching-substring>
                         <xsl:non-matching-substring>
                             <xsl:value-of select="."/>

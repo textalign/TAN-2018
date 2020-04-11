@@ -5,7 +5,7 @@
     
     <!-- Parameters for Create App for XSL Parameters -->
     <!-- author: Joel Kalvesmaki -->
-    <!-- updated: 2020-04-10 -->
+    <!-- updated: 2020-04-11 -->
     
     <!-- To be used in conjunction with the file create%20app%20for%20xsl.xsl -->
     <!-- If you have an xsl that you want to turn into an app, and you want to overwrite
@@ -14,30 +14,46 @@
     parameter values will be used instead. 
             If you do not wish to overwrite a default value, you should probably comment 
     out the <xsl:param> instead of delete it, in case you change your mind later. You 
-    should not leave an empty element, unless you want to make sure that the parameter
+    should not an empty <xsl:param>, unless you want to make sure that the parameter
     is given no value whatsoever. -->
 
     <!-- The values below should be simple strings and not XPath expressions via @select, 
-        unless you can run this through Saxon PE or EE (which require licenses). -->
+        unless you can run this through Saxon PE or EE (which require licenses). If you
+        use @select, all variables and functions will be evaluated according to the context
+        of Create MIRU XSL App (CMXA), not your MIRU xslt file. Because CMXA draws from
+        the TAN library, TAN global variables and functions may be used. 
+    -->
     
     <!-- + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + -->
+    
+    <!-- Parameters specific to an application type -->
     
     <!-- Where is the template batch file that should be used? Normally it is in the same path as this stylesheet, i.e., create app for xsl.bat -->
     <xsl:param name="batch-template-path-relative-to-this-stylesheet" as="xs:string"
         >create%20app%20for%20xsl.bat</xsl:param>
     
-    <!-- Where is the Saxon XSLT processor relative to the stylesheet that declares this parameter? If left blank, the target will point to the Saxon processor used by Create App for XSL -->
+    <!-- Where is the template shell file that should be used? Normally it is in the same path as this stylesheet, i.e., create app for xsl.bat -->
+    <xsl:param name="shell-template-path-relative-to-this-stylesheet" as="xs:string"
+        >create%20app%20for%20xsl.sh</xsl:param>
+    
+    <!-- Where should the batch file be saved relative to the input XSLT? If the value is empty, the batch file will have the same name as the input XSLT, but with a .bat extension -->
+    <xsl:param name="target-batch-uri-relative-to-input-xslt" as="xs:string?"/>
+    
+    <!-- Where should the shell file be saved relative to the input XSLT? If the value is empty, the batch file will have the same name as the input XSLT, but with a .sh extension -->
+    <xsl:param name="target-shell-uri-relative-to-input-xslt" as="xs:string?"/>
+    
+    
+    <!-- Parameters not specific to an application type -->
+    
+    <!-- Where is the Saxon XSLT processor relative to the master stylesheet? If left blank, the target will point to the Saxon processor used by Create MIRU XSLT App -->
     <xsl:param name="processor-path-relative-to-this-stylesheet" as="xs:string"
         >../../processors/saxon9he.jar</xsl:param>
 
     <!-- What are the standard Saxon options you want to include? See https://saxonica.com/documentation/index.html#!using-xsl/commandline -->
     <xsl:param name="default-saxon-options" as="xs:string?"/>
     
-    <!-- Where should the app be saved relative to the input XSLT? If the value is empty, the batch file will have the same name as the input XSLT, but with a .bat extension -->
-    <xsl:param name="target-batch-uri-relative-to-input-xslt" as="xs:string?"/>
-    
     <!-- What should be the filename of the target app's primary output (if any)? Note, this value populates the -o parameter, and does not dictate whether there will be any primary output, or the handling of secondary output via xsl:result-document -->
-    <xsl:param name="primary-output-target-uri" as="xs:string">%_xslPath%.output.xml</xsl:param>
+    <xsl:param name="primary-output-target-uri" as="xs:string?">%_xslPath%.output.xml</xsl:param>
     
     <!-- What is the name of the key parameter in the stylesheet? It must anticipate a sequence of strings representing resolved uris -->
     <xsl:param name="key-parameter-name" as="xs:string">resolved-uris-to-lists-of-main-input-resolved-uris</xsl:param>
@@ -49,6 +65,6 @@
     <xsl:param name="app-diagnostics-on" as="xs:string?">1</xsl:param>
     
     <!-- What additional documentation if any do you want to add to the app? If you can run this through Saxon PE or EE, try select="root()/*/*[1]/preceding-sibling::comment()" to insert all initial comments -->
-    <xsl:param name="additional-documentation" as="xs:string?"/>
+    <xsl:param name="app-documentation" as="xs:string?"/>
     
 </xsl:stylesheet>
