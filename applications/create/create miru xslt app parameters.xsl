@@ -3,7 +3,7 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tan="tag:textalign.net,2015:ns"
     exclude-result-prefixes="#all" version="3.0">
     
-    <!-- Parameters for Create App for XSL Parameters -->
+    <!-- Parameters for Create MIRU XSLT App -->
     <!-- author: Joel Kalvesmaki -->
     <!-- updated: 2020-04-11 -->
     
@@ -20,7 +20,7 @@
     <!-- The values below should be simple strings and not XPath expressions via @select, 
         unless you can run this through Saxon PE or EE (which require licenses). If you
         use @select, all variables and functions will be evaluated according to the context
-        of Create MIRU XSL App (CMXA), not your MIRU xslt file. Because CMXA draws from
+        of Create MIRU XSLT App (CMXA), not your MIRU xslt file. Because CMXA draws from
         the TAN library, TAN global variables and functions may be used. 
     -->
     
@@ -30,11 +30,11 @@
     
     <!-- Where is the template batch file that should be used? Normally it is in the same path as this stylesheet, i.e., create app for xsl.bat -->
     <xsl:param name="batch-template-path-relative-to-this-stylesheet" as="xs:string"
-        >create%20app%20for%20xsl.bat</xsl:param>
+        >create%20miru%20xslt%20app.bat</xsl:param>
     
     <!-- Where is the template shell file that should be used? Normally it is in the same path as this stylesheet, i.e., create app for xsl.bat -->
     <xsl:param name="shell-template-path-relative-to-this-stylesheet" as="xs:string"
-        >create%20app%20for%20xsl.sh</xsl:param>
+        >create%20miru%20xslt%20app.sh</xsl:param>
     
     <!-- Where should the batch file be saved relative to the input XSLT? If the value is empty, the batch file will have the same name as the input XSLT, but with a .bat extension -->
     <xsl:param name="target-batch-uri-relative-to-input-xslt" as="xs:string?"/>

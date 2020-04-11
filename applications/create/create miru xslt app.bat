@@ -26,13 +26,14 @@ REM Where is the XSLT file?
 set _xslPath=%_thisBatchName:.bat=.xsl%
 REM Where should any output go? Check the target stylesheet to see what output
 REM if any there is. If there is none, or the output is of no consequence, leave
-REM it blank
-set _xslOutput=%_xslPath%.output.xml
+REM it blank. If you do wish primary output, preface the value of !_xslOutput!
+REM with -o:, e.g., -o:!_xslPath!.output.xml
+set _xslOutput=
 REM Where is the Saxon processor?
-set _saxonPath=../../processors/saxon9he.jar
+REM set _saxonPath=../../processors/saxon9he.jar
 set _saxonPath=../../../../../processors/SaxonEE9-8-0-15J/saxon9ee.jar
 REM what command-line options should be set for Saxon? For details see https://saxonica.com/documentation/index.html#!using-xsl/commandline
-set _saxonOptions= 
+set _saxonOptions=
 REM What is the name of the one parameter that is expecting the sequence of resolved URLs?
 set _keyParameter=resolved-uris-to-lists-of-main-input-resolved-uris
 REM What other parameters declared by the stylesheet if any should be provided? Follow the syntax of [params] at  For details see https://saxonica.com/documentation/index.html#!using-xsl/commandline
@@ -44,7 +45,6 @@ set _tempFile=%_tempFile::=%
 set _tempFile=%_tempFile:.=%
 set _tempFile=%temp%\~gxt-validate-%_tempFile:,=%.tmp
 type NUL > "%_tempFile%"
-echo temporary File: %_tempFile%
 
 REM Set up MIRU list parameter.
 set _miruList=file:/!_tempFile: =%%20!
@@ -97,36 +97,42 @@ for %%G in (%_allBatchParamsRevised%) do (
 )
 
 REM build the command line that will be sent to Saxon 
-set _saxonComLine=java -cp %_saxonPath% net.sf.saxon.Transform -s:%_xslPath% -o:%_xslOutput% -xsl:%_xslPath% %_saxonOptions% %_otherParameters% %_keyParameter%=%_miruList%
+set _saxonComLine=java -cp !_saxonPath! net.sf.saxon.Transform -xsl:!_xslPath! -s:!_xslPath! !_xslOutput! !_saxonOptions! !_otherParameters! !_keyParameter!=!_miruList!
 
-if %_diagnostics% == 1 (
-    echo Number of parameters: %_argCount%
-    echo Path to starting ^(master^) XSLT: %_xslPath%
-	echo Path to primary output: %_xslOutput%
-    echo Path to Saxon processor: %_saxonPath%
-	echo Path to list of MIRUs: %_miruList%
+if !_diagnostics! == 1 (
+    echo Number of parameters: !_argCount!
+    echo Path to starting ^(master^) XSLT: !_xslPath!
+	echo Path to primary output: !_xslOutput!
+    echo Path to Saxon processor: !_saxonPath!
+	echo Path to list of MIRUs: !_miruList!
     echo Command line about to be executed: 
-	echo %_saxonComLine%
-	set /P _goAhead="Do you wish to proceed? "
-	if /I "%_goAhead%"=="y" (
+	echo.
+	echo !_saxonComLine!
+	echo.
+	echo If the command fails, and you wish to diagnose, copy the line above and run
+	echo again in a shell, from here, the context directory of the batch file:
+	echo %cd%
+	set /P _goAhead="Do you wish to proceed ^(y = yes; anything else = no^)? "
+	if /I "!_goAhead!"=="y" (
 		echo Executing the command.
 		) else (
 		exit /B
 	)
 )
-
 REM Execute the command
-%_saxonComLine%
+!_saxonComLine!
 
-if %_diagnostics% == 1 (
-	echo Do not forget to delete temporary file %_tempFile%
+echo.
+if !_diagnostics! == 1 (
+	echo Do not forget to delete temporary file !_tempFile!
 	) else (
-	del %_tempFile%
+	del !_tempFile!
 )
 
-if not %_xslOutput%=[] (
-	echo Primary output directed to %_xslOutput%
-	start "" %_xslOutput%
+REM if primary output has been generated, open it
+if exist !_xslOutput! (
+	set /P _openOutput="Do you wish to open the primary output, saved at !_xslOutput! ^(y = yes; anything else = no^)? "
+	if /I "!_openOutput!"=="y" start "" !_xslOutput!
 )
 REM Pause to let the user read messages from the XSLT application.
 pause
@@ -146,9 +152,9 @@ echo For more details please see the inline documentation at %_xslPath%.
 REM documentation end
 REM instructions start
 echo.
-echo To use: In Windows Explorer drag onto this batch file any files or 
-echo directories you want to be processed. The resolved URIs are passed 
-echo as a list to the parameter %_keyParameter% in the XSLT stylesheet at: 
+echo To use: In Windows Explorer drag onto this batch file any files or directories 
+echo you want to be processed. The resolved URIs are passed as a list to the parameter
+echo $%_keyParameter% in the XSLT stylesheet at: 
 echo %_xslPath%
 REM instructions end
 pause

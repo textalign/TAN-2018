@@ -4,7 +4,7 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tan="tag:textalign.net,2015:ns"
     exclude-result-prefixes="#all" version="3.0">
     
-    <!-- Create MIRU XSL App -->
+    <!-- Create MIRU XSLT App -->
     <!-- author: Joel Kalvesmaki -->
     <!-- updated: 2020-04-11 -->
     <!-- To do: 
@@ -19,7 +19,7 @@
             Currently in development, this stylesheet supports batch files only. Shell files will be
         supported after kinks have been worked out of the batch process.
         
-        Create MIRU XSL App does not serve every type of XSLT application. It targets a 
+        Create MIRU XSLT App does not serve every type of XSLT application. It targets a 
         significant subset of XSLT that we will call here MIRU stylesheets: Main Input via Resolved 
         URIs. In a MIRU stylesheet:
           - the initial, catalyzing input is irrelevant; any XML file, including stylesheet itself, can be 
@@ -43,8 +43,8 @@
         latter, messages should report the value of @href in each <xsl:result-document>. 
         
         The file you are reading is an example of a MIRU stylesheet, and it works on itself. To test 
-        it, copy it, and drag the copy atop create MIRU XSL app.bat/sh. New application file(s) will 
-        appear alongside the copy. 
+        it, copy it, and drag the copy atop the file: create MIRU XSLT app.bat/sh. New application 
+        file(s) will appear alongside the copy. 
         
         The process should work as well for NIR (no input required) XSLT stylesheets.
         
@@ -64,7 +64,7 @@
     
     <!-- The following file has parameters that may be overwritten by an input xsl file. See
     the file for documentation, instructions -->
-    <xsl:include href="create%20app%20for%20xsl%20parameters.xsl"/>
+    <xsl:include href="create%20miru%20xslt%20app%20parameters.xsl"/>
 
     <!-- Some TAN functions help this process. They also allow target MIRU XSLT files to populate parameters with dynamically evaluated values. -->
     <xsl:import href="../../functions/TAN-A-functions.xsl"/>
@@ -109,7 +109,7 @@
         <xsl:param name="resolved-uris-already-checked" as="xs:string*"/>
         <xsl:param name="loop-counter" as="xs:integer"/>
         
-        <xsl:variable name="diagnostics-on" select="true()"/>
+        <xsl:variable name="diagnostics-on" select="false()"/>
         <xsl:if test="$diagnostics-on">
             <xsl:if test="$loop-counter lt 2"><xsl:message select="'Diagnostics on for tan:get-xslt()'"/></xsl:if>
             <xsl:message select="'Loop ' || string($loop-counter)"/>
@@ -301,12 +301,12 @@
         <!-- We process the output in multiple passes, to ease legibility of this stylesheet's code (indentations) -->
         <xsl:variable name="output-pass-1" as="xs:string+">
             <!-- set up the path to the Saxon engine and its options (other than -xsl:, -o:, and -s:) -->
-            <xsl:analyze-string select="$batch-file-template" regex="(set _saxonPath=)\S*">
+            <xsl:analyze-string select="$batch-file-template" regex="(\n\s*set _saxonPath=)\S*">
                 <xsl:matching-substring>
                     <xsl:value-of select="regex-group(1) || tan:uri-to-batch-path($new-saxon-path, false())"/>
                 </xsl:matching-substring>
                 <xsl:non-matching-substring>
-                    <xsl:analyze-string select="." regex="(set _saxonOptions=)\S*">
+                    <xsl:analyze-string select="." regex="(\n\s*set _saxonOptions=)\S*">
                         <xsl:matching-substring>
                             <xsl:value-of select="regex-group(1) || $new-default-saxon-options"/>
                         </xsl:matching-substring>
@@ -338,18 +338,26 @@
         />
         <xsl:variable name="new-primary-output-target-uri"
             select="($primary-output-target-uri-override, $primary-output-target-uri)[1]"/>
+        <!-- If it's non-space, make sure it is prefaced with -o: -->
+        <xsl:variable name="new-primary-output-target-uri-norm"
+            select="
+                if (matches($new-primary-output-target-uri, '\S') and not(matches($new-primary-output-target-uri, '^-o:'))) then
+                    ('-o:' || $new-primary-output-target-uri)
+                else
+                    $new-primary-output-target-uri"
+        />
         
         <xsl:variable name="output-pass-2" as="xs:string+">
             <!-- set up option -o: and the key parameter -->
-            <xsl:analyze-string select="string-join($output-pass-1)" regex="(set _keyParameter=)\S*">
+            <xsl:analyze-string select="string-join($output-pass-1)" regex="(\n\s*set _keyParameter=)\S*">
                 <xsl:matching-substring>
                     <xsl:value-of select="regex-group(1) || $new-key-parameter-name"/>
                 </xsl:matching-substring>
                 <xsl:non-matching-substring>
                     <!-- set up the primary output target uri -->
-                    <xsl:analyze-string select="." regex="(set _xslOutput=)\S*">
+                    <xsl:analyze-string select="." regex="(\n\s*set _xslOutput=)\S*">
                         <xsl:matching-substring>
-                            <xsl:value-of select="regex-group(1) || tan:uri-to-batch-path($new-primary-output-target-uri, false())"/>
+                            <xsl:value-of select="regex-group(1) || tan:uri-to-batch-path($new-primary-output-target-uri-norm, false())"/>
                         </xsl:matching-substring>
                         <xsl:non-matching-substring>
                             <xsl:value-of select="."/>
@@ -383,24 +391,33 @@
         
         <xsl:variable name="output-pass-3" as="xs:string+">
             <!-- set up diagnostics option -->
-            <xsl:analyze-string select="string-join($output-pass-2)" regex="(set _diagnostics=)\S*">
+            <xsl:analyze-string select="string-join($output-pass-2)" regex="(\n\s*set _diagnostics=)\S*">
                 <xsl:matching-substring>
-                    <xsl:value-of select="regex-group(1) || $new-app-diagnostics-on"/>
+                    <xsl:value-of
+                        select="
+                            regex-group(1) || (if ($new-app-diagnostics-on) then
+                                '1'
+                            else
+                                '0')"
+                    />
                 </xsl:matching-substring>
                 <xsl:non-matching-substring>
                     <!-- add additional documentation -->
-                    <xsl:analyze-string select="." regex="(REM documentation start).+(REM documentation end)">
+                    <xsl:analyze-string select="." flags="s"
+                        regex="(REM documentation start).+(REM documentation end)">
                         <xsl:matching-substring>
-                            <xsl:message select="'Escaping new documentation for batch syntax. Check results for errors.'"/>
+                            <xsl:message
+                                select="'Escaping new documentation for batch syntax. Check results for errors.'"/>
                             <xsl:value-of select="regex-group(1) || '&#xd;&#xa;'"/>
                             <xsl:for-each select="tokenize($new-app-documentation, '\r?\n')">
                                 <xsl:choose>
                                     <xsl:when test="matches(., '\S')">
                                         <!-- Escape parentheses. -->
-                                        <xsl:variable name="this-batch-escaped-text-pass-1" select="replace(., '([\)\(])', '^$1')"/>
-                                        <!-- A line that terminates in a parentheses should have its escape escaped. Batch syntax. Ugh. -->
-                                        <xsl:variable name="this-batch-escaped-text-pass-2" select="replace($this-batch-escaped-text-pass-1, '(\^\))\s*$', '^^$1')"/>
-                                        <xsl:value-of select="'echo ' || $this-batch-escaped-text-pass-2 || '&#xd;&#xa;'"/>
+                                        <xsl:variable name="this-batch-escaped-text-pass-1"
+                                            select="replace(., '([\)\(])', '^$1')"/>
+                                        <xsl:value-of
+                                            select="'echo ' || $this-batch-escaped-text-pass-1 || '&#xd;&#xa;'"
+                                        />
                                     </xsl:when>
                                     <xsl:otherwise>
                                         <!-- A blank line is simply: echo. (no space between 'echo' and the period) -->
@@ -432,15 +449,18 @@
         
         <xsl:variable name="output-pass-4" as="xs:string+">
             <!-- add other parameters -->
-            <xsl:analyze-string select="string-join($output-pass-3)" regex="(set _otherParameters=)\S+">
+            <xsl:analyze-string select="string-join($output-pass-3)"
+                regex="(\n\s*set _otherParameters=)\S*">
                 <xsl:matching-substring>
                     <xsl:value-of select="regex-group(1) || $new-other-parameters"/>
                 </xsl:matching-substring>
                 <xsl:non-matching-substring>
                     <!-- adjust the path to the XSLT file -->
-                    <xsl:analyze-string select="." regex="(set _xslPath=)\S+">
+                    <xsl:analyze-string select="." regex="(\n\s*set _xslPath=)\S*">
                         <xsl:matching-substring>
-                            <xsl:value-of select="regex-group(1) || tan:uri-to-batch-path($relative-path-from-batch-to-xslt, false())"/>
+                            <xsl:value-of
+                                select="regex-group(1) || tan:uri-to-batch-path($relative-path-from-batch-to-xslt, false())"
+                            />
                         </xsl:matching-substring>
                         <xsl:non-matching-substring>
                             <xsl:value-of select="."/>
