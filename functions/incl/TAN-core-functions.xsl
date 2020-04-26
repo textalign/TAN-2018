@@ -14,6 +14,7 @@
    <xsl:include href="TAN-core-expand-functions.xsl"/>
    <xsl:include href="TAN-core-resolve-functions.xsl"/>
    <xsl:include href="TAN-core-string-functions.xsl"/>
+   <xsl:include href="TAN-core-3-0-functions.xsl"/>
 
    <xsl:character-map name="tan">
       <!-- This map included, so that users of TAN files can see where ZWJs and soft hyphens are in use. -->
@@ -37,7 +38,7 @@
    <xsl:template priority="-5" match="comment() | processing-instruction()" mode="#all">
       <xsl:copy-of select="."/>
    </xsl:template>
-   <xsl:template priority="-4" match="* | @*" mode="core-expansion-ad-hoc-pre-pass">
+   <xsl:template priority="-3" match="* | @*" mode="core-expansion-ad-hoc-pre-pass">
       <xsl:copy-of select="."/>
    </xsl:template>
    <xsl:template match="tan:error | tan:help | tan:warning | tan:fix | tan:fatal | tan:info"
@@ -774,7 +775,7 @@
    </xsl:function>
 
    <xsl:function name="tan:collate-sequences" as="xs:string*">
-      <!-- Input: a series of elements with child elements that have text nodes -->
+      <!-- Input: a series of elements with child elements that have text nodes, representing sequences of string sequences -->
       <!-- Output: a series of strings representing the sequences, collated -->
       <xsl:param name="elements-with-elements" as="element()*"/>
       <!-- Start with the element that has the greatest number of elements; that will be the grid into which the other sequences will be fit -->
@@ -797,7 +798,7 @@
          </xsl:for-each>
       </xsl:variable>
       
-      <xsl:variable name="diagnostics-on" select="true()" as="xs:boolean"/>
+      <xsl:variable name="diagnostics-on" select="false()" as="xs:boolean"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'diagnostics on for tan:collate-sequences()'"/>
          <xsl:message select="'input sorted: ', $input-sorted"/>
@@ -841,133 +842,125 @@
       </xsl:choose>
    </xsl:function>
 
-   <xsl:function name="tan:collate-pair-of-sequences" as="xs:string*">
+
+   <xsl:function name="tan:collate-pair-of-sequences" as="element()*">
       <!-- Two-parameter version of the fuller one below, intended for collating pairs of sequences -->
+      <!-- revised Apr. 2020; tan:diff() is the wrong tool for comparing sequences of strings -->
+      <!-- This function has been written for two different scenarios: 
+        1. @n values in two sets of <div>s that must be collated;
+        2. pre-processing two long strings that need to be compared 
+      Although the primary context are two sets of unique string-sequences, one could imagine situations 
+      where one or both input strings have repetition, in which cas it is best to retain information about 
+      sequence. Hence the output is a sequence of elements, with @p1, @p2, or both signifying the position
+      of the original input. Hence the transformation is lossless, and the original input can be reconstructed
+      if needed.
+      -->
       <xsl:param name="string-sequence-1" as="xs:string*"/>
       <xsl:param name="string-sequence-2" as="xs:string*"/>
-      <xsl:copy-of
-         select="tan:collate-pair-of-sequences($string-sequence-1, $string-sequence-2, false())"/>
-   </xsl:function>
-
-   <xsl:function name="tan:collate-pair-of-sequences" as="xs:string*">
-      <!-- Input: two sequences of strings -->
-      <!-- Output: a collation of the two strings, preserving their order -->
-      <xsl:param name="string-sequence-1" as="xs:string*"/>
-      <xsl:param name="string-sequence-2" as="xs:string*"/>
-      <xsl:param name="exclude-unique" as="xs:boolean"/>
-      <xsl:variable name="this-delimiter"
-         select="tan:unique-char(($string-sequence-1, $string-sequence-2))"/>
-      <xsl:variable name="string-1" select="string-join($string-sequence-1, $this-delimiter)"/>
-      <xsl:variable name="string-2" select="string-join($string-sequence-2, $this-delimiter)"/>
-      <xsl:variable name="string-diff" select="tan:diff($string-1, $string-2, false(), false(), 0)"/>
-      <xsl:variable name="results-1" as="element()">
-         <xsl:apply-templates select="$string-diff" mode="collate-sequence-1">
-            <xsl:with-param name="delimiter-regex" select="tan:escape($this-delimiter)" tunnel="yes"
-            />
-         </xsl:apply-templates>
+      <xsl:variable name="string-1-length" select="count($string-sequence-1)"/>
+      <xsl:variable name="string-1-prep" as="element()">
+         <string-1>
+            <xsl:for-each select="$string-sequence-1">
+               <item p1="{position()}">
+                  <xsl:value-of select="."/>
+               </item>
+            </xsl:for-each>
+         </string-1>
       </xsl:variable>
-      <xsl:variable name="results-2" as="element()">
-         <xsl:apply-templates select="$results-1" mode="collate-sequence-2">
-            <xsl:with-param name="delimiter-regex" select="tan:escape($this-delimiter)" tunnel="yes"
-            />
-         </xsl:apply-templates>
+      <xsl:variable name="string-2-prep" as="element()">
+         <string-2>
+            <xsl:for-each select="$string-sequence-2">
+               <xsl:variable name="this-val" select="."/>
+               <xsl:variable name="these-s1-matches" select="$string-1-prep/tan:item[. = $this-val]"/>
+               <item p2="{position()}">
+                  <xsl:value-of select="."/>
+                  <xsl:for-each select="$these-s1-matches/@p1">
+                     <p1><xsl:value-of select="."/></p1>
+                  </xsl:for-each>
+               </item>
+            </xsl:for-each>
+         </string-2>
+      </xsl:variable>
+      <xsl:variable name="string-2-sequence-of-p1-integers" as="element()*">
+         <xsl:for-each select="$string-2-prep/*">
+            <xsl:copy>
+               <xsl:copy-of select="*"/>
+            </xsl:copy>
+         </xsl:for-each>
+      </xsl:variable>
+      <xsl:variable name="longest-ascending-subsquence" as="element()*"
+         select="tan:longest-ascending-subsequence($string-2-sequence-of-p1-integers)"/>
+      <xsl:variable name="subsequence-length" select="count($longest-ascending-subsquence)"/>
+      <xsl:variable name="string-1-groups" as="element()">
+         <string-1>
+            <xsl:for-each-group select="$string-1-prep/*"
+               group-ending-with="self::*[@p1 = $longest-ascending-subsquence]">
+               <group pos="{position()}">
+                  <xsl:copy-of select="current-group()"/>
+               </group>
+            </xsl:for-each-group> 
+         </string-1>
+      </xsl:variable>
+      <xsl:variable name="string-2-groups" as="element()">
+         <string-2>
+            <!-- The $longest-ascending-subsequence is bound to a sequence of 
+               <val pos="[INTEGER]">[INTEGER]</val>s, where @pos represents string 2's sequence
+            and the text node represents string 1's. -->
+            <xsl:for-each-group select="$string-2-prep/*"
+               group-ending-with="
+                  self::*[some $i in $longest-ascending-subsquence
+                     satisfies ($i/@pos = @p2 and $i = tan:p1)]">
+               <group pos="{position()}">
+                  <xsl:copy-of select="current-group()"/>
+               </group>
+            </xsl:for-each-group> 
+         </string-2>
       </xsl:variable>
       
-      <xsl:variable name="diagnostics-on" select="false()" as="xs:boolean?"/>
+      <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
-         <xsl:message select="'diagnostics on for tan:collate-pair-of-sequences()'"/>
-         <xsl:message select="'string sequence 1: ', $string-sequence-1"/>
-         <xsl:message select="'string sequence 2: ', $string-sequence-2"/>
-         <xsl:message select="'this delimiter: ', $this-delimiter"/>
-         <xsl:message select="'string diff: ', $string-diff"/>
-         <xsl:message select="'results pass 1: ', $results-1"/>
-         <xsl:message select="'results pass 2: ', $results-2"/>
+         <xsl:message select="'Diagnostics on, tan:collate-pair-of-sequences()'"/>
+         <xsl:message select="'String 1 prepped: ', $string-1-prep"/>
+         <xsl:message select="'String 2 prepped: ', $string-2-prep"/>
+         <xsl:message select="'Longest ascending subsequence: ', $longest-ascending-subsquence"/>
+         <xsl:message select="'String 1 grouped: ', $string-1-groups"/>
+         <xsl:message select="'String 2 grouped: ', $string-2-groups"/>
+         
       </xsl:if>
-      
-      <xsl:choose>
-         <xsl:when test="$exclude-unique">
-            <xsl:copy-of select="$results-1/tan:common/text()"/>
-         </xsl:when>
-         <xsl:otherwise>
-            <xsl:copy-of select="$results-2/*/text()"/>
-         </xsl:otherwise>
-      </xsl:choose>
-   </xsl:function>
-
-   <xsl:template match="tan:common" mode="collate-sequence-1">
-      <!-- Restrict <common> to only true matches -->
-      <xsl:param name="delimiter-regex" as="xs:string" tunnel="yes"/>
-      <xsl:variable name="preceding-diffs"
-         select="preceding-sibling::*[position() lt 3][self::tan:a or self::tan:b]"/>
-      <xsl:variable name="following-diffs"
-         select="following-sibling::*[position() lt 3][self::tan:a or self::tan:b]"/>
-      <!-- If the preceding differences terminate in the delimiter, or the next differences start with it, then the opening or closing fragment in the <common> should be kept -->
-      <xsl:variable name="opening-item-should-be-excluded"
-         select="
-            count($preceding-diffs) gt 0 and
-            (some $i in $preceding-diffs
-               satisfies not(matches($i, concat($delimiter-regex, '$'))))"/>
-      <xsl:variable name="closing-item-should-be-excluded"
-         select="
-            count($following-diffs) gt 0 and
-            (some $i in $following-diffs
-               satisfies not(matches($i, concat('^', $delimiter-regex))))"/>
-      <xsl:variable name="this-tokenized" select="tokenize(., $delimiter-regex)"/>
-      <xsl:for-each select="$this-tokenized">
+      <xsl:for-each-group select="$string-1-groups/*, $string-2-groups/*" group-by="@pos">
+         <xsl:variable name="s1-last" select="current-group()[1]/*[last()]"/>
+         <xsl:variable name="s2-last" select="current-group()[2]/*[last()]"/>
          <xsl:choose>
-            <xsl:when test="string-length(.) lt 1"/>
-            <!-- split the first item into <a> and <b> if it should not be included -->
-            <!-- split the last item into <a> and <b> if it's the 2nd or greater and it should not be included -->
-            <xsl:when
-               test="
-                  (position() = 1 and $opening-item-should-be-excluded) or
-                  (position() = count($this-tokenized) and (count($this-tokenized) gt 1) and $closing-item-should-be-excluded)">
-               <a>
-                  <xsl:value-of select="."/>
-                  <!-- We include the delimiter after initial fragments that get moved up, so they don't get conflated with fragments that follow -->
-                  <xsl:if test="position() = 1 and count($this-tokenized) gt 1">
-                     <xsl:value-of select="$delimiter-regex"/>
-                  </xsl:if>
-               </a>
-               <b>
-                  <xsl:value-of select="."/>
-                  <xsl:if test="position() = 1 and count($this-tokenized) gt 1">
-                     <xsl:value-of select="$delimiter-regex"/>
-                  </xsl:if>
-               </b>
+            <xsl:when test="(count(current-group()) eq 2) and ($s1-last/text() eq $s2-last/text())">
+               <xsl:copy-of select="current-group()[1]/* except $s1-last"/>
+               <xsl:for-each select="current-group()[2]/* except $s2-last">
+                  <xsl:copy>
+                     <xsl:copy-of select="@*"/>
+                     <xsl:value-of select="text()"/>
+                  </xsl:copy>
+               </xsl:for-each>
+               <xsl:for-each select="$s1-last">
+                  <xsl:copy>
+                     <xsl:copy-of select="$s1-last/@*"/>
+                     <xsl:copy-of select="$s2-last/@*"/>
+                     <xsl:value-of select="."/>
+                  </xsl:copy>
+               </xsl:for-each>
             </xsl:when>
             <xsl:otherwise>
-               <common>
-                  <xsl:value-of select="."/>
-               </common>
+               <xsl:for-each select="current-group()/*">
+                  <xsl:copy>
+                     <xsl:copy-of select="@*"/>
+                     <xsl:value-of select="text()"/>
+                  </xsl:copy>
+               </xsl:for-each>
             </xsl:otherwise>
          </xsl:choose>
-      </xsl:for-each>
-   </xsl:template>
-   <xsl:template match="tan:diff" mode="collate-sequence-2">
-      <xsl:param name="delimiter-regex" as="xs:string" tunnel="yes"/>
-      <xsl:copy>
-         <xsl:copy-of select="@*"/>
-         <xsl:for-each-group select="*" group-adjacent="local-name() = 'common'">
-            <xsl:choose>
-               <xsl:when test="current-grouping-key()">
-                  <xsl:copy-of select="current-group()"/>
-               </xsl:when>
-               <xsl:otherwise>
-                  <xsl:for-each-group select="current-group()" group-by="local-name(.)">
-                     <xsl:variable name="this-element-name" select="current-grouping-key()"/>
-                     <xsl:variable name="this-val" select="string-join(current-group(), '')"/>
-                     <xsl:for-each select="tokenize($this-val, $delimiter-regex)">
-                        <xsl:element name="{$this-element-name}">
-                           <xsl:value-of select="."/>
-                        </xsl:element>
-                     </xsl:for-each>
-                  </xsl:for-each-group>
-               </xsl:otherwise>
-            </xsl:choose>
-         </xsl:for-each-group>
-      </xsl:copy>
-   </xsl:template>
+      </xsl:for-each-group>
+   </xsl:function>
+   
+   
+
 
 
    <xsl:function name="tan:most-common-item-count" as="xs:integer?">

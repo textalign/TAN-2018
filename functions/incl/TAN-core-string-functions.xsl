@@ -558,61 +558,66 @@
                 </xsl:when>
                 <xsl:otherwise>
                     <!-- Pre-process long strings by first analyzing co-occurrence of unique words -->
+                    <!-- Build a variable with two elements, one for each input string, containing <tok> and <non-tok> -->
                     <xsl:variable name="input-analyzed"
                         select="tan:tokenize-text(($string-a, $string-b))" as="element()*"/>
+                    <!-- Reduce each of the two elements to a set of tokens unique to that string -->
                     <xsl:variable name="input-unique-words" as="element()*">
                         <xsl:apply-templates select="$input-analyzed" mode="unique-words"/>
                     </xsl:variable>
                     <xsl:variable name="input-core-sequence"
                         select="
                             tan:collate-pair-of-sequences($input-unique-words[1]/tan:tok,
-                            $input-unique-words[2]/tan:tok, true())"/>
+                            $input-unique-words[2]/tan:tok)"
+                    />
+                    <xsl:variable name="input-core-shared-unique-words-in-same-order"
+                        select="$input-core-sequence[exists(@p1) and exists(@p2)]"/>
+                    <xsl:variable name="this-unique-sequence-count"
+                        select="count($input-core-shared-unique-words-in-same-order)"/>
                     <xsl:variable name="input-analyzed-2" as="element()*">
                         <xsl:for-each select="$input-analyzed">
                             <xsl:variable name="this-pos" select="position()"/>
                             <xsl:copy>
                                 <xsl:copy-of select="@*"/>
                                 <xsl:for-each-group select="*"
-                                    group-adjacent=". = $input-core-sequence">
-                                    <xsl:choose>
-                                        <xsl:when test="current-grouping-key()">
-                                            <common>
-                                                <xsl:value-of
+                                    group-ending-with="self::*[. = $input-core-shared-unique-words-in-same-order]">
+                                    <xsl:variable name="last-is-not-common" select="position() gt $this-unique-sequence-count"/>
+                                    <group n="{position()}" input="{$this-pos}">
+                                        <xsl:choose>
+                                            <xsl:when test="$last-is-not-common">
+                                                <distinct input="{$this-pos}">
+                                                  <xsl:value-of
                                                   select="string-join(current-group(), '')"/>
-                                            </common>
-                                        </xsl:when>
-                                        <xsl:otherwise>
-                                            <distinct input="{$this-pos}">
-                                                <xsl:value-of
-                                                  select="string-join(current-group(), '')"/>
-                                            </distinct>
-                                        </xsl:otherwise>
-                                    </xsl:choose>
+                                                  </distinct>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:variable name="this-common-node" select="current-group()[last()]"/>
+                                                <distinct input="{$this-pos}">
+                                                    <xsl:value-of
+                                                        select="string-join(current-group() except $this-common-node, '')"/>
+                                                </distinct>
+                                                <common>
+                                                    <xsl:value-of select="$this-common-node"/>
+                                                </common>
+                                            </xsl:otherwise>
+                                            
+                                        </xsl:choose>
+                                    </group>
                                 </xsl:for-each-group>
                             </xsl:copy>
                         </xsl:for-each>
                     </xsl:variable>
-                    <xsl:variable name="this-common-count"
-                        select="count($input-analyzed-2[1]/tan:common)"/>
-                    <xsl:copy-of
-                        select="
-                            tan:diff($input-analyzed-2[1]/tan:common[1]/preceding-sibling::*[1]/text(),
-                            $input-analyzed-2[2]/tan:common[1]/preceding-sibling::*[1]/text(),
+                    
+                    <xsl:variable name="diagnostics-on" select="false()"/>
+                    <xsl:if test="$diagnostics-on">
+                        <xsl:message select="'diagnostics on, tan:diff(), branch to preprocess long strings.'"/>
+                        <xsl:message select="'Input core unique words shared (', count($input-core-shared-unique-words-in-same-order), '): ', string-join($input-core-shared-unique-words-in-same-order, ' ')"/>
+                    </xsl:if>
+                    <xsl:for-each-group select="$input-analyzed-2/tan:group" group-by="@n">
+                        <xsl:copy-of select="tan:diff(current-group()[1]/tan:distinct, current-group()[2]/tan:distinct,
                             $snap-to-word, $preprocess-long-strings, $loop-counter + 1)/*"/>
-                    <xsl:for-each select="1 to $this-common-count">
-                        <xsl:variable name="this-pos" select="."/>
-                        <xsl:variable name="this-common-a"
-                            select="$input-analyzed-2[1]/tan:common[$this-pos]"/>
-                        <xsl:variable name="this-common-b"
-                            select="$input-analyzed-2[2]/tan:common[$this-pos]"/>
-                        <xsl:copy-of select="$this-common-a"/>
-                        <xsl:copy-of
-                            select="
-                                tan:diff($this-common-a/following-sibling::tan:distinct[1]/text(),
-                                $this-common-b/following-sibling::tan:distinct[1]/text(),
-                                $snap-to-word, $preprocess-long-strings, $loop-counter + 1)/*"
-                        />
-                    </xsl:for-each>
+                        <xsl:copy-of select="current-group()[1]/tan:common"/>
+                    </xsl:for-each-group> 
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
