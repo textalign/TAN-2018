@@ -608,9 +608,11 @@
                         </xsl:for-each>
                     </xsl:variable>
                     
-                    <xsl:variable name="diagnostics-on" select="false()"/>
+                    <xsl:variable name="diagnostics-on" select="true()"/>
                     <xsl:if test="$diagnostics-on">
                         <xsl:message select="'diagnostics on, tan:diff(), branch to preprocess long strings.'"/>
+                        <xsl:message select="'input A unique words (', count($input-unique-words[1]/tan:tok), '): ', string-join($input-unique-words[1]/tan:tok, ' ')"/>
+                        <xsl:message select="'input B unique words (', count($input-unique-words[2]/tan:tok), '): ', string-join($input-unique-words[2]/tan:tok, ' ')"/>
                         <xsl:message select="'Input core unique words shared (', count($input-core-shared-unique-words-in-same-order), '): ', string-join($input-core-shared-unique-words-in-same-order, ' ')"/>
                     </xsl:if>
                     <xsl:for-each-group select="$input-analyzed-2/tan:group" group-by="@n">
