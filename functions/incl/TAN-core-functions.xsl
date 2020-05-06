@@ -917,12 +917,12 @@
          </string-2>
       </xsl:variable>
       
-      <xsl:variable name="diagnostics-on" select="false()"/>
+      <xsl:variable name="diagnostics-on" select="true()"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'Diagnostics on, tan:collate-pair-of-sequences()'"/>
-         <xsl:message select="'String 1 prepped: ', $string-1-prep"/>
-         <xsl:message select="'String 2 prepped: ', $string-2-prep"/>
-         <xsl:message select="'Longest ascending subsequence: ', $longest-ascending-subsquence"/>
+         <xsl:message select="'String 1 prepped (', count($string-1-prep/*),  '): ', string-join($string-1-prep/*/text(), ' ')"/>
+         <xsl:message select="'String 2 prepped (', count($string-2-prep/*), '): ', string-join($string-2-prep/*//text(), ' ')"/>
+         <xsl:message select="'Longest ascending subsequence (', count($longest-ascending-subsquence), '): ', string-join($longest-ascending-subsquence, ' ')"/>
          <xsl:message select="'String 1 grouped: ', $string-1-groups"/>
          <xsl:message select="'String 2 grouped: ', $string-2-groups"/>
          
