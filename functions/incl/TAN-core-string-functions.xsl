@@ -608,7 +608,7 @@
                         </xsl:for-each>
                     </xsl:variable>
                     
-                    <xsl:variable name="diagnostics-on" select="true()"/>
+                    <xsl:variable name="diagnostics-on" select="false()"/>
                     <xsl:if test="$diagnostics-on">
                         <xsl:message select="'diagnostics on, tan:diff(), branch to preprocess long strings.'"/>
                         <xsl:message select="'input A unique words (', count($input-unique-words[1]/tan:tok), '): ', string-join($input-unique-words[1]/tan:tok, ' ')"/>

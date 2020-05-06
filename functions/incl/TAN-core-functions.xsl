@@ -917,7 +917,7 @@
          </string-2>
       </xsl:variable>
       
-      <xsl:variable name="diagnostics-on" select="true()"/>
+      <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'Diagnostics on, tan:collate-pair-of-sequences()'"/>
          <xsl:message select="'String 1 prepped (', count($string-1-prep/*),  '): ', string-join($string-1-prep/*/text(), ' ')"/>
