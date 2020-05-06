@@ -14,10 +14,13 @@
          and the entire sequence of integers in the text nodes being one of the longet ascending subsequences of the input 
          elements. Each output element has a @pos with an integer identifying the position of the input item that has been 
          chosen (to handle repetitions) -->
-      <!-- Although this function claims by its name to find the longest subsequence, in the interests of efficiency, it uses the so-called
-         Patience method of finding the string, which may return only a long string, not the longest possible string. Such an approach 
-         means that the number of operations are based on the number of input values; otherwise, it would be based on that number
-         squared. --> 
+      <!-- Although this function claims by its name to find the longest subsequence, in the interests of efficiency, it modifies 
+         the so-called Patience method of finding the string, which may return only a long string, not the longest possible string. 
+         Such an approach allows the number of operations to be directly proportionate to the number of input values; to
+         backtrack would be proportionate to that number squared. The routine does "remember" gaps. If adding a number
+         to the sequence would require a jumps, the sequence is created, along with a copy of the pre-gapped sequence, in case
+         it can resume later. 
+      --> 
       <!-- The input is a sequence of elements, not integers, because this function has been written to support 
          tan:collate-pairs-of-sequences(), which requires choice options. That is, you may have a situation
          where you are comparing two sequences, either of which may have values that repeat, e.g., (a, b, c, b, d) and 
@@ -28,32 +31,7 @@
       <xsl:param name="integer-sequence" as="item()*"/>
       <xsl:variable name="sequence-count" select="count($integer-sequence)"/>
       <xsl:variable name="first-item" select="$integer-sequence[1]"/>
-      <!--<xsl:variable name="first-integers" as="element()*">
-         <xsl:choose>
-            <xsl:when test="$first-item castable as xs:integer">
-               <seq>
-                  <val pos="1">
-                     <xsl:value-of select="$first-item"/>
-                  </val>
-               </seq>
-            </xsl:when>
-            <xsl:when
-               test="
-                  every $i in $first-item/*
-                     satisfies $i castable as xs:integer">
-               <xsl:for-each select="$first-item/*">
-                  <seq>
-                     <val pos="1">
-                        <xsl:value-of select="."/>
-                     </val>
-                  </seq>
-               </xsl:for-each>
-            </xsl:when>
-            <xsl:otherwise>
-               <xsl:message select="'Unable to parse the first integer(s): ', $first-item"/>
-            </xsl:otherwise>
-         </xsl:choose>
-      </xsl:variable>-->
+      
       <xsl:variable name="subsequences" as="element()*">
          <xsl:iterate select="$integer-sequence">
             <xsl:param name="subsequences-so-far" as="element()*"/>
@@ -87,16 +65,20 @@
             <!-- Look at the sequences so far and find those whose first (i.e., reversed last) value is less than
             the current value -->
             <xsl:variable name="eligible-subsequences"
-               select="$subsequences-so-far[xs:integer(tan:val[1]) lt max($these-ints)]"/>
+               select="$subsequences-so-far[xs:integer(tan:val[1]) lt max($these-ints)][not(@before) or (xs:integer(@before) gt min($these-ints))]"/>
             <xsl:variable name="new-subsequences" as="element()*">
                <xsl:for-each select="$these-ints">
                   <!-- Iterate over each of the integers in the current item and build new sequences out of the
-                  eligible ones -->
+                  eligible ones. -->
                   <xsl:variable name="this-int" select="."/>
-                  <xsl:variable name="these-eligible-subsequences" select="$eligible-subsequences[xs:integer(tan:val[1]) lt max($this-int)]"/>
+                  <!-- Find within the eligible subsequences (1) those that are gapped (marked by @before) and the integer 
+                     precedes where the gap was, (2) the standard <seq> that -->
+                  <xsl:variable name="these-eligible-subsequences" select="$eligible-subsequences[xs:integer(tan:val[1]) lt $this-int][not(@before) 
+                     or (xs:integer(@before) gt $this-int)]"/>
                   <xsl:for-each select="$these-eligible-subsequences">
                      <xsl:sort select="count(*)" order="descending"/>
-                     <!-- Retain only the longest new subsequence -->
+                     <xsl:variable name="this-subsequence-last-int" select="xs:integer(tan:val[1])"/>
+                     <!-- Retain as a default only the longest new subsequence -->
                      <xsl:if test="position() eq 1">
                         <xsl:copy>
                            <val pos="{$this-pos}">
@@ -104,6 +86,12 @@
                            </val>
                            <xsl:copy-of select="*"/>
                         </xsl:copy>
+                        <!-- If there's a gap in the sequence, "remember" the sequence before the gap -->
+                        <xsl:if test="$this-int gt ($this-subsequence-last-int + 1)">
+                           <gap before="{$this-int}">
+                              <xsl:copy-of select="*"/>
+                           </gap>
+                        </xsl:if>
                      </xsl:if>
                   </xsl:for-each>
                   <xsl:if test="not(exists($these-eligible-subsequences))">
@@ -117,6 +105,28 @@
                </xsl:for-each>
                <xsl:copy-of select="$subsequences-so-far except $eligible-subsequences"/>
             </xsl:variable>
+            
+            <xsl:variable name="diagnostics-on" select="false()"/>
+            <xsl:if test="$diagnostics-on">
+               <xsl:message select="'Diagnostics on, tan:longest-ascending-subsequence(), building $subsequences'"/>
+               <xsl:message select="'Iteration number: ', $this-pos"/>
+               <xsl:message select="'These integers: ', $these-ints"/>
+               <xsl:message
+                  select="
+                     'Eligible subsequences: ',
+                     string-join(for $i in $eligible-subsequences
+                     return
+                        string-join((name($i), name($i/@before), $i/(@before, *)), ' '), '; ')"
+               />
+               <xsl:message
+                  select="
+                     'New subsequences: ',
+                     string-join(for $i in $new-subsequences
+                     return
+                        string-join((name($i), name($i/@before), $i/(@before, *)), ' '), '; ')"
+               />
+            </xsl:if>
+            
             <xsl:if test="position() eq ($sequence-count)">
                <xsl:copy-of select="$new-subsequences"/>
             </xsl:if>
@@ -127,7 +137,7 @@
       </xsl:variable>
       
       <!-- The longest subsequence might not be at the top, so we re-sort, then
-      return a reversal of the children (because the sequence had been built in
+      return a reversal of the children (because the subsequence was built in
       reverse). -->
       <xsl:for-each select="$subsequences">
          <xsl:sort select="count(*)" order="descending"/>
