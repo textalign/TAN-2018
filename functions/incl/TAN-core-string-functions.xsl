@@ -613,6 +613,7 @@
                         <xsl:message select="'diagnostics on, tan:diff(), branch to preprocess long strings.'"/>
                         <xsl:message select="'input A unique words (', count($input-unique-words[1]/tan:tok), '): ', string-join($input-unique-words[1]/tan:tok, ' ')"/>
                         <xsl:message select="'input B unique words (', count($input-unique-words[2]/tan:tok), '): ', string-join($input-unique-words[2]/tan:tok, ' ')"/>
+                        <xsl:message select="'input core sequence (', count($input-core-sequence), '): ', string-join($input-core-sequence, ' ')"/>
                         <xsl:message select="'Input core unique words shared (', count($input-core-shared-unique-words-in-same-order), '): ', string-join($input-core-shared-unique-words-in-same-order, ' ')"/>
                     </xsl:if>
                     <xsl:for-each-group select="$input-analyzed-2/tan:group" group-by="@n">
