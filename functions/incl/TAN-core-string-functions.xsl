@@ -475,6 +475,10 @@
 
     <!-- At what point is the shortest string so long that it would be better to do some pre-processing? -->
     <xsl:param name="long-string-length-min" as="xs:double" select="10 div $vertical-stops[last()]"/>
+    
+    <xsl:variable name="tok-def-long-string" as="element()">
+        <token-definition pattern=".{{30}}" flags="s"/>
+    </xsl:variable>
 
 
     <xsl:function name="tan:diff" as="element()">
@@ -559,8 +563,15 @@
                 <xsl:otherwise>
                     <!-- Pre-process long strings by first analyzing co-occurrence of unique words -->
                     <!-- Build a variable with two elements, one for each input string, containing <tok> and <non-tok> -->
+                    <xsl:variable name="tok-def-of-choice" as="element()"
+                        select="
+                            if ((string-length($string-a) gt 2000) and matches($string-a, '[\r\n]')) then
+                                $tok-def-long-string
+                            else
+                                $token-definition-nonspace"
+                    />
                     <xsl:variable name="input-analyzed"
-                        select="tan:tokenize-text(($string-a, $string-b))" as="element()*"/>
+                        select="tan:tokenize-text(($string-a, $string-b), $tok-def-of-choice, fn:false())" as="element()*"/>
                     <!-- Reduce each of the two elements to a set of tokens unique to that string -->
                     <xsl:variable name="input-unique-words" as="element()*">
                         <xsl:apply-templates select="$input-analyzed" mode="unique-words"/>
@@ -608,13 +619,14 @@
                         </xsl:for-each>
                     </xsl:variable>
                     
-                    <xsl:variable name="diagnostics-on" select="false()"/>
+                    <xsl:variable name="diagnostics-on" select="true()"/>
                     <xsl:if test="$diagnostics-on">
                         <xsl:message select="'diagnostics on, tan:diff(), branch to preprocess long strings.'"/>
                         <xsl:message select="'input A unique words (', count($input-unique-words[1]/tan:tok), '): ', string-join($input-unique-words[1]/tan:tok, ' ')"/>
                         <xsl:message select="'input B unique words (', count($input-unique-words[2]/tan:tok), '): ', string-join($input-unique-words[2]/tan:tok, ' ')"/>
                         <xsl:message select="'input core sequence (', count($input-core-sequence), '): ', string-join($input-core-sequence, ' ')"/>
                         <xsl:message select="'Input core unique words shared (', count($input-core-shared-unique-words-in-same-order), '): ', string-join($input-core-shared-unique-words-in-same-order, ' ')"/>
+                        <xsl:message select="'Input analyzed: ', $input-analyzed-2"/>
                     </xsl:if>
                     <xsl:for-each-group select="$input-analyzed-2/tan:group" group-by="@n">
                         <xsl:copy-of select="tan:diff(current-group()[1]/tan:distinct, current-group()[2]/tan:distinct,
