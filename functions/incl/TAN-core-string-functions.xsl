@@ -3,7 +3,7 @@
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:math="http://www.w3.org/2005/xpath-functions/math"
     xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:tei="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="#all" version="2.0">
+    xmlns:tei="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="#all" version="3.0">
 
     <!-- General functions that process strings -->
 
@@ -626,7 +626,7 @@
                         <xsl:message select="'input B unique words (', count($input-unique-words[2]/tan:tok), '): ', string-join($input-unique-words[2]/tan:tok, ' ')"/>
                         <xsl:message select="'input core sequence (', count($input-core-sequence), '): ', string-join($input-core-sequence, ' ')"/>
                         <xsl:message select="'Input core unique words shared (', count($input-core-shared-unique-words-in-same-order), '): ', string-join($input-core-shared-unique-words-in-same-order, ' ')"/>
-                        <xsl:message select="'Input analyzed: ', $input-analyzed-2"/>
+                        <xsl:message select="'Input analyzed: ', fn:serialize($input-analyzed-2)"/>
                     </xsl:if>
                     <xsl:for-each-group select="$input-analyzed-2/tan:group" group-by="@n">
                         <xsl:copy-of select="tan:diff(current-group()[1]/tan:distinct, current-group()[2]/tan:distinct,
