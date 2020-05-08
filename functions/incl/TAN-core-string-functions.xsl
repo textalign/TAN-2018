@@ -3,7 +3,7 @@
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:math="http://www.w3.org/2005/xpath-functions/math"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:tei="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="#all" version="2.0">
+    xmlns:tei="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="#all" version="3.0">
 
     <!-- General functions that process strings -->
 
@@ -338,13 +338,17 @@
                 else
                     $token-definition-default"/>
         <xsl:variable name="pattern" select="$this-tok-def/@pattern"/>
+        <xsl:variable name="this-regex-is-valid" select="tan:regex-is-valid($pattern)"/>
         <xsl:variable name="pattern-adjusted"
             select="
-                if (string-length($pattern) gt 0) then
+                if ((string-length($pattern) gt 0) and ($this-regex-is-valid = true())) then
                     $pattern
                 else
                     '.+'"/>
         <xsl:variable name="flags" select="$this-tok-def/@flags"/>
+        <xsl:if test="$this-regex-is-valid = false()">
+            <xsl:message select="'Regex ' || $pattern || ' is not a valid regular expression.'"/>
+        </xsl:if>
         <xsl:variable name="pass-1" as="element()*">
             <xsl:for-each select="$text">
                 <results regex="{$pattern}" flags="{$flags}">
@@ -376,7 +380,9 @@
         <xsl:variable name="diagnostics-on" select="false()"/>
         <xsl:if test="$diagnostics-on">
             <xsl:message select="'diagnostics on for tan:tokenize-text()'"/>
-            <xsl:message select="'this token definition: ', $this-tok-def"/>
+            <xsl:message select="'this token definition pattern: ', string($pattern)"/>
+            <xsl:message select="'pattern codepoints: ', string-to-codepoints($pattern)"/>
+            <xsl:message select="'this token definition pattern adjusted: ', string($pattern-adjusted)"/>
             <xsl:message select="'add @q?', $add-attr-q"/>
             <xsl:message select="'add @pos?', $add-attr-pos"/>
             <xsl:message select="'pass 2: ', $pass-2"/>
@@ -515,9 +521,13 @@
                         <text>
                             <xsl:for-each-group select="string-to-codepoints(.)" group-by=".">
                                 <xsl:sort select="count(current-group())"/>
-                                <tok count="{count(current-group())}" cp="{current-grouping-key()}">
-                                    <xsl:value-of select="codepoints-to-string(current-grouping-key())"/>
-                                </tok>
+                                <xsl:if test="current-grouping-key() ge 32">
+                                    <tok count="{count(current-group())}"
+                                        cp="{current-grouping-key()}">
+                                        <xsl:value-of
+                                            select="codepoints-to-string(current-grouping-key())"/>
+                                    </tok>
+                                </xsl:if>
                             </xsl:for-each-group>
                         </text>
                     </xsl:for-each>
@@ -536,7 +546,7 @@
                     </xsl:for-each-group> 
                 </xsl:variable>
                 <xsl:variable name="strings-for-tokenizing" as="xs:string*"
-                    select="string-join($strings-char-inv-grouped/self::tan:unique/tan:tok, ''), $strings-char-inv-grouped/self::tan:shared/tan:tok/text()"
+                    select="string-join($strings-char-inv-grouped/self::tan:unique/tan:tok, '')[string-length(.) gt 0], $strings-char-inv-grouped/self::tan:shared/tan:tok/text()"
                 />
                 <xsl:sequence
                     select="tan:diff($string-a, $string-b, $snap-to-word, $strings-for-tokenizing, 0)"/>
@@ -590,6 +600,20 @@
                 not(exists($characters-to-tokenize-on)) or
                 (min(($str-a-len, $str-b-len)) lt $long-string-length-min)"
         />
+        
+        <xsl:variable name="next-tokenization-string" select="$characters-to-tokenize-on[1]"/>
+        <xsl:variable name="tok-def-of-choice" as="element()">
+            <token-definition pattern="[^{tan:escape($next-tokenization-string)}]+" flags="s"/>
+        </xsl:variable>
+        
+        <xsl:if test="$tok-def-of-choice = '[^]+'">
+            <xsl:message select="'tokenization patterns ', $characters-to-tokenize-on"/>
+            <xsl:message terminate="yes"
+                select="'faulty next tok string cp ', string-to-codepoints($next-tokenization-string)"
+            />
+            
+        </xsl:if>
+        
         <xsl:variable name="strings-diffed" as="element()*">
             <xsl:choose>
                 <xsl:when test="$loop-counter ge $loop-tolerance">
@@ -629,10 +653,7 @@
                 <xsl:otherwise>
                     <!-- Pre-process long strings by first analyzing co-occurrence of unique words -->
                     <!-- Build a variable with two elements, one for each input string, containing <tok> and <non-tok> -->
-                    <xsl:variable name="next-tokenization-string" select="$characters-to-tokenize-on[1]"/>
-                    <xsl:variable name="tok-def-of-choice" as="element()">
-                        <token-definition pattern="[^{tan:escape($next-tokenization-string)}]+" flags="s"/>
-                    </xsl:variable>
+
                     <!--<xsl:variable name="tok-def-of-choice" as="element()"
                         select="
                             if ((string-length($string-a) gt 2000) and matches($string-a, '[\r\n]')) then
@@ -644,7 +665,16 @@
                         select="tan:tokenize-text(($string-a, $string-b), $tok-def-of-choice, false())" as="element()*"/>
                     <!-- Reduce each of the two elements to a set of tokens unique to that string -->
                     <xsl:variable name="input-unique-words" as="element()*">
-                        <xsl:apply-templates select="$input-analyzed" mode="unique-words"/>
+                        <xsl:for-each select="$input-analyzed">
+                            <xsl:copy>
+                                <xsl:copy-of select="@*"/>
+                                <xsl:for-each-group select="*" group-by=".">
+                                    <xsl:if test="count(current-group()) = 1">
+                                        <xsl:copy-of select="current-group()"/>
+                                    </xsl:if>
+                                </xsl:for-each-group>
+                            </xsl:copy>
+                        </xsl:for-each>
                     </xsl:variable>
                     <xsl:variable name="input-core-sequence"
                         select="
@@ -692,12 +722,16 @@
                     <xsl:variable name="diagnostics-on" select="false()"/>
                     <xsl:if test="$diagnostics-on">
                         <xsl:message select="'diagnostics on, tan:diff(), branch to preprocess long strings.'"/>
-                        <xsl:message select="'next tokenization string: ', $next-tokenization-string"/>
-                        <xsl:message select="'input A unique words (', count($input-unique-words[1]/tan:tok), '): ', string-join($input-unique-words[1]/tan:tok, ' ')"/>
-                        <xsl:message select="'input B unique words (', count($input-unique-words[2]/tan:tok), '): ', string-join($input-unique-words[2]/tan:tok, ' ')"/>
+                        <xsl:message select="'next tokenization string (', string-to-codepoints($next-tokenization-string), '): ', $next-tokenization-string"/>
+                        <xsl:message select="'tokenization pattern: ', string($tok-def-of-choice/@pattern)"/>
+                        <xsl:message select="'all tokenization strings: ', string-join($characters-to-tokenize-on, ' ')"/>
+                        <xsl:message select="'all tokenization string codepoints: ', string-to-codepoints(string-join($characters-to-tokenize-on, ''))"/>
+                        <xsl:message select="'input tokenized: ', serialize($input-analyzed)"/>
+                        <xsl:message select="'input A unique words (', count($input-unique-words[1]/tan:tok), '): ', serialize($input-unique-words[1]/tan:tok)"/>
+                        <xsl:message select="'input B unique words (', count($input-unique-words[2]/tan:tok), '): ', serialize($input-unique-words[2]/tan:tok)"/>
                         <xsl:message select="'input core sequence (', count($input-core-sequence), '): ', string-join($input-core-sequence, ' ')"/>
                         <xsl:message select="'Input core unique words shared (', count($input-core-shared-unique-words-in-same-order), '): ', string-join($input-core-shared-unique-words-in-same-order, ' ')"/>
-                        <xsl:message select="'Input analyzed: ', $input-analyzed-2"/>
+                        <xsl:message select="'Input analyzed: ', serialize($input-analyzed-2)"/>
                     </xsl:if>
                     <xsl:for-each-group select="$input-analyzed-2/tan:group" group-by="@n">
                         <xsl:copy-of select="tan:diff(current-group()[1]/tan:distinct, current-group()[2]/tan:distinct,
@@ -863,17 +897,6 @@
         </xsl:choose>
     </xsl:function>
 
-    <xsl:template match="tan:results" mode="unique-words">
-        <xsl:copy>
-            <xsl:copy-of select="@*"/>
-            <xsl:for-each-group select="*" group-by=".">
-                <xsl:if test="count(current-group()) = 1">
-                    <xsl:copy-of select="current-group()"/>
-                </xsl:if>
-            </xsl:for-each-group>
-        </xsl:copy>
-    </xsl:template>
-
     <xsl:template match="tan:common" mode="snap-to-word-pass-1">
         <xsl:variable name="preceding-diff"
             select="preceding-sibling::*[1][self::tan:a or self::tan:b]"/>
@@ -928,189 +951,6 @@
     </xsl:template>
 
 
-    <!-- Older, 2017 function, retained temporarily as a memento -->
-    <!--<xsl:function name="tan:diff-loop">
-        <xsl:param name="short-string" as="element()?"/>
-        <xsl:param name="long-string" as="element()?"/>
-        <xsl:param name="start-at-beginning" as="xs:boolean"/>
-        <xsl:param name="check-vertically-before-horizontally" as="xs:boolean"/>
-        <xsl:param name="loop-counter" as="xs:integer"/>
-        <!-\- If diagnostics are needed, set the following variable to something that will give messages at the right times -\->
-        <xsl:variable name="diagnostic-flag" as="xs:boolean" select="$loop-counter = -1"/>
-        <xsl:variable name="short-size" select="string-length($short-string)"/>
-        <xsl:if test="$diagnostic-flag">
-            <xsl:message>start at beginning <xsl:value-of select="$start-at-beginning"/>; check v
-                before h <xsl:value-of select="$check-vertically-before-horizontally"
-                /></xsl:message>
-            <xsl:message>short string <xsl:value-of select="substring($short-string, 1, 10)"
-                />...</xsl:message>
-            <xsl:message>long string <xsl:value-of select="substring($long-string, 1, 10)"
-                />...</xsl:message>
-        </xsl:if>
-        <xsl:choose>
-            <xsl:when test="$loop-counter ge $loop-tolerance">
-                <xsl:if test="$diagnostic-flag">
-                    <xsl:message>Can't go beyond loop <xsl:value-of select="$loop-tolerance"
-                        /></xsl:message>
-                </xsl:if>
-                <xsl:copy-of select="$short-string, $long-string"/>
-            </xsl:when>
-            <xsl:when test="string-length($long-string) lt 1"/>
-            <xsl:when test="$short-size lt 1">
-                <xsl:copy-of select="$long-string"/>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:variable name="horizontal-search-on-long" as="element()*">
-                    <xsl:for-each select="$vertical-stops">
-                        <xsl:variable name="vertical-pos" select="position()"/>
-                        <xsl:variable name="percent-of-short-to-check"
-                            select="min((max((., 0.0000001)), 1.0))"/>
-                        <xsl:variable name="number-of-horizontal-passes"
-                            select="
-                                if ($check-vertically-before-horizontally) then
-                                    1
-                                else
-                                    xs:integer((1 - $percent-of-short-to-check) * 50) + 1"/>
-                        <xsl:variable name="length-of-short-substring"
-                            select="ceiling($short-size * $percent-of-short-to-check)"/>
-                        <xsl:variable name="length-of-play-in-short"
-                            select="$short-size - $length-of-short-substring"/>
-                        <xsl:variable name="horizontal-stagger"
-                            select="$length-of-play-in-short div max(($number-of-horizontal-passes - 1, 1))"/>
-                        <xsl:if test="$diagnostic-flag">
-                            <xsl:message select="$horizontal-stagger"/>
-                        </xsl:if>
-                        <xsl:variable name="horizontal-pass-sequence"
-                            select="
-                                if ($start-at-beginning) then
-                                    (1 to $number-of-horizontal-passes)
-                                else
-                                    reverse(1 to $number-of-horizontal-passes)"/>
-                        <xsl:for-each select="$horizontal-pass-sequence">
-                            <xsl:variable name="horizontal-pos" select="."/>
-                            <xsl:variable name="starting-pos-of-short-substring"
-                                select="ceiling(($horizontal-pos - 1) * $horizontal-stagger) + 1"/>
-                            <xsl:variable name="picked-search-text"
-                                select="
-                                    concat(if ($check-vertically-before-horizontally and $start-at-beginning) then
-                                        '^'
-                                    else
-                                        (), substring($short-string, $starting-pos-of-short-substring, $length-of-short-substring), if ($check-vertically-before-horizontally and not($start-at-beginning)) then
-                                        '$'
-                                    else
-                                        ())"/>
-                            <xsl:if test="$diagnostic-flag">
-                                <xsl:message select="$picked-search-text"/>
-                            </xsl:if>
-                            <xsl:variable name="this-search" as="element()*">
-                                <xsl:if test="string-length($picked-search-text) gt 0">
-                                    <xsl:analyze-string select="$long-string"
-                                        regex="{tan:escape($picked-search-text)}">
-                                        <xsl:matching-substring>
-                                            <common loop="{$loop-counter}">
-                                                <xsl:value-of select="."/>
-                                            </common>
-                                        </xsl:matching-substring>
-                                        <xsl:non-matching-substring>
-                                            <xsl:element name="{name($long-string)}">
-                                                <xsl:attribute name="loop" select="$loop-counter"/>
-                                                <xsl:value-of select="."/>
-                                            </xsl:element>
-                                        </xsl:non-matching-substring>
-                                    </xsl:analyze-string>
-                                </xsl:if>
-                            </xsl:variable>
-                            <xsl:if test="exists($this-search/self::tan:common)">
-                                <result short-search-start="{$starting-pos-of-short-substring}"
-                                    short-search-length="{$length-of-short-substring}">
-                                    <xsl:copy-of select="$this-search"/>
-                                </result>
-                            </xsl:if>
-                        </xsl:for-each>
-                    </xsl:for-each>
-                </xsl:variable>
-                <xsl:variable name="first-result"
-                    select="($horizontal-search-on-long/self::tan:result)[1]"/>
-                <xsl:choose>
-                    <xsl:when test="not(exists($first-result))">
-                        <xsl:choose>
-                            <xsl:when test="not($check-vertically-before-horizontally = true())">
-                                <xsl:copy-of select="$long-string, $short-string"/>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:copy-of
-                                    select="tan:diff-loop($short-string, $long-string, $start-at-beginning, false(), $loop-counter + 1)"
-                                />
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:variable name="short-search-start"
-                            select="xs:integer($first-result/@short-search-start)"/>
-                        <xsl:variable name="short-search-length"
-                            select="xs:integer($first-result/@short-search-length)"/>
-                        <xsl:variable name="long-head" as="element()">
-                            <xsl:element name="{name($long-string)}">
-                                <xsl:attribute name="loop" select="$loop-counter"/>
-                                <xsl:copy-of
-                                    select="$first-result/tan:common[1]/preceding-sibling::*/text()"
-                                />
-                            </xsl:element>
-                        </xsl:variable>
-                        <xsl:variable name="long-tail" as="element()?">
-                            <xsl:element name="{name($long-string)}">
-                                <xsl:attribute name="loop" select="$loop-counter"/>
-                                <xsl:copy-of
-                                    select="$first-result/tan:common[1]/following-sibling::*/text()"
-                                />
-                            </xsl:element>
-                        </xsl:variable>
-                        <xsl:variable name="short-head" as="element()">
-                            <xsl:element name="{name($short-string)}">
-                                <xsl:attribute name="loop" select="$loop-counter"/>
-                                <xsl:value-of
-                                    select="substring($short-string, 1, $short-search-start - 1)"/>
-                            </xsl:element>
-                        </xsl:variable>
-                        <xsl:variable name="short-tail" as="element()">
-                            <xsl:element name="{name($short-string)}">
-                                <xsl:attribute name="loop" select="$loop-counter"/>
-                                <xsl:value-of
-                                    select="substring($short-string, $short-search-start + $short-search-length)"
-                                />
-                            </xsl:element>
-                        </xsl:variable>
-                        <xsl:variable name="head-input" as="element()*">
-                            <xsl:for-each select="$long-head, $short-head">
-                                <xsl:sort select="string-length(.)"/>
-                                <xsl:copy-of select="."/>
-                            </xsl:for-each>
-                        </xsl:variable>
-                        <xsl:variable name="tail-input" as="element()*">
-                            <xsl:for-each select="$long-tail, $short-tail">
-                                <xsl:sort select="string-length(.)"/>
-                                <xsl:copy-of select="."/>
-                            </xsl:for-each>
-                        </xsl:variable>
-                        <!-\- need to loop again on head fragments -\->
-                        <xsl:copy-of
-                            select="
-                                tan:diff-loop($head-input[1], $head-input[2], false(), true(), $loop-counter + 1)"/>
-                        <xsl:copy-of select="$first-result/tan:common[1]"/>
-                        <!-\- need to loop again on tail fragments -\->
-                        <xsl:if test="$diagnostic-flag">
-                            <xsl:message
-                                select="'tail1: ', $tail-input[1], ' tail2: ', $tail-input[2]"/>
-                        </xsl:if>
-                        <xsl:copy-of
-                            select="
-                                tan:diff-loop($tail-input[1], $tail-input[2], true(), true(), $loop-counter + 1)"
-                        />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:otherwise>
-        </xsl:choose>
-    </xsl:function>-->
 
 
     <xsl:function name="tan:diff-outer-loop">
@@ -1120,7 +960,7 @@
         <xsl:param name="check-vertically-before-horizontally" as="xs:boolean"/>
         <xsl:param name="vertical-stops-to-process" as="xs:double*"/>
         <xsl:param name="loop-counter" as="xs:integer"/>
-        <xsl:variable name="diagnostics-on" as="xs:boolean" select="false()"/>
+        <xsl:variable name="diagnostics-on" as="xs:boolean" select="matches($short-string, 'ww')"/>
         <xsl:if test="$diagnostics-on">
             <xsl:message select="'diagnostics on for tan:diff-outer-loop()'"/>
             <xsl:message select="'loop number ', $loop-counter"/>
@@ -1183,6 +1023,7 @@
                 <xsl:copy-of select="$long-string"/>
             </xsl:when>
             <xsl:otherwise>
+                <!-- Now we can search for parts of the short string within the long string -->
                 <xsl:variable name="this-vertical-stop" select="$vertical-stops-to-process[1]"/>
                 <xsl:variable name="percent-of-short-to-check"
                     select="min((max(($this-vertical-stop, 0.0000001)), 1.0))"/>
@@ -1227,7 +1068,7 @@
                 <xsl:variable name="first-result"
                     select="tan:diff-inner-loop($short-string, $long-string, $starting-locs, $length-of-short-substring, $search-prefix, $search-suffix, 0)"/>
                 <xsl:if test="$diagnostics-on">
-                    <xsl:message select="'outer loop', $loop-counter"/>
+                    <xsl:message select="'outer loop number', $loop-counter"/>
                     <xsl:message select="'$short-string:', tan:trim-long-text($short-string, 11)"/>
                     <xsl:message select="'$long-string:', tan:trim-long-text($long-string, 11)"/>
                     <xsl:message select="'$start-at-beginning:', $start-at-beginning"/>
@@ -1248,7 +1089,7 @@
                     <xsl:message select="'$starting-locs:', $starting-locs"/>
                     <xsl:message select="'$search-prefix:', $search-prefix"/>
                     <xsl:message select="'$search-suffix:', $search-suffix"/>
-                    <xsl:message select="'$first-result:', $first-result"/>
+                    <xsl:message select="'$first-result:', serialize($first-result)"/>
                 </xsl:if>
                 <xsl:choose>
                     <xsl:when test="exists($first-result)">
@@ -1273,7 +1114,63 @@
                                 />
                             </xsl:element>
                         </xsl:variable>
-                        <xsl:variable name="short-head" as="element()">
+                        
+                        <!-- There are cases where the common matching string appears more than once, either
+                        in the short or the long strings. By using tan:common[1] above we grab the first case in the
+                        long string. We should do the same for the short string, so we can't rely exclusively upon the
+                        short-search-start or short-search-length. -->
+                        <xsl:variable name="short-input-should-be-parsed-from-end"
+                            select="(not($start-at-beginning) and matches($short-string, concat(tan:escape($first-result/tan:common[1]), '$')))"
+                        />
+                        <xsl:variable name="short-input-parsed" as="element()">
+                            <result>
+                                <xsl:choose>
+                                    <xsl:when test="$short-input-should-be-parsed-from-end">
+                                        
+                                        <xsl:analyze-string select="$short-string"
+                                            regex="{tan:escape($first-result/tan:common[1])}$">
+                                            <xsl:matching-substring>
+                                                <common>
+                                                  <xsl:value-of select="."/>
+                                                </common>
+                                            </xsl:matching-substring>
+                                            <xsl:non-matching-substring>
+                                                <xsl:element name="{name($short-string)}">
+                                                  <xsl:attribute name="outer-loop"
+                                                  select="$loop-counter"/>
+                                                  <xsl:value-of select="."/>
+                                                </xsl:element>
+                                            </xsl:non-matching-substring>
+                                        </xsl:analyze-string>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:analyze-string select="$short-string"
+                                            regex="{$first-result/tan:common[1]}" flags="q">
+                                            <xsl:matching-substring>
+                                                <common>
+                                                  <xsl:value-of select="."/>
+                                                </common>
+                                            </xsl:matching-substring>
+                                            <xsl:non-matching-substring>
+                                                <xsl:element name="{name($short-string)}">
+                                                  <xsl:attribute name="outer-loop"
+                                                  select="$loop-counter"/>
+                                                  <xsl:value-of select="."/>
+                                                </xsl:element>
+                                            </xsl:non-matching-substring>
+                                        </xsl:analyze-string>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </result>
+                        </xsl:variable>
+                        <xsl:variable name="short-input-common-segment-of-interest"
+                            select="
+                                if (not($start-at-beginning)) then
+                                    $short-input-parsed/tan:common[last()]
+                                else
+                                    $short-input-parsed/tan:common[1]"
+                        />
+                        <!--<xsl:variable name="short-head" as="element()">
                             <xsl:element name="{name($short-string)}">
                                 <xsl:attribute name="outer-loop" select="$loop-counter"/>
                                 <xsl:if test="$short-search-start gt 1">
@@ -1282,8 +1179,22 @@
                                     />
                                 </xsl:if>
                             </xsl:element>
+                        </xsl:variable>-->
+                        <xsl:variable name="short-head" as="element()">
+                            <xsl:element name="{name($short-string)}">
+                                <xsl:attribute name="outer-loop" select="$loop-counter"/>
+                                <xsl:copy-of select="$short-input-common-segment-of-interest/preceding-sibling::*/text()"/>
+                            </xsl:element>
                         </xsl:variable>
+                        <xsl:variable name="short-tail-elements"
+                            select="$short-input-common-segment-of-interest/following-sibling::*"/>
                         <xsl:variable name="short-tail" as="element()">
+                            <xsl:element name="{name($short-string)}">
+                                <xsl:attribute name="outer-loop" select="$loop-counter"/>
+                                <xsl:copy-of select="$short-tail-elements/text()"/>
+                            </xsl:element>
+                        </xsl:variable>
+                        <!--<xsl:variable name="short-tail" as="element()">
                             <xsl:element name="{name($short-string)}">
                                 <xsl:attribute name="outer-loop" select="$loop-counter"/>
                                 <xsl:if test="$short-search-start + $short-search-length gt 0">
@@ -1292,7 +1203,7 @@
                                     />
                                 </xsl:if>
                             </xsl:element>
-                        </xsl:variable>
+                        </xsl:variable>-->
                         <xsl:variable name="head-input" as="element()*">
                             <xsl:for-each select="$long-head, $short-head">
                                 <xsl:sort select="string-length(.)"/>
@@ -1405,17 +1316,17 @@
                         </xsl:analyze-string>
                     </xsl:if>
                 </xsl:variable>
-                <xsl:variable name="diagnostics-on" as="xs:boolean" select="false()"/>
+                <xsl:variable name="diagnostics-on" as="xs:boolean" select="contains($short-string, 'PRIVACY IS PROT')"/>
                 <xsl:if test="$diagnostics-on">
                     <xsl:message select="'diagnostics on for tan:diff-inner-loop()'"/>
-                    <xsl:message select="'loop number ', $loop-counter"/>
+                    <xsl:message select="'inner loop number ', $loop-counter"/>
                     <xsl:message select="'$short-string:', tan:trim-long-text($short-string, 11)"/>
                     <xsl:message select="'$long-string:', tan:trim-long-text($long-string, 11)"/>
                     <xsl:message select="'starting locs to check:', $starting-locs-to-check"/>
                     <xsl:message select="'$length-of-short-substring:', $length-of-short-substring"/>
                     <xsl:message select="'search string:', $this-search-string"/>
                     <xsl:message select="'search regex:', $this-search-regex"/>
-                    <xsl:message select="'search result: ', $this-search"/>
+                    <xsl:message select="'search result: ', serialize($this-search)"/>
                 </xsl:if>
                 <xsl:choose>
                     <xsl:when test="exists($this-search/self::tan:common)">
