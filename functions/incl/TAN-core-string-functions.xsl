@@ -545,8 +545,21 @@
                         </xsl:choose>
                     </xsl:for-each-group> 
                 </xsl:variable>
+                <xsl:variable name="unique-strings-sorted" as="xs:string*">
+                    <!-- We must make sure to put hyphens at the end of a character class -->
+                    <xsl:for-each select="$strings-char-inv-grouped/self::tan:unique/tan:tok">
+                        <xsl:sort
+                            select="
+                                if (. = '-') then
+                                    9
+                                else
+                                    1"
+                        />
+                        <xsl:value-of select="."/>
+                    </xsl:for-each>
+                </xsl:variable>
                 <xsl:variable name="strings-for-tokenizing" as="xs:string*"
-                    select="string-join($strings-char-inv-grouped/self::tan:unique/tan:tok, '')[string-length(.) gt 0], $strings-char-inv-grouped/self::tan:shared/tan:tok/text()"
+                    select="string-join($unique-strings-sorted, '')[string-length(.) gt 0], $strings-char-inv-grouped/self::tan:shared/tan:tok/text()"
                 />
                 <xsl:sequence
                     select="tan:diff($string-a, $string-b, $snap-to-word, $strings-for-tokenizing, 0)"/>
@@ -654,13 +667,6 @@
                     <!-- Pre-process long strings by first analyzing co-occurrence of unique words -->
                     <!-- Build a variable with two elements, one for each input string, containing <tok> and <non-tok> -->
 
-                    <!--<xsl:variable name="tok-def-of-choice" as="element()"
-                        select="
-                            if ((string-length($string-a) gt 2000) and matches($string-a, '[\r\n]')) then
-                                $tok-def-long-string
-                            else
-                                $token-definition-nonspace"
-                    />-->
                     <xsl:variable name="input-analyzed"
                         select="tan:tokenize-text(($string-a, $string-b), $tok-def-of-choice, false())" as="element()*"/>
                     <!-- Reduce each of the two elements to a set of tokens unique to that string -->
@@ -960,7 +966,7 @@
         <xsl:param name="check-vertically-before-horizontally" as="xs:boolean"/>
         <xsl:param name="vertical-stops-to-process" as="xs:double*"/>
         <xsl:param name="loop-counter" as="xs:integer"/>
-        <xsl:variable name="diagnostics-on" as="xs:boolean" select="matches($short-string, 'ww')"/>
+        <xsl:variable name="diagnostics-on" as="xs:boolean" select="false()"/>
         <xsl:if test="$diagnostics-on">
             <xsl:message select="'diagnostics on for tan:diff-outer-loop()'"/>
             <xsl:message select="'loop number ', $loop-counter"/>
@@ -1439,16 +1445,16 @@
                     </xsl:apply-templates>
                 </xsl:variable>
                 <!-- Step 5: run the collation loop -->
-                <xsl:variable name="this-collation"
+                <xsl:variable name="full-collation"
                     select="
-                        tan:collate-loop-outer($first-collation, for $i in $collate-order[position() gt 2],
+                        tan:collate-loop-outer($first-collation, (for $i in $collate-order[position() gt 2],
                             $j in index-of($labels, $i)
                         return
-                            $valid-strings[$j], $collate-order[position() gt 2])"/>
+                            $valid-strings[$j]), $collate-order[position() gt 2])"/>
                 <!-- Step 6: consolidate, stamp the collation -->
                 <xsl:variable name="consolidated-collation" as="element()">
                     <collation>
-                        <xsl:for-each-group select="$this-collation/*" group-adjacent="name(.)">
+                        <xsl:for-each-group select="$full-collation/*" group-adjacent="name(.)">
                             <xsl:choose>
                                 <xsl:when test="current-grouping-key() = 'witness'">
                                     <xsl:for-each select="current-group()">
@@ -1545,7 +1551,7 @@
                     <xsl:message select="'diffs sorted: ', $diffs-sorted"/>
                     <xsl:message select="'collate order: ', $collate-order"/>
                     <xsl:message select="'first collation: ', $first-collation"/>
-                    <xsl:message select="'this collation: ', $this-collation"/>
+                    <xsl:message select="'full collation: ', $full-collation"/>
                     <xsl:message select="'consolidated collation: ', $consolidated-collation"/>
                 </xsl:if>
                 <xsl:copy-of select="$collation-with-base-marked"/>
@@ -1594,7 +1600,7 @@
         <xsl:choose>
             <!-- If there are no more strings to process, then end the loop -->
             <xsl:when test="count($strings-to-process) lt 1">
-                <xsl:copy-of select="$collation-so-far"/>
+                <xsl:sequence select="$collation-so-far"/>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:variable name="new-collation" as="element()">
@@ -1608,7 +1614,23 @@
                         />
                     </collation>
                 </xsl:variable>
-                <xsl:copy-of
+                
+                <xsl:variable name="diagnostics-on" select="false()"/>
+                <xsl:if test="$diagnostics-on">
+                    <xsl:message select="'Diagnostics on, tan:collate-loop-outer()'"/>
+                    <xsl:message select="'Collation so far: ', serialize($collation-so-far)"/>
+                    <xsl:message
+                        select="
+                            'Strings-to-process: (', count($strings-to-process), '): ',
+                            for $i in $strings-to-process
+                            return
+                                tan:trim-long-text($i, 40)"
+                    />
+                    <xsl:message select="'String labels: (', count($string-labels), '): ', $string-labels"/>
+                    <xsl:message select="'New collation: ', serialize($new-collation)"/>
+                </xsl:if>
+                
+                <xsl:sequence
                     select="tan:collate-loop-outer($new-collation, $strings-to-process[position() gt 1], $string-labels[position() gt 1])"
                 />
             </xsl:otherwise>
@@ -1645,14 +1667,6 @@
                 <xsl:variable name="this-diff"
                     select="tan:diff($collation-longest-common, $string-to-process, false())"/>
 
-                <xsl:variable name="diagnostics-on" as="xs:boolean" select="false()"/>
-                <xsl:if test="$diagnostics-on">
-                    <xsl:message select="'diagnostics on for tan:collate-loop-inner()'"/>
-                    <xsl:message
-                        select="'collation longest common length: ', $collation-longest-common-length"/>
-                    <xsl:message select="'collation longest common: ', $collation-longest-common"/>
-                    <xsl:message select="'this diff: ', $this-diff"/>
-                </xsl:if>
                 <!-- Step 3: are the results complete, or does the loop need to be run again? -->
                 <xsl:choose>
                     <!-- If there's no string to process, or if there's no match, then every stretch of text is unique, including the longest collation segment. Mark them as such and end. -->
@@ -1709,7 +1723,14 @@
                                 />
                             </collation>
                         </xsl:variable>
+                        
+                        <xsl:variable name="diagnostics-on" as="xs:boolean" select="false()"/>
                         <xsl:if test="$diagnostics-on">
+                            <xsl:message select="'diagnostics on for tan:collate-loop-inner()'"/>
+                            <xsl:message
+                                select="'collation longest common length: ', $collation-longest-common-length"/>
+                            <xsl:message select="'collation longest common: ', $collation-longest-common"/>
+                            <xsl:message select="'this diff: ', $this-diff"/>
                             <xsl:message
                                 select="'common length max of this diff: ', $this-diff-common-length-max"/>
                             <xsl:message
@@ -1721,6 +1742,7 @@
                             <xsl:message select="'collation head: ', $collation-head"/>
                             <xsl:message select="'collation tail: ', $collation-tail"/>
                         </xsl:if>
+                        
                         <xsl:copy-of
                             select="tan:collate-loop-inner($collation-head, $string-head, $string-label)"/>
                         <c length="{$this-diff-common-length-max}">
