@@ -1543,6 +1543,7 @@
                         </xsl:for-each-group>
                     </collation>
                 </xsl:variable>
+                
                 <!-- diagnostics, results -->
                 <xsl:variable name="diagnostics-on" select="false()"/>
                 <xsl:if test="$diagnostics-on">
@@ -1554,7 +1555,9 @@
                     <xsl:message select="'full collation: ', $full-collation"/>
                     <xsl:message select="'consolidated collation: ', $consolidated-collation"/>
                 </xsl:if>
+                
                 <xsl:copy-of select="$collation-with-base-marked"/>
+                
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
