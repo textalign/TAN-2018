@@ -227,7 +227,7 @@
    <xsl:function name="tan:collation-to-strings" as="element()*">
       <!-- Input: any output from tan:collate (version for XSLT 3.0) -->
       <!-- Output: a sequence of <witness id="">[ORIGINAL STRING] -->
-      <!-- This function was written to test the integrity of the output of tan:collate() -->
+      <!-- This function was written to reverse, and therefore test the integrity of, the output of tan:collate() -->
       <xsl:param name="tan-collate-output" as="element()?"/>
       <xsl:apply-templates select="$tan-collate-output/tan:witness" mode="collation-to-strings"/>
    </xsl:function>
@@ -254,8 +254,19 @@
    
    
    <xsl:function name="tan:collate" as="element()">
+      <!-- 3-parameter version of fuller one, below -->
+      <xsl:param name="strings-to-collate" as="xs:string*"/>
+      <xsl:param name="string-labels" as="xs:string*"/>
+      <xsl:param name="preoptimize-string-order" as="xs:boolean"/>
+      <xsl:sequence
+         select="tan:collate($strings-to-collate, $string-labels, $preoptimize-string-order, true())"
+      />
+   </xsl:function>
+   
+   <xsl:function name="tan:collate" as="element()">
       <!-- Input: a sequence of strings to be collated; a sequence of strings that label each string; a boolean
-      indicating whether the sequence of input strings should be optimized-->
+      indicating whether the sequence of input strings should be optimized; a boolean indicating whether
+      the results of tan:diff() should be adjusted. -->
       <!-- Output: a <collation> with (1) one <witness> per string (and if the last parameter is true, then a 
          sequence of children <commonality>s, signifying how close that string is with every other, and (2)
          a sequence of <c>s and <u>s, each with a <txt> and one or more <wit ref="" pos=""/>, indicating which
@@ -282,6 +293,7 @@
       <xsl:param name="strings-to-collate" as="xs:string*"/>
       <xsl:param name="string-labels" as="xs:string*"/>
       <xsl:param name="preoptimize-string-order" as="xs:boolean"/>
+      <xsl:param name="adjust-diffs" as="xs:boolean"/>
       
       <xsl:variable name="string-count" select="count($strings-to-collate)"/>
       <xsl:variable name="string-labels-norm" as="xs:string*"
@@ -301,8 +313,15 @@
                   <xsl:variable name="that-pos" select="position()"/>
                   <xsl:variable name="this-diff"
                      select="tan:diff($strings-to-collate[$that-pos], $strings-to-collate[$this-pos], false())"/>
+                  <xsl:variable name="this-diff-adjusted"
+                     select="
+                        if ($adjust-diffs) then
+                           tan:adjust-diff($this-diff)
+                        else
+                           $this-diff"
+                  />
                   <diff a="{$text2}" b="{$text1}">
-                     <xsl:copy-of select="$this-diff/*"/>
+                     <xsl:copy-of select="$this-diff-adjusted/*"/>
                   </diff>
                </xsl:for-each>
             </xsl:for-each>
@@ -351,15 +370,22 @@
       />
       
       <xsl:variable name="first-diff" select="tan:diff($strings-re-sorted[1], $strings-re-sorted[2], false())"/>
+      <xsl:variable name="first-diff-adjusted"
+         select="
+            if ($adjust-diffs) then
+               tan:adjust-diff($first-diff)
+            else
+               $first-diff"
+      />
       <xsl:variable name="first-diff-collated"
-         select="tan:diff-to-collation($first-diff, $string-labels-re-sorted[1], $string-labels-re-sorted[2])"/>
+         select="tan:diff-to-collation($first-diff-adjusted, $string-labels-re-sorted[1], $string-labels-re-sorted[2])"/>
       
       <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'Diagnostics on, 2020 tan:collate()'"/>
          <xsl:message select="'String count: ', $string-count"/>
          <xsl:message select="'String labels re-sorted: ' || string-join($string-labels-re-sorted, ' ')"/>
-         <xsl:message select="'First diff: ' || serialize($first-diff)"/>
+         <xsl:message select="'First diff (adjusted): ' || serialize($first-diff-adjusted)"/>
          <xsl:message select="'First diff collated: ' || serialize($first-diff-collated)"/>
       </xsl:if>
 
@@ -377,7 +403,14 @@
             <xsl:variable name="this-label" select="$string-labels-re-sorted[$iteration]"/>
 
             <xsl:variable name="this-diff" select="tan:diff($previous-string, ., false())"/>
-            <xsl:variable name="this-diff-collation" select="tan:diff-to-collation($this-diff, $previous-string-label, $this-label)"/>
+            <xsl:variable name="this-diff-adjusted"
+               select="
+                  if ($adjust-diffs) then
+                     tan:adjust-diff($this-diff)
+                  else
+                     $this-diff"
+            />
+            <xsl:variable name="this-diff-collation" select="tan:diff-to-collation($this-diff-adjusted, $previous-string-label, $this-label)"/>
             
             <!-- The linking text is split in different ways, both in the base collation and the collation to add. Each of those
             should be splintered up so that every starting position for the linking in one collation is also reflected in the other.-->
@@ -574,16 +607,28 @@
                         <xsl:variable name="this-new-collation-item" select="current-group() except $these-base-collation-items"/>
                         <xsl:choose>
                            <xsl:when test="count($this-new-collation-item) gt 1">
-                              <xsl:message select="'We did not expect more than one new collation item: ', serialize($this-new-collation-item)"/>
+                              <xsl:message select="'Unexpected: more than one new collation item: ', serialize($this-new-collation-item)"/>
                            </xsl:when>
                            
                            <xsl:when test="not($group-has-linking-text)">
                               <!-- scenario #1, the front end described above -->
+                              
+                              <xsl:variable name="base-text-match-positions"
+                                 select="
+                                    for $i in (1 to count($these-base-collation-items))
+                                    return
+                                       (if ($these-base-collation-items[$i]/tan:txt = $this-new-collation-item/tan:txt) then
+                                          $i
+                                       else
+                                          ())"
+                              />
                               <xsl:for-each select="$these-base-collation-items">
                                  <xsl:copy>
                                     <xsl:copy-of select="node()"/>
                                     <xsl:choose>
-                                       <xsl:when test="tan:txt = $this-new-collation-item/tan:txt">
+                                       <!-- If the incoming new item matches the text of more than one base item, use only the last to
+                                       make a copy of the new witness. -->
+                                       <xsl:when test="position() = $base-text-match-positions[last()]">
                                           <xsl:copy-of select="$this-new-collation-item/tan:wit"/>
                                        </xsl:when>
                                        <xsl:otherwise>
@@ -594,23 +639,45 @@
                                     </xsl:choose>
                                  </xsl:copy>
                               </xsl:for-each> 
-                              <xsl:if test="not(exists($these-base-collation-items[tan:txt = $this-new-collation-item/tan:txt]))">
+                              <xsl:if test="not(exists($base-text-match-positions))">
                                  <!-- If there are no unique elements in the base that have a matching text, then insert the new 
                                     unique element -->
                                  <xsl:copy-of select="$this-new-collation-item"/>
                               </xsl:if>
                            </xsl:when>
                            
+                           <!-- error checks betwen scenarios #1 and #2, and special situations -->
+                           
                            <xsl:when test="count($these-base-collation-items) gt 1">
-                              <xsl:message select="'We did not expect more than one base collation item: ', serialize($this-new-collation-item)"/>
+                              <xsl:message select="'Unexpected: more than one base collation item: ', serialize($these-base-collation-items)"/>
+                              <xsl:message select="'Accompanying new collation item: ', serialize($this-new-collation-item)"/>
                            </xsl:when>
+                           <!-- If the current group is just a placeholder, but has no actual text, skip it -->
+                           <xsl:when test="not(current-group()/tan:txt/text())"/>
+                           
+                           <!-- The following two special situations, where <txt> is empty, have been replaced by the preceding <xsl:when> -->
+                           <!--<xsl:when test="(count(current-group()) eq 1) and (name($this-new-collation-item) = 'c') and not($this-new-collation-item/tan:txt/text())">
+                              <!-\- This is a case where we're at the end of the iteration, the base collation ends with a <u> because the
+                              linking text isn't in it, and the new collation ends with a <c> that lacks text, because both the new text also lacks text 
+                              at that place. In this case we can just drop the item altogether. If the next string goes beyond the limits, the
+                              algorithm should still work normally. -\->
+                              <!-\-<xsl:copy-of select="$this-new-collation-item"/>-\->
+                           </xsl:when>-->
+                           <!--<xsl:when test="(count(current-group()) eq 1) and (name($these-base-collation-items[1]) = 'c') and not(current-group()/tan:txt/text())">
+                              <!-\- This is a case where we're at the end of the iteration, the base collation ends with a <c> that has an empty
+                              <txt> and the new collation has nothing. In this case we can just drop the item altogether. -\->
+                           </xsl:when>-->
                            <xsl:when test="count(current-group()) eq 1">
                               <xsl:message
-                                 select="'We expect collation items to come in groups of two or more: ', serialize($this-new-collation-item)"/>
+                                 select="
+                                    'We expect collation items to come in groups of two or more; only one item (' || (if (exists($this-new-collation-item)) then
+                                       'new'
+                                    else
+                                       'base') || ' item, linking text ' || $previous-string-label || '): ', serialize(current-group())"
+                              />
                            </xsl:when>
                            
-                           <!-- If we've gotten to this point, we're at the second group, the tail end described above -->
-                           
+                           <!-- If we've gotten to this point, we're at the second group, the tail-end, scenario #2 described above -->
                            <xsl:when test="(name($this-new-collation-item) = 'u')">
                               <!-- If the new collation item is <u> then the reading is not attested in the new string, so no 
                                  matter whether the base element is a <c> or <u> it must be converted to <u>.-->
@@ -649,13 +716,15 @@
             </xsl:variable>
 
             <xsl:variable name="diagnostics-on" select="false()"/>
+            <xsl:variable name="imprint-diagnostics-on" select="true()"/>
             <xsl:if test="$diagnostics-on">
                <xsl:message select="'Iteration: ', $iteration"/>
                <xsl:message select="'Collation so far: ' || serialize($collation-so-far)"/>
                <xsl:message select="'Previous string: ' || $previous-string"/>
                <xsl:message select="'This string label: ' || $this-label"/>
                <xsl:message select="'This string: ' || ."/>
-               <xsl:message select="'This diff: ' || serialize($this-diff)"/>
+               <xsl:message select="'This diff (not adjusted): ' || serialize($this-diff)"/>
+               <xsl:message select="'This diff (adjusted): ' || serialize($this-diff-adjusted)"/>
                <xsl:message select="'Linking text @pos values compared: ' || serialize($pos-values-compared)"/>
                <xsl:message select="'Places where the two collations should be broken up: ' || serialize($pos-values-to-add)"/>
                <xsl:message select="'Base collation splintered: ' || serialize($both-collations-splintered[1])"/>
@@ -664,12 +733,18 @@
             </xsl:if>
 
             <!-- The following diagnostic passage interjects feedback straight into the output, a more drastic method of
-               feedback which may or may not be what you want. -->
-            <xsl:if test="$diagnostics-on and true()">
+               feedback which may or may not be the best way to diagnose a problem. -->
+            
+            <xsl:if test="$diagnostics-on and $imprint-diagnostics-on">
                <diagnostics>
                   <previous-collation n="{position()}">
+                     <added-witness><xsl:value-of select="$previous-string-label"/></added-witness>
                      <xsl:copy-of select="$collation-so-far"/>
                   </previous-collation>
+                  <diff><xsl:copy-of select="$this-diff"/></diff>
+                  <diff-adjusted><xsl:copy-of select="$this-diff-adjusted"/></diff-adjusted>
+                  <base-coll-splintered><xsl:copy-of select="$both-collations-splintered[1]"/></base-coll-splintered>
+                  <new-coll-splintered><xsl:copy-of select="$both-collations-splintered[2]"/></new-coll-splintered>
                </diagnostics>
             </xsl:if>
             
@@ -686,6 +761,10 @@
          </xsl:iterate>
       </xsl:variable>
       
+      <xsl:variable name="cleaned-up-collation" as="element()*">
+         <xsl:apply-templates select="$fragmented-collation" mode="clean-up-collation"/>
+      </xsl:variable>
+      
       <!-- output for the entire function -->
       <collation>
          <xsl:for-each select="$string-labels-re-sorted">
@@ -700,17 +779,500 @@
                </xsl:for-each>
             </witness>
          </xsl:for-each>
-         <xsl:apply-templates select="$fragmented-collation/*" mode="clean-up-collation"/>
+         <xsl:copy-of select="$cleaned-up-collation/*"/>
       </collation>
+      
+      <xsl:variable name="check-output-integrity" as="xs:boolean" select="true()"/>
+      <xsl:if test="$check-output-integrity">
+         <xsl:for-each select="1 to count($string-labels-re-sorted)">
+            <xsl:variable name="this-pos" select="."/>
+            <xsl:variable name="this-label" select="$string-labels-re-sorted[$this-pos]"/>
+            <xsl:variable name="this-input-string" select="$strings-re-sorted[$this-pos]"/>
+            <xsl:variable name="this-output-string" select="string-join($cleaned-up-collation/*[tan:wit/@ref = $this-label]/tan:txt)"/>
+            <xsl:if test="not($this-input-string eq $this-output-string)">
+               <xsl:message select="'Error in tan:collate(). String ' || $this-label || ' does not match output.'"/>
+               <xsl:message select="serialize(tan:diff($this-input-string, $this-output-string, false()))"/>
+            </xsl:if>
+         </xsl:for-each>
+      </xsl:if>
       
    </xsl:function>
 
    <!-- <x> was just a placeholder that can easily be determined by the lack of a <wit>; <witness>
    is no longer needed because it has been reconstructed, perhaps with collation statistics. -->
    <xsl:template match="tan:x | tan:witness" mode="clean-up-collation"/>
+   <xsl:template match="tan:previous-collation" mode="clean-up-collation">
+      <xsl:copy-of select="."/>
+   </xsl:template>
+   
+   <xsl:template match="*[tan:u]" mode="clean-up-collation">
+      <!-- consolidate nearby <u>s that have identical <txt> contents; the challenge is that such creatures are separated
+      from each other by sibling <u>s that don't hav identical <txt> contents. -->
+      <!-- Prior to this step, consecutive <u>s should have <wit>s that follow the order of the sources. After this step,
+      that order is no longer operative -->
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:for-each-group select="*" group-adjacent="name(.)">
+            <xsl:choose>
+               <xsl:when test="current-grouping-key() = 'u'">
+                  <xsl:variable name="these-u-groups" as="element()+">
+                     <xsl:variable name="cg-count" select="count(current-group())"/>
+                     <xsl:iterate select="current-group()">
+                        <xsl:param name="items-to-group" as="element()*"/>
+                        <xsl:variable name="this-item" select="."/>
+                        <xsl:variable name="this-starts-new-group" select="$this-item/tan:wit/@ref = $items-to-group/tan:wit/@ref"/>
+                        <xsl:variable name="new-item-groups"
+                           select="
+                              if ($this-starts-new-group) then
+                                 $this-item
+                              else
+                                 ($items-to-group, $this-item)"
+                        />
+                        <xsl:choose>
+                           <xsl:when test="(position() eq $cg-count) and $this-starts-new-group">
+                              <group>
+                                 <xsl:copy-of select="$items-to-group"/>
+                              </group>
+                              <group>
+                                 <xsl:copy-of select="$this-item"/>
+                              </group>
+                           </xsl:when>
+                           <xsl:when test="$this-starts-new-group">
+                              <group>
+                                 <xsl:copy-of select="$items-to-group"/>
+                              </group>
+                           </xsl:when>
+                           <xsl:when test="(position() eq $cg-count)">
+                              <group>
+                                 <xsl:copy-of select="$items-to-group"/>
+                                 <xsl:copy-of select="$this-item"/>
+                              </group>
+                           </xsl:when>
+                        </xsl:choose>
+                        <xsl:next-iteration>
+                           <xsl:with-param name="items-to-group" select="$new-item-groups"/>
+                        </xsl:next-iteration>
+                     </xsl:iterate>
+                  </xsl:variable>
+                  <xsl:for-each select="$these-u-groups">
+                     <xsl:for-each-group select="*" group-by="tan:txt">
+                        <u>
+                           <xsl:copy-of select="current-group()/@*"/>
+                           <xsl:copy-of select="current-group()[1]/tan:txt"/>
+                           <xsl:apply-templates select="current-group()/(* except tan:txt)" mode="#current"/>
+                        </u>
+                     </xsl:for-each-group> 
+                  </xsl:for-each>
+                  
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:apply-templates select="current-group()" mode="#current"/>
+               </xsl:otherwise>
+            </xsl:choose>
+         </xsl:for-each-group> 
+      </xsl:copy>
+   </xsl:template>
    
    
    
+   <xsl:function name="tan:common-start-string" as="xs:string?">
+      <!-- See full function below -->
+      <xsl:param name="strings" as="xs:string*"/>
+      <xsl:sequence select="tan:common-start-or-end-string($strings, true())"/>
+   </xsl:function>
+   
+   <xsl:function name="tan:common-end-string" as="xs:string?">
+      <!-- See full function below -->
+      <xsl:param name="strings" as="xs:string*"/>
+      <xsl:sequence select="tan:common-start-or-end-string($strings, false())"/>
+   </xsl:function>
+   
+   <xsl:function name="tan:common-start-or-end-string" as="xs:string?">
+      <!-- See full function below -->
+      <xsl:param name="strings" as="xs:string*"/>
+      <xsl:param name="find-common-start" as="xs:boolean"/>
+      <xsl:variable name="string-count" select="count($strings)"/>
+      <xsl:choose>
+         <xsl:when test="$string-count lt 2">
+            <xsl:sequence select="$strings"/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:iterate select="$strings[position() gt 1]">
+               <xsl:param name="common-so-far" as="xs:string*" select="$strings[1]"/>
+               <xsl:variable name="this-css" select="tan:common-start-or-end-string(., $common-so-far, $find-common-start)"/>
+               <xsl:choose>
+                  <xsl:when test="string-length($this-css) lt 1">
+                     <xsl:sequence select="$this-css"/>
+                     <xsl:break/>
+                  </xsl:when>
+                  <xsl:when test="(position() = ($string-count - 1))">
+                     <xsl:sequence select="$this-css"/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                     <xsl:next-iteration>
+                        <xsl:with-param name="common-so-far" select="$this-css"/>
+                     </xsl:next-iteration>
+                  </xsl:otherwise>
+               </xsl:choose>
+            </xsl:iterate>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:function>
+   
+   <xsl:function name="tan:common-start-or-end-string" as="xs:string?">
+      <!-- Input: two strings; a boolean -->
+      <!-- Output: the longest string that can be formed by comparing a common end of both strings,
+      the starting end if the boolean is true, otherwise the -->
+      <xsl:param name="string-a" as="xs:string?"/>
+      <xsl:param name="string-b" as="xs:string?"/>
+      <xsl:param name="find-common-start" as="xs:boolean"/>
+      <xsl:variable name="a-codepoints" as="xs:integer*"
+         select="
+            if ($find-common-start) then
+               string-to-codepoints($string-a)
+            else
+               reverse(string-to-codepoints($string-a))"
+      />
+      <xsl:variable name="b-codepoints" as="xs:integer*"
+         select="
+            if ($find-common-start) then
+               string-to-codepoints($string-b)
+            else
+               reverse(string-to-codepoints($string-b))"
+      />
+      <xsl:variable name="commonality" as="xs:integer*">
+         <xsl:iterate select="$a-codepoints">
+            <xsl:param name="codepoints-to-compare" select="$b-codepoints" as="xs:integer*"/>
+            <xsl:variable name="this-a-point" select="."/>
+            <xsl:variable name="this-b-point" select="$codepoints-to-compare[1]"/>
+            <xsl:variable name="next-b-codepoints" select="$codepoints-to-compare[position() gt 1]"/>
+            <xsl:variable name="this-is-match" select="$this-a-point eq $this-b-point"/>
+            <xsl:if test="$this-is-match">
+               <xsl:sequence select="$this-a-point"/>
+            </xsl:if>
+            <xsl:choose>
+               <xsl:when test="not($this-is-match) or not(exists($codepoints-to-compare))">
+                  <xsl:break/>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:next-iteration>
+                     <xsl:with-param name="codepoints-to-compare" select="$next-b-codepoints"/>
+                  </xsl:next-iteration>
+               </xsl:otherwise>
+            </xsl:choose>
+         </xsl:iterate>
+      </xsl:variable>
+      
+      <xsl:choose>
+         <xsl:when test="$find-common-start">
+            <xsl:value-of select="codepoints-to-string($commonality)"/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:value-of select="codepoints-to-string(reverse($commonality))"/>
+         </xsl:otherwise>
+      </xsl:choose>
+      
+   </xsl:function>
+   
+   
+   <xsl:function name="tan:adjust-diff" as="element()*">
+      <!-- Input: any output <diff>s from tan:diff() -->
+      <!-- Output: the output adjusted, with <a> and <b>s adjusted if there are more optimal placements -->
+      <xsl:param name="diff-output" as="element()*"/>
+      <xsl:variable name="end-of-sequence" as="element()">
+         <end-of-sequence/>
+      </xsl:variable>
+      <xsl:variable name="adjustment-1" as="element()?">
+         <xsl:for-each select="$diff-output">
+            <xsl:variable name="element-count" select="count(*)"/>
+            <xsl:copy>
+               <xsl:copy-of select="@*"/>
+               <xsl:iterate select="*, $end-of-sequence">
+                  <xsl:param name="group-so-far" as="element()">
+                     <group/>
+                  </xsl:param>
+                  
+                  <xsl:variable name="this-is-the-end" select="self::tan:end-of-sequence"/>
+                  <xsl:variable name="last-group-in-group-so-far" select="$group-so-far/tan:group[last()]"/>
+                  <xsl:variable name="this-name" select="name(.)"/>
+                  
+                  <!-- We think of the adjustment process as being applied to a triad, i.e., a combination of 
+                     <common> + <a/b> + <common> or <a/b> + <common> + <a/b>. The triad is complete 
+                     in the case of the former, and in the latter it is  complete only if the current element is 
+                     not a missing <a> or <b> (i.e., the current element is <common>)-->
+                  <!-- We assume there is only perhaps one <a> and perhaps one <b> before
+                  any <common>, so checking for completeness of the triad depends upon checking
+                  for <common>, instead of trying to figure out combinations of <a> and <b>. -->
+                  <xsl:variable name="group-so-far-is-a-complete-triad"
+                     select="(count($group-so-far/tan:group) eq 3)
+                     and 
+                     (self::tan:common or $last-group-in-group-so-far/tan:common)"
+                  />
+                  
+                  <xsl:variable name="group-so-far-for-adjustment" as="element()?">
+                     <xsl:choose>
+                        <xsl:when test="$this-is-the-end and exists($group-so-far/tan:group/tan:a) and exists($group-so-far/tan:group/tan:b)">
+                           <!-- If we're at the end, well, it's time to wrap things up. Because we've ended with a dummy 
+                           element, the group so far should be the first two parts of a triad. The middle part cannot be 
+                           shifted right, and it can be shifted left only if some new element is created at the tail to receive
+                           the common text. And so it must be a <common>. Which means that the middle part of the triad
+                           can only be a group of both <a> and <b>.
+                           -->
+                           <group>
+                              <xsl:copy-of select="$group-so-far/*"/>
+                              <group>
+                                 <common/>
+                              </group>
+                           </group>
+                        </xsl:when>
+                        <xsl:when test="$group-so-far-is-a-complete-triad">
+                           <xsl:sequence select="$group-so-far"/>
+                        </xsl:when>
+                        <!-- If the group so far is incomplete and we're not at the end, then we leave the variable empty -->
+                     </xsl:choose>
+                  </xsl:variable>
+                  
+                  <xsl:variable name="common-end-1"
+                     select="tan:common-end-string($group-so-far-for-adjustment/tan:group[position() = (1, 2)]/*)"
+                  />
+                  <xsl:variable name="common-start-1"
+                     select="tan:common-start-string($group-so-far-for-adjustment/tan:group[position() = (2, 3)]/*)"
+                  />
+                  
+                  <xsl:variable name="shift-middle-by" as="xs:integer?">
+                     <xsl:choose>
+                        <!-- If an <a> or <b> can be shifted to accommodate word spaces, we prefer that spaces be put 
+                        at the end of the <a> or <b>, hence the different placement of \s in each of the next two
+                        regular expressions. -->
+                        <xsl:when
+                           test="
+                              $group-so-far-for-adjustment/tan:group[1]/tan:common
+                              and matches($common-end-1, '^\s*[\[&lt;\(]')">
+                           <xsl:value-of select="string-length($common-end-1) * -1"/>
+                        </xsl:when>
+                        <xsl:when
+                           test="
+                              $group-so-far-for-adjustment/tan:group[3]/tan:common
+                              and matches($common-start-1, '[\]&gt;\)\s]$')">
+                           <xsl:value-of select="string-length($common-start-1)"/>
+                        </xsl:when>
+                     </xsl:choose>
+                  </xsl:variable>
+                  
+                  <xsl:variable name="text-to-insert" as="xs:string?">
+                     <xsl:choose>
+                        <xsl:when test="$shift-middle-by lt 0">
+                           <xsl:sequence
+                              select="substring($common-end-1, (string-length($common-end-1) + $shift-middle-by))"
+                           />
+                        </xsl:when>
+                        <xsl:when test="$shift-middle-by gt 0">
+                           <xsl:sequence
+                              select="substring($common-start-1, 1, $shift-middle-by)"
+                           />
+                        </xsl:when>
+                     </xsl:choose>
+                  </xsl:variable>
+                  
+                  <xsl:variable name="new-group-adjusted" as="element()?">
+                     <xsl:choose>
+                        <xsl:when test="exists($shift-middle-by)">
+                           <group>
+                              <xsl:apply-templates select="$group-so-far-for-adjustment/*[1]" mode="trim-or-add-text">
+                                 <xsl:with-param name="trim-end-by" tunnel="yes"
+                                    select="
+                                       if ($shift-middle-by lt 0) then
+                                          abs($shift-middle-by)
+                                       else
+                                          ()"
+                                 />
+                                 <xsl:with-param name="append-text" tunnel="yes"
+                                    select="
+                                       if ($shift-middle-by gt 0) then
+                                          $text-to-insert
+                                       else
+                                          ()"
+                                 />
+                              </xsl:apply-templates>
+                              <xsl:apply-templates select="$group-so-far-for-adjustment/*[2]" mode="trim-or-add-text">
+                                 <xsl:with-param name="trim-start-by" tunnel="yes"
+                                    select="
+                                       if ($shift-middle-by gt 0) then
+                                          $shift-middle-by
+                                       else
+                                          ()"
+                                 />
+                                 <xsl:with-param name="trim-end-by" tunnel="yes"
+                                    select="
+                                       if ($shift-middle-by lt 0) then
+                                          abs($shift-middle-by)
+                                       else
+                                          ()"
+                                 />
+                                 <xsl:with-param name="prepend-text" tunnel="yes"
+                                    select="
+                                       if ($shift-middle-by lt 0) then
+                                          $text-to-insert
+                                       else
+                                          ()"
+                                 />
+                                 <xsl:with-param name="append-text" tunnel="yes"
+                                    select="
+                                       if ($shift-middle-by gt 0) then
+                                          $text-to-insert
+                                       else
+                                          ()"
+                                 />
+                              </xsl:apply-templates>
+                              <xsl:apply-templates select="$group-so-far-for-adjustment/*[3]"
+                                 mode="trim-or-add-text">
+                                 <xsl:with-param name="trim-start-by" tunnel="yes"
+                                    select="
+                                       if ($shift-middle-by gt 0) then
+                                          $shift-middle-by
+                                       else
+                                          ()"/>
+                                 <xsl:with-param name="prepend-text" tunnel="yes"
+                                    select="
+                                       if ($shift-middle-by lt 0) then
+                                          $text-to-insert
+                                       else
+                                          ()"
+                                 />
+                              </xsl:apply-templates>
+                           </group>
+                        </xsl:when>
+                        <xsl:otherwise>
+                           <xsl:sequence select="$group-so-far-for-adjustment"/>
+                        </xsl:otherwise>
+                     </xsl:choose>
+                  </xsl:variable>
+                  
+                  <!-- build new parameters -->
+                  <xsl:variable name="group-to-pass-to-next-iteration" as="element()">
+                     <group>
+                        <xsl:choose>
+                           <!-- Is the group so far incomplete? I.e., is this an <a> that needs to join
+                           a lonely <b> or vice versa? -->
+                           <xsl:when test="($last-group-in-group-so-far/tan:a and self::tan:b)
+                              or ($last-group-in-group-so-far/tan:b and self::tan:a)">
+                              <xsl:copy-of select="$last-group-in-group-so-far/preceding-sibling::*"/>
+                              <group>
+                                 <xsl:copy-of select="$last-group-in-group-so-far/*"/>
+                                 <xsl:copy-of select="."/>
+                              </group>
+                           </xsl:when>
+                           <!-- Perhaps its incomplete only because we've just started. -->
+                           <xsl:when test="not($group-so-far-is-a-complete-triad)">
+                              <xsl:copy-of select="$group-so-far/tan:group"/>
+                              <group>
+                                 <xsl:copy-of select="."/>
+                              </group>
+                           </xsl:when>
+                           <xsl:otherwise>
+                              <!-- The second part of the inherited triad now becomes the first part of the next triad -->
+                              <xsl:copy-of select="$new-group-adjusted/*[2]"/>
+                              <xsl:copy-of select="$new-group-adjusted/*[3]"/>
+                              <group>
+                                 <xsl:copy-of select="."/>
+                              </group>
+                           </xsl:otherwise>
+                        </xsl:choose>
+                     </group>
+                  </xsl:variable>
+                  
+                  <xsl:variable name="diagnostics-on" select="exists($group-so-far/tan:group/tan:common[2][matches(., 'BILCOD')])"/>
+                  <xsl:if test="$diagnostics-on">
+                     <xsl:message select="'Diagnostics on, tan:adjust-diff(), iteration', position()"/>
+                     <xsl:if test="$this-is-the-end"><xsl:message select="'Last iteration.'"/></xsl:if>
+                     <xsl:message select="'Group so far: ', serialize($group-so-far)"/>
+                     <xsl:message select="'This item: ', serialize(.)"/>
+                     <xsl:message
+                        select="'Process the group that has been built so far?: ', $group-so-far-is-a-complete-triad"
+                     />
+                     <xsl:message select="'Group primed for adjustment and output: ', serialize($group-so-far-for-adjustment)"/>
+                     <xsl:message select="'New group so far: ', serialize($group-to-pass-to-next-iteration)"/>
+                     <xsl:message select="'Common end (1): ' || $common-end-1"/>
+                     <xsl:message select="'Common start (1): ' || $common-start-1"/>
+                     <xsl:message select="'Shift middle by:', $shift-middle-by"/>
+                     <xsl:message select="'Text to insert: ' || $text-to-insert"/>
+                  </xsl:if>
+                  
+                  <!-- write results -->
+                  <!-- We copy only those elements that have text. In the course of adjustment, some elements might
+                  have been dispensed with, creating another area that needs to be fixed. -->
+                  <xsl:choose>
+                     <xsl:when test="$this-is-the-end and exists($new-group-adjusted/tan:group[3]/*[text()])">
+                        <xsl:copy-of select="$new-group-adjusted/tan:group[1]/*[text()]"/>
+                        <xsl:copy-of select="$new-group-adjusted/tan:group[2]/*[text()]"/>
+                        <xsl:copy-of select="$new-group-adjusted/tan:group[3]/*[text()]"/>
+                     </xsl:when>
+                     <xsl:when test="$this-is-the-end">
+                        <!-- If we're at the end but can't move the second part of the triad, then we just 
+                        return the group so far, without changes -->
+                        <xsl:copy-of select="$group-so-far/tan:group/*[text()]"/>
+                     </xsl:when>
+                     <xsl:when test="$group-so-far-is-a-complete-triad">
+                        <!-- Only the first part of the triad is now fully adjusted, and can be copied to output. The 
+                           second part of the triad will become the first part of the next triad. -->
+                        <xsl:copy-of select="$new-group-adjusted/tan:group[1]/*[text()]"/>
+                     </xsl:when>
+                  </xsl:choose>
+                  
+                  <xsl:next-iteration>
+                     <xsl:with-param name="group-so-far" select="$group-to-pass-to-next-iteration"/>
+                  </xsl:next-iteration>
+               </xsl:iterate>
+            </xsl:copy>
+         </xsl:for-each>
+      </xsl:variable>
+      
+      <!-- If adjustments created an element to empty out, then adjacent elements need to be consolidated -->
+      <diff>
+         <xsl:for-each-group select="$adjustment-1/*" group-adjacent="name() = 'common'">
+            <xsl:choose>
+               <xsl:when test="current-grouping-key()">
+                  <common><xsl:value-of select="current-group()"/></common>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:for-each-group select="current-group()" group-by="name()">
+                     <xsl:sort select="current-grouping-key()"/>
+                     <xsl:element name="{current-grouping-key()}">
+                        <xsl:value-of select="current-group()"/>
+                     </xsl:element>
+                  </xsl:for-each-group>
+               </xsl:otherwise>
+            </xsl:choose>
+         </xsl:for-each-group>
+      </diff>
+      
+      </xsl:function>
+
+      <xsl:template match="tan:a | tan:b | tan:common" mode="trim-or-add-text">
+         <xsl:param name="trim-start-by" tunnel="yes" as="xs:integer?"/>
+         <xsl:param name="trim-end-by" tunnel="yes" as="xs:integer?"/>
+         <xsl:param name="prepend-text" tunnel="yes" as="xs:string?"/>
+         <xsl:param name="append-text" tunnel="yes" as="xs:string?"/>
+         <xsl:copy>
+            <xsl:copy-of select="@*"/>
+            <xsl:value-of select="$prepend-text"/>
+            <xsl:choose>
+               <xsl:when test="($trim-start-by gt 0) and ($trim-end-by gt 0)">
+                  <xsl:value-of select="substring(., $trim-start-by + 1, (string-length(.) - $trim-start-by - $trim-end-by))"/>
+               </xsl:when>
+               <xsl:when test="$trim-start-by gt 0">
+                  <xsl:value-of select="substring(., $trim-start-by + 1)"/>
+               </xsl:when>
+               <xsl:when test="$trim-end-by gt 0">
+                  <xsl:value-of select="substring(., 1, (string-length(.) - $trim-end-by))"/>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:value-of select="."/>
+               </xsl:otherwise>
+            </xsl:choose>
+            <xsl:value-of select="$append-text"/>
+         </xsl:copy>
+      </xsl:template>
    
    
    

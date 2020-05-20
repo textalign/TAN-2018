@@ -740,7 +740,7 @@
                         <xsl:message select="'Input analyzed: ', serialize($input-analyzed-2)"/>
                     </xsl:if>
                     <xsl:for-each-group select="$input-analyzed-2/tan:group" group-by="@n">
-                        <xsl:copy-of select="tan:diff(current-group()[1]/tan:distinct, current-group()[2]/tan:distinct,
+                        <xsl:copy-of select="tan:diff(current-group()[@input='1']/tan:distinct, current-group()[@input='2']/tan:distinct,
                             $snap-to-word, $characters-to-tokenize-on[position() gt 1], $loop-counter + 1)/*"/>
                         <xsl:copy-of select="current-group()[1]/tan:common"/>
                     </xsl:for-each-group> 
@@ -1176,16 +1176,6 @@
                                 else
                                     $short-input-parsed/tan:common[1]"
                         />
-                        <!--<xsl:variable name="short-head" as="element()">
-                            <xsl:element name="{name($short-string)}">
-                                <xsl:attribute name="outer-loop" select="$loop-counter"/>
-                                <xsl:if test="$short-search-start gt 1">
-                                    <xsl:value-of
-                                        select="substring($short-string, 1, $short-search-start - 1)"
-                                    />
-                                </xsl:if>
-                            </xsl:element>
-                        </xsl:variable>-->
                         <xsl:variable name="short-head" as="element()">
                             <xsl:element name="{name($short-string)}">
                                 <xsl:attribute name="outer-loop" select="$loop-counter"/>
@@ -1200,16 +1190,6 @@
                                 <xsl:copy-of select="$short-tail-elements/text()"/>
                             </xsl:element>
                         </xsl:variable>
-                        <!--<xsl:variable name="short-tail" as="element()">
-                            <xsl:element name="{name($short-string)}">
-                                <xsl:attribute name="outer-loop" select="$loop-counter"/>
-                                <xsl:if test="$short-search-start + $short-search-length gt 0">
-                                    <xsl:value-of
-                                        select="substring($short-string, $short-search-start + $short-search-length)"
-                                    />
-                                </xsl:if>
-                            </xsl:element>
-                        </xsl:variable>-->
                         <xsl:variable name="head-input" as="element()*">
                             <xsl:for-each select="$long-head, $short-head">
                                 <xsl:sort select="string-length(.)"/>
