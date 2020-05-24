@@ -11,12 +11,12 @@
       </titleStmt>
       <publicationStmt>
         <publisher>Joel Kalvesmaki</publisher>
-        <date>Revised 2019-10-15</date>
+        <date>Revised 2020-05-24</date>
         <availability status="free">
           <p>Insofar as this ODD file constitutes an original work (see below) all material is
             released under a GNU General Public License, https://opensource.org/licenses/GPL-3.0</p>
-          <p>The notice in the next paragraph is preserved whole from the template upon which this
-            ODD file is based.</p>
+          <p>The notice in the next paragraph is preserved from the template upon which this ODD
+            file is based.</p>
           <!-- original <p> -->
           <p>TEI material can be licensed differently depending on the use you intend to make of it.
             Hence it is made available under both the CC+BY and BSD-2 licences. The CC+BY licence is
@@ -36,7 +36,7 @@
       <head>TEI All, adapted for the Text Alignment Network</head>
       <p>This ODD describes parameters needed to turn any document that validates against TEI All
         (P5) into a form that can be used with the Text Alignment Network (TAN). The next two
-        paragraphs are reproduced wholesale from the template upon which this ODD file is based. </p>
+        paragraphs are preserved from the template upon which this ODD file is based. </p>
       <!-- original <p>s -->
       <p>This TEI customization describes a schema that includes <emph>all</emph> of the TEI (P5)
         modules. This is a very useful starting place for manually creating your own customizations
@@ -158,10 +158,6 @@
             <memberOf key="att.declaring" mode="delete"/>
             <memberOf key="att.written" mode="delete"/>
           </classes>
-          <!-- the following element is flagged as invalid because of the a:documentation element below,
-          which is permitted by rng. Because the ODD processor passes the <a:documentation> elements
-          along just fine into the target .rng and .rnc files, this should be retained, until the TEI council
-          sees fit to permit elements in the a: namespace -->
           <content>
             <rng:optional>
               <rng:attribute name="ed-who">
@@ -284,15 +280,32 @@
         <classSpec type="atts" ident="att.global" mode="change">
           <attList>
             <attDef ident="n" mode="change">
-              <desc>@n values must consist of word characters or the underscore. If @n is to be
-                given more than one value, those items must be separated by a space or a comma. A
-                hyphen-minus, - (U+002D, the most common form of hyphen), always has special
-                meaning, specifying a range. This feature is useful for cases where a &lt;div>
+              <desc>names a &lt;div> or &lt;group>, or refers to a &lt;div>'s @n. ¶ @n may consist
+                of one or more values, space delimited, which are to be treated as synonyms. ¶ Each
+                synonymous value of @n may be simple or complex. A simple value of @n is a set of
+                word characters (or the underbar). A complex value of @n consists of word characters
+                (or the underbar) separated by commas and hyphens. A complex value of @n refers to a
+                range of references. The sequence of items in a complex value are significant. For
+                example n="6, 8" signifies that the text straddles reference 6 then 8. But n="8, 6"
+                signifies the converse. In the context of a &lt;div>, the implication is that in
+                neither case can the text be securely disentangled so as to create one &lt;div> for
+                6 and another for 8. ¶ The hyphen-minus, - (U+002D, the most common form of hyphen),
+                is reserved to specify a range. This feature is useful for cases where a &lt;div>
                 straddles more than one standard reference number (e.g., a translation of Aristotle
-                that cannot be easily tied to Bekker numbers). If you need to use a hyphen-like
+                that cannot be easily tied to Bekker numbers). ¶ If you need to use a hyphen-like
                 character in an @n that does not specify a range, consider ‐ (U+2010 HYPHEN), ‑
                 (U+2011 NON-BREAKING HYPHEN), ‒ (U+2012 FIGURE DASH), – (U+2013 EN DASH), or −
-                (U+2212 MINUS SIGN).</desc>
+                (U+2212 MINUS SIGN). ¶ The comma is reserved to specify a sequence of references. ¶
+                The space is reserved to separate synonymous values, or to pad commas and hyphens.
+                If you wish to use a value of @n that would normally use word spaces, use the
+                underbar, _, instead. ¶ @n does not permit other non-word spaces reserved by @ref,
+                i.e., the period/full stop or colon, which delimit a hierarchy of @n's. ¶ Because @n
+                is used to construct @ref, it is indirectly cumulatively inheritable. See
+                main.xml#inheritable_attributes. ¶ Extra TAN vocabulary is available for @n, to
+                provide built-in aliases. For more on this feature see main.xml#extra_n_vocabulary.
+                For specific extra vocabulary see main.xml#vocabularies-n-bible-eng
+                main.xml#vocabularies-n-bible-spa main.xml#vocabularies-n-quran-eng-ara
+                main.xml#vocabularies-n-unlabeled-divs-1-eng</desc>
               <datatype>
                 <rng:data type="string">
                   <rng:param name="pattern">[\w\._]+([\- ,]+[\w\._]+)*</rng:param>

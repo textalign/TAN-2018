@@ -13,20 +13,22 @@ include "TAN-core.rnc" {
 # ATTRIBUTES
 attr-replacement =
     
-    ## contains a string used to replace any occurrence of <pattern> 
+    ## contains a string used to replace any occurrence of @pattern 
     attribute replacement { text }
 # ELEMENTS
 element-n-alias =
     
-    ## specifies whether aliases for n should be applied selectively. This element makes validating a file more efficient.
+    ## specifies whether aliases for n should be applied selectively. For files that use <vocabulary> with @which, for extra @n vocabulary, this element improves the efficiency of validation.
     element n-alias { ptr-attr-div-type }
 element-normalization =
     
-    ## specifies an alteration made to a source file to bring the transcription into conformity with standards or common expectations. This element is used typically for minor corrections, e.g., suppression of discretionary hyphenation. You should declare every change you have made to the source.
+    ## specifies an alteration that has been made to a source file to bring the transcription into conformity with standards or common expectations. This element is used typically for minor corrections, e.g., suppression of discretionary hyphenation. You should declare every change you have made to the source.
     
     ## <normalization> is especially helpful in reference to nondigital sources, but it may be made also for digital sources, to declare global changes that would be cumbersome, difficult, or impossible to describe in <replace>. 
     
-    ## See main.xml#vocabularies-normalizations for suggested IRI + name values for normalizations. For general discussion see main.xml#normalizing_transcriptions 
+    ## The sequence of consecutive <normalization> is immaterial.
+    
+    ## See main.xml#vocabularies-normalizations for standard TAN vocabulary for normalizations. For general discussion see main.xml#normalizing_transcriptions 
     element normalization { entity-nondigital-no-id }
 element-replace =
     
@@ -34,7 +36,9 @@ element-replace =
     
     ## Multiple <replace>s will be assumed to have been implemented in document order.
     
-    ## The conventions of this element and its children accord with the definition of the function and its parameters provided at http://www.w3.org/TR/xpath-functions-30/#func-replace
+    ## The conventions of this element and its children parallel the XPath function replace(). See http://www.w3.org/TR/xpath-functions-30/#func-replace
+    
+    ## The sequence of consecutive <replace>s is important, reflecting the order in which replacements occured. Results may differ depending upon the order of replace operations.
     element replace {
         ed-stamp?,
         (inclusion
@@ -60,21 +64,25 @@ element-work =
     element work { entity-nondigital-no-id }
 link-element-annotation =
     
-    ## identifies a class 2 file that is an annotation on (and therefore a dependent of) the current file.
+    ## identifies a class-2 file that is an annotation on (and therefore a dependent of) the current file.
+    
+    ## The sequence of consecutive <annotation>s is immaterial.
     element annotation { entity-digital-tan-no-id }
 link-element-model =
     
-    ## identifies a class 1 file has been used as a model for how the current file has been segmented and labeled.
+    ## identifies a class-1 file has been used as a model for how the current file has been segmented and labeled.
     
-    ## To declare a model is to indicate that the reference system that has been adopted is likely not native to the scriptum, and users should take that into account. For example, if a file modeled on another has <div type="sentence">, it should not be assumed that the text that is surrounded is really a sentence.
+    ## To declare a model is to indicate that the reference system used is likely not native to the scriptum. For example, if a file modeled on another has <div type="sentence">, it should not be assumed that the text that falls in that <div> is really a sentence.
     
-    ## A file need not follow its model exactly.
+    ## A file need not follow its model exactly. Upon verbose validation, differences between the file and its model will be reported only as warnings.
     element model { entity-digital-tan-no-id }
 link-element-redivision =
     
-    ## identifies a class 1 file that has the same work, scriptum, and version, but segmented according to a different reference system.
+    ## identifies a class-1 file that has the same work, scriptum, and version, but segmented according to a different reference system.
     
-    ## The normalized transcriptions of redivided texts must be identical
+    ## The normalized transcriptions of redivided texts must be identical.
+    
+    ## The sequence of consecutive <redivision>s is immaterial.
     element redivision { entity-digital-tan-no-id }
 # PATTERNS
 adjust-repl = element-replace

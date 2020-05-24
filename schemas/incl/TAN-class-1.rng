@@ -55,21 +55,22 @@
   <!-- ATTRIBUTES -->
   <define name="attr-replacement">
     <attribute name="replacement">
-      <a:documentation>contains a string used to replace any occurrence of &lt;pattern&gt; </a:documentation>
+      <a:documentation>contains a string used to replace any occurrence of @pattern </a:documentation>
     </attribute>
   </define>
   <!-- ELEMENTS -->
   <define name="element-n-alias">
     <element name="n-alias">
-      <a:documentation>specifies whether aliases for n should be applied selectively. This element makes validating a file more efficient.</a:documentation>
+      <a:documentation>specifies whether aliases for n should be applied selectively. For files that use &lt;vocabulary&gt; with @which, for extra @n vocabulary, this element improves the efficiency of validation.</a:documentation>
       <ref name="ptr-attr-div-type"/>
     </element>
   </define>
   <define name="element-normalization">
     <element name="normalization">
-      <a:documentation>specifies an alteration made to a source file to bring the transcription into conformity with standards or common expectations. This element is used typically for minor corrections, e.g., suppression of discretionary hyphenation. You should declare every change you have made to the source.</a:documentation>
+      <a:documentation>specifies an alteration that has been made to a source file to bring the transcription into conformity with standards or common expectations. This element is used typically for minor corrections, e.g., suppression of discretionary hyphenation. You should declare every change you have made to the source.</a:documentation>
       <a:documentation>&lt;normalization&gt; is especially helpful in reference to nondigital sources, but it may be made also for digital sources, to declare global changes that would be cumbersome, difficult, or impossible to describe in &lt;replace&gt;. </a:documentation>
-      <a:documentation>See main.xml#vocabularies-normalizations for suggested IRI + name values for normalizations. For general discussion see main.xml#normalizing_transcriptions </a:documentation>
+      <a:documentation>The sequence of consecutive &lt;normalization&gt; is immaterial.</a:documentation>
+      <a:documentation>See main.xml#vocabularies-normalizations for standard TAN vocabulary for normalizations. For general discussion see main.xml#normalizing_transcriptions </a:documentation>
       <ref name="entity-nondigital-no-id"/>
     </element>
   </define>
@@ -77,7 +78,8 @@
     <element name="replace">
       <a:documentation>contains the equivalent of the XPath replace() function plus parameters, indicating a replacement operation that should be, or has been, applied to a digital file.</a:documentation>
       <a:documentation>Multiple &lt;replace&gt;s will be assumed to have been implemented in document order.</a:documentation>
-      <a:documentation>The conventions of this element and its children accord with the definition of the function and its parameters provided at http://www.w3.org/TR/xpath-functions-30/#func-replace</a:documentation>
+      <a:documentation>The conventions of this element and its children parallel the XPath function replace(). See http://www.w3.org/TR/xpath-functions-30/#func-replace</a:documentation>
+      <a:documentation>The sequence of consecutive &lt;replace&gt;s is important, reflecting the order in which replacements occured. Results may differ depending upon the order of replace operations.</a:documentation>
       <optional>
         <ref name="ed-stamp"/>
       </optional>
@@ -117,22 +119,24 @@
   </define>
   <define name="link-element-annotation">
     <element name="annotation">
-      <a:documentation>identifies a class 2 file that is an annotation on (and therefore a dependent of) the current file.</a:documentation>
+      <a:documentation>identifies a class-2 file that is an annotation on (and therefore a dependent of) the current file.</a:documentation>
+      <a:documentation>The sequence of consecutive &lt;annotation&gt;s is immaterial.</a:documentation>
       <ref name="entity-digital-tan-no-id"/>
     </element>
   </define>
   <define name="link-element-model">
     <element name="model">
-      <a:documentation>identifies a class 1 file has been used as a model for how the current file has been segmented and labeled.</a:documentation>
-      <a:documentation>To declare a model is to indicate that the reference system that has been adopted is likely not native to the scriptum, and users should take that into account. For example, if a file modeled on another has &lt;div type="sentence"&gt;, it should not be assumed that the text that is surrounded is really a sentence.</a:documentation>
-      <a:documentation>A file need not follow its model exactly.</a:documentation>
+      <a:documentation>identifies a class-1 file has been used as a model for how the current file has been segmented and labeled.</a:documentation>
+      <a:documentation>To declare a model is to indicate that the reference system used is likely not native to the scriptum. For example, if a file modeled on another has &lt;div type="sentence"&gt;, it should not be assumed that the text that falls in that &lt;div&gt; is really a sentence.</a:documentation>
+      <a:documentation>A file need not follow its model exactly. Upon verbose validation, differences between the file and its model will be reported only as warnings.</a:documentation>
       <ref name="entity-digital-tan-no-id"/>
     </element>
   </define>
   <define name="link-element-redivision">
     <element name="redivision">
-      <a:documentation>identifies a class 1 file that has the same work, scriptum, and version, but segmented according to a different reference system.</a:documentation>
-      <a:documentation>The normalized transcriptions of redivided texts must be identical</a:documentation>
+      <a:documentation>identifies a class-1 file that has the same work, scriptum, and version, but segmented according to a different reference system.</a:documentation>
+      <a:documentation>The normalized transcriptions of redivided texts must be identical.</a:documentation>
+      <a:documentation>The sequence of consecutive &lt;redivision&gt;s is immaterial.</a:documentation>
       <ref name="entity-digital-tan-no-id"/>
     </element>
   </define>

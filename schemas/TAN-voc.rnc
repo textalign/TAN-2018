@@ -3,7 +3,7 @@ default namespace = "tag:textalign.net,2015:ns"
 include "incl/TAN-class-3.rnc" {
 start =
     
-    ## specifies that the TAN file contains vocabulary—things given IRIs + names + descriptions, or token definitions. Root element.
+    ## specifies a TAN file that contains vocabulary items. Root element.
     element TAN-voc { TAN-root }
     source-list = empty
     body-attributes-non-core = element-scope?, attribute-scope?
@@ -17,16 +17,16 @@ attribute-scope =
     
     ## names one or more TAN attributes that an item applies to.
     
-    ## This attribute is non-cumulatively inheritable. An element will be affected only by the nearest value and not any other values rootward.
+    ## This attribute is weakly inheritable. An element will be affected only by the values of the closest @affects-attribute.
     
     ## Currently this attribute may have scope over only @n.
     attribute affects-attribute { "n" }
 # ELEMENTS
 element-item =
     
-    ## names an item that is being described. The item is assumed to be a type of thing indicated by the closest @affects-attribute or @affects-element.
+    ## provides a container for IRI, names, and descriptions of something. The item is assumed to be a type (or types) of thing indicated by the values of the closest @affects-attribute or @affects-element.
     
-    ## The term "item" implies something that can be more than one type of thing. Verbs are special, and cannot be assigned any other categories, so <item> should not be used of verbs. Use <verb> instead.
+    ## Verbs are special, and cannot be assigned any other categories, so <verb> is used for them instead of <item>.
     element item {
         ed-stamp?,
         (inclusion
@@ -41,6 +41,6 @@ element-scope =
     
     ## names one or more TAN elements that an item applies to.
     
-    ## This attribute is non-cumulatively inheritable. An element will be affected only by its nearest value and not any other values rootward.
+    ## This attribute is weakly inheritable. An element will be affected only by the values of the closest @affects-element.
     attribute affects-element { text }
 # PATTERNS

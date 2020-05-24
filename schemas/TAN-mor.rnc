@@ -20,26 +20,26 @@ attr-code =
     ## contains a string that serves as an identifier for <feature>.
     attribute code {
         
-        ## hyphen reserved for "not applicable"; spaces and (),| reserved for @feature-test expressions
+        ## The hyphen is reserved for "not applicable"; spaces and (),| reserved for @feature-test expressions
         xsd:string { pattern = "[^\-\+\s]|[^\+\s]+" }
     }
 cond-attr-m-matches =
     
-    ## takes a regular expression. If an <m> matches the pattern, then the condition will be true. 
+    ## takes a regular expression. The condition is true only if an <m> matches the pattern. 
     
-    ## One of four tests for determining the truth value that will trigger the message in a <report> or <assert> 
+    ## This is one of four tests for determining whether to process a <report> or <assert> 
     attribute m-matches { text }
 cond-attr-tok-matches =
     
-    ## takes a regular expression. When validating a given <m>, a test will be made against each companion <tok> (i.e., those <tok>s that have the same ancestral <ana>). The condition will be treated as true only if there is a match with the resolved value of every such <tok>, and false if there is any nonmatch. 
+    ## takes a regular expression. When validating a given <m>, a test will be made against each companion <tok> (i.e., those <tok>s that have the same ancestral <ana>). The condition will be treated as true only for those matches with the resolved token value. 
     
-    ## One of four tests for determining the truth value that will trigger the message in a <report> or <assert> 
+    ## This is one of four tests for determining whether to process a <report> or <assert>
     attribute tok-matches { text }
 cond-attr-m-has-features =
     
-    ## specifies one or more features separated by spaces or the padded + (a plus sign with surrounding spaces). A plain space is treated  as meaning "or" and the padded + as meaning "and." If there is at least one match between the list and the value of the codes in an <m> then the condition will be treated as true. The padded plus sign specifies that all the items need to be found in the <m>. 
+    ## specifies one or more features. Values must be separated by spaces or the padded + (a plus sign with surrounding spaces). A plain space is treated  as meaning "or" and the padded + as meaning "and." If there is at least one match between the list and the value of the codes in an <m> then the condition will be treated as true. The padded plus sign specifies that all the items need to be found in the <m>. 
     
-    ## For example, feature-test="A B + C D + E" means that the condition will be true for a given <m> only if that <m> has A or (B and C) or (D and E) present as values. This test is one of four tests for determining the truth value that will trigger the message in a <report> or <assert> 
+    ## For example, feature-test="A B + C D + E" means that the condition will be true for a given <m> only if that <m> has A or (B and C) or (D and E) present as values. This is one of four tests for determining whether to process a <report> or <assert>
     attribute m-has-features {
         xsd:string { pattern = "[^\s\+]+(\s(\+\s)?[^\s\+]+)*" }
     }
@@ -47,16 +47,19 @@ cond-attr-m-has-how-many-features =
     
     ## specifies a range or sequence of integers (e.g., 2-4). If the quantity of features in an <m> matches a number from that sequence, the condition is true, and false otherwise. If the keyword 'last' or 'max' is used, the number of features will be substituted. 
     
-    ## This test is useful for non-category based languages to put a limit on the number of features that can be declared in an <m>. It is one of four tests for determining the truth value that will determine whether a <report> or <assert> will be acted upon. 
+    ## This test is useful for non-category based grammars to put a limit on the number of features that can be declared in an <m>. This is one of four tests for determining whether to process a <report> or <assert>
     attribute m-has-how-many-features { data-picker-sequence }
 # ELEMENTS
 element-assert =
     
     ## names a pattern that, if found to be false in any <m> in a dependent TAN-A-lm file, will return the enclosed message upon validation of the dependent file, along with an error or warning. Modeled on Schematron <report>.
+    
+    ## The sequence of consecutive <assert>s is immaterial.
     element assert { condition-pattern }
 element-category =
     
     ## groups a set of features that share a common grammatical trait such as gender, number, etc.
+    ## The sequence of consecutive <category>s is important, dictating the sequence in which codes should appear in a dependent TAN-A-lm file.
     element category {
         ed-stamp?,
         (inclusion
@@ -65,10 +68,14 @@ element-category =
 element-report =
     
     ## names a pattern that, if found to be true in any <m> in a dependent TAN-A-lm file, will return the enclosed message upon validation of the dependent file, along with an error or warning. Modeled on Schematron <report>.
+    
+    ## The sequence of consecutive <report>s is immaterial.
     element report { condition-pattern }
 element-rule =
     
     ## encloses asserts and reports that should be evaluated provided that the conditions specified in the attributes (or children <where> attributes) are true.
+    
+    ## The sequence of consecutive <rule>s is immaterial.
     element rule {
         ed-stamp?,
         (inclusion
@@ -79,7 +86,9 @@ voc-element-feature =
     
     ## names, through its IRI + name pattern, a grammatical feature or concept (e.g., plural, subjunctive, 1st person) that is part of a language. In the context of <feature> a @code is always included. The first <feature> of a <category> never has @code, and refers to the grammatical feature that characterizes the category.
     
-    ## See main.xml#vocabularies-features for a list of standard features, derived  from OLiA.
+    ## The sequence of consecutive <feature>s is immaterial.
+    
+    ## See main.xml#vocabularies-features for a list of standard features.
     element feature { entity-nondigital-id }
 # PATTERNS
 condition-pattern = attr-flags-for-errors?, action-condition-attributes, text

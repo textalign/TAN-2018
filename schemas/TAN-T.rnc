@@ -11,9 +11,9 @@ body-attributes-non-core = attr-lang-xml
 }
 element-div =
     
-    ## marks a textual unit. Contains other <div>s or text, but not both (no mixed content).
+    ## marks a textual unit. Contains other <div>s or text, but not both (i.e., no mixed content).
     
-    ## TAN's <div> differs from the TEI's, in that the latter is intended for the first level or levels of subdivision in the front, body, or back of a text, but not for paragraphs or anonymous blocks. The TAN <div> better resembles the one defined by HTML, and can be applied to any kind of division whatsoever., even down to the letter or character level.
+    ## TAN's <div> differs from the TEI's, in that the latter is intended for the first level or levels of subdivision in the front, body, or back of a text, but not for paragraphs or anonymous blocks. The TAN <div> better resembles HTML's, and can be applied to any kind of textual division, even a letter.
     element div {
         ed-stamp?,
         (inclusion

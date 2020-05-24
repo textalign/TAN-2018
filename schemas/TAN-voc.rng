@@ -3,7 +3,7 @@
   <include href="incl/TAN-class-3.rng">
     <start>
       <element name="TAN-voc">
-        <a:documentation>specifies that the TAN file contains vocabulary—things given IRIs + names + descriptions, or token definitions. Root element.</a:documentation>
+        <a:documentation>specifies a TAN file that contains vocabulary items. Root element.</a:documentation>
         <ref name="TAN-root"/>
       </element>
     </start>
@@ -50,7 +50,7 @@
   <define name="attribute-scope">
     <attribute name="affects-attribute">
       <a:documentation>names one or more TAN attributes that an item applies to.</a:documentation>
-      <a:documentation>This attribute is non-cumulatively inheritable. An element will be affected only by the nearest value and not any other values rootward.</a:documentation>
+      <a:documentation>This attribute is weakly inheritable. An element will be affected only by the values of the closest @affects-attribute.</a:documentation>
       <a:documentation>Currently this attribute may have scope over only @n.</a:documentation>
       <value>n</value>
     </attribute>
@@ -58,8 +58,8 @@
   <!-- ELEMENTS -->
   <define name="element-item">
     <element name="item">
-      <a:documentation>names an item that is being described. The item is assumed to be a type of thing indicated by the closest @affects-attribute or @affects-element.</a:documentation>
-      <a:documentation>The term "item" implies something that can be more than one type of thing. Verbs are special, and cannot be assigned any other categories, so &lt;item&gt; should not be used of verbs. Use &lt;verb&gt; instead.</a:documentation>
+      <a:documentation>provides a container for IRI, names, and descriptions of something. The item is assumed to be a type (or types) of thing indicated by the values of the closest @affects-attribute or @affects-element.</a:documentation>
+      <a:documentation>Verbs are special, and cannot be assigned any other categories, so &lt;verb&gt; is used for them instead of &lt;item&gt;.</a:documentation>
       <optional>
         <ref name="ed-stamp"/>
       </optional>
@@ -90,7 +90,7 @@
   <define name="element-scope">
     <attribute name="affects-element">
       <a:documentation>names one or more TAN elements that an item applies to.</a:documentation>
-      <a:documentation>This attribute is non-cumulatively inheritable. An element will be affected only by its nearest value and not any other values rootward.</a:documentation>
+      <a:documentation>This attribute is weakly inheritable. An element will be affected only by the values of the closest @affects-element.</a:documentation>
     </attribute>
   </define>
 </grammar>

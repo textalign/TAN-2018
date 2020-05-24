@@ -40,27 +40,27 @@
     <attribute name="code">
       <a:documentation>contains a string that serves as an identifier for &lt;feature&gt;.</a:documentation>
       <data type="string">
-        <a:documentation>hyphen reserved for "not applicable"; spaces and (),| reserved for @feature-test expressions</a:documentation>
+        <a:documentation>The hyphen is reserved for "not applicable"; spaces and (),| reserved for @feature-test expressions</a:documentation>
         <param name="pattern">[^\-\+\s]|[^\+\s]+</param>
       </data>
     </attribute>
   </define>
   <define name="cond-attr-m-matches">
     <attribute name="m-matches">
-      <a:documentation>takes a regular expression. If an &lt;m&gt; matches the pattern, then the condition will be true. </a:documentation>
-      <a:documentation>One of four tests for determining the truth value that will trigger the message in a &lt;report&gt; or &lt;assert&gt; </a:documentation>
+      <a:documentation>takes a regular expression. The condition is true only if an &lt;m&gt; matches the pattern. </a:documentation>
+      <a:documentation>This is one of four tests for determining whether to process a &lt;report&gt; or &lt;assert&gt; </a:documentation>
     </attribute>
   </define>
   <define name="cond-attr-tok-matches">
     <attribute name="tok-matches">
-      <a:documentation>takes a regular expression. When validating a given &lt;m&gt;, a test will be made against each companion &lt;tok&gt; (i.e., those &lt;tok&gt;s that have the same ancestral &lt;ana&gt;). The condition will be treated as true only if there is a match with the resolved value of every such &lt;tok&gt;, and false if there is any nonmatch. </a:documentation>
-      <a:documentation>One of four tests for determining the truth value that will trigger the message in a &lt;report&gt; or &lt;assert&gt; </a:documentation>
+      <a:documentation>takes a regular expression. When validating a given &lt;m&gt;, a test will be made against each companion &lt;tok&gt; (i.e., those &lt;tok&gt;s that have the same ancestral &lt;ana&gt;). The condition will be treated as true only for those matches with the resolved token value. </a:documentation>
+      <a:documentation>This is one of four tests for determining whether to process a &lt;report&gt; or &lt;assert&gt;</a:documentation>
     </attribute>
   </define>
   <define name="cond-attr-m-has-features">
     <attribute name="m-has-features">
-      <a:documentation>specifies one or more features separated by spaces or the padded + (a plus sign with surrounding spaces). A plain space is treated  as meaning "or" and the padded + as meaning "and." If there is at least one match between the list and the value of the codes in an &lt;m&gt; then the condition will be treated as true. The padded plus sign specifies that all the items need to be found in the &lt;m&gt;. </a:documentation>
-      <a:documentation>For example, feature-test="A B + C D + E" means that the condition will be true for a given &lt;m&gt; only if that &lt;m&gt; has A or (B and C) or (D and E) present as values. This test is one of four tests for determining the truth value that will trigger the message in a &lt;report&gt; or &lt;assert&gt; </a:documentation>
+      <a:documentation>specifies one or more features. Values must be separated by spaces or the padded + (a plus sign with surrounding spaces). A plain space is treated  as meaning "or" and the padded + as meaning "and." If there is at least one match between the list and the value of the codes in an &lt;m&gt; then the condition will be treated as true. The padded plus sign specifies that all the items need to be found in the &lt;m&gt;. </a:documentation>
+      <a:documentation>For example, feature-test="A B + C D + E" means that the condition will be true for a given &lt;m&gt; only if that &lt;m&gt; has A or (B and C) or (D and E) present as values. This is one of four tests for determining whether to process a &lt;report&gt; or &lt;assert&gt;</a:documentation>
       <data type="string">
         <param name="pattern">[^\s\+]+(\s(\+\s)?[^\s\+]+)*</param>
       </data>
@@ -69,7 +69,7 @@
   <define name="cond-attr-m-has-how-many-features">
     <attribute name="m-has-how-many-features">
       <a:documentation>specifies a range or sequence of integers (e.g., 2-4). If the quantity of features in an &lt;m&gt; matches a number from that sequence, the condition is true, and false otherwise. If the keyword 'last' or 'max' is used, the number of features will be substituted. </a:documentation>
-      <a:documentation>This test is useful for non-category based languages to put a limit on the number of features that can be declared in an &lt;m&gt;. It is one of four tests for determining the truth value that will determine whether a &lt;report&gt; or &lt;assert&gt; will be acted upon. </a:documentation>
+      <a:documentation>This test is useful for non-category based grammars to put a limit on the number of features that can be declared in an &lt;m&gt;. This is one of four tests for determining whether to process a &lt;report&gt; or &lt;assert&gt;</a:documentation>
       <ref name="data-picker-sequence"/>
     </attribute>
   </define>
@@ -77,12 +77,14 @@
   <define name="element-assert">
     <element name="assert">
       <a:documentation>names a pattern that, if found to be false in any &lt;m&gt; in a dependent TAN-A-lm file, will return the enclosed message upon validation of the dependent file, along with an error or warning. Modeled on Schematron &lt;report&gt;.</a:documentation>
+      <a:documentation>The sequence of consecutive &lt;assert&gt;s is immaterial.</a:documentation>
       <ref name="condition-pattern"/>
     </element>
   </define>
   <define name="element-category">
     <element name="category">
-      <a:documentation>groups a set of features that share a common grammatical trait such as gender, number, etc.</a:documentation>
+      <a:documentation>groups a set of features that share a common grammatical trait such as gender, number, etc.
+The sequence of consecutive &lt;category&gt;s is important, dictating the sequence in which codes should appear in a dependent TAN-A-lm file.</a:documentation>
       <optional>
         <ref name="ed-stamp"/>
       </optional>
@@ -105,12 +107,14 @@
   <define name="element-report">
     <element name="report">
       <a:documentation>names a pattern that, if found to be true in any &lt;m&gt; in a dependent TAN-A-lm file, will return the enclosed message upon validation of the dependent file, along with an error or warning. Modeled on Schematron &lt;report&gt;.</a:documentation>
+      <a:documentation>The sequence of consecutive &lt;report&gt;s is immaterial.</a:documentation>
       <ref name="condition-pattern"/>
     </element>
   </define>
   <define name="element-rule">
     <element name="rule">
       <a:documentation>encloses asserts and reports that should be evaluated provided that the conditions specified in the attributes (or children &lt;where&gt; attributes) are true.</a:documentation>
+      <a:documentation>The sequence of consecutive &lt;rule&gt;s is immaterial.</a:documentation>
       <optional>
         <ref name="ed-stamp"/>
       </optional>
@@ -137,7 +141,8 @@
   <define name="voc-element-feature">
     <element name="feature">
       <a:documentation>names, through its IRI + name pattern, a grammatical feature or concept (e.g., plural, subjunctive, 1st person) that is part of a language. In the context of &lt;feature&gt; a @code is always included. The first &lt;feature&gt; of a &lt;category&gt; never has @code, and refers to the grammatical feature that characterizes the category.</a:documentation>
-      <a:documentation>See main.xml#vocabularies-features for a list of standard features, derived  from OLiA.</a:documentation>
+      <a:documentation>The sequence of consecutive &lt;feature&gt;s is immaterial.</a:documentation>
+      <a:documentation>See main.xml#vocabularies-features for a list of standard features.</a:documentation>
       <ref name="entity-nondigital-id"/>
     </element>
   </define>

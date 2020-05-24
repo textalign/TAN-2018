@@ -48,7 +48,7 @@
   </define>
   <define name="attr-chars">
     <attribute name="chars">
-      <a:documentation>lists of one or more characters, specified through Arabic numerals, the keyword 'last' or 'last-X' (where X is a valid number), joined with commas or hyphens.</a:documentation>
+      <a:documentation>identifies one or more characters, specified through Arabic numerals, or the keywords 'last' or 'last-X' (where X is a valid number), joined with commas or hyphens.</a:documentation>
       <a:documentation>Examples: '1', 'last', 'last-3 - last-1', '1, 3, 5, 7 - 11, last-8, last'</a:documentation>
       <ref name="data-picker-sequence"/>
     </attribute>
@@ -64,18 +64,18 @@
   </define>
   <define name="attr-new-name">
     <attribute name="new">
-      <a:documentation>provides the new name for an @n or reference that is to be renamed</a:documentation>
+      <a:documentation>provides the new name for an @n or reference that is to be renamed.</a:documentation>
     </attribute>
   </define>
   <define name="attr-new-ref">
     <attribute name="new">
-      <a:documentation>provides the new ref for a &lt;div&gt; that is to be renamed</a:documentation>
+      <a:documentation>provides the new ref for a &lt;div&gt; that is to be renamed.</a:documentation>
       <ref name="data-div-item-ref"/>
     </attribute>
   </define>
   <define name="attr-pos-many">
     <attribute name="pos">
-      <a:documentation>lists one or more items, specified through Arabic numerals and the keyword 'last' or 'last-X' (where X is a valid number), joined with commas or hyphens.</a:documentation>
+      <a:documentation>lists one or more items by position, specified through Arabic numerals or the keywords 'last' or 'last-X' (where X is a valid number), joined with commas or hyphens.</a:documentation>
       <a:documentation>Examples: '1', 'last', 'last-3 - last-1', '1, 3, 5, 7 - 11, last-8, last'</a:documentation>
       <a:documentation>For more see main.xml#attr_pos_and_val</a:documentation>
       <ref name="data-picker-sequence"/>
@@ -83,7 +83,7 @@
   </define>
   <define name="attr-pos-one">
     <attribute name="pos">
-      <a:documentation>lists one items, specified through Arabic numerals and the keyword 'last' or 'last-X' (where X is a valid number).</a:documentation>
+      <a:documentation>lists the position of one item, specified through Arabic numerals and the keyword 'last' or 'last-X' (where X is a valid number).</a:documentation>
       <a:documentation>Examples: '1', 'last', 'last-3 - last-1'</a:documentation>
       <a:documentation>For more see main.xml#attr_pos_and_val</a:documentation>
       <ref name="data-picker-item"/>
@@ -92,8 +92,8 @@
   <define name="attr-ref-many">
     <attribute name="ref">
       <a:documentation>lists references to one or more &lt;div&gt;s. It consists of one or more simple references joined by commas or hyphens. A simple reference is a string value that points to a single &lt;div&gt;, e.g., "1 1". </a:documentation>
-      <a:documentation>Truncation is allowed. For example, 1 1 - 3 will be interpreted first as 1 1 through 1 3; if that is invalid, it will be interpeted as 1 1 through 3. Other examples: '2.4 - 7, 9', 'iv 7 - 9'</a:documentation>
-      <a:documentation>In a range with members of uneven depth, those &lt;div&gt;s that are closest to the shallowest member are retrieved. For example, 2 - 3 2 2 might fetch 2, 3 1, 3 2 1, 3 2 2 (and not 3 or 3 1 1).</a:documentation>
+      <a:documentation>Truncation is allowed. For example, 1 1 - 3 will be interpreted first as 1.1 through 1.3; if that is invalid, it will be interpeted as 1.1 through 3. Another examples: '2.4 - 7, 9', 'ii iv - vii, 9' will each be interpreted to mean 2.4 through 2.7 and 2.9.</a:documentation>
+      <a:documentation>In a range with members of uneven depth, those complete &lt;div&gt;s that are closest to the shallowest member are retrieved. For example, 2 - 4 2 2 might fetch 2, 3, 4.1, and 4.2.1, 4.2.2 (and not 4 as a whole).</a:documentation>
       <a:documentation>For more, see main.xml#referencing-divisions </a:documentation>
       <ref name="data-div-range-ref"/>
     </attribute>
@@ -106,7 +106,7 @@
   </define>
   <define name="attr-rgx">
     <attribute name="rgx">
-      <a:documentation>contains a regular expression that points to a particular word token by means of its string value.</a:documentation>
+      <a:documentation>contains a regular expression. In the context of &lt;tok&gt; it points to a particular word token according to a match on its string value. It is an alternative to @val. Searches are case-sensitive. The TAN extension character class \u{} may be used, but may penalize inefficiency during validation or processing. </a:documentation>
       <a:documentation>For more see main.xml#attr_pos_and_val</a:documentation>
       <data type="string">
         <param name="pattern">.+</param>
@@ -130,29 +130,30 @@
   </define>
   <define name="ptr-attr-claimant">
     <attribute name="claimant">
-      <a:documentation>points to a &lt;person&gt;, &lt;organization&gt;, or &lt;algorithm&gt; who makes a claim. @claimant within &lt;body&gt; indicates the default persons to be credited or blamed for an assertion.</a:documentation>
+      <a:documentation>points to a &lt;person&gt;, &lt;organization&gt;, or &lt;algorithm&gt; who makes a claim. @claimant within &lt;body&gt; indicates the default persons to be credited or blamed for an assertion. If &lt;body&gt;'s @claimant is absent, the default claimant would be the key agents of the file.</a:documentation>
       <a:documentation>This attribute is taken into account before all other attributes. That is, @claimant is to be interpreted to mean: "@claimant states the following:...." Multiple values of @claimant are interpreted to mean "and", resulting in distribution of the claim (e.g., claimant="x y" becomes "x claims that..." and "y claims that...").</a:documentation>
       <a:documentation>In a TAN-A file, nested @claimants mean that claimant X claims that claimant Y claims that... and so forth.</a:documentation>
       <a:documentation>In other class-2 files, a nested @claimant cancels out any inherited @claimants. </a:documentation>
-      <a:documentation>This attribute is inheritable. See main.xml#inheritable_attributes</a:documentation>
+      <a:documentation>This attribute is weakly inheritable. See main.xml#inheritable_attributes</a:documentation>
     </attribute>
   </define>
   <define name="ptr-attr-src-one">
     <attribute name="src">
-      <a:documentation>refers to the ID of only one &lt;source&gt;</a:documentation>
+      <a:documentation>refers via idref to only one &lt;source&gt;</a:documentation>
       <data type="NCName"/>
     </attribute>
   </define>
   <define name="ptr-attr-src-many">
     <attribute name="src">
-      <a:documentation>refers to the ID of one or more &lt;source&gt;s </a:documentation>
+      <a:documentation>refers via idrefs to one or more &lt;source&gt;s </a:documentation>
     </attribute>
   </define>
   <!-- ELEMENTS -->
   <define name="adj-element-equate">
     <element name="equate">
-      <a:documentation>declares an ad hoc equivalence in @n values. It behaves similar to &lt;alias&gt; but has scope only over a particular source. For example, &lt;equate n="pr pref preface introduction"/&gt; specifies that any &lt;div&gt;s in a source that match that @n value, the other values should be treated as synonyms. In this way @ref="pr" will, for this source, match a &lt;div n="introduction"/&gt;</a:documentation>
-      <a:documentation>This element does not imply that the @n values are the same. It merely states that, for the purposes of this alignment, they should be treated as equivalent.</a:documentation>
+      <a:documentation>declares an ad hoc equivalence in @n values. It behaves like &lt;alias&gt; but has scope only over a particular source. For example, &lt;equate n="pr pref preface introduction"/&gt; specifies that sources with &lt;div&gt; @n values of either "pr", "pref", "preface", or "introduction" should be treated as equivalent. Hence, in the &lt;body&gt; any @ref="pr" will also match a &lt;div n="introduction"/&gt;</a:documentation>
+      <a:documentation>This element does not imply that the @n values are the same. It merely states that, for the purposes of this class-2 file, they should be treated as equivalent.</a:documentation>
+      <a:documentation>The sequence of consecutive &lt;equate&gt;s is immaterial.</a:documentation>
       <optional>
         <ref name="ed-stamp"/>
       </optional>
@@ -165,6 +166,7 @@
   <define name="adj-element-reassign">
     <element name="reassign">
       <a:documentation>identifies word fragments that should be moved from one ref to another</a:documentation>
+      <a:documentation>The sequence of consecutive &lt;reassigns&gt;s may matter. They will be processed in document order, and the application of one reassign  may affect the results of subsequent ones.</a:documentation>
       <optional>
         <ref name="ed-stamp"/>
       </optional>
@@ -182,7 +184,8 @@
   <define name="adj-element-rename">
     <element name="rename">
       <a:documentation>provisionally reassigns values of @n's in class 1 sources, or their calculated ref value, to another value.</a:documentation>
-      <a:documentation>Values of @n will be renamed before attempting to rename references. Only the first renaming match will be applied.</a:documentation>
+      <a:documentation>A rename may be applied to either @n or @ref, but &lt;div&gt;s will be renamed first according to @n, and then perhaps by @ref. Only the first renaming match will be applied.</a:documentation>
+      <a:documentation>The sequence of consecutive &lt;rename&gt;s is important, because they will be processed in document order. The effect of one &lt;rename&gt; may affect the results of subsequent ones.</a:documentation>
       <a:documentation>If a div is renamed such that it needs to be moved elsewhere in the hierarchy, and it matches the reference of another div, the text nodes will be fused, with the newly moved divs placed at the end.</a:documentation>
       <optional>
         <ref name="ed-stamp"/>
@@ -199,8 +202,9 @@
   <define name="adj-element-skip">
     <element name="skip">
       <a:documentation>marks parts of a source that have been ignored or should be skipped, either shallowly (default) or deeply.</a:documentation>
-      <a:documentation>Note, the shallow skip of a &lt;div&gt; may result in the creation of empty &lt;div&gt;s.</a:documentation>
+      <a:documentation>Note, the shallow skip of a &lt;div&gt; may result in the creation of empty &lt;div&gt;s, which will be ignored during validation.</a:documentation>
       <a:documentation>This element is useful for ignoring extraneous divs, e.g., where a source has introduced divs that do not exist in other versions of the same work. For example, a transcription may group the topmost divisions of a text into parts, or may adopt superfluous divisions (e.g., introducing a &lt;div&gt; for chapter in the New Testament book Philemon, which does not have more than one chapter, and can be identified purely by verse).  </a:documentation>
+      <a:documentation>The sequence of consecutive &lt;skips&gt;s is important, because they will be processed in document order. The effect of one &lt;skip&gt; may affect the results of subsequent ones.</a:documentation>
       <optional>
         <ref name="ed-stamp"/>
       </optional>
@@ -229,6 +233,7 @@
     <element name="div-ref">
       <a:documentation>refers to one or more &lt;div&gt;s.</a:documentation>
       <a:documentation>&lt;div-ref&gt;s are expanded against @src/@work and @ref. That is, a &lt;div-ref&gt; points to every div of every source cited.</a:documentation>
+      <a:documentation>The sequence of consecutive &lt;div-ref&gt;s is important, because they will be processed in document order. The effect of one &lt;div-ref&gt; may affect the results of subsequent ones.</a:documentation>
       <optional>
         <ref name="ed-stamp"/>
       </optional>
@@ -250,7 +255,7 @@
   </define>
   <define name="element-group-for-tok">
     <element name="group">
-      <a:documentation>groups references that should be treated as a single token.</a:documentation>
+      <a:documentation>groups token references that should be treated as referring to but a single token.</a:documentation>
       <optional>
         <ref name="ed-stamp"/>
       </optional>
@@ -285,11 +290,13 @@
   </define>
   <define name="element-tok-standard">
     <element name="tok">
-      <a:documentation>identifies one or more words or word fragments. Used by class 2 files to make assertions about specific words. </a:documentation>
+      <a:documentation>identifies one or more tokens (words or word fragments). Used by class-2 files to make claims about specific words. </a:documentation>
       <a:documentation>In TAN-A and TAN-A-tok files, &lt;tok&gt; has no linguistic connotations; in TAN-A-lm, it normally does.</a:documentation>
       <a:documentation>&lt;tok&gt;s that are restricted to a single token, or a portion of a single token. This is the normal behavior of &lt;tok&gt;. Multiple values in @src, @ref, and @pos will result in expansion across all values. But multiple values of @chars are taken to refer to the constituent parts of a single &lt;tok&gt; and so no expansion occurs on @chars.</a:documentation>
-      <a:documentation>This syntax allows multiple &lt;tok&gt;s to be collapsed into a single one, to save space and perhaps enhance legibility. For example, a &lt;tok&gt; with 2 values for @src, 3 for @ref, 4 for @pos, and 5 for @chars will result in a &lt;tok&gt; that points to 24 tokens, each of which is filtered to the same five characters (by position, not content). Put another way, &lt;tok src="X" ref="a" pos="1"/&gt; and &lt;tok src="X" ref="a" pos="2"/&gt; is always identical to &lt;tok src="X" ref="a" pos="1-2"/&gt;</a:documentation>
+      <a:documentation>This syntax allows a single &lt;tok&gt; to be used to represent multiple tokens, to save space and perhaps enhance legibility. For example, a &lt;tok src="a b" ref="1.1 - 1.3" pos="1-4"&gt; will result in that &lt;tok&gt; pointing to 24 tokens (assuming that the two sources each have at least four tokens in the three references 1.1, 1.2, and 1.3).</a:documentation>
       <a:documentation>If you wish to treat multiple word fragments as a single token, use &lt;group&gt;.</a:documentation>
+      <a:documentation>The sequence of consecutive &lt;tok&gt;s is immaterial in the context of TAN-A-lm, and TAN-A-tok, except in the context of &lt;group&gt;, where the sequence dictates how the new token is to be constructed. </a:documentation>
+      <a:documentation>The sequence of consecutive &lt;tok&gt;s is important in the context of TAN-A, where the sequence of &lt;tok&gt;s specifies the order in which word tokens should be supplied in the context of the &lt;claim&gt;. </a:documentation>
       <optional>
         <ref name="ed-stamp"/>
       </optional>
@@ -310,7 +317,7 @@
   </define>
   <define name="element-through-tok-with-ref">
     <element name="through-tok">
-      <a:documentation>points to a single token that is the end of a range of tokens to be selected</a:documentation>
+      <a:documentation>points to a single token in a single reference that is the end of a range of tokens to be selected</a:documentation>
       <ref name="attr-ref-one"/>
       <ref name="tok-selector-attributes-one"/>
     </element>
