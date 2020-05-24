@@ -246,7 +246,7 @@
    </doc>
    <doc href="error-test-4.tan-tei.xml"
         TAN-version="2020"
-        id="tag:textalign.net,2015:error-test-4"
+        id="tag:textalign.net,2015:error-test-4-bogus"
         root="TEI">
       <name xmlns="tag:textalign.net,2015:ns">TAN-TEI transcription of Ring a Ring o' Roses</name>
       <license xmlns="tag:textalign.net,2015:ns" which="by_4.0" licensor="park"/>

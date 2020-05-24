@@ -67,11 +67,14 @@
             <sch:let name="is-advanced" value="parent::tan:group/@type = 'advanced'"/>
             <sch:let name="errors-checked-where" value="tan:errors-checked-where($error-id)"/>
             <sch:let name="errors-tested-where" value="$error-markers[matches(., $error-id)]"/>
+            <sch:let name="errors-that-dont-need-testing" value="('wrn04')"/>
             <sch:report
                 test="not($is-advanced) and not(exists($errors-checked-where))"
                 >Error <sch:value-of select="$error-id"/> has not yet been implemented.</sch:report>
-            <sch:assert test="$is-advanced or exists($errors-tested-where)">Error <sch:value-of
-                    select="$error-id"/> should be set up in a test file.</sch:assert>
+            <sch:assert
+                test="$is-advanced or exists($errors-tested-where) or ($error-id = $errors-that-dont-need-testing)"
+                >Error <sch:value-of select="$error-id"/> should be set up in a test
+                file.</sch:assert>
         </sch:rule>
     </sch:pattern>
     <sch:pattern id="mark-strays">

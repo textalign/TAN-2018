@@ -2,7 +2,7 @@
 <?xml-model href="../../schemas/TAN-TEI.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="../../schemas/TAN-TEI.sch" phase="verbose" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <!-- this test file primed for verbose validation -->
-<!-- cat01 verbose cat04 verbose cat07 verbose cat03 verbose (catalog should have a bogus id in it) 
+<!-- cat01 verbose cat04 verbose cat07 verbose cat03 verbose (make sure catalog.tan.xml has a bogus id in it for this file) 
     cat06 verbose (provided catalog doesn't have entry for this file) -->
 <TEI xmlns="http://www.tei-c.org/ns/1.0" TAN-version="2020" id="tag:textalign.net,2015:error-test-4">
     <teiHeader>
