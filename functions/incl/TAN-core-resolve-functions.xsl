@@ -1150,15 +1150,10 @@
    </xsl:template>
    
    <xsl:function name="tan:consolidate-resolved-vocab-items" as="element()*">
-      <!-- Input: elements that should be consolidated -->
-      <!-- Output: the elements, consolidated -->
-      <!-- This function was written to produce an accurately resolved <head>, and adopts the following assumptions. -->
-      <!-- We assume that the order of the elements may be altered; it is assumed that elements are never interleaved with text or other nodes -->
+      <!-- Input: vocabulary items -->
+      <!-- Output: the items, consolidated accordin to matches in <IRI> -->
       <!-- Elements that are empty and distinct, e.g., <location>, should not be consolidated. -->
-      <!-- It is also assumed that elements that share <IRI> values should be consolidated with each other -->
-      <!-- Oct 2019: This function was written originally to support the previous method of resolving
-      a document. That method has been deleted, but this function retained, in case it proves useful 
-      at a later stage. -->
+      <!-- Although this function is no longer used for validation, it is helpful for grouping elements by IRI -->
       <xsl:param name="elements-to-consolidate" as="element()*"/>
       <xsl:copy-of select="tan:consolidate-resolved-vocab-items-loop($elements-to-consolidate, 1)"/>
    </xsl:function>
