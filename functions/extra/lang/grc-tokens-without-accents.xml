@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <grc>
+    <!-- The following is a list of Greek tokens (words) that may legitimately not have an accent. -->
     <no-accent>αʹ</no-accent>
     <no-accent>αἱ</no-accent>
     <no-accent>βʹ</no-accent>
