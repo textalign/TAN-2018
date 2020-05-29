@@ -263,7 +263,8 @@
       />
    </xsl:function>
    
-   <xsl:function name="tan:collate" as="element()?">
+   
+      <xsl:function name="tan:collate" as="element()?">
       <!-- Input: a sequence of strings to be collated; a sequence of strings that label each string; a boolean
       indicating whether the sequence of input strings should be optimized; a boolean indicating whether
       the results of tan:diff() should be adjusted; a boolean indicating whether the collation should be cleaned up. -->
@@ -594,7 +595,7 @@
                       No base element + no new element         nothing
                 -->
                   <xsl:for-each-group select="$both-collations-splintered/*" group-by="*[@ref = $previous-string-label]/@pos">
-                     <xsl:sort select="number(current-grouping-key())"/>
+                     <!--<xsl:sort select="number(current-grouping-key())"/>-->
                      
                      <!-- If from the groups about to be created the first of the two groups fails to have a reference to
                      the incoming text, we need a reference with an accurate @pos, so now we get all those that are 
@@ -634,6 +635,16 @@
                                        make a copy of the new witness. -->
                                        <xsl:when test="position() = $base-text-match-positions[last()]">
                                           <xsl:copy-of select="$this-new-collation-item/tan:wit"/>
+                                       </xsl:when>
+                                       <!-- Added 2020-05-29 -->
+                                       <xsl:when test="(exists($base-text-match-positions)) and (position() gt $base-text-match-positions[last()])">
+                                          <!-- For items after the last match, we need to increase the @pos by however long the string was -->
+                                          <x>
+                                             <xsl:copy-of select="$this-new-collation-item/tan:wit/@ref"/>
+                                             <xsl:attribute name="pos"
+                                                select="number($this-new-collation-item/tan:wit/@pos) + string-length($this-new-collation-item/tan:txt)"
+                                             />
+                                          </x>
                                        </xsl:when>
                                        <xsl:otherwise>
                                           <x>
@@ -808,11 +819,11 @@
       </xsl:if>
       
    </xsl:function>
-
+   
    <!-- <x> was just a placeholder that can easily be determined by the lack of a <wit>; <witness>
    is no longer needed because it has been reconstructed, perhaps with collation statistics. -->
    <xsl:template match="tan:x | tan:witness" mode="clean-up-collation"/>
-   <xsl:template match="tan:previous-collation" mode="clean-up-collation">
+   <xsl:template match="tan:previous-collation | tan:diagnostics" mode="clean-up-collation">
       <xsl:copy-of select="."/>
    </xsl:template>
    
