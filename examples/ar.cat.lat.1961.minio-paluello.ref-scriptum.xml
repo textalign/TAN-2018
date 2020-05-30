@@ -6,7 +6,7 @@
 <TAN-T xmlns="tag:textalign.net,2015:ns" id="tag:kalvesmaki.com,2014:tan-t:ar.cat.lat.1961.a.minio-paluello:object-refs" TAN-version="2020">
     <head>
         <name>Categories, Aristotle, Latin translation by Boethius, first recension, edited by Minio-Paluello</name>
-       <master-location href="https://raw.githubusercontent.com/textalign/TAN-2019/master/examples/ar.cat.lat.1949.minio-paluello.ref-scriptum.xml"/>
+       <master-location href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.lat.1949.minio-paluello.ref-scriptum.xml"/>
         <license licensor="kalvesmaki">
             <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
             <name>Creative Commons Attribution 4.0 International License</name>

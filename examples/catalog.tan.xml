@@ -9,7 +9,7 @@
         root="TAN-T">
       <name xmlns="tag:textalign.net,2015:ns">Categories, Aristotle, English translation by E. M. Edghill</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="https://raw.githubusercontent.com/textalign/TAN-2019/master/examples/ar.cat.eng.1926.edghill.ref-logical.xml"/>
+                       href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.eng.1926.edghill.ref-logical.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" licensor="kalvesmaki">
          <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
          <name>Creative Commons Attribution 4.0 International License</name>
@@ -59,7 +59,7 @@
         root="TAN-T">
       <name xmlns="tag:textalign.net,2015:ns">Categories, Aristotle, English translation by E. M. Edghill</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="https://raw.githubusercontent.com/textalign/TAN-2019/master/examples/ar.cat.eng.1926.edghill.ref-scriptum.xml"/>
+                       href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.eng.1926.edghill.ref-scriptum.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" licensor="kalvesmaki">
          <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
          <name>Creative Commons Attribution 4.0 International License</name>
@@ -103,7 +103,7 @@
       <name xmlns="tag:textalign.net,2015:ns">Realignment of Categories, Aristotle, French translation by J. Barthélemy
          Saint-Hilaire</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="https://raw.githubusercontent.com/textalign/TAN-2019/master/examples/ar.cat.fra.1844.saint-hilaire.ref-logical-after-1949.xml"/>
+                       href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.fra.1844.saint-hilaire.ref-logical-after-1949.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" licensor="kalvesmaki">
          <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
          <name>Creative Commons Attribution 4.0 International License</name>
@@ -145,7 +145,7 @@
         root="TAN-T">
       <name xmlns="tag:textalign.net,2015:ns">Categories, Aristotle, French translation by J. Barthélemy Saint-Hilaire</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="https://raw.githubusercontent.com/textalign/TAN-2019/master/examples/ar.cat.fra.1844.saint-hilaire.ref-logical-after.xml"/>
+                       href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.fra.1844.saint-hilaire.ref-logical-after.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" licensor="kalvesmaki">
          <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
          <name>Creative Commons Attribution 4.0 International License</name>
@@ -181,7 +181,7 @@
         root="TAN-T">
       <name xmlns="tag:textalign.net,2015:ns">Categories, Aristotle, Greek text by Minio-Paluello</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="https://raw.githubusercontent.com/textalign/TAN-2019/master/examples/ar.cat.grc.1949.minio-paluello.ref-logical.xml"/>
+                       href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.grc.1949.minio-paluello.ref-logical.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" licensor="kalvesmaki">
          <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
          <name>Creative Commons Attribution 4.0 International License</name>
@@ -214,7 +214,7 @@
         root="TAN-T">
       <name xmlns="tag:textalign.net,2015:ns">Categories, Aristotle, Greek text edited in 1949 by Minio-Paluello, native scriptum-based reference system</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="https://raw.githubusercontent.com/textalign/TAN-2019/master/examples/ar.cat.grc.1949.minio-paluello.ref-scriptum.xml"/>
+                       href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.grc.1949.minio-paluello.ref-scriptum.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" licensor="kalvesmaki">
             <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
             <name>Creative Commons Attribution 4.0 International License</name>
@@ -254,7 +254,7 @@
         root="TAN-T">
       <name xmlns="tag:textalign.net,2015:ns">Categories, Aristotle, Latin translation by Boethius, first recension, edited by Minio-Paluello</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="https://raw.githubusercontent.com/textalign/TAN-2019/master/examples/ar.cat.lat.1949.minio-paluello.ref-scriptum.xml"/>
+                       href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.lat.1949.minio-paluello.ref-scriptum.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" licensor="kalvesmaki">
             <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
             <name>Creative Commons Attribution 4.0 International License</name>
@@ -329,7 +329,7 @@
       <name xmlns="tag:textalign.net,2015:ns">Matthew's version of the Lord's Prayer, King James Version of the Bible, 1760
          edition</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="https://raw.githubusercontent.com/textalign/TAN-2019/master/examples/lords-prayer.eng.kjv.1760.xml"/>
+                       href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/lords-prayer.eng.kjv.1760.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" which="by 4.0" licensor="park"/>
       <work xmlns="tag:textalign.net,2015:ns">
          <IRI>http://dbpedia.org/resource/Lord%27s_Prayer</IRI>
@@ -357,7 +357,7 @@
         root="TAN-T">
       <name xmlns="tag:textalign.net,2015:ns">Gospel of Matthew, King James Version of the Bible, 1760 edition</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="https://raw.githubusercontent.com/textalign/TAN-2019/master/examples/matt.eng.kjv.1760.xml"/>
+                       href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/matt.eng.kjv.1760.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" which="by 4.0" licensor="park"/>
       <work xmlns="tag:textalign.net,2015:ns" which="matthew"/>
       <inclusion xmlns="tag:textalign.net,2015:ns" xml:id="serm-mount">
@@ -550,7 +550,7 @@
         root="TAN-T">
       <name xmlns="tag:textalign.net,2015:ns">Sermon on the Mount, King James Version of the Bible, 1760 edition</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="https://raw.githubusercontent.com/textalign/TAN-2019/master/examples/sermon-on-the-mount.eng.kjv.1760.xml"/>
+                       href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/sermon-on-the-mount.eng.kjv.1760.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" which="by 4.0" licensor="park"/>
       <work xmlns="tag:textalign.net,2015:ns">
          <IRI>http://dbpedia.org/resource/Sermon_on_the_Mount</IRI>
@@ -865,7 +865,7 @@
         root="TAN-voc">
       <name xmlns="tag:textalign.net,2015:ns">Keywords for Aristotle's Categories</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="https://raw.githubusercontent.com/textalign/TAN-2019/master/examples/TAN-voc/ar.cat.TAN-voc.xml"/>
+                       href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/TAN-voc/ar.cat.TAN-voc.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" licensor="park">
             <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
             <name>Creative Commons Attribution 4.0 International License</name>
@@ -881,7 +881,7 @@
         root="TAN-voc">
       <name xmlns="tag:textalign.net,2015:ns">Keywords for TAN files edited by Jenny Park</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="https://raw.githubusercontent.com/textalign/TAN-2019/master/examples/TAN-voc/park-projects.TAN-voc.xml"/>
+                       href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/TAN-voc/park-projects.TAN-voc.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" licensor="park" which="by 4.0"/>
    </doc>
 </collection>

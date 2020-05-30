@@ -4,7 +4,7 @@
 <TAN-T xmlns="tag:textalign.net,2015:ns" TAN-version="2020" id="tag:parkj@textalign.net,2015:bible:matthew:sermon-on-the-mount">
    <head>
       <name>Sermon on the Mount, King James Version of the Bible, 1760 edition</name>
-      <master-location href="https://raw.githubusercontent.com/textalign/TAN-2019/master/examples/sermon-on-the-mount.eng.kjv.1760.xml"/>
+      <master-location href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/sermon-on-the-mount.eng.kjv.1760.xml"/>
       <license which="by 4.0" licensor="park"/>
       <work>
          <IRI>http://dbpedia.org/resource/Sermon_on_the_Mount</IRI>

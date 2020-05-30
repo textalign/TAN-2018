@@ -6,7 +6,7 @@
 <TAN-T xmlns="tag:textalign.net,2015:ns" id="tag:kalvesmaki.com,2014:tan-t:ar.cat.fra.1844.saint-hilaire:semantic-refs" TAN-version="2020">
    <head>
       <name>Categories, Aristotle, French translation by J. Barthélemy Saint-Hilaire</name>
-      <master-location href="https://raw.githubusercontent.com/textalign/TAN-2019/master/examples/ar.cat.fra.1844.saint-hilaire.ref-logical-after.xml"/>
+      <master-location href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.fra.1844.saint-hilaire.ref-logical-after.xml"/>
       <license licensor="kalvesmaki">
          <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
          <name>Creative Commons Attribution 4.0 International License</name>
