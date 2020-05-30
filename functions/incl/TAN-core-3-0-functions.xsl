@@ -740,6 +740,7 @@
                <xsl:message select="'This string: ' || ."/>
                <xsl:message select="'This diff (not adjusted): ' || serialize($this-diff)"/>
                <xsl:message select="'This diff (adjusted): ' || serialize($this-diff-adjusted)"/>
+               <xsl:message select="'This diff as collation: ' || serialize($this-diff-collation)"/>
                <xsl:message select="'Linking text @pos values compared: ' || serialize($pos-values-compared)"/>
                <xsl:message select="'Places where the two collations should be broken up: ' || serialize($pos-values-to-add)"/>
                <xsl:message select="'Base collation splintered: ' || serialize($both-collations-splintered[1])"/>
@@ -1120,6 +1121,9 @@
                   
                   <xsl:variable name="shift-middle-by" as="xs:integer?">
                      <xsl:choose>
+                        <!-- We shift only <a>s and <b>s, not <common>s -->
+                        <xsl:when
+                           test="exists($group-so-far-for-adjustment/tan:group[2]/tan:common)"/>
                         <!-- If an <a> or <b> can be shifted to accommodate word spaces, we prefer that spaces be put 
                         at the end of the <a> or <b>, hence the different placement of \s in each of the next two
                         regular expressions. -->
@@ -1269,7 +1273,7 @@
                      </group>
                   </xsl:variable>
                   
-                  <xsl:variable name="diagnostics-on" select="exists($group-so-far/tan:group/tan:common[2][matches(., 'BILCOD')])"/>
+                  <xsl:variable name="diagnostics-on" select="false()"/>
                   <xsl:if test="$diagnostics-on">
                      <xsl:message select="'Diagnostics on, tan:adjust-diff(), iteration', position()"/>
                      <xsl:if test="$this-is-the-end"><xsl:message select="'Last iteration.'"/></xsl:if>
@@ -1279,11 +1283,11 @@
                         select="'Process the group that has been built so far?: ', $group-so-far-is-a-complete-triad"
                      />
                      <xsl:message select="'Group primed for adjustment and output: ', serialize($group-so-far-for-adjustment)"/>
-                     <xsl:message select="'New group so far: ', serialize($group-to-pass-to-next-iteration)"/>
                      <xsl:message select="'Common end (1): ' || $common-end-1"/>
                      <xsl:message select="'Common start (1): ' || $common-start-1"/>
                      <xsl:message select="'Shift middle by:', $shift-middle-by"/>
                      <xsl:message select="'Text to insert: ' || $text-to-insert"/>
+                     <xsl:message select="'Group to pass to next iteration: ', serialize($group-to-pass-to-next-iteration)"/>
                   </xsl:if>
                   
                   <!-- write results -->
