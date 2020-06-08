@@ -36,21 +36,30 @@
       </xsl:copy>
    </xsl:template>
    <xsl:template priority="-5" match="comment() | processing-instruction()" mode="#all">
-      <xsl:copy-of select="."/>
+      <xsl:if test="not($is-validation)">
+         <xsl:copy-of select="."/>
+      </xsl:if>
    </xsl:template>
-   <xsl:template priority="-3" match="* | @*" mode="core-expansion-ad-hoc-pre-pass">
-      <xsl:copy-of select="."/>
-   </xsl:template>
+   <!-- An empty template for a no-name element avoids validation warnings -->
+   <xsl:template match="squelch" priority="-5"/>
    <xsl:template match="tan:error | tan:help | tan:warning | tan:fix | tan:fatal | tan:info"
       priority="-4" mode="#all">
       <xsl:copy-of select="."/>
    </xsl:template>
+   <xsl:template match="tei:teiHeader" mode="#all" priority="-4">
+      <xsl:if test="not($is-validation)">
+         <xsl:copy-of select="."/>
+      </xsl:if>
+   </xsl:template>
    <xsl:template match="tan:tail" mode="#all" priority="-4">
-      <!-- We ignore, but retain, tails throughout -->
+      <!-- We ignore tails in validation; retain otherwise -->
+      <xsl:if test="not($is-validation)">
+         <xsl:copy-of select="."/>
+      </xsl:if>
+   </xsl:template>
+   <xsl:template priority="-3" match="* | @*" mode="core-expansion-ad-hoc-pre-pass">
       <xsl:copy-of select="."/>
    </xsl:template>
-   <!-- We include an empty template on a no-name element, to avoid validation warnings -->
-   <xsl:template match="squelch" priority="-5"/>
 
    <!-- CORE GLOBAL VARIABLES -->
 
@@ -2574,10 +2583,10 @@
    </xsl:template>
 
    <xsl:function name="tan:doc-id-namespace" as="xs:string?">
-      <!-- Input: a TAN-doc -->
+      <!-- Input: an item from a TAN file -->
       <!-- Output: the namespace of the doc's @id -->
-      <xsl:param name="TAN-doc" as="document-node()?"/>
-      <xsl:variable name="this-id" select="$TAN-doc/*/@id"/>
+      <xsl:param name="TAN-doc" as="item()?"/>
+      <xsl:variable name="this-id" select="root($TAN-doc)/*/@id"/>
       <xsl:if test="string-length($this-id) gt 0">
          <xsl:analyze-string select="$this-id" regex="^tag:[^:]+">
             <xsl:matching-substring>
@@ -3297,6 +3306,28 @@
 
    <!-- Step 4: expand it -->
    <!-- See TAN-core-expand-functions.xsl -->
+   
+   <!-- Step 5: reduce it to errors and information, if intended f or validation only -->
+   
+   <xsl:template match="* | text()" priority="-3" mode="strip-for-validation">
+      <xsl:apply-templates mode="#current"/>
+   </xsl:template>
+   <xsl:template match="*[tan:error | tan:help | tan:warning | tan:fix | tan:fatal | tan:info]" priority="-2" mode="strip-for-validation">
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:apply-templates mode="#current"/>
+      </xsl:copy>
+   </xsl:template>
+   <xsl:template match="tan:error | tan:help | tan:warning | tan:fix | tan:fatal | tan:info"
+      priority="-1" mode="strip-for-validation">
+      <xsl:copy-of select="."/>
+   </xsl:template>
+   <xsl:template match="/*" priority="-1" mode="strip-for-validation">
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:apply-templates mode="#current"/>
+      </xsl:copy>
+   </xsl:template>
 
    <!-- MERGING -->
 

@@ -14,7 +14,15 @@
    <xsl:function name="tan:expand-doc" as="document-node()*">
       <!-- Input: a tan document + dependencies, a string indicating a phase of expansion -->
       <!-- Output: the document and its dependencies expanded at the phase indicated -->
-      <!-- Because class 2 files are expanded hand-in-glove with the class 1 files they depend upon, expansion is necessarily synchronized. The original class-2 document is the first document of the result, and the expanded class-1 files follow. -->
+      <!-- Because class 2 files are expanded hand-in-glove with the class 1 files they depend upon, expansion is necessarily synchronized. 
+         The expanded form of the original class-2 document is the first document of the result, and the expanded class-1 or -3 files follow. -->
+      <!-- To expand a TAN document is to unwrap the implications of a TAN file in light of its final output. For 
+         applications, such as turn a TAN file and its dependencies into an HTML file, that involves 
+         making the file easier to query and parse, for example, by breaking attribute values into individual nodes.
+         But if the end goal is validation, then things change. Validation requires speed, and the larger the file, the
+         slower the validation process. So when $is-validation is true tan:expand-doc() ironically reduces the file
+         size.
+      -->
       <xsl:param name="tan-doc-and-dependencies" as="document-node()*"/>
       <xsl:param name="target-phase" as="xs:string"/>
       <xsl:variable name="tan-doc" select="$tan-doc-and-dependencies[1]"/>
@@ -25,11 +33,13 @@
       <xsl:variable name="this-is-tan-a" select="$this-tan-type = 'TAN-A'"/>
       <xsl:variable name="this-is-tan-a-lm" select="$this-tan-type = 'TAN-A-lm'"/>
       <xsl:variable name="expansion-so-far" select="$tan-doc/*/tan:expanded"/>
+      
       <xsl:variable name="diagnostics-on" as="xs:boolean" select="false()"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'diagnostics on for tan:expand-doc()'"/>
          <xsl:message select="'expanding to', $target-phase, 'phase on doc id ', string($this-id)"/>
       </xsl:if>
+      
       <xsl:choose>
          <!-- Don't try to do anything if the input document itself is empty -->
          <xsl:when test="not(exists($tan-doc-and-dependencies/*))"/>
@@ -46,9 +56,16 @@
          <xsl:when test="$target-phase = 'terse'">
             <!-- Terse expansion needs at least two passes: one to expand overloaded attributes, and then general element expansions. -->
 
-            <!-- We insert pre-pass template that has no effect within validation, so that users downstream can cut out parts of the file of no interest -->
+            <!-- What follows is a wildcard template that has no effect within validation. Users downstream can cut out parts of the file of no interest -->
             <xsl:variable name="core-expansion-ad-hoc-pre-pass" as="document-node()?">
-               <xsl:apply-templates select="$tan-doc" mode="core-expansion-ad-hoc-pre-pass"/>
+               <xsl:choose>
+                  <xsl:when test="$is-validation">
+                     <xsl:sequence select="$tan-doc"/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                     <xsl:apply-templates select="$tan-doc" mode="core-expansion-ad-hoc-pre-pass"/>
+                  </xsl:otherwise>
+               </xsl:choose>
             </xsl:variable>
 
             <!-- Some overloaded attributes in class 2 files, i.e., @ref, @n, and @new, should be expanded only in the context of a host source file  -->
@@ -92,6 +109,67 @@
             </xsl:if>
 
             <xsl:choose>
+               <!-- TESTING -->
+               <!--<xsl:when test="true()">
+                  <!-\- testing -\->
+                  <xsl:variable name="these-ref-parents"
+                     select="$core-expansion-pass-2/*/tan:body//*[tan:ref]"/>
+                  <xsl:variable name="these-tok-parents"
+                     select="$these-ref-parents[descendant::tan:pos]"/>
+                  <!-\- Are there claims that require tokenization of everything? If so, no div can be ignored during validation -\->
+                  <xsl:variable name="special-elements-that-require-universal-tokenization"
+                     select="$core-expansion-pass-2/tan:TAN-A-lm/tan:body//tan:tok[not(@ref)]"/>
+                  <xsl:variable name="adjustments-part-1"
+                     select="$core-expansion-pass-2/*/tan:head/tan:adjustments/(tan:skip, tan:rename, tan:equate)"/>
+                  <xsl:variable name="adjustments-part-2"
+                     select="$core-expansion-pass-2/*/tan:head/tan:adjustments/tan:reassign"/>
+
+                  <!-\- Shall divs in the dependent files be dropped right away? -\->
+                  <xsl:variable name="div-filters"
+                     select="
+                        if ($is-validation and not($validation-phase = 'verbose') and not(exists($special-elements-that-require-universal-tokenization))) then
+                           $these-ref-parents
+                        else
+                           ()"/>
+
+                  <xsl:variable name="dependencies-adjusted-pass-1a" as="document-node()*">
+                     <xsl:choose>
+                        <xsl:when
+                           test="not($is-validation) or exists($adjustments-part-1) or exists($these-ref-parents) or $this-is-tan-a-lm">
+                           <xsl:apply-templates select="$these-dependencies-resolved"
+                              mode="dependency-adjustments-pass-1">
+                              <xsl:with-param name="class-2-doc" select="$core-expansion-pass-2"
+                                 tunnel="yes"/>
+                              <xsl:with-param name="div-filters" tunnel="yes" select="$div-filters"
+                              />
+                           </xsl:apply-templates>
+                        </xsl:when>
+                        <xsl:otherwise>
+                           <xsl:sequence select="$these-dependencies-resolved"/>
+                        </xsl:otherwise>
+                     </xsl:choose>
+                  </xsl:variable>
+
+                  <xsl:apply-templates select="$core-expansion-pass-2" mode="strip-for-validation"/>
+                  <!-\- CPG4425 TAN-A:
+                  5.7 seconds-\->
+                  <xsl:document>
+                     <test08a>
+                        <xsl:copy-of select="$these-ref-parents"/>
+                     </test08a>
+                  </xsl:document>
+                  <xsl:document>
+                     <test08b>
+                        <xsl:copy-of select="$adjustments-part-1"/>
+                     </test08b>
+                  </xsl:document>
+                  <!-\- 5.8 seconds -\->
+                  <xsl:sequence select="$dependencies-adjusted-pass-1a"/>
+                  <!-\- 48.1 seconds, yikes -\->
+                  <!-\- after changes to mode dependency-adjustments-pass-1: 6.3 seconds  -\->
+               </xsl:when>-->
+               <!-- TESTING -->
+               
                <!-- terse expansion class 2 -->
                <xsl:when test="$this-class-number = 2">
                   <!-- If a class 2 file, first make all adjustments to the class-1 sources requested by the class 2 file, resetting the 
@@ -100,11 +178,27 @@
                      with errors returned for missing markers, or too many of them.
                   -->
 
+                  <!-- Important parts of the class-2 file -->
                   <!-- All textual references must begin with @ref (expanded to <ref> in an earlier pass) -->
                   <xsl:variable name="these-ref-parents"
                      select="$core-expansion-pass-2/*/tan:body//*[tan:ref]"/>
+                  <xsl:variable name="these-tok-parents"
+                     select="$these-ref-parents[descendant::tan:pos]"/>
+                  <!-- Are there claims that require tokenization of everything? If so, no div can be ignored during validation -->
+                  <xsl:variable name="special-elements-that-require-universal-tokenization" select="$core-expansion-pass-2/tan:TAN-A-lm/tan:body//tan:tok[not(@ref)]"/>
                   <xsl:variable name="adjustments-part-1"
                      select="$core-expansion-pass-2/*/tan:head/tan:adjustments/(tan:skip, tan:rename, tan:equate)"/>
+                  <xsl:variable name="adjustments-part-2"
+                     select="$core-expansion-pass-2/*/tan:head/tan:adjustments/tan:reassign"/>
+                  
+                  <!-- Shall divs in the dependent files be dropped right away? -->
+                  <xsl:variable name="div-filters"
+                     select="
+                        if ($is-validation and not($validation-phase = 'verbose') and not(exists($special-elements-that-require-universal-tokenization))) then
+                           $these-ref-parents
+                        else
+                           ()"
+                  />
 
                   <!-- The first pass of source expansion processes the first three steps of the <adjustments>: <skip>, <rename>, <equate> -->
                   <!-- We almost always go through this first pass even if there are no adjustments, because it also sets up <n> and <ref> elements in dependency <div>s that are essential for later references -->
@@ -117,6 +211,7 @@
                               mode="dependency-adjustments-pass-1">
                               <xsl:with-param name="class-2-doc" select="$core-expansion-pass-2"
                                  tunnel="yes"/>
+                              <xsl:with-param name="div-filters" tunnel="yes" select="$div-filters"/>
                            </xsl:apply-templates>
                         </xsl:when>
                         <xsl:otherwise>
@@ -142,10 +237,7 @@
                      </xsl:apply-templates>
                   </xsl:variable>
 
-                  <!-- Now perform second round of adjustments, <reassign> -->
-
-                  <xsl:variable name="adjustments-part-2"
-                     select="$core-expansion-pass-2/*/tan:head/tan:adjustments/tan:reassign"/>
+                  <!-- Now perform the second round of adjustments, <reassign> -->
 
                   <xsl:variable name="dependencies-adjusted-pass-2a" as="document-node()*">
                      <xsl:choose>
@@ -186,8 +278,7 @@
                      Markers are of three sorts: <div> references (derived from @ref); token references (derived from
                      @val/@rgx + @pos); character references (derived from @chars)
                   -->
-                  <!-- On the first pass, set all <div>-based markers (@ref), and tokenize any leaf <div>s that are subject to token references -->
-                  <xsl:variable name="special-elements-that-require-universal-tokenization" select="$core-expansion-pass-2/tan:TAN-A-lm/tan:body//tan:tok[not(@ref)]"/>
+                  <!-- On the first pass, set all <div>-based markers (@ref), and tokenize any leaf <div>s that are subject to token references. If this is a validation process, irrelevant items can be dropped. -->
                   <xsl:variable name="dependencies-marked-pass-1" as="document-node()*">
                      <xsl:choose>
                         <xsl:when test="exists($these-ref-parents) or exists($special-elements-that-require-universal-tokenization)">
@@ -204,8 +295,6 @@
                   </xsl:variable>
 
                   <!-- On the second pass, set all token- and character-based markers; all tokenization should have happened in the previous step -->
-                  <xsl:variable name="these-tok-parents"
-                     select="$these-ref-parents[descendant::tan:pos]"/>
                   <xsl:variable name="dependencies-marked-pass-2" as="document-node()*">
                      <xsl:choose>
                         <xsl:when test="exists($these-tok-parents) or exists($special-elements-that-require-universal-tokenization)">
@@ -281,23 +370,49 @@
                   </xsl:if>
                   <xsl:choose>
                      <xsl:when test="$this-is-tan-a-lm">
+                        <xsl:variable name="tan-a-lm-expansion-pass-1" as="document-node()?">
+                           <xsl:apply-templates select="$class-2-expansion-pass-1"
+                              mode="tan-a-lm-expansion-terse">
+                              <xsl:with-param name="dependencies" as="document-node()*"
+                                 select="$dependencies-marked-pass-2" tunnel="yes"/>
+                           </xsl:apply-templates>
+                        </xsl:variable>
+                        <xsl:choose>
+                           <xsl:when test="$is-validation and ($validation-phase = 'terse')">
+                              <xsl:apply-templates select="$tan-a-lm-expansion-pass-1"
+                                 mode="strip-for-validation"/>
+                           </xsl:when>
+                           <xsl:otherwise>
+                              <xsl:sequence select="$tan-a-lm-expansion-pass-1, $dependencies-marked-pass-2"/>
+                           </xsl:otherwise>
+                        </xsl:choose>
+                     </xsl:when>
+                     
+                     <xsl:when test="$is-validation and ($validation-phase = 'terse')">
                         <xsl:apply-templates select="$class-2-expansion-pass-1"
-                           mode="tan-a-lm-expansion-terse">
-                           <xsl:with-param name="dependencies" as="document-node()*"
-                              select="$dependencies-marked-pass-2" tunnel="yes"/>
-                        </xsl:apply-templates>
-                        <xsl:copy-of select="$dependencies-marked-pass-2"/>
+                           mode="strip-for-validation"/>
+                        <!--<xsl:sequence select="$dependencies-marked-pass-1"/>-->
                      </xsl:when>
                      <xsl:otherwise>
-                        <!--<xsl:copy-of select="$core-expansion-pass-2, $dependencies-adjusted-pass-2b"/>-->
-                        <xsl:copy-of select="$class-2-expansion-pass-1, $dependencies-marked-pass-2"
+                        <!--<xsl:document><test8a><xsl:copy-of select="$core-expansion-pass-2, $dependencies-adjusted-pass-2b"/></test8a></xsl:document>-->
+                        <!--<xsl:document><test8b><xsl:copy-of select="$core-expansion-pass-2, $dependencies-adjusted-pass-1a"/></test8b></xsl:document>-->
+                        <xsl:sequence select="$class-2-expansion-pass-1, $dependencies-marked-pass-2"
                         />
                      </xsl:otherwise>
                   </xsl:choose>
                </xsl:when>
+               
                <xsl:otherwise>
                   <!-- classes 1, 3 diagnostics, results -->
-                  <xsl:copy-of select="$core-expansion-pass-2, $dependencies"/>
+                  <xsl:choose>
+                     <xsl:when test="$is-validation and ($validation-phase = 'terse')">
+                        <xsl:apply-templates select="$core-expansion-pass-2, $dependencies"
+                           mode="strip-for-validation"/>
+                     </xsl:when>
+                     <xsl:otherwise>
+                        <xsl:sequence select="$core-expansion-pass-2, $dependencies"/>
+                     </xsl:otherwise>
+                  </xsl:choose>
                </xsl:otherwise>
             </xsl:choose>
          </xsl:when>
@@ -348,13 +463,21 @@
                               <!--<xsl:copy-of select="$core-expansion, $dependencies-reset"/>-->
                               <xsl:copy-of select="$core-expansion, $dependencies-pass-2"/>
                            </xsl:when>
+                           <xsl:when test="$is-validation and ($validation-phase = 'normal')">
+                              <xsl:apply-templates select="$class-2-expansion"
+                                 mode="strip-for-validation"/>
+                           </xsl:when>
                            <xsl:otherwise>
                               <xsl:copy-of select="$class-2-expansion, $dependencies-pass-2"/>
                            </xsl:otherwise>
                         </xsl:choose>
                      </xsl:when>
+                     <xsl:when test="$is-validation and ($validation-phase = 'normal')">
+                        <xsl:apply-templates select="$core-expansion, $dependencies"
+                           mode="strip-for-validation"/>
+                     </xsl:when>
                      <xsl:otherwise>
-                        <xsl:copy-of select="$core-expansion, $dependencies"/>
+                        <xsl:sequence select="$core-expansion, $dependencies"/>
                      </xsl:otherwise>
                   </xsl:choose>
                </xsl:when>
@@ -392,7 +515,15 @@
                         </xsl:variable>
                         <!--<xsl:copy-of select="$class-1-expansion-pass-1"/>-->
                         <!--<xsl:copy-of select="$class-1-expansion-pass-2"/>-->
-                        <xsl:copy-of select="$class-1-expansion-pass-3"/>
+                        <xsl:choose>
+                           <xsl:when test="$is-validation and ($validation-phase = 'verbose')">
+                              <xsl:apply-templates select="$class-1-expansion-pass-3"
+                                 mode="strip-for-validation"/>
+                           </xsl:when>
+                           <xsl:otherwise>
+                              <xsl:sequence select="$class-1-expansion-pass-3"/>
+                           </xsl:otherwise>
+                        </xsl:choose>
                      </xsl:when>
                      <xsl:when test="$this-class-number = 2">
                         <!-- Commented out sections below anticipate areas of development; it also points to a very useful application of TAN functions, namely, to create a merger of an number of class 1 documents -->
@@ -421,10 +552,22 @@
                               mode="class-2-expansion-verbose">
                            </xsl:apply-templates>
                         </xsl:variable>
-                        <xsl:copy-of select="$class-2-expansion, $dependencies"/>
+                        <xsl:choose>
+                           <xsl:when test="$is-validation and ($validation-phase = 'verbose')">
+                              <xsl:apply-templates select="$class-2-expansion"
+                                 mode="strip-for-validation"/>
+                           </xsl:when>
+                           <xsl:otherwise>
+                              <xsl:sequence select="$class-2-expansion, $dependencies"/>
+                           </xsl:otherwise>
+                        </xsl:choose>
+                     </xsl:when>
+                     <xsl:when test="$is-validation and ($validation-phase = 'verbose')">
+                        <xsl:apply-templates select="$core-expansion, $dependencies"
+                           mode="strip-for-validation"/>
                      </xsl:when>
                      <xsl:otherwise>
-                        <xsl:copy-of select="$core-expansion, $dependencies"/>
+                        <xsl:sequence select="$core-expansion, $dependencies"/>
                      </xsl:otherwise>
                   </xsl:choose>
                </xsl:when>
@@ -568,6 +711,7 @@
                   <xsl:for-each select="(@accessed-when, @ed-when, @when)">
                      <xsl:value-of select="concat('[', ., '] ')"/>
                   </xsl:for-each>
+                  <xsl:value-of select="text()"/>
                </xsl:for-each>
                <xsl:text>)</xsl:text>
             </xsl:variable>
@@ -785,12 +929,17 @@
       </xsl:copy>
    </xsl:template>
 
-   <xsl:template match="tei:teiHeader | tan:head/tan:vocabulary[tan:location] | tan:head/tan:tan-vocabulary"
+   <xsl:template match="tei:teiHeader"
       mode="core-expansion-terse-attributes">
-      <!-- we just deep copy the teiHeader, whose attribute constructions cannot be predicted, and any 
-         vocabulary brought in from resolving the document, since the attributes should have already been
-         expanded or resolved in the context of their original document.
-      -->
+      <!-- the contents of teiHeadercannot be predicted, so is useless for validation, but important for
+         applications-->
+      <xsl:if test="not($is-validation)">
+         <xsl:copy-of select="."/>
+      </xsl:if>
+   </xsl:template>
+   
+   <xsl:template match="tan:head/tan:vocabulary[tan:location] | tan:head/tan:tan-vocabulary"
+      mode="core-expansion-terse-attributes">
       <xsl:copy-of select="."/>
    </xsl:template>
 
@@ -824,6 +973,7 @@
       />
       
       <xsl:copy>
+         <!-- In the future, validation might be selective in retention of attributes -->
          <xsl:copy-of select="@*"/>
 
          <!-- Process every attribute. For those that permit multiple values, convert the attribute to a series
@@ -869,6 +1019,7 @@
             />
             <xsl:variable name="all-permissible-vocabulary-items"
                select="tan:vocabulary($these-target-element-names, (), $vocabulary-nodes)"/>
+            
             <xsl:variable name="diagnostics-on" select="false()"/>
             <xsl:if test="$diagnostics-on">
                <xsl:message select="'diagnostics on for ', ."/>
@@ -878,6 +1029,7 @@
                <xsl:message select="'appropriate vocabulary nodes:', $appropriate-vocabulary-nodes"/>
                <xsl:message select="'this vocabulary: ', $this-vocabulary"/>
             </xsl:if>
+            
             <!-- If tan:vocabulary() finds errors, copy them. -->
             <xsl:copy-of select="$this-vocabulary/self::tan:error"/>
             <xsl:if test="not(exists($these-vals-pass-1))">
@@ -978,7 +1130,9 @@
                <xsl:element name="{$this-attr-name}">
                   <xsl:attribute name="attr"/>
                   <xsl:value-of select="$this-val"/>
-                  <xsl:if test="$distribute-vocabulary = true()">
+                  <xsl:if test="not($is-validation) and ($distribute-vocabulary)">
+                     <!-- Vocabulary is distributed in situations where a TAN file is being prepared for HTML, etc. But if the
+                     purpose is validation, there is no point. -->
                      <xsl:variable name="this-item-vocabulary"
                         select="
                            if (exists($vocab-items-pointed-to-by-id)) then
@@ -1006,7 +1160,7 @@
                <xsl:element name="{$this-attr-name}">
                   <xsl:attribute name="attr"/>
                   <xsl:value-of select="."/>
-                  <xsl:if test="$distribute-vocabulary = true()">
+                  <xsl:if test="not($is-validation) and ($distribute-vocabulary)">
                      <xsl:copy-of select=".."/>
                   </xsl:if>
                </xsl:element>
@@ -1087,6 +1241,7 @@
                select="tan:stamp-q-id($this-val-analyzed/*, true())"/>
             <xsl:copy-of select="$this-attr-converted-to-elements"/>
          </xsl:for-each>
+         
          <xsl:if test="exists(@new)">
             <!-- @new is special, in that the resultant <new> will encase its value as a representation of @ref or @n, depending upon which one <rename> has -->
             <xsl:variable name="type-of-new"
@@ -1103,6 +1258,7 @@
                <xsl:copy-of select="$this-attr-converted-to-elements"/>
             </new>
          </xsl:if>
+         
          <!-- default behavior for any other attributes left over; we don't do every attribute, because not every one needs to be expanded into an element -->
          <xsl:apply-templates select="@code, @val, @rgx, @div-type, @affects-element, @affects-attribute, @by, @item-type, @in-lang"
             mode="#current"/>
@@ -1114,7 +1270,6 @@
    </xsl:template>
    
    <xsl:template match="@*" mode="core-expansion-terse-attributes">
-      <xsl:param name="add-q-id" as="xs:boolean?"/>
       <xsl:variable name="this-name" select="name(.)"/>
       <xsl:variable name="this-val-parsed" select="tan:help-extracted(.)"/>
       <xsl:variable name="this-q-id" select="generate-id(.)"/>
@@ -1139,11 +1294,8 @@
       <xsl:for-each select="$these-vals-2">
          <xsl:element name="{$this-name}" namespace="tag:textalign.net,2015:ns">
             <xsl:attribute name="attr"/>
-            <xsl:if test="$add-q-id">
-               <xsl:attribute name="q" select="$this-q-id"/>
-            </xsl:if>
             <xsl:choose>
-               <!-- a faulty regular expression will be flagged in the parent; its value should be suppressed, to avoid fatal errors -->
+               <!-- a faulty regular expression will be flagged as erroneous in the parent; its value should be suppressed, to avoid fatal errors -->
                <xsl:when test="$this-name = 'rgx' and not(tan:regex-is-valid(.))"/>
                <xsl:otherwise>
                   <xsl:value-of select="."/>
@@ -1152,6 +1304,7 @@
          </xsl:element>
       </xsl:for-each>
    </xsl:template>
+   
 
    <xsl:template match="/*" mode="core-expansion-terse" priority="-2">
       <xsl:variable name="this-last-change-agent" select="tan:last-change-agent(root())"/>
@@ -1262,7 +1415,7 @@
    </xsl:template>
 
    <xsl:template match="tan:name" mode="core-expansion-terse">
-      <!-- parameters below specifically for TAN-voc files -->
+      <!-- parameters below are populated only in TAN-voc files -->
       <xsl:param name="reserved-vocabulary-items" as="element()*"/>
       <xsl:param name="is-reserved" as="xs:boolean?" tunnel="yes"/>
       <xsl:variable name="this-name" select="text()"/>
@@ -1334,16 +1487,18 @@
 
    <xsl:template match="tan:file-resp" mode="core-expansion-terse">
       <xsl:variable name="these-whos" select="tan:who"/>
-      <!--<xsl:variable name="who-vocab" select="tan:glossary(('person', 'organization'), $these-whos), preceding-sibling::tan:vocabulary-key/*[(@xml:id, @id) = $these-whos]"/>-->
       <xsl:variable name="who-vocab" select="tan:vocabulary(('person', 'organization'), $these-whos, (parent::tan:head, root(.)/(tan:TAN-A, tan:TAN-voc)/tan:body))"/>
+      <xsl:variable name="this-doc-id-namespace" select="tan:doc-id-namespace(.)"/>
       <xsl:variable name="key-agent"
-         select="$who-vocab/*[tan:IRI[starts-with(., $doc-id-namespace)]]"/>
+         select="$who-vocab/*[tan:IRI[starts-with(., $this-doc-id-namespace)]]"/>
+      
       <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'diagnostics on, tan:file-resp, template mode core-expansion-terse'"/>
          <xsl:message select="'Who vocab:', $who-vocab"/>
          <xsl:message select="'Key agent:', $key-agent"/>
       </xsl:if>
+      
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:if test="not(exists($key-agent))">

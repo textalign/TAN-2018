@@ -113,8 +113,8 @@
       <report test="exists($help-offered) and not($doc-is-error-test)" role="warning" sqf:fix="tan-sqf">
          <value-of select="$help-offered/tan:message"/>
       </report>
-      <assert test="exists($this-checked-for-errors)"><value-of select="$this-q-ref"/> doesn't
-         match; other @q values of <value-of select="$this-name"/>: <value-of select="string-join($self-expanded//*[name() = $this-name]/@q, ', ')"/></assert>
+      <!--<assert test="exists($this-checked-for-errors)"><value-of select="$this-q-ref"/> doesn't
+         match; other @q values of <value-of select="$this-name"/>: <value-of select="string-join($self-expanded//*[name() = $this-name]/@q, ', ')"/></assert>-->
       
       <report test="$doc-is-error-test and exists($intended-codes-missing)">Expected: 
          <value-of select="for $i in $intended-codes-missing return concat($i, ' (', tan:error($i)/tan:rule, ')')"/></report>

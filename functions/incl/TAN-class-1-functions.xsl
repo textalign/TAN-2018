@@ -215,6 +215,7 @@
       <xsl:variable name="target-doc-source" select="$target-doc-resolved/*/tan:head/tan:source"/>
       <xsl:variable name="target-doc-source-vocab"
          select="tan:vocabulary(('source', 'scriptum'), $target-doc-source/@which, $target-doc-resolved/*/tan:head)"/>
+      
       <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'Diagnostics on, tan:redivision or tan:companion-version, template mode core-expansion-terse'"/>
@@ -224,6 +225,7 @@
          <xsl:message select="'Target doc work vocab:', $target-doc-work-vocab"/>
          <xsl:message select="'Target doc source vocab: ', $target-doc-source-vocab"/>
       </xsl:if>
+      
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:if
@@ -281,9 +283,6 @@
       </xsl:copy>
    </xsl:template>
 
-   <xsl:template match="tei:teiHeader" mode="#all" priority="-4">
-      <xsl:copy-of select="."/>
-   </xsl:template>
    <xsl:template match="tei:div[not(tei:div)]/tei:*" priority="1"
       mode="resolve-numerals core-expansion-terse-attributes">
       <xsl:copy-of select="."/>
@@ -293,6 +292,8 @@
       mode="core-expansion-terse dependency-adjustments-pass-1">
       <!-- Homogenize tei:TEI to tan:TAN-T -->
       <xsl:param name="class-2-doc" tunnel="yes" as="document-node()?"/>
+      <xsl:param name="div-filters" as="element()*" tunnel="yes"/>
+      
       <xsl:variable name="vocabulary" select="$class-2-doc/*/tan:head/tan:vocabulary-key"/>
       <xsl:variable name="this-src-id" select="@src"/>
       <xsl:variable name="is-self" select="@id = $doc-id" as="xs:boolean"/>
@@ -313,6 +314,8 @@
             <xsl:with-param name="n-alias-items" select="$n-alias-items" tunnel="yes"/>
          </xsl:apply-templates>
       </xsl:variable>
+      <xsl:variable name="div-filters-for-this-source" select="$div-filters[not(tan:src) or (tan:src = $this-src-id)]"/>
+      
       <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'diagnostics on for template mode: core-expansion-terse AND dependency-adjustments-pass-1'"/>
@@ -321,6 +324,7 @@
          <xsl:message select="'n alias items: ', $n-alias-items"/>
          <xsl:message select="'adjustments resolved: ', $these-adjustments-resolved"/>
       </xsl:if>
+      
       <TAN-T>
          <xsl:copy-of select="@*"/>
          <xsl:if test="exists($this-work-group)">
@@ -346,12 +350,16 @@
             <xsl:copy-of select="tan:error('tan20', string-join($this-message, ''))"/>
          </xsl:if>
          <expanded>terse</expanded>
-         <xsl:apply-templates mode="#current">
-            <xsl:with-param name="adjustment-actions-resolved" tunnel="yes"
-               select="$these-adjustments-resolved/(tan:skip, tan:rename, tan:equate)"/>
-         </xsl:apply-templates>
+         <xsl:if test="not(exists($div-filters)) or exists($div-filters-for-this-source)">
+            <xsl:apply-templates mode="#current">
+               <xsl:with-param name="adjustment-actions-resolved" tunnel="yes"
+                  select="$these-adjustments-resolved/(tan:skip, tan:rename, tan:equate)"/>
+               <xsl:with-param name="div-filters" tunnel="yes" select="$div-filters-for-this-source"/>
+            </xsl:apply-templates>
+         </xsl:if>
       </TAN-T>
    </xsl:template>
+   
    <xsl:template match="tan:head" mode="dependency-adjustments-pass-1">
       <xsl:copy>
          <xsl:copy-of select="@*"/>
@@ -378,7 +386,7 @@
       </body>
    </xsl:template>
    <xsl:template match="tei:text" mode="core-expansion-terse dependency-adjustments-pass-1">
-      <!-- Makes sure the tei:body rises rootward one level, as is customary in TAN and HTML -->
+      <!-- Makes sure tei:body rises rootward one level, as is customary for <body> in TAN and HTML -->
       <xsl:apply-templates mode="#current"/>
    </xsl:template>
    <xsl:template match="tan:div | tei:div"
@@ -508,6 +516,7 @@
       <xsl:param name="adjustment-actions-resolved" tunnel="yes" as="element()*"/>
       <xsl:param name="parent-orig-refs" as="element()*" select="$empty-element"/>
       <xsl:param name="parent-new-refs" as="element()*" select="$empty-element"/>
+      <xsl:param name="div-filters" as="element()*" tunnel="yes"/>
 
       <xsl:variable name="these-div-types-analyzed"
          select="tan:analyze-sequence(@type, 'type', false())"/>
@@ -723,6 +732,15 @@
                </xsl:for-each>
             </xsl:variable>
             <xsl:variable name="is-leaf-div" select="not(exists(*:div))"/>
+            
+            <xsl:variable name="this-n-level" select="count($new-refs[1]/tan:n)"/>
+            <xsl:variable name="next-n-level" select="$this-n-level + 1"/>
+            <xsl:variable name="filters-for-this-div" select="$div-filters[tan:ref[tan:n[$this-n-level] = $new-ns]]"/>
+            <xsl:variable name="div-filters-to-pass-to-children"
+               select="$filters-for-this-div[tan:ref[tan:n[$next-n-level]]]"/>
+            <xsl:variable name="deep-skip-this-element" select="exists($div-filters) and not(exists($filters-for-this-div))"/>
+            <xsl:variable name="deep-skip-children" select="exists($div-filters) and not(exists($div-filters-to-pass-to-children))"/>
+            
 
             <xsl:variable name="diagnostics-on" select="false()"/>
             <xsl:if test="$diagnostics-on">
@@ -742,42 +760,53 @@
                <xsl:message select="'new ns: ', $new-ns"/>
                <xsl:message select="'new refs: ', $new-refs"/>
             </xsl:if>
+            
+            <xsl:choose>
+               <xsl:when test="$deep-skip-this-element"/>
+               <xsl:otherwise>
 
-            <!-- Homogenize tei:div to tan:div -->
-            <div>
-               <xsl:copy-of select="@*"/>
-               <xsl:copy-of select="$new-ns"/>
-               <xsl:copy-of select="$new-refs"/>
-               <xsl:if
-                  test="
-                     some $i in $new-ns
-                        satisfies matches($i, '^0')">
-                  <xsl:copy-of select="tan:error('cl117')"/>
-               </xsl:if>
-               <xsl:copy-of
-                  select="tan:imprint-adjustment-locator($rename-n-locators-overridden-by-rename-ref-locators, tan:error('cl206'))"/>
-               <xsl:copy-of
-                  select="tan:imprint-adjustment-locator($equate-locators-that-match-rename-locators, tan:error('cl204'))"/>
-               <xsl:copy-of
-                  select="tan:imprint-adjustment-locator($equate-locators[text() = $duplicate-equate-locator-vals], tan:error('cl205'))"/>
-               <xsl:choose>
-                  <xsl:when test="$is-leaf-div and $is-tei">
-                     <xsl:apply-templates select="*" mode="#current"/>
-                     <!-- If this is TEI, we add a plain text version of the text -->
-                     <xsl:value-of select="tan:normalize-div-text(string-join(.//tei:*/text(), ''))"
-                     />
-                  </xsl:when>
-                  <xsl:when test="$is-leaf-div">
-                     <xsl:value-of select="tan:normalize-div-text(text())"/>
-                  </xsl:when>
-                  <xsl:otherwise>
-                     <xsl:apply-templates mode="#current">
-                        <xsl:with-param name="parent-orig-refs" select="$these-refs-analyzed"/>
-                        <xsl:with-param name="parent-new-refs" select="$new-refs"/>
-                     </xsl:apply-templates>
-                  </xsl:otherwise>
-               </xsl:choose>
-            </div>
+                  <!-- Homogenize tei:div to tan:div -->
+                  <div>
+                     <xsl:copy-of select="@*"/>
+                     <xsl:copy-of select="$new-ns"/>
+                     <xsl:copy-of select="$new-refs"/>
+                     <xsl:if
+                        test="
+                           some $i in $new-ns
+                              satisfies matches($i, '^0')">
+                        <xsl:copy-of select="tan:error('cl117')"/>
+                     </xsl:if>
+                     <xsl:copy-of
+                        select="tan:imprint-adjustment-locator($rename-n-locators-overridden-by-rename-ref-locators, tan:error('cl206'))"/>
+                     <xsl:copy-of
+                        select="tan:imprint-adjustment-locator($equate-locators-that-match-rename-locators, tan:error('cl204'))"/>
+                     <xsl:copy-of
+                        select="tan:imprint-adjustment-locator($equate-locators[text() = $duplicate-equate-locator-vals], tan:error('cl205'))"/>
+                     
+                     <xsl:choose>
+                        <xsl:when test="$is-leaf-div and $is-tei">
+                           <xsl:apply-templates select="*" mode="#current"/>
+                           <!-- If this is TEI, we add a plain text version of the text -->
+                           <xsl:value-of
+                              select="tan:normalize-div-text(string-join(.//tei:*/text(), ''))"/>
+                        </xsl:when>
+                        <xsl:when test="$is-leaf-div or $deep-skip-children">
+                           <xsl:value-of select="tan:normalize-div-text(text())"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                           <xsl:apply-templates mode="#current">
+                              <xsl:with-param name="parent-orig-refs" select="$these-refs-analyzed"/>
+                              <xsl:with-param name="parent-new-refs" select="$new-refs"/>
+                              <xsl:with-param name="div-filters" tunnel="yes" select="$div-filters-to-pass-to-children"/>
+                           </xsl:apply-templates>
+                        </xsl:otherwise>
+                     </xsl:choose>
+                     
+                  </div>
+
+               </xsl:otherwise>
+            </xsl:choose>
+            
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
@@ -1454,8 +1483,8 @@
 
    <xsl:template match="tan:div" mode="mark-dependencies-pass-1">
       <xsl:param name="ref-parents" tunnel="yes" as="element()*"/>
-
       <xsl:param name="tokenize-leaf-div" tunnel="yes" as="xs:boolean"/>
+      
       <xsl:variable name="is-leaf-div" select="not(exists(tan:div))"/>
       <xsl:variable name="these-ns" select="tan:n"/>
       <xsl:variable name="this-n-level" select="count(tan:ref[1]/tan:n)"/>
@@ -1466,6 +1495,9 @@
       <xsl:variable name="ref-parents-to-pass-to-children"
          select="$ref-parents[tan:ref[tan:n[$this-n-level] = $these-ns][tan:n[$next-n-level] = $next-ns]]"/>
       <xsl:variable name="claim-requires-tokenization" select="exists($these-ref-parents//tan:pos)"/>
+      <!-- If we're validating, and tokenization ain't happening and there's no reason to process children, then stop -->
+      <xsl:variable name="stop-here" select="not($is-leaf-div) and not(exists($ref-parents-to-pass-to-children)) and $is-validation and ($validation-phase = 'terse')"/>
+      
       <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'diagnostics on, template mode mark-dependencies-pass-1, for: ', ."/>
@@ -1474,16 +1506,27 @@
          <xsl:message select="'this n level: ', $this-n-level"/>
          <xsl:message select="'picked ref parents: ', $these-ref-parents"/>
       </xsl:if>
+      
+      
+         
+         
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:copy-of select="* except tan:div"/>
          <!-- Leave a marker for any div claims -->
          <xsl:copy-of select="tan:shallow-copy($these-ref-parents/tan:ref[text() = $these-refs])"/>
-         <xsl:apply-templates select="(tan:div, text())" mode="#current">
-            <xsl:with-param name="tokenize-leaf-div" tunnel="yes"
-               select="$tokenize-leaf-div or $claim-requires-tokenization"/>
-         </xsl:apply-templates>
+         <xsl:if test="not($stop-here)">
+            <xsl:apply-templates select="(tan:div, text())" mode="#current">
+               <xsl:with-param name="tokenize-leaf-div" tunnel="yes"
+                  select="$tokenize-leaf-div or $claim-requires-tokenization"/>
+               <xsl:with-param name="ref-parents" tunnel="yes"
+                  select="$ref-parents-to-pass-to-children"/>
+            </xsl:apply-templates>
+         </xsl:if>
       </xsl:copy>
+         
+      
+      
    </xsl:template>
 
    <xsl:template match="tan:div/text()[matches(., '\S')]" mode="mark-dependencies-pass-1">
@@ -1520,7 +1563,7 @@
       <xsl:variable name="these-ref-parents-with-pos"
          select="$items-mentioning-this-src-or-work/descendant-or-self::*[tan:ref][descendant::tan:pos]"
       />
-      <xsl:variable name="these-universal-toks" select="$items-mentioning-this-src-or-work/self::tan:tok[not(@ref)]"/>
+      <xsl:variable name="these-universal-toks" select="$items-mentioning-this-src-or-work/self::tan:tok[not(ancestor-or-self::*/@ref)]"/>
 
       <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">

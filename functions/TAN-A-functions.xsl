@@ -264,6 +264,8 @@
    
    <xsl:template match="tan:claim/tan:work" mode="core-expansion-terse">
       <!-- This template targets <work> elements in the body, not the head -->
+      <!-- Such a step would ordinarily have been taken in the previous expansion pass,
+      on attributes, but it didn't have the extra vocabulary. -->
       <xsl:param name="extra-vocabulary" tunnel="yes" as="element()*"/>
       <xsl:variable name="this-work-id" select="."/>
       <xsl:variable name="this-vocab" select="$extra-vocabulary[self::tan:work][(tan:id, tan:name) = $this-work-id]"/>
