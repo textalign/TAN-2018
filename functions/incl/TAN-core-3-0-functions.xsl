@@ -858,6 +858,13 @@
                         return
                            string-join(current-group()[tan:wit/@ref = $i]/tan:txt)"
                   />
+                  <xsl:variable name="these-offsets" as="element()*">
+                     <xsl:for-each select="$these-u-wit-refs">
+                        <xsl:variable name="this-ref" select="."/>
+                        <xsl:variable name="this-smallest-pos" select="($these-u-wits[@ref = $this-ref])[1]/@pos"/>
+                        <offset ref="{$this-ref}" by="{$this-smallest-pos}"/>
+                     </xsl:for-each>
+                  </xsl:variable>
                   
                   
                   <xsl:variable name="diagnostics-on" select="false()"/>
@@ -881,7 +888,9 @@
                         
                         <xsl:for-each select="$these-us-recollated/(* except tan:witness)">
                            <u>
-                              <xsl:copy-of select="* except tan:x"/>
+                              <xsl:apply-templates select="* except tan:x" mode="add-collation-pos-offset">
+                                 <xsl:with-param name="offsets" select="$these-offsets"/>
+                              </xsl:apply-templates>
                            </u>
                         </xsl:for-each>
                      </xsl:when>
@@ -949,6 +958,17 @@
                </xsl:otherwise>
             </xsl:choose>
          </xsl:for-each-group> 
+      </xsl:copy>
+   </xsl:template>
+   
+   <xsl:template match="tan:wit" mode="add-collation-pos-offset">
+      <xsl:param name="offsets" as="element()*"/>
+      <xsl:variable name="this-ref" select="@ref"/>
+      <xsl:variable name="this-pos" select="number(@pos)"/>
+      <xsl:variable name="this-offset-pos" select="(number($offsets[@ref = $this-ref][1]/@by), 1)[1]"/>
+      <xsl:copy>
+         <xsl:copy-of select="@* except @pos"/>
+         <xsl:attribute name="pos" select="$this-pos + $this-offset-pos - 1"/>
       </xsl:copy>
    </xsl:template>
    
@@ -1126,17 +1146,18 @@
                            test="exists($group-so-far-for-adjustment/tan:group[2]/tan:common)"/>
                         <!-- If an <a> or <b> can be shifted to accommodate word spaces, we prefer that spaces be put 
                         at the end of the <a> or <b>, hence the different placement of \s in each of the next two
-                        regular expressions. -->
+                        regular expressions. The other patterns below look for grouping punctuation, e.g. () {}
+                        [] &; <> to try to get the whole group within an <a> or <b> -->
                         <xsl:when
                            test="
                               $group-so-far-for-adjustment/tan:group[1]/tan:common
-                              and matches($common-end-1, '^\s*[\[&lt;\(]')">
+                              and matches($common-end-1, '^\s*[\[&lt;\(&amp;\{]')">
                            <xsl:value-of select="string-length($common-end-1) * -1"/>
                         </xsl:when>
                         <xsl:when
                            test="
                               $group-so-far-for-adjustment/tan:group[3]/tan:common
-                              and matches($common-start-1, '[\]&gt;\)\s]$')">
+                              and matches($common-start-1, '[\]&gt;\)\s;\}]$')">
                            <xsl:value-of select="string-length($common-start-1)"/>
                         </xsl:when>
                         <!-- The previous two cases looked for cases where the entire common segment could be moved;
