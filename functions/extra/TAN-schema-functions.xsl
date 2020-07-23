@@ -17,7 +17,16 @@
     <!--Functions for analyzing the TAN schemas, using ../schemas/*.rng for analysis. This
                 stylesheet is used primarily to generate the documentation, not for core validation,
                 but it may be useful in other contexts.-->
-    <xsl:variable name="schema-collection" select="collection('../../schemas/collection.xml')"/>
+    <xsl:variable name="schema-uri-collection" select="uri-collection('../../schemas'), uri-collection('../../schemas/incl')"/>
+    <xsl:variable name="schema-collection"
+        select="
+            for $i in $schema-uri-collection
+            return
+                if (doc-available($i)) then
+                    doc($i)
+                else
+                    ()"
+    />
     <xsl:variable name="rng-collection" select="$schema-collection[rng:*]"/>
     <xsl:variable name="rng-collection-without-TEI"
         select="$rng-collection[not(matches(base-uri(.), 'TAN-TEI'))]"/>

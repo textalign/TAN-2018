@@ -387,7 +387,7 @@
       
       <xsl:variable name="diagnostics-on" select="string-length($strings-re-sorted[2]) lt 1"/>
       <xsl:if test="$diagnostics-on">
-         <xsl:message select="'Diagnostics on, 2020 tan:collate()'"/>
+         <xsl:message select="'Diagnostics on, 2020 version of tan:collate()'"/>
          <xsl:message select="'String count: ', $string-count"/>
          <xsl:message select="'String labels re-sorted: ' || string-join($string-labels-re-sorted, ' ')"/>
          <xsl:message select="'First diff (adjusted): ' || serialize($first-diff-adjusted)"/>
@@ -636,7 +636,7 @@
                                        <xsl:when test="position() = $base-text-match-positions[last()]">
                                           <xsl:copy-of select="$this-new-collation-item/tan:wit"/>
                                        </xsl:when>
-                                       <!-- Added 2020-05-29 -->
+
                                        <xsl:when test="(exists($base-text-match-positions)) and (position() gt $base-text-match-positions[last()])">
                                           <!-- For items after the last match, we need to increase the @pos by however long the string was -->
                                           <x>
