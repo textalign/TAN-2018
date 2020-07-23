@@ -12,8 +12,11 @@ include "incl/TAN-class-2.rnc" {
     tok-sources-ref-opt = empty
     # TAN-A-lm files must each have at least one lexicon and one TAN-mor
     voc-element-non-class-2 = voc-element-lexicon+ & voc-element-morphology+
-    # Because TAN-A-lm files depend on only one source, no id references to sources are needed
+    # Because TAN-A-lm files depend on only one source, no id references to sources are needed...
     token-definition-attributes = empty
+    ptr-attr-src-many = empty
+    # ...and <where> is also unnecessary
+    action-condition = action-simple-condition
     group-attributes-non-core = ptr-attr-lexicon?, ptr-attr-morphology?
     body-attributes-non-core = ptr-attr-lexicon, ptr-attr-morphology
     body-item = element-ana
@@ -101,10 +104,8 @@ element-tok-abstract =
     
     ## points to a token in the abstract, no matter where it is found, either in the source (if there is one) or the language (if there is no source).
     
-    ## This version of <tok> does not allow regular expressions (@rgx).
-    
     ## The sequence of consecutive <tok>s is immaterial, except in the context of <group>.
-    element tok { certainty-stamp?, attr-val }
+    element tok { certainty-stamp?, (attr-val | attr-rgx), attr-chars? }
 element-tok-is =
     
     ## specifies an exact value of @val of <tok>s in the file. Collectively, every <tok> should point to at least on <tok-is>.

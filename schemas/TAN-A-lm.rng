@@ -43,9 +43,16 @@
         </oneOrMore>
       </interleave>
     </define>
-    <!-- Because TAN-A-lm files depend on only one source, no id references to sources are needed -->
+    <!-- Because TAN-A-lm files depend on only one source, no id references to sources are needed... -->
     <define name="token-definition-attributes">
       <empty/>
+    </define>
+    <define name="ptr-attr-src-many">
+      <empty/>
+    </define>
+    <!-- ...and <where> is also unnecessary -->
+    <define name="action-condition">
+      <ref name="action-simple-condition"/>
     </define>
     <define name="group-attributes-non-core">
       <optional>
@@ -217,12 +224,17 @@
   <define name="element-tok-abstract">
     <element name="tok">
       <a:documentation>points to a token in the abstract, no matter where it is found, either in the source (if there is one) or the language (if there is no source).</a:documentation>
-      <a:documentation>This version of &lt;tok&gt; does not allow regular expressions (@rgx).</a:documentation>
       <a:documentation>The sequence of consecutive &lt;tok&gt;s is immaterial, except in the context of &lt;group&gt;.</a:documentation>
       <optional>
         <ref name="certainty-stamp"/>
       </optional>
-      <ref name="attr-val"/>
+      <choice>
+        <ref name="attr-val"/>
+        <ref name="attr-rgx"/>
+      </choice>
+      <optional>
+        <ref name="attr-chars"/>
+      </optional>
     </element>
   </define>
   <define name="element-tok-is">
