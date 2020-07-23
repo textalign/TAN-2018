@@ -264,10 +264,11 @@
    </xsl:function>
    
    
-      <xsl:function name="tan:collate" as="element()?">
+   <xsl:function name="tan:collate" as="element()?">
       <!-- Input: a sequence of strings to be collated; a sequence of strings that label each string; a boolean
       indicating whether the sequence of input strings should be optimized; a boolean indicating whether
-      the results of tan:diff() should be adjusted; a boolean indicating whether the collation should be cleaned up. -->
+      the results of tan:diff() should be processed and weighed; a boolean indicating whether the collation 
+      should be cleaned up. -->
       <!-- Output: a <collation> with (1) one <witness> per string (and if the last parameter is true, then a 
          sequence of children <commonality>s, signifying how close that string is with every other, and (2)
          a sequence of <c>s and <u>s, each with a <txt> and one or more <wit ref="" pos=""/>, indicating which
@@ -285,7 +286,7 @@
       because the cleanup process itself invokes tan:collate() and one does not want to get into an endless 
       loop because of a mishmash of differences that can never be reconciled or brought closer together. -->
       <!-- This version of tan:collate was written in XSLT 3.0 to take advantage of xsl:iterate, and has an
-      arity of 3 parameters to distinguish it from its XSLT 2.0 predecessors, which used a different approach 
+      arity of 3 and 5 parameters to distinguish it from its XSLT 2.0 predecessors, which used a different approach 
       to collation. Tests comparing the two versions of tan:collate() may be profitable. -->
       <!-- Changes in output from previous version of tan:collate():
           - @w is now <wit> with @ref and @pos
@@ -297,17 +298,17 @@
       <xsl:param name="strings-to-collate" as="xs:string*"/>
       <xsl:param name="string-labels" as="xs:string*"/>
       <xsl:param name="preoptimize-string-order" as="xs:boolean"/>
-      <xsl:param name="adjust-diffs" as="xs:boolean"/>
+      <xsl:param name="adjust-diffs-during-preoptimization" as="xs:boolean"/>
       <xsl:param name="clean-up-collation" as="xs:boolean"/>
-      
+
       <xsl:variable name="string-count" select="count($strings-to-collate)"/>
       <xsl:variable name="string-labels-norm" as="xs:string*"
          select="
             for $i in (1 to $string-count)
             return
                ($string-labels[$i], string($i))[1]"/>
-      
-      
+
+
       <xsl:variable name="all-diffs" as="element()*">
          <xsl:if test="$preoptimize-string-order">
             <xsl:for-each select="$string-labels-norm[position() gt 1]">
@@ -320,11 +321,10 @@
                      select="tan:diff($strings-to-collate[$that-pos], $strings-to-collate[$this-pos], false())"/>
                   <xsl:variable name="this-diff-adjusted"
                      select="
-                        if ($adjust-diffs) then
+                        if ($adjust-diffs-during-preoptimization) then
                            tan:adjust-diff($this-diff)
                         else
-                           $this-diff"
-                  />
+                           $this-diff"/>
                   <diff a="{$text2}" b="{$text1}">
                      <xsl:copy-of select="$this-diff-adjusted/*"/>
                   </diff>
@@ -332,7 +332,7 @@
             </xsl:for-each>
          </xsl:if>
       </xsl:variable>
-      
+
       <xsl:variable name="diffs-sorted" as="element()*">
          <xsl:for-each-group select="$all-diffs"
             group-by="
@@ -352,7 +352,7 @@
             </xsl:for-each>
          </xsl:for-each-group>
       </xsl:variable>
-      
+
       <xsl:variable name="string-labels-re-sorted"
          select="
             if ($preoptimize-string-order) then
@@ -360,9 +360,8 @@
                return
                   ($i/@a, $i/@b))
             else
-               $string-labels-norm"
-      />
-      
+               $string-labels-norm"/>
+
       <xsl:variable name="strings-re-sorted"
          select="
             if ($preoptimize-string-order) then
@@ -371,25 +370,25 @@
                return
                   $strings-to-collate[$j])
             else
-               $strings-to-collate"
-      />
-      
-      <xsl:variable name="first-diff" select="tan:diff($strings-re-sorted[1], $strings-re-sorted[2], false())"/>
+               $strings-to-collate"/>
+
+      <xsl:variable name="first-diff"
+         select="tan:diff($strings-re-sorted[1], $strings-re-sorted[2], false())"/>
       <xsl:variable name="first-diff-adjusted"
          select="
-            if ($adjust-diffs) then
+            if ($adjust-diffs-during-preoptimization) then
                tan:adjust-diff($first-diff)
             else
-               $first-diff"
-      />
+               $first-diff"/>
       <xsl:variable name="first-diff-collated"
          select="tan:diff-to-collation($first-diff-adjusted, $string-labels-re-sorted[1], $string-labels-re-sorted[2])"/>
-      
+
       <xsl:variable name="diagnostics-on" select="string-length($strings-re-sorted[2]) lt 1"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'Diagnostics on, 2020 version of tan:collate()'"/>
          <xsl:message select="'String count: ', $string-count"/>
-         <xsl:message select="'String labels re-sorted: ' || string-join($string-labels-re-sorted, ' ')"/>
+         <xsl:message
+            select="'String labels re-sorted: ' || string-join($string-labels-re-sorted, ' ')"/>
          <xsl:message select="'First diff (adjusted): ' || serialize($first-diff-adjusted)"/>
          <xsl:message select="'First diff collated: ' || serialize($first-diff-collated)"/>
       </xsl:if>
@@ -402,7 +401,8 @@
             <xsl:param name="collation-so-far" as="element()?" select="$first-diff-collated"/>
             <!-- The previous string is a text that links the previous collation and the diff that is about to be run. -->
             <xsl:param name="previous-string" as="xs:string?" select="$strings-re-sorted[2]"/>
-            <xsl:param name="previous-string-label" as="xs:string?" select="$string-labels-re-sorted[2]"/>
+            <xsl:param name="previous-string-label" as="xs:string?"
+               select="$string-labels-re-sorted[2]"/>
 
             <xsl:variable name="iteration" select="position() + 2"/>
             <xsl:variable name="this-label" select="$string-labels-re-sorted[$iteration]"/>
@@ -410,16 +410,16 @@
             <xsl:variable name="this-diff" select="tan:diff($previous-string, ., false())"/>
             <xsl:variable name="this-diff-adjusted"
                select="
-                  if ($adjust-diffs) then
+                  if ($adjust-diffs-during-preoptimization) then
                      tan:adjust-diff($this-diff)
                   else
-                     $this-diff"
-            />
-            <xsl:variable name="this-diff-collation" select="tan:diff-to-collation($this-diff-adjusted, $previous-string-label, $this-label)"/>
-            
+                     $this-diff"/>
+            <xsl:variable name="this-diff-collation"
+               select="tan:diff-to-collation($this-diff-adjusted, $previous-string-label, $this-label)"/>
+
             <!-- The linking text is split in different ways, both in the base collation and the collation to add. Each of those
             should be splintered up so that every starting position for the linking in one collation is also reflected in the other.-->
-            
+
             <xsl:variable name="pos-values-compared" as="element()">
                <pos-compared>
                   <xsl:for-each-group
@@ -432,7 +432,8 @@
                         <xsl:if test="exists($group-root-elements[tan:witness/@id = $this-label])">
                            <new/>
                         </xsl:if>
-                        <xsl:if test="exists($group-root-elements[not(tan:witness/@id = $this-label)])">
+                        <xsl:if
+                           test="exists($group-root-elements[not(tan:witness/@id = $this-label)])">
                            <base/>
                         </xsl:if>
                      </group>
@@ -471,10 +472,10 @@
                         </xsl:if>
                      </xsl:for-each-group>
                   </in-new-collation>
-                  
+
                </pos-to-add>
             </xsl:variable>
-            
+
             <xsl:variable name="both-collations-splintered" as="element()*">
                <!-- The strategy here is to go through each collation and fragment any <c> or <u> where the linking
                text has text that should be broken up to match the other collation. -->
@@ -486,7 +487,8 @@
                      <xsl:copy-of select="@*"/>
                      <xsl:attribute name="is-base" select="$this-is-base-collation"/>
                      <!-- group each <u> and <c> based on whether a child <x> or <wit> for the linking text has a matching position -->
-                     <xsl:for-each-group select="*" group-by="(*[@ref = $previous-string-label]/@pos, '-1')[1]">
+                     <xsl:for-each-group select="*"
+                        group-by="(*[@ref = $previous-string-label]/@pos, '-1')[1]">
                         <xsl:variable name="this-pos-val" select="current-grouping-key()"/>
                         <xsl:variable name="break-points"
                            select="$pos-values-to-add/*[$this-collation-position]/tan:break[@pos = $this-pos-val]/tan:at-pos"/>
@@ -523,14 +525,18 @@
                                              select="$next-start-pos - $this-new-pos-int"/>
                                           <xsl:variable name="this-text-portion"
                                              select="substring($this-text, $this-substring-start, $this-substring-length)"/>
-                                          
+
                                           <xsl:if test="$diagnostics-on">
-                                             <xsl:message select="'Starting splinter ', $this-position, 'at ', $this-new-pos-int"/>
-                                             <xsl:message select="'Substring start: ', $this-substring-start"/>
-                                             <xsl:message select="'Substring length: ', $this-substring-length"/>
-                                             <xsl:message select="'Text portion: ' || $this-text-portion"/>
+                                             <xsl:message
+                                                select="'Starting splinter ', $this-position, 'at ', $this-new-pos-int"/>
+                                             <xsl:message
+                                                select="'Substring start: ', $this-substring-start"/>
+                                             <xsl:message
+                                                select="'Substring length: ', $this-substring-length"/>
+                                             <xsl:message
+                                                select="'Text portion: ' || $this-text-portion"/>
                                           </xsl:if>
-                                          
+
                                           <xsl:element name="{name($this-element)}"
                                              namespace="tag:textalign.net,2015:ns">
                                              <xsl:copy-of select="$this-element/@*"/>
@@ -538,11 +544,13 @@
                                                 <xsl:value-of select="$this-text-portion"/>
                                              </txt>
                                              <xsl:for-each select="$this-element/tan:wit">
-                                                <xsl:variable name="this-diff-with-linking-text-pos" select="$this-pos-int - xs:integer(@pos)"/>
+                                                <xsl:variable name="this-diff-with-linking-text-pos"
+                                                  select="$this-pos-int - xs:integer(@pos)"/>
                                                 <xsl:copy copy-namespaces="no">
                                                   <xsl:copy-of select="@ref"/>
                                                   <xsl:attribute name="pos"
-                                                  select="$this-new-pos-int - $this-diff-with-linking-text-pos"/>
+                                                  select="$this-new-pos-int - $this-diff-with-linking-text-pos"
+                                                  />
                                                 </xsl:copy>
                                              </xsl:for-each>
                                              <xsl:copy-of select="$this-element/tan:x"/>
@@ -560,9 +568,9 @@
 
                   </xsl:copy>
                </xsl:for-each>
-                
+
             </xsl:variable>
-            
+
 
             <xsl:variable name="new-base-collation" as="element()">
                <collation>
@@ -570,7 +578,7 @@
                   from one collation to the next. -->
                   <xsl:copy-of select="$collation-so-far/tan:witness"/>
                   <witness id="{$this-label}"/>
-                  
+
                   <!-- The collations we are gathering consist of elements that have identical sequences of @pos for the linking
                   text, and they are in numerical order. So by grouping by the linking text @pos, we are guaranteed groups 
                   made up of the following items from the two collations:
@@ -594,30 +602,37 @@
                               string). Further, the final group might have:
                       No base element + no new element         nothing
                 -->
-                  <xsl:for-each-group select="$both-collations-splintered/*" group-by="*[@ref = $previous-string-label]/@pos">
+                  <xsl:for-each-group select="$both-collations-splintered/*"
+                     group-by="*[@ref = $previous-string-label]/@pos">
                      <!--<xsl:sort select="number(current-grouping-key())"/>-->
-                     
+
                      <!-- If from the groups about to be created the first of the two groups fails to have a reference to
                      the incoming text, we need a reference with an accurate @pos, so now we get all those that are 
                      available. -->
-                     <xsl:variable name="refs-to-new-text" select="current-group()/*[@ref = $this-label]"/>
-                     
-                     <xsl:for-each-group select="current-group()" group-by="exists(tan:wit[@ref = $previous-string-label])">
+                     <xsl:variable name="refs-to-new-text"
+                        select="current-group()/*[@ref = $this-label]"/>
+
+                     <xsl:for-each-group select="current-group()"
+                        group-by="exists(tan:wit[@ref = $previous-string-label])">
                         <!-- If indeed the group has a reading from the linking text, it should come second, and the sort places 
                            false before true -->
                         <xsl:sort select="current-grouping-key()"/>
                         <xsl:variable name="group-has-linking-text" select="current-grouping-key()"/>
-                        <xsl:variable name="these-base-collation-items" select="current-group()[ancestor::tan:collation/@is-base = true()]"/>
+                        <xsl:variable name="these-base-collation-items"
+                           select="current-group()[ancestor::tan:collation/@is-base = true()]"/>
                         <!-- We know there will be no more than one of the following -->
-                        <xsl:variable name="this-new-collation-item" select="current-group() except $these-base-collation-items"/>
+                        <xsl:variable name="this-new-collation-item"
+                           select="current-group() except $these-base-collation-items"/>
                         <xsl:choose>
                            <xsl:when test="count($this-new-collation-item) gt 1">
-                              <xsl:message select="'Unexpected: more than one new collation item: ', serialize($this-new-collation-item)"/>
+                              <xsl:message
+                                 select="'Unexpected: more than one new collation item: ', serialize($this-new-collation-item)"
+                              />
                            </xsl:when>
-                           
+
                            <xsl:when test="not($group-has-linking-text)">
                               <!-- scenario #1, the front end described above -->
-                              
+
                               <xsl:variable name="base-text-match-positions"
                                  select="
                                     for $i in (1 to count($these-base-collation-items))
@@ -625,22 +640,23 @@
                                        (if ($these-base-collation-items[$i]/tan:txt = $this-new-collation-item/tan:txt) then
                                           $i
                                        else
-                                          ())"
-                              />
+                                          ())"/>
                               <xsl:for-each select="$these-base-collation-items">
                                  <xsl:copy>
                                     <xsl:copy-of select="node()"/>
                                     <xsl:choose>
                                        <!-- If the incoming new item matches the text of more than one base item, use only the last to
                                        make a copy of the new witness. -->
-                                       <xsl:when test="position() = $base-text-match-positions[last()]">
+                                       <xsl:when
+                                          test="position() = $base-text-match-positions[last()]">
                                           <xsl:copy-of select="$this-new-collation-item/tan:wit"/>
                                        </xsl:when>
 
                                        <xsl:when test="(exists($base-text-match-positions)) and (position() gt $base-text-match-positions[last()])">
                                           <!-- For items after the last match, we need to increase the @pos by however long the string was -->
                                           <x>
-                                             <xsl:copy-of select="$this-new-collation-item/tan:wit/@ref"/>
+                                             <xsl:copy-of
+                                                select="$this-new-collation-item/tan:wit/@ref"/>
                                              <xsl:attribute name="pos"
                                                 select="number($this-new-collation-item/tan:wit/@pos) + string-length($this-new-collation-item/tan:txt)"
                                              />
@@ -653,23 +669,26 @@
                                        </xsl:otherwise>
                                     </xsl:choose>
                                  </xsl:copy>
-                              </xsl:for-each> 
+                              </xsl:for-each>
                               <xsl:if test="not(exists($base-text-match-positions))">
                                  <!-- If there are no unique elements in the base that have a matching text, then insert the new 
                                     unique element -->
                                  <xsl:copy-of select="$this-new-collation-item"/>
                               </xsl:if>
                            </xsl:when>
-                           
+
                            <!-- error checks betwen scenarios #1 and #2, and special situations -->
-                           
+
                            <xsl:when test="count($these-base-collation-items) gt 1">
-                              <xsl:message select="'Unexpected: more than one base collation item: ', serialize($these-base-collation-items)"/>
-                              <xsl:message select="'Accompanying new collation item: ', serialize($this-new-collation-item)"/>
+                              <xsl:message
+                                 select="'Unexpected: more than one base collation item: ', serialize($these-base-collation-items)"/>
+                              <xsl:message
+                                 select="'Accompanying new collation item: ', serialize($this-new-collation-item)"
+                              />
                            </xsl:when>
                            <!-- If the current group is just a placeholder, but has no actual text, skip it -->
                            <xsl:when test="not(current-group()/tan:txt/text())"/>
-                           
+
                            <!-- The following two special situations, where <txt> is empty, have been replaced by the preceding <xsl:when> -->
                            <!--<xsl:when test="(count(current-group()) eq 1) and (name($this-new-collation-item) = 'c') and not($this-new-collation-item/tan:txt/text())">
                               <!-\- This is a case where we're at the end of the iteration, the base collation ends with a <u> because the
@@ -691,7 +710,7 @@
                                        'base') || ' item, linking text ' || $previous-string-label || '): ', serialize(current-group())"
                               />
                            </xsl:when>
-                           
+
                            <!-- If we've gotten to this point, we're at the second group, the tail-end, scenario #2 described above -->
                            <xsl:when test="(name($this-new-collation-item) = 'u')">
                               <!-- If the new collation item is <u> then the reading is not attested in the new string, so no 
@@ -703,7 +722,8 @@
                                  <xsl:copy-of select="$this-new-collation-item/tan:x"/>
                               </u>
                            </xsl:when>
-                           <xsl:when test="(name($these-base-collation-items) = 'u') and (name($this-new-collation-item) = 'c')">
+                           <xsl:when
+                              test="(name($these-base-collation-items) = 'u') and (name($this-new-collation-item) = 'c')">
                               <u>
                                  <xsl:copy-of select="$these-base-collation-items/node()"/>
                                  <wit>
@@ -711,7 +731,8 @@
                                  </wit>
                               </u>
                            </xsl:when>
-                           <xsl:when test="(name($these-base-collation-items) = 'c') and (name($this-new-collation-item) = 'c')">
+                           <xsl:when
+                              test="(name($these-base-collation-items) = 'c') and (name($this-new-collation-item) = 'c')">
                               <c>
                                  <xsl:copy-of select="$these-base-collation-items/node()"/>
                                  <wit>
@@ -721,12 +742,14 @@
                            </xsl:when>
                            <xsl:otherwise>
                               <!-- Not quite sure what's going on, so we bellow and moan -->
-                              <xsl:message select="'We are not quite sure what to do with: ', serialize(current-group())"/>
+                              <xsl:message
+                                 select="'We are not quite sure what to do with: ', serialize(current-group())"
+                              />
                            </xsl:otherwise>
                         </xsl:choose>
-                     </xsl:for-each-group> 
-                     
-                  </xsl:for-each-group> 
+                     </xsl:for-each-group>
+
+                  </xsl:for-each-group>
                </collation>
             </xsl:variable>
 
@@ -741,34 +764,48 @@
                <xsl:message select="'This diff (not adjusted): ' || serialize($this-diff)"/>
                <xsl:message select="'This diff (adjusted): ' || serialize($this-diff-adjusted)"/>
                <xsl:message select="'This diff as collation: ' || serialize($this-diff-collation)"/>
-               <xsl:message select="'Linking text @pos values compared: ' || serialize($pos-values-compared)"/>
-               <xsl:message select="'Places where the two collations should be broken up: ' || serialize($pos-values-to-add)"/>
-               <xsl:message select="'Base collation splintered: ' || serialize($both-collations-splintered[1])"/>
-               <xsl:message select="'New collation splintered: ' || serialize($both-collations-splintered[2])"/>
+               <xsl:message
+                  select="'Linking text @pos values compared: ' || serialize($pos-values-compared)"/>
+               <xsl:message
+                  select="'Places where the two collations should be broken up: ' || serialize($pos-values-to-add)"/>
+               <xsl:message
+                  select="'Base collation splintered: ' || serialize($both-collations-splintered[1])"/>
+               <xsl:message
+                  select="'New collation splintered: ' || serialize($both-collations-splintered[2])"/>
                <xsl:message select="'New base collation: ' || serialize($new-base-collation)"/>
             </xsl:if>
 
             <!-- The following diagnostic passage interjects feedback straight into the output, a more drastic method of
                feedback which may or may not be the best way to diagnose a problem. -->
-            
+
             <xsl:if test="$diagnostics-on and $imprint-diagnostics-on">
                <diagnostics>
                   <previous-collation n="{position()}">
-                     <added-witness><xsl:value-of select="$previous-string-label"/></added-witness>
+                     <added-witness>
+                        <xsl:value-of select="$previous-string-label"/>
+                     </added-witness>
                      <xsl:copy-of select="$collation-so-far"/>
                   </previous-collation>
-                  <diff><xsl:copy-of select="$this-diff"/></diff>
-                  <diff-adjusted><xsl:copy-of select="$this-diff-adjusted"/></diff-adjusted>
-                  <base-coll-splintered><xsl:copy-of select="$both-collations-splintered[1]"/></base-coll-splintered>
-                  <new-coll-splintered><xsl:copy-of select="$both-collations-splintered[2]"/></new-coll-splintered>
+                  <diff>
+                     <xsl:copy-of select="$this-diff"/>
+                  </diff>
+                  <diff-adjusted>
+                     <xsl:copy-of select="$this-diff-adjusted"/>
+                  </diff-adjusted>
+                  <base-coll-splintered>
+                     <xsl:copy-of select="$both-collations-splintered[1]"/>
+                  </base-coll-splintered>
+                  <new-coll-splintered>
+                     <xsl:copy-of select="$both-collations-splintered[2]"/>
+                  </new-coll-splintered>
                </diagnostics>
             </xsl:if>
-            
+
             <!-- If we're at the end of the iteration, we're done and we can return the last collation. -->
             <xsl:if test="$iteration eq $string-count">
                <xsl:copy-of select="$new-base-collation"/>
             </xsl:if>
-            
+
             <xsl:next-iteration>
                <xsl:with-param name="collation-so-far" select="$new-base-collation"/>
                <xsl:with-param name="previous-string" select="."/>
@@ -776,18 +813,25 @@
             </xsl:next-iteration>
          </xsl:iterate>
       </xsl:variable>
+
+      <xsl:variable name="cleaned-up-collation-pass-1" as="element()*">
+         <xsl:apply-templates select="$fragmented-collation" mode="clean-up-collation-pass-1">
+            <xsl:with-param name="allow-recollation" tunnel="yes" select="$clean-up-collation"/>
+         </xsl:apply-templates>
+      </xsl:variable>
       
-      <xsl:variable name="cleaned-up-collation" as="element()*">
+      <xsl:variable name="cleaned-up-collation-pass-2" as="element()*">
          <xsl:choose>
             <xsl:when test="$clean-up-collation">
-               <xsl:apply-templates select="$fragmented-collation" mode="clean-up-collation"/>
+               <xsl:apply-templates select="$cleaned-up-collation-pass-1" mode="clean-up-collation-pass-2"
+               />
             </xsl:when>
             <xsl:otherwise>
-               <xsl:sequence select="$fragmented-collation"/>
+               <xsl:sequence select="$cleaned-up-collation-pass-1"/>
             </xsl:otherwise>
          </xsl:choose>
       </xsl:variable>
-      
+
       <!-- output for the entire function -->
       <collation>
          <xsl:for-each select="$string-labels-re-sorted">
@@ -795,40 +839,46 @@
             <xsl:variable name="these-diffs" select="$diffs-sorted[(@a, @b) = $this-string-label]"/>
             <witness id="{.}">
                <xsl:for-each select="$these-diffs">
-                  <xsl:variable name="that-string-label" select="(@a, @b)[not(. = $this-string-label)]"/>
+                  <xsl:variable name="that-string-label"
+                     select="(@a, @b)[not(. = $this-string-label)]"/>
                   <commonality with="{$that-string-label}">
                      <xsl:value-of select="@commonality"/>
                   </commonality>
                </xsl:for-each>
             </witness>
          </xsl:for-each>
-         <xsl:copy-of select="$cleaned-up-collation/*"/>
+         <xsl:copy-of select="$cleaned-up-collation-pass-2/*"/>
       </collation>
-      
+
       <xsl:variable name="check-output-integrity" as="xs:boolean" select="true()"/>
       <xsl:if test="$check-output-integrity">
          <xsl:for-each select="1 to count($string-labels-re-sorted)">
             <xsl:variable name="this-pos" select="."/>
             <xsl:variable name="this-label" select="$string-labels-re-sorted[$this-pos]"/>
             <xsl:variable name="this-input-string" select="$strings-re-sorted[$this-pos]"/>
-            <xsl:variable name="this-output-string" select="string-join($cleaned-up-collation/*[tan:wit/@ref = $this-label]/tan:txt)"/>
+            <xsl:variable name="this-output-string"
+               select="string-join($cleaned-up-collation-pass-2/*[tan:wit/@ref = $this-label]/tan:txt)"
+            />
             <xsl:if test="not($this-input-string eq $this-output-string)">
-               <xsl:message select="'Error in tan:collate(). String ' || $this-label || ' does not match output.'"/>
-               <xsl:message select="serialize(tan:diff($this-input-string, $this-output-string, false()))"/>
+               <xsl:message
+                  select="'Error in tan:collate(). String ' || $this-label || ' does not match output.'"/>
+               <xsl:message
+                  select="serialize(tan:diff($this-input-string, $this-output-string, false()))"/>
             </xsl:if>
          </xsl:for-each>
       </xsl:if>
-      
+
    </xsl:function>
    
    <!-- <x> was just a placeholder that can easily be determined by the lack of a <wit>; <witness>
    is no longer needed because it has been reconstructed, perhaps with collation statistics. -->
-   <xsl:template match="tan:x | tan:witness" mode="clean-up-collation"/>
-   <xsl:template match="tan:previous-collation | tan:diagnostics" mode="clean-up-collation">
+   <xsl:template match="tan:x | tan:witness" mode="clean-up-collation-pass-1"/>
+   <xsl:template match="tan:previous-collation | tan:diagnostics" mode="clean-up-collation-pass-1">
       <xsl:copy-of select="."/>
    </xsl:template>
    
-   <xsl:template match="*[tan:u]" mode="clean-up-collation">
+   <xsl:template match="*[tan:u]" mode="clean-up-collation-pass-1">
+      <xsl:param name="allow-recollation" select="true()" as="xs:boolean" tunnel="yes"/>
       <!-- A collation might have the following issues:
       1. nearby <u>s that have identical <txt> contents; the challenge is that such creatures are separated
       from each other by sibling <u>s that don't have identical <txt> contents.
@@ -836,6 +886,7 @@
       routine was run on the fragments. -->
       <!-- Prior to this step, consecutive <u>s should have <wit>s that follow the order of the sources. After this step,
       that principle is no longer true. -->
+      <xsl:variable name="witness-count" select="count(tan:witness)"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:for-each-group select="*" group-adjacent="name(.)">
@@ -850,8 +901,12 @@
                            count($these-u-wits[@ref = $i])"
                   />
                   <!-- (max($these-u-wit-counts) gt 1) and  -->
+                  <!--<xsl:variable name="these-us-should-be-recollated"
+                     select="(count($these-u-wit-refs) gt 2)"/>-->
+                  <!--<xsl:variable name="these-us-should-be-recollated"
+                     select="$allow-recollation and (max($these-u-wit-counts) gt 1) and (count($these-u-wit-refs) gt 2)"/>-->
                   <xsl:variable name="these-us-should-be-recollated"
-                     select="(count($these-u-wit-refs) gt 2)"/>
+                     select="$allow-recollation and (count($these-u-wit-refs) gt 2)"/>
                   <xsl:variable name="these-u-strings" as="xs:string*"
                      select="
                         for $i in $these-u-wit-refs
@@ -870,7 +925,14 @@
                   <xsl:variable name="diagnostics-on" select="false()"/>
                   <xsl:if test="$diagnostics-on">
                      <xsl:message select="'Diagnostics on, template mode clean-up-collation'"/>
-                     <xsl:message select="'These u witness refs: (', count($these-u-wit-refs), '): ', string-join($these-u-wit-refs, ', ')"/>
+                     <xsl:message select="'Allow recollation?', $allow-recollation"/>
+                     <xsl:message
+                        select="
+                           'These u witness refs: (', count($these-u-wit-refs), '): ',
+                           (for $i in $these-u-wit-refs
+                           return
+                              ($i || ' (pos ' || $these-u-wits[@ref = $i][1]/@pos || '); '))"
+                     />
                      <xsl:message select="'These u witness counts: ', $these-u-wit-counts"/>
                      <xsl:message select="'These us should be recollated: ', $these-us-should-be-recollated"/>
                      <xsl:message select="'These u strings: ', (for $i in $these-u-strings return '[START]' || $i || '[END]  ')"/>
@@ -887,11 +949,18 @@
                         </xsl:if>
                         
                         <xsl:for-each select="$these-us-recollated/(* except tan:witness)">
-                           <u>
+                           <xsl:variable name="this-element-name"
+                              select="
+                                 if (count(tan:wit) eq $witness-count) then
+                                    'c'
+                                 else
+                                    'u'"
+                           />
+                           <xsl:element name="{$this-element-name}">
                               <xsl:apply-templates select="* except tan:x" mode="add-collation-pos-offset">
                                  <xsl:with-param name="offsets" select="$these-offsets"/>
                               </xsl:apply-templates>
-                           </u>
+                           </xsl:element>
                         </xsl:for-each>
                      </xsl:when>
                      
@@ -969,6 +1038,28 @@
       <xsl:copy>
          <xsl:copy-of select="@* except @pos"/>
          <xsl:attribute name="pos" select="$this-pos + $this-offset-pos - 1"/>
+      </xsl:copy>
+   </xsl:template>
+   
+   <xsl:template match="*[tan:u]" mode="clean-up-collation-pass-2">
+      <!-- At the end of cleanup, there may be adjacent <c>s, which should be consolidated -->
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:for-each-group select="*" group-adjacent="name(.)">
+            <xsl:choose>
+               <xsl:when test="(current-grouping-key() eq 'c') and (count(current-group()) gt  1)">
+                  <c>
+                     <txt>
+                        <xsl:value-of select="string-join(current-group()/tan:txt)"/>
+                     </txt>
+                     <xsl:copy-of select="current-group()[1]/tan:wit"/>
+                  </c>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:copy-of select="current-group()"/>
+               </xsl:otherwise>
+            </xsl:choose>
+         </xsl:for-each-group> 
       </xsl:copy>
    </xsl:template>
    
