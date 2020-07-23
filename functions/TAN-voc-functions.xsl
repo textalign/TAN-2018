@@ -56,44 +56,28 @@
          </xsl:apply-templates>
       </xsl:copy>
    </xsl:template>
-   <xsl:template match="tan:affects-element" mode="core-expansion-terse">
+   <xsl:template match="*[@affects-element]/tan:affects-element" mode="core-expansion-terse">
       <xsl:variable name="this-val" select="."/>
+      <xsl:if test="not(. = $TAN-elements-that-take-the-attribute-which/@name)">
+         <xsl:variable name="this-fix" as="element()*">
+            <xsl:for-each select="$TAN-elements-that-take-the-attribute-which/@name">
+               <xsl:sort select="matches(., $this-val)" order="descending"/>
+               <element affects-element="{.}"/>
+            </xsl:for-each>
+         </xsl:variable>
+         <xsl:copy-of
+            select="tan:error('voc03', concat('try: ', string-join($this-fix/@affects-element, ', ')), $this-fix, 'copy-attributes')"
+         />
+      </xsl:if>
+      <xsl:if test="($this-val = 'vocabulary') and not(tan:doc-id-namespace(root(.)) = $TAN-id-namespace)">
+         <xsl:copy-of select="tan:error('voc06')"/>
+      </xsl:if>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
-         <xsl:if test="not(. = $TAN-elements-that-take-the-attribute-which/@name)">
-            <xsl:variable name="this-fix" as="element()*">
-               <xsl:for-each select="$TAN-elements-that-take-the-attribute-which/@name">
-                  <xsl:sort select="matches(., $this-val)" order="descending"/>
-                  <element affects-element="{.}"/>
-               </xsl:for-each>
-            </xsl:variable>
-            <xsl:copy-of
-               select="tan:error('voc03', concat('try: ', string-join($this-fix/@affects-element, ', ')), $this-fix, 'copy-attributes')"
-            />
-         </xsl:if>
-         <xsl:if test="($this-val = 'vocabulary') and not(tan:doc-id-namespace(root(.)) = $TAN-id-namespace)">
-            <xsl:copy-of select="tan:error('voc06')"/>
-         </xsl:if>
          <xsl:apply-templates mode="#current"/>
       </xsl:copy>
    </xsl:template>
-   <!--<xsl:template match="tan:group" mode="core-expansion-terse core-expansion-normal">
-      <xsl:param name="inherited-affects-elements" tunnel="yes"/>
-      <xsl:variable name="immediate-affects-elements" select="tan:affects-element"/>
-      <xsl:variable name="these-affects-elements"
-         select="
-            if (exists($immediate-affects-elements)) then
-               $immediate-affects-elements
-            else
-               $inherited-affects-elements"/>
-      <xsl:copy>
-         <xsl:copy-of select="@*"/>
-         <xsl:apply-templates mode="#current">
-            <xsl:with-param name="inherited-affects-elements" select="$these-affects-elements"
-               tunnel="yes"/>
-         </xsl:apply-templates>
-      </xsl:copy>
-   </xsl:template>-->
+
    <xsl:template match="tan:item | tan:verb" mode="core-expansion-terse">
       <xsl:param name="is-reserved" as="xs:boolean?" tunnel="yes"/>
       <xsl:variable name="these-affects-elements" select="tan:affects-element/text()"/>
