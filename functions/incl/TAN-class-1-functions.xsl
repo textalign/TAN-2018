@@ -1685,168 +1685,13 @@
       <xsl:apply-templates mode="#current"/>
    </xsl:template>
    
-   <xsl:function name="tan:check-tok-refs-for-validation" as="element()*">
-      <!-- Input: a string to check; a token definition element; any sequence of expanded class-2 elements 
-         that refer to tokens (ancestors of <pos> + <val>/<rgx>); two strings, one with an idref to the source
-         and the other for the div ref
-      -->
-      <!-- Output: shallow copies of <pos>, with any errors inserted. If a rgx-based token reference, then <pos> takes a <val>
-         with the value of the token found, <chars> is evaluated for errors, and inserted after any <pos> output. Neither of the 
-         last two steps are needed in a val-based token reference.
-      -->
-      <!-- Written for the validation process only. -->
-      <xsl:param name="string-to-check" as="xs:string?"/>
-      <xsl:param name="token-definition" as="element(tan:token-definition)"/>
-      <xsl:param name="token-ref-parents" as="element()*"/>
-      <xsl:param name="source-idref" as="xs:string?"/>
-      <xsl:param name="div-ref" as="xs:string?"/>
-      <xsl:variable name="these-val-based-refs" select="$token-ref-parents[tan:pos][tan:val]" as="element()*"/>
-      <xsl:variable name="these-rgx-based-refs" select="$token-ref-parents[tan:pos][tan:rgx]" as="element()*"/>
-      <xsl:variable name="these-orphaned-refs"
-         select="$token-ref-parents except ($these-val-based-refs, $these-rgx-based-refs)"/>
-      <xsl:variable name="all-tokens" as="xs:string*">
-         <xsl:analyze-string select="$string-to-check" regex="{$token-definition/@pattern}">
-            <xsl:matching-substring>
-               <xsl:value-of select="."/>
-            </xsl:matching-substring>
-         </xsl:analyze-string>
-      </xsl:variable>
-      <xsl:variable name="all-tokens-enumerated" as="element()">
-         <toks>
-            <xsl:for-each select="$all-tokens">
-               <tok pos="{position()}">
-                  <xsl:value-of select="."/>
-               </tok>
-            </xsl:for-each>
-         </toks>
-      </xsl:variable>
-      <xsl:variable name="all-tokens-grouped" as="element()?">
-         <toks>
-            <xsl:for-each-group select="$all-tokens-enumerated/*" group-by=".">
-               <group val="{current-grouping-key()}">
-                  <xsl:copy-of select="current-group()"/>
-               </group>
-            </xsl:for-each-group>
-         </toks>
-      </xsl:variable>
-      
-      <xsl:for-each select="$these-orphaned-refs">
-         <xsl:message select="'Cannot check the following tok ref for validation: ', tan:xml-to-string(.)"/>
-      </xsl:for-each>
-      
-      <xsl:for-each select="$these-val-based-refs/tan:val">
-         <xsl:variable name="this-val" select="."/>
-         <xsl:variable name="these-matches" select="$all-tokens-grouped/tan:group[@val = $this-val]"/>
-
-         <xsl:if test="exists($these-matches)">
-            <xsl:variable name="this-match-count" select="count($these-matches/tan:tok)"/>
-            <xsl:variable name="this-val-length" select="string-length($this-val)"/>
-            <xsl:variable name="these-poses" select="../tan:pos"/>
-            <xsl:for-each select="$these-poses">
-               <xsl:variable name="this-pos-value"
-                  select="tan:expand-numerical-sequence(., $this-match-count)"/>
-               <xsl:variable name="this-tok-match" select="$these-matches/tan:tok[$this-pos-value]"/>
-               <xsl:copy>
-                  <xsl:copy-of select="@*"/>
-                  <!--<xsl:copy-of select="$this-tok-match"/>-->
-                  <xsl:if test="not(exists($this-tok-match))">
-                     <xsl:copy-of
-                        select="tan:error('tok01', concat('Source ', $source-idref, ' has ', string($this-match-count), ' instances of ', $this-val, ' at ref ', $div-ref))"
-                     />
-                  </xsl:if>
-                  <xsl:copy-of select="tan:sequence-error($this-pos-value)"/>
-               </xsl:copy>
-            </xsl:for-each>
-         </xsl:if>
-      </xsl:for-each>
-      
-      <!-- rgx-based token anchors are more complicated than val-based ones, because neither the target text nor the value of @chars can be
-      calculated without a specific context -->
-      <xsl:for-each select="$these-rgx-based-refs/tan:rgx">
-         <xsl:variable name="this-rgx" select="."/>
-         <xsl:variable name="these-matches" select="$all-tokens-grouped/tan:group[matches(@val, $this-rgx)]"/>
-         <xsl:if test="exists($these-matches)">
-            <xsl:variable name="this-new-group" as="element()">
-               <xsl:choose>
-                  <xsl:when test="count($these-matches) eq 1">
-                     <xsl:sequence select="$these-matches"/>
-                  </xsl:when>
-                  <xsl:otherwise>
-                     <group>
-                        <xsl:for-each select="$these-matches/tan:tok">
-                           <xsl:sort select="number(@pos)"/>
-                           <xsl:copy-of select="."/>
-                        </xsl:for-each> 
-                     </group>
-                  </xsl:otherwise>
-               </xsl:choose>
-            </xsl:variable>
-            <xsl:variable name="this-match-count" select="count($these-matches/tan:tok)"/>
-            <xsl:variable name="these-poses" select="../tan:pos"/>
-            <xsl:variable name="these-pos-values"
-               select="
-                  for $i in $these-poses
-                  return
-                     tan:expand-numerical-sequence($i, $this-match-count)"
-            />
-            <xsl:variable name="these-toks-chosen"
-               select="$this-new-group/tan:tok[position() = $these-pos-values]"/>
-            <xsl:variable name="min-tok-length" as="xs:integer?">
-               <xsl:for-each select="$these-toks-chosen">
-                  <xsl:sort select="string-length(.)"/>
-                  <xsl:if test="position() = 1">
-                     <xsl:sequence select="string-length(.)"/>
-                  </xsl:if>
-               </xsl:for-each>
-            </xsl:variable>
-            <xsl:variable name="these-chars" select="../tan:chars"/>
-            
-            <xsl:for-each select="$these-poses">
-               <xsl:variable name="this-pos-value"
-                  select="tan:expand-numerical-sequence(., $this-match-count)"/>
-               <xsl:variable name="this-tok-match" select="$this-new-group/tan:tok[$this-pos-value]"/>
-               
-               <xsl:copy>
-                  <xsl:copy-of select="@*"/>
-                  <xsl:copy-of select="$this-tok-match"/>
-                  <xsl:if test="not(exists($this-tok-match))">
-                     <xsl:copy-of
-                        select="tan:error('tok01', concat('Source ', $source-idref, ' has ', string($this-match-count), ' matches on ', $this-rgx, ' at ref ', $div-ref))"
-                     />
-                  </xsl:if>
-                  <xsl:copy-of select="tan:sequence-error($this-pos-value)"/>
-               </xsl:copy>
-               <xsl:if test="exists($this-tok-match)">
-                  <xsl:variable name="this-tok-match-length" select="count(tan:chop-string($this-tok-match))"/>
-                  <xsl:for-each select="$these-chars">
-                     <xsl:variable name="this-char-int" select="tan:expand-numerical-sequence(., $this-tok-match-length)"/>
-                     <xsl:copy>
-                        <xsl:copy-of select="@*"/>
-                        <xsl:if test="$this-char-int le 0">
-                           <xsl:copy-of select="tan:error('chr01', concat('Source ', $source-idref, ' at ref ', $div-ref, ' matches ', $this-tok-match, 
-                              ' (length ', string($this-tok-match-length), ' characters) '))"/>
-                        </xsl:if>
-                     </xsl:copy>
-                  </xsl:for-each>
-               </xsl:if>
-            </xsl:for-each>
-            
-         </xsl:if>
-      </xsl:for-each>
-   </xsl:function>
-   
    <xsl:template match="tan:TAN-T/tan:body" mode="mark-dependencies-for-validation">
       <xsl:param name="src-id" tunnel="yes" as="xs:string"/>
       <xsl:param name="token-definition" tunnel="yes" as="element()"/>
       <xsl:param name="reference-trees" tunnel="yes" as="element()*"/>
       
-      <!--<xsl:variable name="universal-token-refs" select="$reference-trees/tan:tok"/>-->
       <xsl:copy>
          <xsl:copy-of select="@*"/>
-         <!--<xsl:if test="exists($universal-token-refs)">
-            <xsl:variable name="this-text-normalized" select="tan:text-join(.)"/>
-            <xsl:copy-of select="tan:check-tok-refs-for-validation($this-text-normalized, $token-definition, $universal-token-refs, $src-id, '[all]')"/>
-         </xsl:if>-->
          <xsl:if test="exists($reference-trees)">
             <xsl:apply-templates mode="#current">
                <xsl:with-param name="reference-trees" tunnel="yes" select="$reference-trees/tan:div"/>
@@ -1900,18 +1745,11 @@
       
       <!-- copy only the anchors that match, with any <ref> (div anchor) and <pos> (token anchors) nested -->
       <xsl:if test="exists($these-ref-parents)">
-         <!--<xsl:variable name="this-text-normalized" select="tan:text-join(.)"/>-->
 
          <xsl:for-each select="$these-ref-parents">
-            <!--<xsl:variable name="these-pos-parents" select="descendant-or-self::*[tan:pos]"/>-->
             <xsl:copy>
                <xsl:copy-of select="@*"/>
                <xsl:copy-of select="tan:ref[text() = $these-refs]"/>
-               <!--<xsl:if test="exists($these-pos-parents)">
-                  <xsl:copy-of
-                     select="tan:check-tok-refs-for-validation($this-text-normalized, $token-definition, $these-pos-parents, $src-id, tan:ref[1]/text())"
-                  />
-               </xsl:if>-->
             </xsl:copy>
          </xsl:for-each>
       </xsl:if>
