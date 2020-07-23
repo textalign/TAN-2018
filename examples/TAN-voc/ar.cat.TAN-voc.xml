@@ -27,7 +27,8 @@
                 <IRI>http://schema.org/creator</IRI>
                 <name xml:lang="eng">creator</name>
             </role>
-            <role xml:id="stylesheet1" which="stylesheet"/></vocabulary-key>
+            <role xml:id="stylesheet1" which="stylesheet"/>
+        </vocabulary-key>
         <file-resp who="park"/>
         <resp who="xslt3" roles="stylesheet1"/>
         <resp roles="creator" who="park"/>

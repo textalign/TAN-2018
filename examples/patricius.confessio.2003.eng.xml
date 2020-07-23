@@ -171,7 +171,6 @@
             <location href="../applications/convert/convert%20TAN%202018%20to%20TAN%202020.xsl" accessed-when="2018-08-09T11:14:11.796-04:00"/>
          </algorithm>
          <div-type xml:id="sect" which="section"/>
-         <div-type xml:id="title" which="title"/>
          <div-type xml:id="para" which="paragraph"/><comment when="2016-01-25-05:00" who="park">The following agents and roles apply only to the
          preparation of the TAN file, not the original TEI file that serves as the source. See the
          teiHeader for details on responsibility.</comment>

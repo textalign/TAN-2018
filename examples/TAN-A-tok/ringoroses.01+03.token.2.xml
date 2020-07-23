@@ -28,7 +28,7 @@
         </source>
         <adjustments src="ger">
             <skip div-type="Gedicht"/>
-            <rename ref="5" new="4"/>
+            <rename ref="1 e" new="4"/>
         </adjustments>
         <vocabulary-key>
             <algorithm xml:id="xslt2">
