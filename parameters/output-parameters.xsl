@@ -32,6 +32,6 @@
 
    <!-- What directory is the default for saving output? -->
    <xsl:param name="default-output-directory-resolved" as="xs:string"
-      select="resolve-uri('../../output/html/', static-base-uri())"/>
+      select="resolve-uri('../../output/', static-base-uri())"/>
 
 </xsl:stylesheet>
