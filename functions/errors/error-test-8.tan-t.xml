@@ -35,7 +35,7 @@
             <name>Vocabulary</name>
             <location href="error-test-2.tan-voc.xml" accessed-when="2012-12-01"/>
         </vocabulary>
-        <!-- lnk05 wrn02 wrn07 inc06 -->
+        <!-- lnk05 wrn02 wrn07 -->
         <vocabulary>
             <IRI>tag:textalign.net,2015:error-test</IRI>
             <name>Error test file 1</name>

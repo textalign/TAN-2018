@@ -52,5 +52,11 @@
                 <m>a b</m>
             </lm>
         </ana>
+        <ana>
+            <tok val="Books" ref="7"/>
+            <lm>
+                <m>a</m>
+            </lm>
+        </ana>
     </body>
 </TAN-A-lm>

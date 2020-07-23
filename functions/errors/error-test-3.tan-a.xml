@@ -2,7 +2,7 @@
 <?xml-model href="../../schemas/TAN-A.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="../../schemas/TAN-A.sch" type="application/xml" phase="verbose" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <!-- this test file primed for verbose validation -->
-<!-- verbose: cat01 cat04 cat07 -->
+<!-- verbose: cat01 cat04 cat07 cat03 (because error test 4 has a bogus id in catalog.tan.xml) -->
 <TAN-A xmlns="tag:textalign.net,2015:ns" id="tag:textalign.net,2015:error-test" TAN-version="2020">
     <head>
         <name>Error test tan-a</name>
@@ -57,34 +57,36 @@
         </adjustments>
         <adjustments src="test-4">
             <skip ref="2"/>
-            <!-- cl214 -->
+            <!-- cl219 -->
             <skip ref="2"/>
             <!-- cl213 cl215 -->
             <rename n="huh" by="4"/>
             <!-- ref01 cl216 -->
             <rename ref="7.4-6" new="8.2"/>
-            <!-- cl218 -->
+            <!-- cl219 -->
             <rename ref="2" by="4"/>
             <rename ref="preface" new="pref1"/>
-            <!-- cl212 -->
+            <!-- cl219 -->
             <rename ref="preface" new="pref3"/>
-            <!-- cl206 -->
+            <!-- cl219 -->
             <rename n="preface" new="pref2"/>
             <!-- cl217 -->
             <rename ref="test3" new="3"/>
             <!-- rea03 -->
             <rename n="test4" new="test5"/>
-            <!-- cl205 -->
+            <!-- cl205 cl219 -->
             <equate n="3 iii"/>
-            <!-- cl204 -->
+            <!-- cl219 -->
             <equate n="test4 test6"/>
+            <!-- cl217 -->
             <reassign>
-                <!-- rea04 rea02 (because tokenization will still be tried on nonleaf divs) -->
+                <!-- rea04 -->
                 <passage ref="2a">
+                    <!-- tok01 -->
                     <from-tok pos="1"/>
+                    <!-- tok01 -->
                     <through-tok pos="1"/>
                 </passage>
-                <!-- rea02 -->
                 <passage ref="2a.3">
                     <from-tok pos="2"/>
                     <!-- rea01 -->
@@ -166,13 +168,12 @@
         <claim verb="quotes">
             <!-- ref01 -->
             <subject src="test-1" ref="2">
-                <!-- tok01 tan07 -->
+                <!-- tan07 tok01 -->
                 <tok rgx="\z+"/>
             </subject>
             <object src="test-4" ref="1">
-                <!-- seq02 seq03 seq06 tok01 cl211 -->
+                <!-- seq02 seq03 tok01 -->
                 <tok rgx=".+" pos="2-1, 8"/>
-                <!-- cl211 -->
                 <tok val="Line"/>
                 <!-- seq01 seq02 tok01 -->
                 <tok rgx=".+" pos="last-100, 1000"/>
@@ -180,15 +181,18 @@
             <!-- ref02 verbose -->
             <object work="test-4" ref="test999"/>
             <object src="test-4" ref="3.a">
-                <!-- chr01 -->
+                <!-- seq02 -->
                 <tok val="Some" chars="5"/>
+                <!-- chr01 -->
+                <tok rgx="Som.+" chars="5"/>
             </object>
             <!-- ref01 -->
             <object src="test-4" ref="bad4"/>
         </claim>
         <!-- clm08 -->
         <claim verb="reads">
-            <subject src="test-4" ref="3.a"/>
+            <!-- ref03 -->
+            <subject src="test-4" ref="3 - 1"/>
             <object>one version</object>
             <object>another version</object>
         </claim>

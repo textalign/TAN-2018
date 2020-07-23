@@ -28,6 +28,12 @@
             <name>test file 4</name>
             <location href="error-test-4.tan-tei.xml" accessed-when="2019-01-30"/>
         </inclusion>
+        <!-- inc04 inc06 wrn02 -->
+        <inclusion xml:id="test-8">
+            <IRI>tag:textalign.net,2015:error-test-8</IRI>
+            <name>test file 8</name>
+            <location href="error-test-8.tan-t.xml" accessed-when="2019-01-30"/>
+        </inclusion>
         <!-- loc02 wrn02 wrn03 wrn05 tan05 -->
         <see-also relationship="badidref">
             <!-- tan10 -->
@@ -127,6 +133,7 @@
         <resp who="xslt2" roles="stylesheet1"/>
         <resp roles="creator" who="park"/>
         <resp who="xslt1" roles="stylesheet1"/>
+        <resp include="test-8"/>
         <change when="2014-08-13" who="park">Started file</change>
         <change who="xslt1" when="2017-11-02T22:15:23.904-04:00">TAN file updated to 2018 schemas.</change>
         <change who="xslt2" when="2018-08-09T11:14:15.228-04:00">Converted from 2018 to 2019 schemas.</change>
@@ -146,5 +153,6 @@
         <div type="line" n="5"> </div>
         <!-- cl111 cl112 cl113 cl117 -->
         <div type="line" n="06">̐ Opening modifier; disallowed character:  . Space then modifier: ̋.</div>
+        <div type="book" n="7-8">Books 7-8</div>
     </body>
 </TAN-T>
