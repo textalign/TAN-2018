@@ -966,12 +966,15 @@
         <xsl:param name="check-vertically-before-horizontally" as="xs:boolean"/>
         <xsl:param name="vertical-stops-to-process" as="xs:double*"/>
         <xsl:param name="loop-counter" as="xs:integer"/>
+        
+        <xsl:variable name="short-size" select="string-length($short-string)"/>
+        
         <xsl:variable name="diagnostics-on" as="xs:boolean" select="false()"/>
         <xsl:if test="$diagnostics-on">
             <xsl:message select="'diagnostics on for tan:diff-outer-loop()'"/>
             <xsl:message select="'loop number ', $loop-counter"/>
         </xsl:if>
-        <xsl:variable name="short-size" select="string-length($short-string)"/>
+        
         <xsl:choose>
             <xsl:when test="string-length($long-string) lt 1"/>
             <xsl:when test="$short-size lt 1">
@@ -1027,6 +1030,70 @@
                 <xsl:message>Out of vertical stops</xsl:message>
                 <xsl:copy-of select="$short-string"/>
                 <xsl:copy-of select="$long-string"/>
+            </xsl:when>
+            <xsl:when test="$check-vertically-before-horizontally and $start-at-beginning">
+                <xsl:variable name="this-common-start" select="tan:common-start-string(($short-string, $long-string))"/>
+                <xsl:variable name="this-common-start-length" select="string-length($this-common-start)"/>
+                <xsl:choose>
+                    <xsl:when test="$this-common-start-length gt 0">
+                        <xsl:variable name="new-short" as="element()">
+                            <xsl:element name="{name($short-string)}">
+                                <xsl:attribute name="outer-loop" select="$loop-counter"/>
+                                <xsl:value-of
+                                    select="substring($short-string, $this-common-start-length + 1)"/>
+                            </xsl:element>
+                        </xsl:variable>
+                        <xsl:variable name="new-long" as="element()">
+                            <xsl:element name="{name($long-string)}">
+                                <xsl:attribute name="outer-loop" select="$loop-counter"/>
+                                <xsl:value-of
+                                    select="substring($long-string, $this-common-start-length + 1)"/>
+                            </xsl:element>
+                        </xsl:variable>
+                        
+                        <!--<xsl:message select="'common start: ', $this-common-start"/>
+                        <xsl:message select="'cs length:', $this-common-start-length"/>
+                        <xsl:message select="'new short:', $new-short"/>
+                        <xsl:message select="'new long:', $new-long"/>-->
+                        
+                        <common outer-loop="{$loop-counter}">
+                            <xsl:value-of select="$this-common-start"/>
+                        </common>
+                        <xsl:copy-of select="tan:diff-outer-loop($new-short, $new-long, true(), false(), $vertical-stops-to-process, $loop-counter + 1)"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:copy-of select="tan:diff-outer-loop($short-string, $long-string, true(), false(), $vertical-stops-to-process, $loop-counter + 1)"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:when test="$check-vertically-before-horizontally and not($start-at-beginning)">
+                <xsl:variable name="this-common-end" select="tan:common-end-string(($short-string, $long-string))"/>
+                <xsl:variable name="this-common-end-length" select="string-length($this-common-end)"/>
+                <xsl:choose>
+                    <xsl:when test="$this-common-end-length gt 0">
+                        <xsl:variable name="new-short" as="element()">
+                            <xsl:element name="{name($short-string)}">
+                                <xsl:attribute name="outer-loop" select="$loop-counter"/>
+                                <xsl:value-of
+                                    select="substring($short-string, 1, (string-length($short-string) - $this-common-end-length))"/>
+                            </xsl:element>
+                        </xsl:variable>
+                        <xsl:variable name="new-long" as="element()">
+                            <xsl:element name="{name($long-string)}">
+                                <xsl:attribute name="outer-loop" select="$loop-counter"/>
+                                <xsl:value-of
+                                    select="substring($long-string, 1, (string-length($long-string) - $this-common-end-length))"/>
+                            </xsl:element>
+                        </xsl:variable>
+                        <xsl:copy-of select="tan:diff-outer-loop($new-short, $new-long, true(), false(), $vertical-stops-to-process, $loop-counter + 1)"/>
+                        <common outer-loop="{$loop-counter}">
+                            <xsl:value-of select="$this-common-end"/>
+                        </common>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:copy-of select="tan:diff-outer-loop($short-string, $long-string, true(), false(), $vertical-stops-to-process, $loop-counter + 1)"/>
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:when>
             <xsl:otherwise>
                 <!-- Now we can search for parts of the short string within the long string -->
@@ -1190,6 +1257,7 @@
                                 <xsl:copy-of select="$short-tail-elements/text()"/>
                             </xsl:element>
                         </xsl:variable>
+                        
                         <xsl:variable name="head-input" as="element()*">
                             <xsl:for-each select="$long-head, $short-head">
                                 <xsl:sort select="string-length(.)"/>
