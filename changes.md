@@ -48,7 +48,7 @@ Referencing vocabulary is facilitated primarily through the new function `tan:vo
 Files are now resolved differently. 
 
 * The goal is to return a file that can be interpreted without reference to vocabularies (including standard TAN ones) or inclusions. (One would still need to fetch files referenced by class-2 `&lt;source>`s, or `&lt;redivision>`, `&lt;successor>`, `&lt;see-also>` etc.)
-* In resolving a file F, elements involved in inclusions are handled nearly at the very beginning. All inclusions are resolved recursively and returned to F as a set of `&lt;inclusion>`s that carry children errors, vocabulary items, and substitutions. The errors and vocabulary items are copied to F's `&lt;inclusion>` and individual substitutions are made in F. This means that inclusion now brings back not just specific elements, but the vocabulary upon which it depends. It also means ids/idrefs are qualified, with F's id/idrefs being distinct from any of F's inclusions' id/idrefs. This is important, because F might assign an id `foo` to a scriptum, but F's inclusion, to a person. This approach resolved other problems as well. Under the previous system, if you used `&lt;resp @include="incl1">` you would have to have also invoked `@include` for `&lt;role>` and `&lt;person>`. Previously, reference errors were reported not in the resolved file but only in terse expansion.
+* In resolving a file F, elements involved in inclusions are handled nearly at the very beginning. All inclusions are resolved recursively and returned to F as a set of `&lt;inclusion>`s that carry children errors, vocabulary items, and substitutions. The errors and vocabulary items are copied to F's `&lt;inclusion>` and individual substitutions are made in F. This means that inclusion now brings back not just specific elements, but the vocabulary upon which it depends. It also means that all ids/idrefs associated with the substitutions are imported as well. This is important, because it might lead to id conflicts. F might assign an id `foo` to a scriptum, but F's inclusion, to a person. Inclusion should not be taken lightly. This new approach resolved other problems as well. Under the previous system, if you used `&lt;resp @include="incl1">` you would have to have also invoked `@include` for `&lt;role>` and `&lt;person>`. Previously, reference errors were reported not in the resolved file but only in terse expansion.
 * Another important change in file resolution is in numbering schemes. Changes have been made to the way class 1 files are resolved with regard to values of `@n` (see below), to help reconcile synonyms. This means that when a class 1 file is resolved, its vocabulary must be resolved before values of `@n` can be normalized. This technique provides great flexibility to creators of class 1 files. But it complicates TAN-A files, In the 2018 schema, every `@ref` in a class 2 file was resolved independent of what the sources were doing. But in any claim that combines sources that have different systems of resolving ambiguous numerals (e.g., c as 3 in an alphabet system but 100 in Roman numerals), number resolution would require a complexity that is at present infeasible. In a future release, it is expected that TAN-A files will take `&lt;numeral>` specified for sources.
 * Resolution of numbers now happens at the conclusion of `tan:resolve-doc()`, because it requires querying vocabulary..
 
@@ -56,9 +56,9 @@ The above treats default resolution of a TAN file. But sometimes we are interest
 
 Expansion has been streamlined, to avoid summoning global or in-scope variables that do not matter. XSLT operations ignore such unused variables, but Schematron validation seems not to. Thoroughly revised the way a hierarchy is reset in the course of expanding the sources of a class 2 file, using `@reset` to mark elements that need to be moved and `@has-been-reset` to mark those that have. Resetting has been moved from class 2 functions to class 1 functions.
 
-New errors introduced: wrn07, wrn08, inc05, tan21, inc06, whi05, voc06, loc04, lnk07
+New errors introduced: wrn07, wrn08, inc05, tan21, inc06, whi05, voc06, loc04, lnk07, cl219, ref03
 
-Deleted errors: tan13 (an `&lt;alias>` should be able to combine different element types, esp. `&lt;person>` and `&lt;organization>`; it's up to other elements that use the `&lt;alias>` `@ids` to import the correct kinds of vocabulary items); all vrb error codes (consolidated in clm error codes), tei02, tei03 (handled by ODD file).
+Deleted errors: tan13 (an `&lt;alias>` should be able to combine different element types, esp. `&lt;person>` and `&lt;organization>`; it's up to other elements that use the `&lt;alias>` `@ids` to import the correct kinds of vocabulary items); all vrb error codes (consolidated in clm error codes), tei02, tei03 (handled by ODD file), seq06 (other sequence checks are enough), cl211 (a burden on the validation process; might be reintroduced later), cl216, cl218, cl206, cl214, cl212, cl204 (previous six are subsumed by cl219, a general principle about the priority of adjustment actions); seq06 (became ref03).
 
 Errors named tky... are now renamed voc...
 
@@ -66,7 +66,7 @@ New elements: `&lt;predecessor>` and `&lt;successor>`, to leave a sequence of fi
 
 New attributes: `@claim-when`
 
-New functions: `tan:last-change-agent()`, `tan:trim-long-text()`, `tan:catalogs()`, `tan:chop-string()` (2 parameters), `tan:collate-sequences()`, `tan:collate-pair-of-sequences()`, `tan:catalog-uris()`, `tan:collection()`, `tan:unique-char()`, `tan:most-common-item-count()`, `tan:vertical-stops()` (to support `tan:diff()`), `tan:nested-phrase-loop()` (supports `tan:chop-string()`), `tan:primary-agent()`; `tan:revise-href()`; `tan:lm-data()`; `tan:takes-idrefs()`; `tan:target-element-names()`; `tan:consolidate-resolved-vocab-items()`; `tan:element-vocabulary()`; `tan:attribute-vocabulary()`; `tan:vocabulary()`, `tan:get-and-resolve-dependency()`, `tan:fill()`, `tan:ordinal()` (moved from extra functions), `tan:duplicate-values()` (alias for `tan:duplicate-items()`, `tan:node-before()`, `tan:indent-value()`, `tan:copy-indentation()`, `tan:url-is-local()`, `tan:imprint-adjustment-locator()` (for adjusting class-1 sources of class-2 files), `tan:attr()`, `tan:is-valid-uri()`
+New functions: `tan:last-change-agent()`, `tan:trim-long-text()`, `tan:catalogs()`, `tan:chop-string()` (2 parameters), `tan:collate-sequences()`, `tan:collate-pair-of-sequences()`, `tan:catalog-uris()`, `tan:collection()`, `tan:unique-char()`, `tan:most-common-item-count()`, `tan:vertical-stops()` (to support `tan:diff()`), `tan:nested-phrase-loop()` (supports `tan:chop-string()`), `tan:primary-agent()`; `tan:revise-href()`; `tan:lm-data()`; `tan:takes-idrefs()`; `tan:target-element-names()`; `tan:consolidate-resolved-vocab-items()`; `tan:element-vocabulary()`; `tan:attribute-vocabulary()`; `tan:vocabulary()`, `tan:get-and-resolve-dependency()`, `tan:fill()`, `tan:ordinal()` (moved from extra functions), `tan:duplicate-values()` (alias for `tan:duplicate-items()`, `tan:node-before()`, `tan:indent-value()`, `tan:copy-indentation()`, `tan:url-is-local()`, `tan:imprint-adjustment-locator()` (for adjusting class-1 sources of class-2 files), `tan:attr()`, `tan:is-valid-uri()`, `tan:path()`
 
 Deleted functions: `tan:glossary()` (replaced by new `tan:vocabulary()`), `tan:definition()` (replaced by new `tan:vocabulary()`), `tan:evaluate-morphological-test()`, `tan:resolve-idref()`
 
@@ -105,6 +105,7 @@ Some enhancement of functions:
 * `tan:analyze-sequence()`, `tan:analyze-ref()` revised to be more straightforward, stable.
 * Debugged `tan:conditions-hold()`, which requires an extra parameter indicating whether the fallback value should be true or false if a condition is not even found.
 * regular expressions submodule now includes `tan:n-to-dec()` and `tan:dec-to-n()`, to permit conversions from decimal to base N systems (N = 2 through 16 or 64) or vice versa. 
+* `tan:doc-id-namespace()` opened up to any node in a TAN file.
 
 ## TAN-T(EI)
 
@@ -121,6 +122,12 @@ Leaf Div Uniqueness Rule has been downgraded to a warning. The problem is that s
 New `@n` alias method. There are some values of `@n` that are frustrating to use, e.g., ep, epi, and epilogue, or Mt, Matt, and Matthew. Now, any TAN-voc file may include `@affects-attribute="n,"` and the `&lt;name>`s in each item will be treated as synonyms. When the file is resolved, during the process that converts non-Arabic numerals to Arabic numerals, any specially invoked TAN-voc items will be checked, and matching values of `@n` will be converted to the normalized form of the first `&lt;name>` in the first `&lt;item>` found. That means that communities of practice can work with common TAN-voc files, and not worry about having to use the same abbreviations.
 
 Along with the new approach to `@n` above comes the new element `&lt;n-alias>` and its accompanying `@div-type.` This element, part of `&lt;head>`, specifies which div types are affected by any aliases for `@n.` Including this element expedites validation. In a test on a file of the New Testament with about 40,000 elements, validation without `&lt;n-alias>` took about 23 seconds longer than validation without the TAN-voc file; with it (`&lt;n-alias div-type="bk"/>`, affecting only the 27 topmost `&lt;div>`s), negligibly longer (1/10th of a second or shorter).
+
+## Class-2 Files
+
+Adjustments now follow a different routine. Skips overrule ref-based renames overrule n-based renames overrule equates. All those are applied to the reference system that is in the original source. Then reassigns are applied. If an adjustment is overruled by another adjustment a warning will be returned.
+
+A `&lt;tok>` now does not need to point to a leaf div. This was introduced because of very taxing TAN-A-lm files that were needlessly large and inefficient.
 
 ## TAN-A-div (now TAN-A)
 

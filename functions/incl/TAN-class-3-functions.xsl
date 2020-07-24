@@ -75,5 +75,9 @@
       </xsl:if>
       <xsl:copy-of select="."/>
    </xsl:template>
-
+   
+   <xsl:template match="tan:TAN-mor" mode="mark-dependencies-pass-1 mark-dependencies-pass-2">
+      <xsl:copy-of select="."/>
+   </xsl:template>
+   
 </xsl:stylesheet>

@@ -184,8 +184,9 @@
   <define name="adj-element-rename">
     <element name="rename">
       <a:documentation>provisionally reassigns values of @n's in class 1 sources, or their calculated ref value, to another value.</a:documentation>
-      <a:documentation>A rename may be applied to either @n or @ref, but &lt;div&gt;s will be renamed first according to @n, and then perhaps by @ref. Only the first renaming match will be applied.</a:documentation>
-      <a:documentation>The sequence of consecutive &lt;rename&gt;s is important, because they will be processed in document order. The effect of one &lt;rename&gt; may affect the results of subsequent ones.</a:documentation>
+      <a:documentation>A rename may be applied on the basis of either @n or @ref, but a ref-based rename always supercedes an n-based rename. Only the first renaming match will be applied.</a:documentation>
+      <a:documentation>A ref-based rename eliminates any alternative values of @n, inherited or native. That is, if a &lt;div&gt; has @n="prol pref" and the rename has @ref="prol" and @new="prologue" then the alternative value "pref" will be ignored.</a:documentation>
+      <a:documentation>Renames override any equate actions. An exception is made when an n-based rename affects one value of @n but an equate affects another value. Ref-based renames always override any equate action.</a:documentation>
       <a:documentation>If a div is renamed such that it needs to be moved elsewhere in the hierarchy, and it matches the reference of another div, the text nodes will be fused, with the newly moved divs placed at the end.</a:documentation>
       <optional>
         <ref name="ed-stamp"/>
@@ -291,7 +292,7 @@
   <define name="element-tok-standard">
     <element name="tok">
       <a:documentation>identifies one or more tokens (words or word fragments). Used by class-2 files to make claims about specific words. </a:documentation>
-      <a:documentation>In TAN-A and TAN-A-tok files, &lt;tok&gt; has no linguistic connotations; in TAN-A-lm, it normally does.</a:documentation>
+      <a:documentation>In TAN-A and TAN-A-tok files, &lt;tok&gt; does not necessarily carry linguistic connotations; in TAN-A-lm, it normally does.</a:documentation>
       <a:documentation>&lt;tok&gt;s that are restricted to a single token, or a portion of a single token. This is the normal behavior of &lt;tok&gt;. Multiple values in @src, @ref, and @pos will result in expansion across all values. But multiple values of @chars are taken to refer to the constituent parts of a single &lt;tok&gt; and so no expansion occurs on @chars.</a:documentation>
       <a:documentation>This syntax allows a single &lt;tok&gt; to be used to represent multiple tokens, to save space and perhaps enhance legibility. For example, a &lt;tok src="a b" ref="1.1 - 1.3" pos="1-4"&gt; will result in that &lt;tok&gt; pointing to 24 tokens (assuming that the two sources each have at least four tokens in the three references 1.1, 1.2, and 1.3).</a:documentation>
       <a:documentation>If you wish to treat multiple word fragments as a single token, use &lt;group&gt;.</a:documentation>

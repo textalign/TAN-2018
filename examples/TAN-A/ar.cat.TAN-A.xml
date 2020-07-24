@@ -30,9 +30,8 @@
             <name>Categories, Aristotle, English translation by E. M. Edghill</name>
             <location href="../ar.cat.eng.1926.edghill.ref-logical.xml" accessed-when="2016-07-08T15:18:25.573-04:00"/>
         </source>
-        <adjustments src="*">
+        <adjustments src="fra">
             <equate n="ti title"/>
-            <equate n="pr praef pref preface"/>
         </adjustments>
         <vocabulary-key>
             <algorithm xml:id="xslt2">

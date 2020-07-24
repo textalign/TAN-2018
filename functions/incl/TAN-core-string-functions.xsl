@@ -331,6 +331,7 @@
         <xsl:param name="count-toks" as="xs:boolean?"/>
         <xsl:param name="add-attr-q" as="xs:boolean?"/>
         <xsl:param name="add-attr-pos" as="xs:boolean?"/>
+        
         <xsl:variable name="this-tok-def"
             select="
                 if (exists($token-definition)) then
@@ -377,6 +378,7 @@
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
+        
         <xsl:variable name="diagnostics-on" select="false()"/>
         <xsl:if test="$diagnostics-on">
             <xsl:message select="'diagnostics on for tan:tokenize-text()'"/>
@@ -387,10 +389,11 @@
             <xsl:message select="'add @pos?', $add-attr-pos"/>
             <xsl:message select="'pass 2: ', $pass-2"/>
         </xsl:if>
+        
         <xsl:choose>
             <xsl:when test="not(exists($pattern)) or string-length($pattern) lt 1">
                 <xsl:message select="'Tokenization definition has no pattern.'"/>
-                <xsl:copy-of select="$pass-2"/>
+                <xsl:sequence select="$pass-2"/>
             </xsl:when>
             <xsl:when test="$count-toks = true()">
                 <xsl:for-each select="$pass-2">
@@ -418,7 +421,7 @@
                 </xsl:apply-templates>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:copy-of select="$pass-2"/>
+                <xsl:sequence select="$pass-2"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tan="tag:textalign.net,2015:ns" exclude-result-prefixes="#all" version="2.0">
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tan="tag:textalign.net,2015:ns" exclude-result-prefixes="#all" version="3.0">
     <!-- Input: any file (including this one) -->
     <!-- Output: a catalog file for schemas/, functions/, and TAN-voc -->
     <!-- The resultant files are important for the function library and validation, which can use fn:collection() only in connection with an XML file listing the XML files available. -->
@@ -26,12 +26,9 @@
     <xsl:variable name="schema-URIs">
         <collection stable="true">
             <xsl:for-each select="$schema-directories">
-                <xsl:variable name="this-directory" select="."/>
-                <xsl:for-each
-                    select="
-                        collection(string-join(($this-directory, '.?select=*.sch'), '/')),
-                        collection(string-join(($this-directory, '.?select=*.rng'), '/'))">
-                    <doc href="{tan:uri-relative-to(base-uri(.), $base-schema-directory-resolved)}"/>
+                <xsl:variable name="this-directory-resolved" select="resolve-uri(., static-base-uri())"/>
+                <xsl:for-each select="uri-collection($this-directory-resolved)">
+                    <doc href="{tan:uri-relative-to(., $base-schema-directory-resolved)}"/>
                 </xsl:for-each>
             </xsl:for-each>
         </collection>

@@ -125,9 +125,11 @@ adj-element-rename =
     
     ## provisionally reassigns values of @n's in class 1 sources, or their calculated ref value, to another value.
     
-    ## A rename may be applied to either @n or @ref, but <div>s will be renamed first according to @n, and then perhaps by @ref. Only the first renaming match will be applied.
+    ## A rename may be applied on the basis of either @n or @ref, but a ref-based rename always supercedes an n-based rename. Only the first renaming match will be applied.
     
-    ## The sequence of consecutive <rename>s is important, because they will be processed in document order. The effect of one <rename> may affect the results of subsequent ones.
+    ## A ref-based rename eliminates any alternative values of @n, inherited or native. That is, if a <div> has @n="prol pref" and the rename has @ref="prol" and @new="prologue" then the alternative value "pref" will be ignored.
+    
+    ## Renames override any equate actions. An exception is made when an n-based rename affects one value of @n but an equate affects another value. Ref-based renames always override any equate action.
     
     ## If a div is renamed such that it needs to be moved elsewhere in the hierarchy, and it matches the reference of another div, the text nodes will be fused, with the newly moved divs placed at the end.
     element rename {
@@ -185,7 +187,7 @@ element-tok-standard =
     
     ## identifies one or more tokens (words or word fragments). Used by class-2 files to make claims about specific words. 
     
-    ## In TAN-A and TAN-A-tok files, <tok> has no linguistic connotations; in TAN-A-lm, it normally does.
+    ## In TAN-A and TAN-A-tok files, <tok> does not necessarily carry linguistic connotations; in TAN-A-lm, it normally does.
     
     ## <tok>s that are restricted to a single token, or a portion of a single token. This is the normal behavior of <tok>. Multiple values in @src, @ref, and @pos will result in expansion across all values. But multiple values of @chars are taken to refer to the constituent parts of a single <tok> and so no expansion occurs on @chars.
     

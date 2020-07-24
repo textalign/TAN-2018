@@ -15,7 +15,7 @@
    <!-- TAN-A-LM GLOBAL VARIABLES -->
    
    <xsl:variable name="morphologies-expanded"
-      select="tan:expand-doc($morphologies-resolved)" as="document-node()*"/>
+      select="tan:expand-doc($morphologies-resolved, 'terse', false())" as="document-node()*"/>
 
    <!-- FUNCTIONS -->
    
@@ -83,6 +83,13 @@
 
    <!--  TERSE EXPANSION -->
 
+   <xsl:template match="tan:adjustments" mode="core-expansion-terse">
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <src>1</src>
+         <xsl:apply-templates mode="#current"/>
+      </xsl:copy>
+   </xsl:template>
    <xsl:template match="tan:body" mode="core-expansion-terse">
       <xsl:copy>
          <xsl:copy-of select="@*"/>
@@ -178,31 +185,7 @@
          </xsl:apply-templates>
       </xsl:copy>
    </xsl:template>
-   <xsl:template match="tan:tok[not(@ref)]" mode="class-2-expansion-terse">
-      <xsl:param name="is-lang-specific" tunnel="yes" as="xs:boolean"/>
-      <xsl:param name="dependencies-adjusted-and-marked" as="document-node()*" tunnel="yes"/>
-      
-      <xsl:variable name="this-q" select="@q"/>
-      <xsl:variable name="these-tok-markers"
-         select="
-            for $i in $dependencies-adjusted-and-marked
-            return
-               key('q-ref', $this-q, $i)"
-      />
-      <xsl:copy>
-         <xsl:copy-of select="@*"/>
-         <xsl:choose>
-            <xsl:when test="$is-lang-specific"/>
-            <xsl:when test="exists($these-tok-markers)">
-               <xsl:copy-of select="$these-tok-markers"/>
-            </xsl:when>
-            <xsl:otherwise>
-               <xsl:copy-of select="tan:error('tok01', concat('The value ', @val, ' does not match any tokens in the source.'))"/>
-            </xsl:otherwise>
-         </xsl:choose>
-         <xsl:apply-templates mode="#current"/>
-      </xsl:copy>
-   </xsl:template>
+   
    
    <xsl:template match="tan:m" mode="tan-a-lm-expansion-terse">
       <xsl:param name="dependencies" tunnel="yes" as="document-node()*"/>
@@ -237,6 +220,7 @@
          select="$relevant-rules/tan:assert[not(tan:all-conditions-hold(., $this-m, (), true()))]"/>
       <xsl:variable name="disobeyed-reports"
          select="$relevant-rules/tan:report[tan:all-conditions-hold(., $this-m, (), true())]"/>
+      
       <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'diagnostics on for tan-a-lm-expansion-terse'"/>
@@ -250,6 +234,7 @@
          <xsl:message select="'disobeyed asserts: ', $disobeyed-asserts"/>
          <xsl:message select="'disobeyed reports: ', $disobeyed-reports"/>
       </xsl:if>
+      
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:if
@@ -290,21 +275,19 @@
             else
                $this-f"
       />
-      <xsl:variable name="this-feature-vocabulary"
-         select="tan:vocabulary('feature', $this-id-resolved, root()/tan:TAN-A-lm/tan:head)"
-      />
-      <xsl:variable name="this-voc-item" select="$feature-vocabulary[(@xml:id, tan:id) = $this-id-resolved]"/>
+      <xsl:variable name="this-voc-item" select="$feature-vocabulary[(@xml:id, tan:id, tan:alias) = $this-id-resolved]"/>
+      
       <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'diagnostics on for tan-a-lm-expansion-terse'"/>
-         <xsl:message select="'dependencies: ', tan:shallow-copy($dependencies/*)"/>
-         <xsl:message select="'feature-vocabulary: ', $feature-vocabulary"/>
+         <xsl:message select="'dependencies: ', tan:xml-to-string(tan:shallow-copy($dependencies/*))"/>
+         <xsl:message select="'feature-vocabulary: ', tan:xml-to-string($feature-vocabulary)"/>
          <xsl:message select="'this pos: ', $this-pos"/>
-         <xsl:message select="'this category: ', $this-category"/>
+         <xsl:message select="'this category: ', tan:xml-to-string($this-category)"/>
          <xsl:message select="'this id resolved: ', $this-id-resolved"/>
-         <xsl:message select="'this voc item: ', $this-voc-item"/>
-         <xsl:message select="'this feature vocabulary: ', $this-feature-vocabulary"/>
+         <xsl:message select="'this voc item: ', tan:xml-to-string($this-voc-item)"/>
       </xsl:if>
+      
       <xsl:copy-of select="."/>
       <!-- these errors are set as following siblings of the errant element because we need to tether it as a child to an element that was in the original. -->
       <xsl:if test="not(exists($this-voc-item)) or $help-requested = true()">

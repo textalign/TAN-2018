@@ -40,7 +40,6 @@
             <name>Stylesheet to create a TAN file.</name>
             <location href="../applications/convert/convert%20TAN%202018%20to%20TAN%202020.xsl" accessed-when="2018-08-09T11:14:13.596-04:00"/>
          </algorithm>
-         <role xml:id="stylesheet" which="stylesheet"/>
          <div-type xml:id="Zeile">
             <IRI>http://dbpedia.org/resource/Gedichtzeile</IRI>
             <name>Gedichtzeile</name>

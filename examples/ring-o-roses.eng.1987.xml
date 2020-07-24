@@ -42,7 +42,6 @@
             <name>Stylesheet to create a TAN file.</name>
             <location href="../applications/convert/convert%20TAN%202018%20to%20TAN%202020.xsl" accessed-when="2018-08-09T11:14:17.982-04:00"/>
          </algorithm>
-         <role xml:id="stylesheet" which="stylesheet"/>
          <div-type xml:id="l">
             <IRI>http://dbpedia.org/resource/Line_(poetry)</IRI>
             <name>line</name>

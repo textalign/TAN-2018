@@ -35,7 +35,7 @@
     </group>
     <group affects-attribute="xml:id id">
         <error xml:id="tan03"><rule>@xml:id values may not be repeated in the same document.</rule></error>
-        <warning xml:id="tan12"><rule>An @xml:id on a vocabulary item need not duplicate a &lt;name>.</rule></warning>
+        <warning xml:id="tan12"><rule>An @xml:id on a vocabulary item need not duplicate a &lt;name> (except in a TAN-mor file).</rule></warning>
     </group>
     <group affects-attribute="href" affects-element="location master-location">
         <error xml:id="tan08"><rule>@href must have &lt;location> or &lt;master-location> as a parent; any other parent will trigger a quick fix to populate the element with the IRI + name pattern of the target file.</rule></error>
@@ -191,18 +191,20 @@
     <group affects-attribute="ref work">
         <warning xml:id="ref02"><rule>If a reference to a work is not found in some sources for that work, a warning will be returned.</rule></warning>
     </group>
+    <group affects-attribute="ref">
+        <error xml:id="ref03"><rule>In a @ref range the first reference should precede the second.</rule></error>
+    </group>
     <group affects-element="tok from-tok through-tok" affects-attribute="pos val rgx">
         <error xml:id="tok01"><rule>Every token must be locatable in every cited ref in every source.</rule></error>
     </group>
     <group affects-element="tok" affects-attribute="chars">
         <error xml:id="chr01"><rule>Every character must be locatable in every token in every ref in every source.</rule></error>
     </group>
-    <group affects-attribute="ref pos chars">
-        <error xml:id="seq06"><rule>In ranges, the position of the first item should precede that of the second.</rule></error>
-    </group>
-    <!-- adjustment actions -->
     <group affects-attribute="ref n" affects-element="skip rename reassign adjustments">
         <error xml:id="seq05"><rule>Any range in either an @n or in a @ref in an adjustment action must be predictably calculated.</rule></error>
+    </group>
+    <group affects-element="rename skip equate">
+        <warning xml:id="cl219"><rule>Only the first of multiple adjustment actions will be applied. Action priority: skip, ref-based rename, then for every @n n-based rename, equate.</rule></warning>
     </group>
     <group affects-element="rename skip equate" affects-attribute="n">
         <error xml:id="cl215"><rule>In adjustment actions involving @n, at least one value should be found in each source.</rule></error>
@@ -211,11 +213,9 @@
         <error xml:id="cl213"><rule>@by may be applied only to those @n and @ref values that are calculable as integers.</rule></error>
     </group>
     <group affects-attribute="new ref" affects-element="rename">
-        <error xml:id="cl216"><rule>In a &lt;rename>, the quantity of values in @ref and @new must be identical.</rule></error>
-        <error xml:id="cl218"><rule>A &lt;rename> should not be applied to a &lt;div> that is skipped.</rule></error>
+        <error xml:id="cl216"><rule>In a &lt;rename> the quantity of values in @ref and @new must be identical.</rule></error>
     </group>
     <group affects-element="skip">
-        <warning xml:id="cl214"><rule>If more than one &lt;skip> applies to a &lt;div> only the first will be applied.</rule></warning>
     </group>
     <group affects-element="source">
         <fatal xml:id="cl201"><rule>Sources are integral parts of a class 2 TAN file. Access to at least one non-faulty copy is absolutely mandatory.</rule></fatal>
@@ -232,13 +232,6 @@
     <group affects-element="rename" affects-attribute="new">
         <error xml:id="cl203"><rule>@new may not take the same value as what it replaces.</rule></error>
     </group>
-    <group affects-element="rename">
-        <warning xml:id="cl212"><rule>Only the first of multiple &lt;rename>s that apply to a particular &lt;div> will be applied.</rule></warning>
-        <warning xml:id="cl206"><rule>For multiple &lt;rename>s apply to a particular &lt;div>, those with @ref take precedent over those with @n.</rule></warning>
-    </group>
-    <group affects-element="equate rename" affects-attribute="n">
-        <error xml:id="cl204"><rule>An @n in &lt;equate> may not take a value that is subject to a &lt;rename> rule on @n</rule></error>
-    </group>
     <group affects-element="equate" affects-attribute="n">
         <warning xml:id="cl207"><rule>At least one @n value in an equate should be found in every source.</rule></warning>
     </group>
@@ -251,9 +244,6 @@
     </group>
     <group affects-element="reassign rename adjustments to" affects-attribute="new">
         <error xml:id="cl217"><rule>No adjustment action should result in the mixing of leaf &lt;div>s and non-leaf &lt;div>s.</rule></error>
-    </group>
-    <group affects-element="tok ana align reassign subject object locus">
-        <warning xml:id="cl211"><rule>No &lt;tok> should duplicate any sibling &lt;tok>.</rule></warning>
     </group>
     <group affects-element="reassign from-tok through-tok">
         <error xml:id="rea01"><rule>In a &lt;reassign>, the token referred to at &lt;from-tok> must precede the one referred to by &lt;through-tok>.</rule></error>

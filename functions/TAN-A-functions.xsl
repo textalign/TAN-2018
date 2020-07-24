@@ -226,6 +226,7 @@
                      <xsl:value-of select="."/>
                   </id>
                </xsl:for-each>
+               <xsl:copy-of select="$these-equate-works/tan:alias"/>
             </xsl:copy>
          </xsl:for-each>
       </xsl:variable>
@@ -262,13 +263,16 @@
       </xsl:copy>
    </xsl:template>
    
-   <xsl:template match="tan:claim/tan:work" mode="core-expansion-terse">
+   <xsl:template match="tan:claim/tan:work | tan:object/tan:work | tan:subject/tan:work"
+      mode="core-expansion-terse">
       <!-- This template targets <work> elements in the body, not the head -->
       <!-- Such a step would ordinarily have been taken in the previous expansion pass,
       on attributes, but it didn't have the extra vocabulary. -->
       <xsl:param name="extra-vocabulary" tunnel="yes" as="element()*"/>
       <xsl:variable name="this-work-id" select="."/>
-      <xsl:variable name="this-vocab" select="$extra-vocabulary[self::tan:work][(tan:id, tan:name) = $this-work-id]"/>
+      <xsl:variable name="this-vocab"
+         select="$extra-vocabulary[self::tan:work][(tan:id | tan:name | tan:alias) = $this-work-id]"/>
+
       <xsl:choose>
          <xsl:when test="exists($this-vocab)">
             <xsl:for-each select="$this-vocab/tan:id">

@@ -5,11 +5,9 @@
    xmlns:tei="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="#all" version="2.0">
    <!-- template for outputting a TAN file. The primary purpose is to credit/blame the master stylesheet by means of <agent>, add a <role> if one doesn't exist, and log the change in <change> -->
 
-   <!--<xsl:param name="stylesheet-iri" as="xs:string" required="yes"/>
-   <xsl:param name="stylesheet-url" as="xs:string" select="static-base-uri()"/>
-   <xsl:param name="change-message" as="xs:string*" required="yes"/>-->
    <xsl:import href="../../parameters/output-parameters.xsl"/>
 
+   <!-- we apply templates to attributes, to allow @xml:base or other attributes to be deleted -->
    <xsl:template match="node() | @*" mode="credit-stylesheet">
       <xsl:copy>
          <xsl:apply-templates select="node() | @*" mode="#current"/>
@@ -72,8 +70,9 @@
             <resp who="{$stylesheet-id}" roles="stylesheet"/>
          </xsl:if>
       </xsl:variable>
+      
+      <xsl:text>&#xa;</xsl:text>
       <xsl:copy>
-         <!-- we apply templates to attributes, in case @xml:base or other attributes should be deleted -->
          <xsl:apply-templates select="@*" mode="#current"/>
          <xsl:apply-templates mode="#current">
             <xsl:with-param name="new-vocabulary-key-children" tunnel="yes" as="element()*"
@@ -88,28 +87,27 @@
       <xsl:param name="new-resp-elements" tunnel="yes"/>
       <xsl:variable name="first-indent" select="node()[1][self::text()]"/>
       <xsl:copy>
-         <xsl:copy-of select="@*"/>
+         <xsl:apply-templates select="@*" mode="#current"/>
          <xsl:copy-of select="tan:copy-indentation($new-vocabulary-key-children, *[1])"/>
-         <xsl:copy-of select="node()"/>
+         <xsl:apply-templates mode="#current"/>
       </xsl:copy>
       <xsl:if test="exists($new-resp-elements)">
          <xsl:copy-of select="tan:copy-indentation($new-resp-elements, .)"/>
       </xsl:if>
-      <xsl:copy-of select="following-sibling::node()[1][self::text()]"/>
+      <!--<xsl:copy-of select="following-sibling::node()[1][self::text()]"/>-->
    </xsl:template>
    
-   <xsl:template match="tan:resp[@roles = 'stylesheet'][1]" mode="credit-stylesheet">
+   <xsl:template match="tan:resp[@roles = 'stylesheet'][1]/@who" mode="credit-stylesheet">
       <xsl:param name="new-vocabulary-key-children" tunnel="yes"/>
-      <xsl:copy>
-         <xsl:copy-of select="@* except @who"/>
-         <xsl:attribute name="who"
-            select="string-join((@who, $new-vocabulary-key-children/@xml:id), ' ')"/>
-      </xsl:copy>
+      <xsl:attribute name="who"
+         select="string-join((., $new-vocabulary-key-children/@xml:id), ' ')"/>
    </xsl:template>
    
    <xsl:template match="tan:change[last()]" mode="credit-stylesheet">
       <xsl:param name="new-vocabulary-key-children" tunnel="yes" as="element()*"/>
-      <xsl:copy-of select="."/>
+      <xsl:copy>
+         <xsl:apply-templates select="node() | @*" mode="#current"/>
+      </xsl:copy>
       <xsl:value-of select="$most-common-indentations[2]"/>
       <change who="{$new-vocabulary-key-children/@xml:id}" when="{current-dateTime()}">
          <xsl:value-of select="$change-message"/>
@@ -119,12 +117,12 @@
    <xsl:template match="tan:body" mode="credit-stylesheet">
       <xsl:param name="new-vocabulary-key-children" tunnel="yes" as="element()*"/>
       <xsl:copy>
-         <xsl:copy-of select="@*"/>
+         <xsl:apply-templates select="@*" mode="#current"/>
          <xsl:if test="tan:class-number(.) = 2">
             <!-- We presume that this process of creating class 2 data requires blaming/crediting the stylesheet with the data -->
             <xsl:attribute name="claimant" select="$new-vocabulary-key-children/self::tan:algorithm/@xml:id"/>
          </xsl:if>
-      <xsl:copy-of select="node()"/>
+         <xsl:apply-templates mode="#current"/>
       </xsl:copy>
    </xsl:template>
 
