@@ -364,11 +364,12 @@
    </xsl:template>
    <xsl:template match="processing-instruction()" mode="revise-infused-template">
       <xsl:variable name="href-regex" as="xs:string">(href=['"])([^'"]+)(['"])</xsl:variable>
+      <xsl:variable name="this-base-uri" select="tan:base-uri(.)"/>
       <xsl:processing-instruction name="{name(.)}">
             <xsl:analyze-string select="." regex="{$href-regex}">
                 <xsl:matching-substring>
                     <xsl:value-of select="concat(regex-group(1), tan:uri-relative-to(resolve-uri(regex-group(2), 
-                       $template-url-resolved), $output-url-resolved), regex-group(3))"/>
+                       ($template-url-resolved, $this-base-uri)[1]), $output-url-resolved), regex-group(3))"/>
                 </xsl:matching-substring>
                 <xsl:non-matching-substring>
                     <xsl:value-of select="."/>

@@ -5,9 +5,7 @@
     xmlns:tan="tag:textalign.net,2015:ns" exclude-result-prefixes="#all" version="2.0">
 
     <!-- Basic conversion utility for TAN to html -->
-    <!-- Must be included by a master stylesheet that also includes the TAN function library, perhaps by also importing convert.xsl -->
-
-    <!--<xsl:param name="tables-via-css" as="xs:boolean" select="false()"/>-->
+    <!-- Must be imported or included by a master stylesheet that also includes the TAN function library, perhaps by also importing convert.xsl -->
 
     <xsl:param name="attribute-values-to-add-to-class-attribute" as="xs:string*" select="('type')"/>
     <xsl:param name="attributes-to-convert-to-elements" as="xs:string*"
@@ -39,12 +37,14 @@
         <xsl:variable name="pass-3" as="item()*">
             <xsl:apply-templates select="$pass-2" mode="tan-to-html-pass-3"/>
         </xsl:variable>
+        
         <xsl:variable name="diagnostics-on" as="xs:boolean" select="false()"/>
         <xsl:choose>
             <xsl:when test="$diagnostics-on">
                 <xsl:message>diagnostics turned on for tan:tan-to-html()</xsl:message>
                 <pass-1><xsl:copy-of select="$pass-1"/></pass-1>
                 <pass-2><xsl:copy-of select="$pass-2"/></pass-2>
+                <pass-3><xsl:copy-of select="$pass-3"/></pass-3>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:copy-of select="$pass-3"/>
@@ -372,9 +372,6 @@
                         />
                     </tr>
                 </xsl:for-each>
-                <!--<test13a><xsl:copy-of select="$these-tds-pass-1"/></test13a>-->
-                <!--<test13b><xsl:copy-of select="$these-tds-pass-2"/></test13b>-->
-                <!--<test13c><xsl:copy-of select="$these-tds-pass-3"/></test13c>-->
             </tbody>
         </table>
     </xsl:template>
