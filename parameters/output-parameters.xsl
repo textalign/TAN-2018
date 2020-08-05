@@ -18,6 +18,16 @@
 
    <!-- What message should be recorded when saving? -->
    <xsl:param name="change-message" as="xs:string*" required="yes"/>
+   
+   <!-- Is the application one of the core TAN applications? -->
+   <xsl:param name="stylesheet-is-core-tan-application" as="xs:boolean?" select="false()" required="no"/>
+   
+   <!-- What is the change history of the stylesheet? -->
+   <xsl:param name="stylesheet-change-log" as="element(tan:change)*" required="no"/>
+   
+   <!-- What remains to be done to the stylesheet? -->
+   <xsl:param name="stylesheet-to-do-list" as="element(tan:to-do)?" required="no"/>
+   
 
    <!-- Saving and retrieving intermediate steps -->
 
@@ -32,6 +42,9 @@
 
    <!-- What directory is the default for saving output? -->
    <xsl:param name="default-output-directory-resolved" as="xs:string"
-      select="resolve-uri('../../output/', static-base-uri())"/>
+      select="resolve-uri('../output/', static-base-uri())"/>
+   
+   <!-- To what directory should output be saved? -->
+   <xsl:param name="target-output-directory-resolved" as="xs:string" select="$default-output-directory-resolved"/>
 
 </xsl:stylesheet>
