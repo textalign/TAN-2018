@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="tag:textalign.net,2015:ns"
     xmlns:html="http://www.w3.org/1999/xhtml" xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:tan="tag:textalign.net,2015:ns"
-    exclude-result-prefixes="#all" version="2.0">
+    exclude-result-prefixes="#all" version="3.0">
 
     <!-- Catalyzing input: a class 1 file or a non-TAN XML file -->
     <!-- Secondary input: a TAN-T (not TAN-TEI) that exemplifies a model reference system that the input should imitate -->
@@ -14,13 +14,15 @@
 
     <!-- If the input is not TAN, then there is no way for the algorithm to determine the correct metadata for the output file. Errors are likely. -->
 
+    <xsl:param name="use-diagnostic-output" static="yes" select="false()"/>
 
     <xsl:import href="../get%20inclusions/convert.xsl"/>
-    <xsl:output indent="yes"/>
 
     <!-- PARAMETERS YOU WILL WANT TO CHANGE MOST OFTEN -->
+    
     <!-- provide the idrefs of div-types you want to delete or preserve, space delimited -->
     <xsl:param name="delete-what-input-div-types" select="''" as="xs:string?"/>
+    
     <!-- If you are going from a logical reference system to a scriptum-based one, it's a good idea to leave the following blank. -->
     <xsl:param name="preserve-what-input-div-types" select="'ti title head'" as="xs:string?"/>
 
@@ -33,26 +35,29 @@
     <!-- A wrapper is useful when you want to subdivide by hand. -->
     <xsl:param name="last-level-as-wrapper-only" as="xs:boolean" select="false()"/>
 
-    <!-- If you want to customize the way sentences, clauses, and words are defined, use the following variables -->
+    <!-- What regular expression should be used to define the end of a sentence? -->
     <xsl:param name="sentence-end-regex" select="'[\.;\?!ا·*]+[\p{P}\s]*'"/>
+    
+    <!-- What regular expression should be used to define the end of a clause? -->
     <xsl:param name="clause-end-regex" select="'\w\p{P}+\s*'"/>
-    <!--<xsl:param name="word-end-regex" select="'\s+'"/>-->
+    
+    <!-- What regular expression should be used to decide where breaks are allowed if the model has a scriptum-based structure? -->
     <xsl:param name="if-target-uses-scriptum-refs-allow-breaks-only-where-regex" as="xs:string"
         select="$word-end-regex"/>
+    
+    <!-- What regular expression should be used to decide where breaks are allowed if the model has a logical (non-scriptum) reference system? -->
     <!-- In the following, you might want to use $clause-end-regex; if the transcription has little punctuation, $word-end-regex -->
     <xsl:param name="if-target-uses-logical-refs-allow-breaks-only-where-regex" as="xs:string"
         select="$clause-end-regex"/>
+    
     <!-- If chopping up segments of text, should parenthetical clauses be preserved intact? -->
     <xsl:param name="do-not-chop-parenthetical-clauses" as="xs:boolean" select="false()"/>
 
-    <!-- In this conversion, the model and the template are identical -->
+    <!-- Where is the model (template) relative to the catalyzing input? -->
     <xsl:param name="template-url-relative-to-actual-input" as="xs:string?">
-        <!--<xsl:text>../../library-clio/cpg4425/cpg%204425%20lat%201173%20Burgundio.xml</xsl:text>-->
-        <!--<xsl:text>../../../library-arithmeticus/aristotle/ar.cat.grc.1949.minio-paluello.ref-scriptum-native.xml</xsl:text>-->
-        <!--<xsl:text>../../../library-arithmeticus/aristotle/ar.cat.grc.1949.minio-paluello.ref-logical-native.xml</xsl:text>-->
         <!--<xsl:text>ar.cat.grc.1949.minio-paluello.ref-logical-native.xml</xsl:text>-->
         <!--<xsl:text>ar.cat.grc.1949.minio-paluello.ref-scriptum-native.xml</xsl:text>-->
-        <xsl:text>../../../../../Google%20Drive/CLIO%20commons/TAN%20library/CLIO/cpg%204425%20lat%201728%20Montfaucon.xml</xsl:text>
+        <xsl:text>ring-o-roses.eng.1881.xml</xsl:text>
     </xsl:param>
     
     <!-- Do you want to save the output at the directory of the input (true) or at that of the template (false)? -->
@@ -800,55 +805,60 @@
                 'scriptum'
             else
                 'logical', '-after-', $template-language)"/>
-    <xsl:variable name="output-url-prepped"
+    <!--<xsl:variable name="output-url-prepped"
         select="
             replace(replace(if ($save-output-at-input-directory) then
                 $input-base-uri
             else
                 $template-url-resolved, '(\.[^\.]+$)', ''), 'ref-[^.]+$', '')"
+    />-->
+    <xsl:param name="output-filename" select="tan:cfn(/) || $output-url-infix || '-' || $today-iso || '.xml'"/>
+    <xsl:param name="output-directory-relative-to-actual-input"
+        select="
+            if ($save-output-at-input-directory) then
+                tan:uri-directory($template-url-resolved)
+            else
+                tan:uri-directory(base-uri())"
     />
-    <xsl:param name="output-url-relative-to-actual-input" as="xs:string?"
-        select="concat($output-url-prepped, $output-url-infix, '-', $today-iso, '.xml')"/>
+    <!--<xsl:param name="output-url-relative-to-actual-input" as="xs:string?"
+        select="$output-url-prepped || $output-url-infix || '-' || $today-iso || '.xml'"/>-->
 
-    <xsl:template match="/" priority="5">
+    <xsl:template match="/" priority="5" use-when="$use-diagnostic-output">
+        <xsl:message
+            select="'Using diagnostic output for application ' || $stylesheet-name || ' (' || static-base-uri() || ')'"
+        />
         <!-- diagnostics -->
         <diagnostics>
-            <!--<xsl:copy-of select="$self-resolved"/>-->
-            <!--<xsl:copy-of select="$validation-phase"/>-->
-            <!--<xsl:copy-of select="$self-expanded"/>-->
-            <xsl:copy-of select="$input-precheck"/>
-            <!--<xsl:copy-of select="$input-expanded"/>-->
-            <!--<xsl:copy-of select="$input-body-with-unique-ns"/>-->
+            <!--<input-precheck><xsl:copy-of select="$input-precheck"/></input-precheck>-->
+            <!--<input-body-w-unique-ns><xsl:copy-of select="$input-body-with-unique-ns"/></input-body-w-unique-ns>-->
             
-            <!--<xsl:copy-of select="$input-body-analyzed"/>-->
-            <!--<xsl:copy-of select="$excepted-and-deleted-elements"/>-->
-            <!--<xsl:copy-of select="$excepted-elements-prepped"/>-->
+            <!--<input-body-analyzed><xsl:copy-of select="$input-body-analyzed"/></input-body-analyzed>-->
+            <!--<excepted-and-deleted-elements><xsl:copy-of select="$excepted-and-deleted-elements"/></excepted-and-deleted-elements>-->
+            <!--<excepted-elements-prepped><xsl:copy-of select="$excepted-elements-prepped"/></excepted-elements-prepped>-->
             
-            <!--<xsl:copy-of select="$median-template-search-1"/>-->
-            <!--<xsl:copy-of select="$median-template-search-2"/>-->
-            <!--<xsl:copy-of select="$median-body-with-grouped-ns"/>-->
-            <!--<xsl:copy-of select="$median-template-doc-resolved"/>-->
-            <!--<xsl:copy-of select="$median-template-doc-expanded"/>-->
-            <!--<xsl:copy-of select="$median-template-doc-analyzed"/>-->
-            <!--<xsl:copy-of select="$input-and-median-merge"/>-->
-            <!--<xsl:copy-of select="$input-and-median-merge-reconstructed"/>-->
+            <!--<median-template-search-1><xsl:copy-of select="$median-template-search-1"/></median-template-search-1>-->
+            <!--<median-template-search-2><xsl:copy-of select="$median-template-search-2"/></median-template-search-2>-->
+            <!--<median-body-with-grouped-ns><xsl:copy-of select="$median-body-with-grouped-ns"/></median-body-with-grouped-ns>-->
+            <!--<median-template-doc-resolved><xsl:copy-of select="$median-template-doc-resolved"/></median-template-doc-resolved>-->
+            <!--<median-template-expanded><xsl:copy-of select="$median-template-doc-expanded"/></median-template-expanded>-->
+            <!--<median-template-analyzed><xsl:copy-of select="$median-template-doc-analyzed"/></median-template-analyzed>-->
+            <!--<input-and-median-merge><xsl:copy-of select="$input-and-median-merge"/></input-and-median-merge>-->
+            <!--<input-and-median-merge-reconstructed><xsl:copy-of select="$input-and-median-merge-reconstructed"/></input-and-median-merge-reconstructed>-->
 
-            <!--<xsl:copy-of select="$input-pass-1"/>-->
-            <!--<xsl:copy-of select="$input-pass-2"/>-->
-            <!--<xsl:copy-of select="$input-pass-3"/>-->
-            <!--<xsl:copy-of select="tan:analyze-string-length($input-pass-3)"/>-->
-            <!--<xsl:copy-of select="$input-pass-4"/>-->
-            <!--<xsl:copy-of select="tan:diff(string-join($input-body-analyzed//tan:div[@n = '1']/tan:div[@type='p'],''),
-                string-join($input-pass-4//tan:div[@n = '1']/tan:div/tan:div,''), false())"/>-->
+            <!--<input-pass-1><xsl:copy-of select="$input-pass-1"/></input-pass-1>-->
+            <!--<input-pass-2><xsl:copy-of select="$input-pass-2"/></input-pass-2>-->
+            <!--<input-pass-3><xsl:copy-of select="$input-pass-3"/></input-pass-3>-->
+            <!--<input-pass-4><xsl:copy-of select="$input-pass-4"/></input-pass-4>-->
 
-            <!--<xsl:copy-of select="$template-doc"/>-->
-            <!--<xsl:copy-of select="$template-resolved"/>-->
-            <!--<xsl:copy-of select="$template-body-analyzed"/>-->
-            <!--<xsl:copy-of select="$template-div-spikes"/>-->
+            <!--<template-doc><xsl:copy-of select="$template-doc"/></template-doc>-->
+            <!--<template-resolved><xsl:copy-of select="$template-resolved"/></template-resolved>-->
+            <!--<template-body-analyzed><xsl:copy-of select="$template-body-analyzed"/></template-body-analyzed>-->
+            <!--<template-div-spikes><xsl:copy-of select="$template-div-spikes"/></template-div-spikes>-->
 
-            <!--<xsl:copy-of select="$output-url-resolved"/>-->
-            <!--<xsl:copy-of select="$template-infused-with-revised-input"/>-->
-            <!--<xsl:copy-of select="$infused-template-revised"/>-->
+            <output-url-resolved><xsl:copy-of select="$output-url-resolved"/></output-url-resolved>
+            <!--<template-infused-w-revised-input><xsl:copy-of select="$template-infused-with-revised-input"/></template-infused-w-revised-input>-->
+            <!--<infused-template-revised><xsl:copy-of select="$infused-template-revised"/></infused-template-revised>-->
+            <final-output><xsl:copy-of select="$final-output"/></final-output>
 
         </diagnostics>
     </xsl:template>
