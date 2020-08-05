@@ -12,6 +12,14 @@
 
    <xsl:include href="../../functions/incl/TAN-core-functions.xsl"/>
 
+   <!-- THIS STYLESHEET -->
+   
+   <xsl:param name="stylesheet-iri" select="'tag:textalign.net,2015:stylesheet:resolve-hrefs'"/>
+   <xsl:variable name="stylesheet-url" select="static-base-uri()"/>
+   <xsl:param name="change-message">
+      <xsl:value-of select="'Links in ' || base-uri(/) || ' resolved'"/>
+   </xsl:param>
+
    <xsl:template match="element() | text() | comment() | @*" mode="resolve-href">
       <xsl:copy>
          <xsl:apply-templates select="node() | @*" mode="#current"/>
@@ -22,6 +30,7 @@
       <xsl:copy>
          <xsl:apply-templates select="node()" mode="#current">
             <xsl:with-param name="leave-breadcrumbs" select="false()" tunnel="yes"/>
+            <xsl:with-param name="add-q-ids" tunnel="yes" select="false()"/>
          </xsl:apply-templates>
       </xsl:copy>
    </xsl:template>
