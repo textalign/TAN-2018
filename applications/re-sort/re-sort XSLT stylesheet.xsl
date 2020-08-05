@@ -3,9 +3,18 @@
    xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:tan="tag:textalign.net,2015:ns"
    xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="#all" version="2.0">
    <xsl:output indent="yes"/>
-   <!-- Input: any xslt stylesheet -->
-   <!-- Output: that same stylesheet, but with the children of the root element re-sorted in order of dependency, from least dependent to most -->
-   <!-- Results should be checked carefully, since comments will be kept with independent elements -->
+   <!-- Catalyzing and main input: any xslt stylesheet -->
+   <!-- Primary output: that same stylesheet, but with the children of the root element re-sorted in order of dependency, from least dependent to most -->
+   <!-- Secondary output: none -->
+   <!-- Results should be checked carefully. Comments will be sorted with independent elements, and inclusions or imports will not be taken into account -->
+
+   <!-- THIS STYLESHEET -->
+   <xsl:param name="stylesheet-iri"
+      select="'tag:textalign.net,2015:stylesheet:re-sort-xslt-stylesheet'"/>
+   <xsl:param name="stylesheet-name" select="'Re-sorter of XSLT file'"/>
+   <xsl:param name="stylesheet-url" select="static-base-uri()"/>
+   <xsl:param name="stylesheet-is-core-tan-application" select="true()"/>
+   
 
    <xsl:include href="../get%20inclusions/XSLT%20analysis.xsl"/>
    <xsl:include href="../../functions/incl/TAN-core-functions.xsl"/>
@@ -105,6 +114,7 @@
       <!-- Output: resultant element with the child elements reordered from least dependent to most -->
       <xsl:param name="element-with-children-to-reorder" as="element()"/>
       <xsl:param name="results-so-far" as="element()?"/>
+      <xsl:param name="loop-counter" as="xs:integer"/>
       <xsl:variable name="next-children-to-add"
          select="
             $element-with-children-to-reorder/*[not(exists(tan:depends-upon))
@@ -125,16 +135,16 @@
          </xsl:element>
       </xsl:variable>
       <xsl:choose>
-         <xsl:when test="not(exists($element-with-children-to-reorder/*))">
+         <xsl:when test="not(exists($element-with-children-to-reorder/*)) or $loop-counter gt $loop-tolerance">
             <xsl:copy-of select="$results-so-far"/>
          </xsl:when>
          <xsl:otherwise>
-            <xsl:copy-of select="tan:reorder-by-dependence-loop($new-param-1, $new-param-2)"/>
+            <xsl:copy-of select="tan:reorder-by-dependence-loop($new-param-1, $new-param-2, $loop-counter + 1)"/>
          </xsl:otherwise>
       </xsl:choose>
    </xsl:function>
    <xsl:variable name="analysis-pass-3"
-      select="tan:reorder-by-dependence-loop($analysis-pass-2, ())"/>
+      select="tan:reorder-by-dependence-loop($analysis-pass-2, (), 0)"/>
    <xsl:variable name="new-sequence" as="xs:integer*" select="$analysis-pass-3/*/@n"/>
 
    <xsl:template match="comment() | processing-instruction()">
