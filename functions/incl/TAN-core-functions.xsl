@@ -288,7 +288,7 @@
    <xsl:variable name="doc-is-error-test" select="matches($doc-id, '^tag:textalign.net,\d+:error-test')"/>
    <xsl:variable name="doc-type" select="name(/*)"/>
    <xsl:variable name="doc-class" select="tan:class-number($self-resolved)"/>
-   <xsl:variable name="doc-uri" select="base-uri(/*)"/>
+   <xsl:variable name="doc-uri" select="base-uri(/*)" as="xs:anyURI"/>
    <xsl:variable name="doc-parent-directory" select="tan:uri-directory(string($doc-uri))"/>
    <xsl:variable name="source-ids"
       select="
@@ -1320,10 +1320,12 @@
       <xsl:param name="group-by-shallow-node-value" as="xs:boolean?"/>
       <xsl:choose>
          <xsl:when test="$group-by-shallow-node-value">
-            <xsl:apply-templates select="text()" mode="#current"></xsl:apply-templates>
+            <xsl:apply-templates select="text()" mode="#current"/>
          </xsl:when>
          <xsl:otherwise>
-            <grouping-key><xsl:value-of select="."/></grouping-key>
+            <grouping-key>
+               <xsl:value-of select="."/>
+            </grouping-key>
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
@@ -2206,7 +2208,14 @@
       <!-- Output: the Current File Name, without extension, of the host document node of each item -->
       <xsl:param name="item" as="item()*"/>
       <xsl:for-each select="$item">
-         <xsl:value-of select="replace(xs:string(tan:base-uri(.)), '.+/([^/]+)\.\w+$', '$1')"/>
+         <xsl:variable name="this-base"
+            select="
+               if (. instance of text() or . instance of xs:string or . instance of xs:anyURI) then
+                  .
+               else
+                  tan:base-uri(.)"
+         />
+         <xsl:value-of select="replace(xs:string($this-base), '.+/([^/]+)\.\w+$', '$1')"/>
       </xsl:for-each>
    </xsl:function>
    <xsl:function name="tan:cfne" as="xs:string*">
@@ -2214,7 +2223,14 @@
       <!-- Output: the Current File Name, with Extension, of the host document node of each item -->
       <xsl:param name="item" as="item()*"/>
       <xsl:for-each select="$item">
-         <xsl:value-of select="replace(xs:string(tan:base-uri(.)), '.+/([^/]+\.\w+)$', '$1')"/>
+         <xsl:variable name="this-base"
+            select="
+               if (. instance of text() or . instance of xs:string or . instance of xs:anyURI) then
+                  .
+               else
+                  tan:base-uri(.)"
+         />
+         <xsl:value-of select="replace(xs:string($this-base), '.+/([^/]+\.\w+)$', '$1')"/>
       </xsl:for-each>
    </xsl:function>
    <xsl:function name="tan:is-valid-uri" as="xs:boolean?">
@@ -2332,6 +2348,7 @@
             <xsl:copy-of select="$path-a/tan:step[position() gt $last-common-step]"/>
          </path-a>
       </xsl:variable>
+      <xsl:variable name="output-path" select="string-join($new-path-a/tan:step, '/')"/>
       
       <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
@@ -2343,6 +2360,8 @@
          <xsl:message select="'uri b resolved: ', $uri-b-resolved"/>
          <xsl:message select="'path a: ', $path-a"/>
          <xsl:message select="'path b: ', $path-b"/>
+         <xsl:message select="'last common step: ', $last-common-step"/>
+         <xsl:message select="'new a path:', $new-path-a"/>
       </xsl:if>
       
       <xsl:choose>
@@ -2350,7 +2369,7 @@
             <xsl:value-of select="$uri-to-revise"/>
          </xsl:when>
          <xsl:otherwise>
-            <xsl:value-of select="string-join($new-path-a/tan:step, '/')"/>
+            <xsl:value-of select="$output-path"/>
          </xsl:otherwise>
       </xsl:choose>
    </xsl:function>
@@ -2380,6 +2399,19 @@
       
       <xsl:attribute name="href" select="$this-href-revised"/>
    </xsl:template>
+   
+   <xsl:function name="tan:uri-is-relative" as="xs:boolean?">
+      <!-- Input: a string representing a URI -->
+      <!-- Output: a boolean indicating whether it is relative -->
+      <xsl:param name="uri-to-test" as="xs:string?"/>
+      <xsl:sequence select="not(tan:uri-is-resolved($uri-to-test))"/>
+   </xsl:function>
+   <xsl:function name="tan:uri-is-resolved" as="xs:boolean?">
+      <!-- Input: a string representing a URI -->
+      <!-- Output: a boolean indicating whether it is resolved -->
+      <xsl:param name="uri-to-test" as="xs:string?"/>
+      <xsl:sequence select="$uri-to-test eq resolve-uri($uri-to-test)"/>
+   </xsl:function>
    
    
    <xsl:function name="tan:catalog-uris" as="xs:string*">
