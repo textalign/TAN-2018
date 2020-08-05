@@ -20,7 +20,8 @@
     <xsl:param name="stylesheet-url" select="static-base-uri()"/>
     <xsl:param name="stylesheet-name" select="'Converter from TAN 2018 to TAN 2020'"/>
     <xsl:param name="change-message" select="'Converted from 2018 to 2020 schemas.'"/>
-
+    <xsl:param name="stylesheet-is-core-tan-application" select="true()"/>
+    
     <xsl:variable name="other-stylesheets" select="$applications-collection[xsl:stylesheet]"/>
 
     <!-- INPUT -->

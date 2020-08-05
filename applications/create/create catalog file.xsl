@@ -2,12 +2,26 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:tei="http://www.tei-c.org/ns/1.0"
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tan="tag:textalign.net,2015:ns"
     exclude-result-prefixes="#all" version="3.0">
-    <!-- Input: any file -->
-    <!-- Output: a catalog.xml file for all XML files or a catalog.tan.xml file for all TAN files in that directory and its subdirectories -->
+    
+    <!-- Primary (catalyzing) input: any XML file -->
+    <!-- Secondary input: parameters as specified below -->
+    <!-- Primary output: none -->
+    <!-- Secondary output: a catalog.xml file for all XML files or a catalog.tan.xml file for all TAN files in that directory and its subdirectories -->
     <!-- The resultant files provide support for fn:collection(). -->
     
     <xsl:output indent="yes"/>
     <xsl:include href="../../functions/incl/TAN-core-functions.xsl"/>
+    
+    
+    <!-- THIS STYLESHEET -->
+    <xsl:param name="stylesheet-iri"
+        select="'tag:textalign.net,2015:stylesheet:create-catalog-file'"/>
+    <xsl:param name="stylesheet-name" select="'Catalog file builder'"/>
+    <xsl:param name="stylesheet-url" select="static-base-uri()"/>
+    <xsl:param name="change-message" select="'Built catalog file.'"/>
+    <xsl:param name="stylesheet-is-core-tan-application" select="true()"/>
+    
+    
 
     <xsl:param name="tan-only" as="xs:boolean" select="true()"/>
     
@@ -136,7 +150,6 @@
     <xsl:template match="node()"/>
     <xsl:template match="/">
         <xsl:result-document href="{$target-url-resolved}">
-            <!--<xsl:copy-of select="$results-pass-1"/>-->
             <xsl:copy-of select="$results-pass-2"/>
         </xsl:result-document>
     </xsl:template>
