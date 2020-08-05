@@ -3,8 +3,13 @@
    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tan="tag:textalign.net,2015:ns"
    xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:saxon="http://saxon.sf.net/"
    xmlns:html="http://www.w3.org/1999/xhtml" xmlns:tei="http://www.tei-c.org/ns/1.0"
+   xmlns:file="http://expath.org/ns/file" xmlns:bin="http://expath.org/ns/binary"
    xmlns:math="http://www.w3.org/2005/xpath-functions/math" exclude-result-prefixes="#all"
    version="3.0">
+
+   <!-- Are advanced Saxon features available? -->
+   <xsl:param name="advanced-saxon-features-available" static="yes"
+      select="system-property('xsl:supports-higher-order-functions') eq 'yes'"/>
 
    <xsl:include href="extra/TAN-function-functions.xsl"/>
    <xsl:include href="extra/TAN-schema-functions.xsl"/>
@@ -1180,6 +1185,84 @@
 
 
    <!-- Functions: accessors and manipulation of uris -->
+   
+   <xsl:function name="tan:open-file">
+      <!-- 1-parameter function of the main one below -->
+      <xsl:param name="resolved-urls"/>
+      <xsl:copy-of select="tan:open-file($resolved-urls, $fallback-encoding)"/>
+   </xsl:function>
+   
+   <xsl:function name="tan:open-file" as="document-node()*">
+      <!-- Input: items that can be resolved as strings; a string -->
+      <!-- Output: for each resolvable string in the first parameter, if a document is available, the document; 
+            if it is not, but unparsed text is available, a document with the unparsed text wrapped in a root 
+            element; otherwise an empty document node. If unparsed text is not available, another attempt 
+            will be made on a fallback encoding specified by the 2nd parameter.
+        -->
+      <!-- If the file is not an XML document, the content will be wrapped by a root element of an
+        XML document. That root node will have @xml:base pointing to the source url. -->
+      <xsl:param name="resolved-urls"/>
+      <xsl:param name="target-fallback-encoding" as="xs:string*"/>
+
+      <xsl:for-each select="$resolved-urls[. castable as xs:string]">
+         <xsl:variable name="this-path-normalized" select="replace(xs:string(.), '\s', '%20')"/>
+         <xsl:variable name="this-path-normalized-for-extension-functions"
+            select="replace($this-path-normalized, 'file:', '')"/>
+         <xsl:choose>
+            <xsl:when test="doc-available($this-path-normalized)">
+               <xsl:sequence select="doc($this-path-normalized)"/>
+            </xsl:when>
+            <xsl:when test="unparsed-text-available($this-path-normalized)">
+               <xsl:document>
+                  <unparsed-text>
+                     <xsl:attribute name="xml:base" select="$this-path-normalized"/>
+                     <xsl:value-of select="unparsed-text($this-path-normalized)"/>
+                  </unparsed-text>
+               </xsl:document>
+            </xsl:when>
+            <xsl:when
+               test="unparsed-text-available($this-path-normalized, $target-fallback-encoding)">
+               <xsl:document>
+                  <unparsed-text>
+                     <xsl:attribute name="xml:base" select="$this-path-normalized"/>
+                     <xsl:value-of
+                        select="unparsed-text($this-path-normalized, $target-fallback-encoding)"/>
+                  </unparsed-text>
+               </xsl:document>
+            </xsl:when>
+            <xsl:when test="true()" use-when="$advanced-saxon-features-available">
+               <xsl:variable name="file-exists" use-when="$advanced-saxon-features-available"
+                  as="xs:boolean?">
+                  <xsl:try select="file:exists($this-path-normalized-for-extension-functions)">
+                     <xsl:catch>
+                        <xsl:message
+                           select="$this-path-normalized-for-extension-functions || ' breaks the syntax allowed for the function file:exists()'"/>
+                        <xsl:value-of select="false()"/>
+                     </xsl:catch>
+                  </xsl:try>
+               </xsl:variable>
+               <xsl:if test="$file-exists">
+                  <xsl:variable name="binary-file"
+                     select="file:read-binary($this-path-normalized-for-extension-functions)"/>
+                  <xsl:message
+                     select="$this-path-normalized-for-extension-functions || ' points to a file that exists, but is neither XML nor unparsed text (UTF-8 or fallback encoding ' || $target-fallback-encoding || '). Returning an XML document whose root element contains a single text node encoded as xs:base64Binary.'"/>
+                  <xsl:document>
+                     <base64Binary>
+                        <xsl:attribute name="xml:base"
+                           select="$this-path-normalized-for-extension-functions"/>
+                        <xsl:value-of select="$binary-file"/>
+                     </base64Binary>
+                  </xsl:document>
+               </xsl:if>
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:message
+                  select="$this-path-normalized || ' points to a file that does not exist. Returning an empty document node.'"/>
+               <xsl:document/>
+            </xsl:otherwise>
+         </xsl:choose>
+      </xsl:for-each>
+   </xsl:function>
 
    <xsl:function name="tan:zip-uris" as="xs:anyURI*">
       <!-- Input: any string representing a uri -->
