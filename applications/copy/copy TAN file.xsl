@@ -4,10 +4,15 @@
     xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:tan="tag:textalign.net,2015:ns"
     exclude-result-prefixes="#all" version="2.0">
 
-    <!-- Input: any TAN file; a copy location -->
-    <!-- Output: the file copied to the target location, resolving all relative @hrefs -->
+    <!-- Primary (catalyzing) input: any TAN file -->
+    <!-- Secondary input: a copy location -->
+    <!-- Primary output: none -->
+    <!-- Secondary output: the file copied to the target location, revising any relative @hrefs in light of the target location -->
+    
+    <!-- July 2020: When you use this application in the context of an oXygen dialogue, you should type the 
+        path directly into the bar. If you use the navigation feature you will be required to select a file that you wish 
+        to overwrite. -->
 
-    <!--<xsl:import href="../../functions/TAN-A-functions.xsl"/>-->
     <xsl:import href="../get%20inclusions/convert.xsl"/>
     <xsl:output indent="no" use-character-maps="tan"/>
     
@@ -15,11 +20,11 @@
     <xsl:variable name="copy-to-resolved" select="resolve-uri($copy-to, $doc-uri)"/>
     
     <!-- THIS STYLESHEET -->
-
-    <xsl:variable name="stylesheet-iri"
+    <xsl:param name="stylesheet-iri"
         select="'tag:textalign.net,2015:stylesheet:copy-tan-file'"/>
-    <xsl:variable name="stylesheet-url" select="static-base-uri()"/>
-    <xsl:variable name="change-message" select="'Copied file from', $doc-uri, 'to', $copy-to-resolved"/>
+    <xsl:param name="stylesheet-url" select="static-base-uri()"/>
+    <xsl:param name="change-message" select="'Copied file from', $doc-uri, 'to', $copy-to-resolved"/>
+    <xsl:param name="stylesheet-is-core-tan-application" select="true()"/>
 
     <xsl:variable name="self-hrefs-resolved" as="document-node()"
         select="tan:revise-hrefs(/, $doc-uri, $copy-to-resolved)"/>
