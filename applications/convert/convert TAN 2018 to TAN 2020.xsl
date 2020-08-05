@@ -316,13 +316,13 @@
     <xsl:template match="tan:definitions" mode="input-pass-1 test-input">
         <vocabulary-key>
             <xsl:apply-templates select="@*" mode="#current"/>
-            <!-- Note, we can discard any vocabulary items whose @xml:id and @which values are identical -->
+            <!-- Note, we can discard any vocabulary items whose @xml:id and @which values are identical, except in TAN-mor features -->
             <xsl:apply-templates
                 select="
                     node() except
                     (tan:relationship[(tan:name, @which, tan:attribute-vocabulary(@relationship)//tan:name) = ('model', 'redivision', 'class 2', 'old version', 'new version')],
                     (tan:work, tan:version)[ancestor::tei:TEI or ancestor::tan:TAN-T],
-                    *[@xml:id = @which],
+                    *[@xml:id = @which][not(self::tan:feature)],
                     tan:token-definition, tan:ambiguous-letter-numerals-are-roman)/(self::node(), preceding-sibling::node()[1]/self::text())"
                 mode="#current"/>
         </vocabulary-key>
@@ -462,6 +462,14 @@
             <xsl:if test="exists($pass-1-primary-agent-ids)">
                 <xsl:attribute name="who" select="string-join($pass-1-primary-agent-ids, ' ')"/>
             </xsl:if>
+        </xsl:copy>
+    </xsl:template>
+    
+    <xsl:template match="tan:tok[not(@pos)]" mode="input-pass-2">
+        <xsl:copy copy-namespaces="no">
+            <xsl:copy-of select="@*"/>
+            <xsl:attribute name="pos" select="1"/>
+            <xsl:apply-templates mode="#current"/>
         </xsl:copy>
     </xsl:template>
 

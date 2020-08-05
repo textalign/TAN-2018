@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns="tag:textalign.net,2015:ns" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:ti="http://chs.harvard.edu/xmlns/cts"
-    xmlns:tan="tag:textalign.net,2015:ns" exclude-result-prefixes="#all" version="2.0">
+    xmlns:tan="tag:textalign.net,2015:ns" exclude-result-prefixes="#all" version="3.0">
 
-    <!-- Input: A TAN-TEI file -->
-    <!-- Output: The same, but as one TAN-T file per divisions system (native, or milestones) -->
-    <!-- This stylesheet should work on its own, but it is also suited for importing into other stylesheets -->
+    <!-- Primary (catalyzing) input: A TAN-TEI file -->
+    <!-- Secondary input: none -->
+    <!-- Primary output: perhaps diagnostics -->
+    <!-- Secondary output: one TAN-T file per detectable divisions system (native, or milestones) -->
+    <!-- Resultant output will need attention, because of how unpredictable TEI files are. -->
+
+    <xsl:param name="output-diagnostics-on" static="yes" as="xs:boolean" select="false()"/>
+    
+    <xsl:output expand-text="false"/>
 
     <xsl:import href="../get%20inclusions/convert.xsl"/>
     <xsl:import href="../get%20inclusions/analysis%20of%20TEI.xsl"/>
@@ -14,16 +20,20 @@
     <!-- TEI files that use <lb> assume one knows there are line breaks at other elements; this parameter has relevance only if converting to a line-based reference system -->
     <xsl:param name="add-implicit-lb" as="xs:boolean" select="true()"/>
 
-    <!-- These variables supplied for TAN output stylesheet -->
-    <xsl:variable name="stylesheet-iri"
-        select="'tag:textalign.net,2015:stylesheet:convert-tan-tei-to-tan-t'"/>
-    <xsl:variable name="this-stylesheet-uri" select="static-base-uri()"/>
-    <xsl:variable name="change-message" select="'Converted from TAN-TEI to TAN-T.'"/>
 
-    <!--<xsl:variable name="div-type-glossary" select="tan:glossary('div-type', '')"/>-->
+    <!-- THIS STYLESHEET -->
+    <xsl:param name="stylesheet-iri"
+        select="'tag:textalign.net,2015:stylesheet:convert-tan-tei-to-tan-t'"/>
+    <xsl:param name="stylesheet-url" select="static-base-uri()"/>
+    <xsl:param name="stylesheet-name" select="'TAN-TEI to TAN-T converter'"/>
+    <xsl:param name="change-message" select="'Converted from TAN-TEI to TAN-T.'"/>
+    <xsl:param name="stylesheet-is-core-tan-application" select="true()"/>
+    
+
     <xsl:variable name="div-type-glossary" select="tan:vocabulary('div-type', '*', $doc-vocabulary)"/>
     <xsl:variable name="div-type-glossary-for-tei-element"
         select="$div-type-glossary/*[tan:name[matches(., '^tei ')]]"/>
+    <xsl:variable name="TAN-div-type-vocabulary" select="$TAN-vocabularies[tan:TAN-voc/@id = 'tag:textalign.net,2015:tan-voc:div-types']"/>
 
     <!-- Input pre-analysis -->
     
@@ -203,10 +213,14 @@
         <xsl:param name="is-in-mixed-content" as="xs:boolean?"/>
         <xsl:variable name="has-mixed-content" select="exists(*) and exists(text()[matches(., '\S')])"/>
         <xsl:variable name="this-element-name" select="local-name()"/>
+        <xsl:variable name="this-tan-voc-entry" select="$TAN-div-type-vocabulary//*[tan:name = ('tei ' || $this-element-name)]"/>
         <xsl:variable name="this-div-type" as="xs:string">
             <xsl:choose>
                 <xsl:when test="exists(@type) and $this-element-name = ('ab', 'lg')">
                     <xsl:value-of select="@type"/>
+                </xsl:when>
+                <xsl:when test="exists($this-tan-voc-entry)">
+                    <xsl:value-of select="$this-tan-voc-entry[1]/tan:name[1]"/>
                 </xsl:when>
                 <xsl:when test="$this-element-name = 'l'">line</xsl:when>
                 <xsl:when test="$this-element-name = 'quote' and not($is-in-mixed-content)">block-quote</xsl:when>
@@ -215,11 +229,22 @@
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
+        
+        <xsl:variable name="diagnostics-on" select="false()"/>
+        <xsl:if test="$diagnostics-on">
+            <xsl:message select="'Diagnostics on, template mode convert-tei-leaf-div-content'"/>
+            <xsl:message select="'This element name: ' || $this-element-name"/>
+            <xsl:message select="'Is in mixed content: ', $is-in-mixed-content"/>
+            <xsl:message select="'Has mixed content: ', $has-mixed-content"/>
+            <xsl:message select="'This TAN-voc entry:', $this-tan-voc-entry"/>
+            <xsl:message select="'This div type: ' || $this-div-type"/>
+        </xsl:if>
+        
         <xsl:choose>
             <xsl:when
                 test="$this-element-name = $milestoneLike-element-info/tan:group/tan:element/@name"/>
             <xsl:otherwise>
-                <div type="{$this-div-type}" n="{@n}">
+                <div type="{replace($this-div-type, ' ', '_')}" n="{@n}">
                     <xsl:choose>
                         <xsl:when test="$has-mixed-content">
                             <xsl:value-of select="normalize-space(string-join(.//text(), ''))"/>
@@ -268,12 +293,6 @@
         <xsl:variable name="lb-alt-div" select="$alt-div/tan:alt-div[@element-name = 'lb']"/>
         <xsl:choose>
             <xsl:when test="exists($this-alt-div)">
-                <!--<xsl:variable name="this-div-type"
-                    select="
-                        if ($this-element-name = 'milestone') then
-                            (@unit, @type)[1]
-                        else
-                            $milestoneLike-element-info/tan:group/tan:element[@name = $this-element-name]/@idref"/>-->
                 <xsl:variable name="this-div-type" as="xs:string">
                     <xsl:choose>
                         <xsl:when test="$this-element-name = 'milestone' and exists(@n)">
@@ -501,6 +520,14 @@
         <xsl:copy-of select="$these-see-alsos[not(tan:IRI = $new-doc-id)]"/>
     </xsl:template>
 
+    <xsl:variable name="names-of-attributes-allowed-in-tan-div" as="xs:string+"
+        select="('n', 'type', 'help', 'xml:lang', 'ed-when', 'ed-who', 'include')"/>
+    <xsl:template match="tan:div[tan:div]" mode="input-pass-2">
+        <xsl:copy>
+            <xsl:copy-of select="@*[name(.) = $names-of-attributes-allowed-in-tan-div]"/>
+            <xsl:apply-templates mode="#current"/>
+        </xsl:copy>
+    </xsl:template>
     <xsl:template match="tan:div[not(tan:div)]" mode="input-pass-2">
         <xsl:choose>
             <xsl:when
@@ -508,7 +535,7 @@
                     some $i in text()
                         satisfies matches($i, '\S')">
                 <xsl:copy>
-                    <xsl:copy-of select="@*"/>
+                    <xsl:copy-of select="@*[name(.) = $names-of-attributes-allowed-in-tan-div]"/>
                     <xsl:apply-templates mode="#current"/>
                 </xsl:copy>
             </xsl:when>
@@ -528,26 +555,21 @@
     <xsl:param name="output-url-relative-to-actual-input" as="xs:string?"
         select="concat(replace(tan:cfn(/), 'tan-tei', 'tan-t'), '-', $today-iso, '.xml')"/>
 
-    <!--<xsl:template match="/" priority="5">
-        <!-\-<diagnostics>
-            <!-\\-<test02a><xsl:copy-of select="$milestoneLike-elements"/></test02a>-\\->
-            <test02b><xsl:copy-of select="$milestoneLike-analysis"/></test02b>
-            <test03d><xsl:value-of select="$suffixes-for-multiple-output"/></test03d>
-            <!-\\-<test03a><xsl:copy-of select="$these-see-alsos"/></test03a>-\\->
-            <!-\\-<test03b><xsl:copy-of select="$output-url-resolved"/></test03b>-\\->
-            <!-\\-<test03e><xsl:copy-of select="count($input-pass-1)"/></test03e>-\\->
-            <!-\\-<xsl:for-each select="$input-pass-1"><test06a><xsl:copy-of select="tan:shallow-copy(.//tan:div[not(tan:div)])"/></test06a></xsl:for-each>-\\->
-        </diagnostics>-\->
-        <xsl:copy-of select="$primary-conversion"/>
-        <!-\-<xsl:copy-of select="$secondary-conversions[3]"/>-\->
-        <!-\-<xsl:copy-of select="$input-pass-1[4]"/>-\->
-        <!-\-<xsl:copy-of select="$input-pass-2[2]"/>-\->
-        <!-\-<xsl:copy-of select="$template-infused-with-revised-input[1]"/>-\->
-        <!-\-<xsl:copy-of select="$infused-template-revised[1]"/>-\->
-        <!-\-<xsl:variable name="pass-1" as="document-node()*">
-            <xsl:apply-templates select="." mode="tan-tei-to-tan-t"/>
-        </xsl:variable>-\->
-        <!-\-<xsl:apply-templates select="$pass-1" mode="credit-stylesheet"/>-\->
-    </xsl:template>-->
+    <xsl:template match="/" use-when="$output-diagnostics-on">
+        <diagnostics>
+            <milestone-like-elements><xsl:copy-of select="$milestoneLike-elements"/></milestone-like-elements>
+            <milestone-like-analysis><xsl:copy-of select="$milestoneLike-analysis"/></milestone-like-analysis>
+            <suffixes-for-multiple-output><xsl:value-of select="$suffixes-for-multiple-output"/></suffixes-for-multiple-output>
+            <see-alsos><xsl:copy-of select="$these-see-alsos"/></see-alsos>
+            <primary-conversion><xsl:copy-of select="$primary-conversion"/></primary-conversion>
+            <secondary-conversions><xsl:copy-of select="$secondary-conversions"/></secondary-conversions>
+            <input-pass-1><xsl:copy-of select="$input-pass-1"/></input-pass-1>
+            <input-pass-2><xsl:copy-of select="$input-pass-2"/></input-pass-2>
+            <template-url-resolved><xsl:copy-of select="$template-url-resolved"/></template-url-resolved>
+            <template-infused-with-revised-input><xsl:copy-of select="$template-infused-with-revised-input[1]"/></template-infused-with-revised-input>
+            <infused-template-revised><xsl:copy-of select="$infused-template-revised"/></infused-template-revised>
+            <output-url-resolved><xsl:copy-of select="$output-url-resolved"/></output-url-resolved>
+        </diagnostics>
+    </xsl:template>
 
 </xsl:stylesheet>
