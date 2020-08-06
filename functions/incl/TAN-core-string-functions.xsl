@@ -451,6 +451,23 @@
                     string-to-codepoints($i)"/>
         <xsl:copy-of select="codepoints-to-string(max($codepoints-used) + 1)"/>
     </xsl:function>
+    
+    <xsl:function name="tan:ellipses" as="xs:string*">
+        <!-- Input: any sequence of strings; an integer -->
+        <!-- Output: the sequence of strings, but with any substring beyond the requested length replaced by ellipses -->
+        <xsl:param name="strings-to-truncate" as="xs:string*"/>
+        <xsl:param name="string-length-to-retain" as="xs:integer"/>
+        <xsl:for-each select="$strings-to-truncate">
+            <xsl:choose>
+                <xsl:when test="string-length(.) lt $string-length-to-retain">
+                    <xsl:value-of select="."/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="substring(., 1, $string-length-to-retain) || '...'"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:for-each>
+    </xsl:function>
 
 
 
@@ -517,8 +534,8 @@
         <xsl:variable name="str-b-len" select="string-length($string-b)"/>
         <xsl:choose>
             <xsl:when
-                test="($preprocess-long-strings = false()) or ($str-a-len lt $long-string-length-min) 
-                or ($str-b-len lt $long-string-length-min)">
+                test="($preprocess-long-strings = false()) or 
+                (($str-a-len lt $long-string-length-min) or ($str-b-len lt $long-string-length-min))">
                 <xsl:sequence select="tan:diff($string-a, $string-b, $snap-to-word, (), 0)"/>
             </xsl:when>
             <xsl:otherwise>
@@ -580,22 +597,11 @@
         <xsl:param name="string-a" as="xs:string?"/>
         <xsl:param name="string-b" as="xs:string?"/>
         <xsl:param name="snap-to-word" as="xs:boolean"/>
-        <!--<xsl:param name="preprocess-long-strings" as="xs:boolean"/>-->
         <xsl:param name="characters-to-tokenize-on" as="xs:string*"/>
         <xsl:param name="loop-counter" as="xs:integer"/>
         
         <xsl:variable name="str-a-len" select="string-length($string-a)"/>
         <xsl:variable name="str-b-len" select="string-length($string-b)"/>
-        <!--<xsl:variable name="a-prepped" as="element()">
-            <a>
-                <xsl:value-of select="$string-a"/>
-            </a>
-        </xsl:variable>-->
-        <!--<xsl:variable name="b-prepped" as="element()">
-            <b>
-                <xsl:value-of select="$string-b"/>
-            </b>
-        </xsl:variable>-->
         <xsl:variable name="strings-prepped" as="element()+">
             <xsl:choose>
                 <xsl:when test="$str-a-len lt $str-b-len">
@@ -607,10 +613,6 @@
                     <a><xsl:value-of select="$string-a"/></a>
                 </xsl:otherwise>
             </xsl:choose>
-            <!--<xsl:for-each select="$a-prepped, $b-prepped">
-                <xsl:sort select="string-length(text())"/>
-                <xsl:copy-of select="."/>
-            </xsl:for-each>-->
         </xsl:variable>
         <xsl:variable name="some-string-is-zero-length"
             select="($str-a-len lt 1) or ($str-b-len lt 1)"/>
@@ -653,6 +655,14 @@
                             select="tan:diff-outer-loop($strings-prepped[1], $strings-prepped[2], true(), false(), $vertical-stops, 0)"
                         />
                     </xsl:variable>
+                    
+                    <xsl:variable name="diagnostics-on" select="false()"/>
+                    <xsl:if test="$diagnostics-on">
+                        <xsl:message select="'diagnostics on, tan:diff(), branch where preprocessing is not needed.'"/>
+                        <xsl:message select="concat('String a length: ', string($str-a-len), ' (', tan:ellipses($string-a, 20), '); string b length: ', string($str-b-len), ' (', tan:ellipses($string-b, 20), ')')"/>
+                        <xsl:message select="'Pass 1:', $pass-1"/>
+                    </xsl:if>
+                    
                     <xsl:for-each-group select="$pass-1" group-adjacent="name() = 'common'">
                         <xsl:choose>
                             <xsl:when test="current-grouping-key()">
@@ -745,11 +755,13 @@
                         <xsl:message select="'Input core unique words shared (', count($input-core-shared-unique-words-in-same-order), '): ', string-join($input-core-shared-unique-words-in-same-order, ' ')"/>
                         <xsl:message select="'Input analyzed: ', serialize($input-analyzed-2)"/>
                     </xsl:if>
+                    
                     <xsl:for-each-group select="$input-analyzed-2/tan:group" group-by="@n">
                         <xsl:copy-of select="tan:diff(current-group()[@input='1']/tan:distinct, current-group()[@input='2']/tan:distinct,
                             $snap-to-word, $characters-to-tokenize-on[position() gt 1], $loop-counter + 1)/*"/>
                         <xsl:copy-of select="current-group()[1]/tan:common"/>
                     </xsl:for-each-group> 
+                    
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
@@ -998,12 +1010,12 @@
                 <common outer-loop="{$loop-counter}">
                     <xsl:value-of select="$short-string"/>
                 </common>
-            </xsl:when>
-            <xsl:when test="matches($long-string, tan:escape($short-string))">
+            </xsl:when><!-- matches($long-string, tan:escape($short-string)) -->
+            <xsl:when test="matches($long-string, $short-string, 'q')">
                 <xsl:variable name="this-analysis" as="element()">
-                    <analysis>
+                    <analysis><!-- {tan:escape($short-string/text())} -->
                         <xsl:analyze-string select="$long-string/text()"
-                            regex="{tan:escape($short-string/text())}">
+                            regex="{$short-string/text()}" flags="q">
                             <xsl:matching-substring>
                                 <common outer-loop="{$loop-counter}">
                                     <xsl:value-of select="."/>
@@ -1198,8 +1210,9 @@
                         in the short or the long strings. By using tan:common[1] above we grab the first case in the
                         long string. We should do the same for the short string, so we can't rely exclusively upon the
                         short-search-start or short-search-length. -->
+                        <!-- matches($short-string, concat(tan:escape($first-result/tan:common[1]), '$')) -->
                         <xsl:variable name="short-input-should-be-parsed-from-end"
-                            select="(not($start-at-beginning) and matches($short-string, concat(tan:escape($first-result/tan:common[1]), '$')))"
+                            select="(not($start-at-beginning) and ends-with($short-string, $first-result/tan:common[1]))"
                         />
                         <xsl:variable name="short-input-parsed" as="element()">
                             <result>
@@ -1419,6 +1432,7 @@
         <!-- Input: any number of strings -->
         <!-- Output: an element with <c> and <u w="[WITNESS NUMBERS]">, showing where there are common strings and where there are departures. At the beginning are <witness>es identifying the numbers, and providing basic statistics about how much each pair of witnesses agree. -->
         <!-- This function was written to deal with multiple OCR results of the same page of text, to find agreement wherever possible. -->
+        <!-- This function was rewritten in 2020 as an XSLT 3.0 function, with 5-arity. -->
         <xsl:param name="strings" as="xs:string*"/>
         <xsl:param name="labels" as="xs:string*"/>
 

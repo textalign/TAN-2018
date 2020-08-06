@@ -137,6 +137,10 @@ script,
 body > div > div.label{
    font-size:larger;
 }
+tr.averages{
+   font-size:smaller;
+   font-style: italic;
+}
 
 
 /* MARGINS */
@@ -170,6 +174,11 @@ body > * > .label {
 
 .e-u {
    position: relative;
+}
+
+/* TEXT */
+tr.averages > td:nth-child(2){
+   text-align:right;
 }
 
 /* VISIBILITY */
