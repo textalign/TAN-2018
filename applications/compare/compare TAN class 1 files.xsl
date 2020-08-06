@@ -99,6 +99,7 @@
     <xsl:param name="stylesheet-url" select="static-base-uri()"/>
     <xsl:param name="stylesheet-name" select="'Application to compare class 1 files'"/>
     <xsl:param name="change-message" select="'Compared class 1 files.'"/>
+    <xsl:param name="stylesheet-is-core-tan-application" select="true()"/>
     
     
     <!-- Beginning of main input -->

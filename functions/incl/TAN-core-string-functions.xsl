@@ -504,8 +504,8 @@
     </xsl:function>
 
     <!-- At what point is the shortest string so long that it would be better to do some pre-processing? -->
-    <!--<xsl:param name="long-string-length-min" as="xs:double" select="10 div $vertical-stops[last()]"/>-->
-    <xsl:param name="long-string-length-min" as="xs:double" select="1000"/>
+    <!--<xsl:param name="long-string-length-min" as="xs:integer" select="10 div $vertical-stops[last()]"/>-->
+    <xsl:param name="long-string-length-min" as="xs:integer" select="1000"/>
     
     <xsl:variable name="tok-def-long-string" as="element()">
         <token-definition pattern=".{{30}}" flags="s"/>
@@ -622,32 +622,37 @@
                 (min(($str-a-len, $str-b-len)) lt $long-string-length-min)"
         />
         
+        <!--<xsl:variable name="tok-def-of-choice" as="element()">
+            <!-\-<token-definition pattern="[^{tan:escape($next-tokenization-string)}]+" flags="s"/>-\->
+            <xsl:choose>
+                <xsl:when test="$next-tokenization-string eq '&#xA;'">
+                    <token-definition pattern="[^\n\r]+"/>
+                </xsl:when>
+                <xsl:when test="$next-tokenization-string eq '&#x9;'">
+                    <token-definition pattern="[^\t]+" flags="s"/>
+                </xsl:when>
+                <!-\-<xsl:when test="$loop-counter eq 0">
+                    <token-definition pattern="[^{tan:escape($next-tokenization-string)}\n\r]+"/>
+                </xsl:when>-\->
+                <xsl:otherwise>
+                    <token-definition pattern="[^{tan:escape($next-tokenization-string)}]+" flags="s"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>-->
+
         <xsl:variable name="next-tokenization-string" select="$characters-to-tokenize-on[1]"/>
-        <xsl:variable name="tok-def-of-choice" as="element()">
-            <token-definition pattern="[^{tan:escape($next-tokenization-string)}]+" flags="s"/>
-        </xsl:variable>
-        
-        <xsl:if test="$tok-def-of-choice = '[^]+'">
-            <xsl:message select="'tokenization patterns ', $characters-to-tokenize-on"/>
-            <xsl:message terminate="yes"
-                select="'faulty next tok string cp ', string-to-codepoints($next-tokenization-string)"
-            />
-            
-        </xsl:if>
+        <xsl:variable name="tokenize-on" as="xs:string"
+            select="concat('[', tan:escape($next-tokenization-string), ']')"/>
         
         <xsl:variable name="strings-diffed" as="element()*">
             <xsl:choose>
                 <xsl:when test="$loop-counter ge $loop-tolerance">
                     <xsl:message
                         select="concat('Diff function cannot be repeated more than ', xs:string($loop-tolerance), ' times')"/>
-                    <!--<xsl:copy-of select="$a-prepped"/>-->
-                    <!--<xsl:copy-of select="$b-prepped"/>-->
                     <xsl:sequence select="$strings-prepped/self::a, $strings-prepped/self::b"/>
                 </xsl:when>
                 <xsl:when test="$some-string-is-zero-length">
                     <xsl:sequence select="$strings-prepped[text()]"/>
-                    <!--<xsl:copy-of select="$a-prepped[string-length(.) gt 0]"/>-->
-                    <!--<xsl:copy-of select="$b-prepped[string-length(.) gt 0]"/>-->
                 </xsl:when>
                 <xsl:when test="$does-not-need-preprocessing">
                     <xsl:variable name="pass-1" as="element()*">
@@ -682,11 +687,40 @@
                 <xsl:otherwise>
                     <!-- Pre-process long strings by first analyzing co-occurrence of unique words -->
                     <!-- Build a variable with two elements, one for each input string, containing <tok> and <non-tok> -->
+                    
+                    <xsl:if test="$tokenize-on eq '[]'">
+                        <xsl:message select="'tokenization patterns ', $characters-to-tokenize-on"/>
+                        <xsl:message terminate="yes"
+                            select="'faulty next tok string cp ', string-to-codepoints($next-tokenization-string)"
+                        />
+                        
+                    </xsl:if>
 
-                    <xsl:variable name="input-analyzed"
-                        select="tan:tokenize-text(($string-a, $string-b), $tok-def-of-choice, false())" as="element()*"/>
+                    <!--<xsl:variable name="input-analyzed"
+                        select="tan:tokenize-text(($string-a, $string-b), $tok-def-of-choice, false())" as="element()*"/>-->
+                    <xsl:variable name="input-a-analyzed" as="xs:string*">
+                        <xsl:analyze-string select="$string-a" regex="{$tokenize-on}">
+                            <xsl:matching-substring>
+                                <xsl:value-of select="."/>
+                            </xsl:matching-substring>
+                            <xsl:non-matching-substring>
+                                <xsl:value-of select="."/>
+                            </xsl:non-matching-substring>
+                        </xsl:analyze-string>
+                    </xsl:variable>
+                    <xsl:variable name="input-b-analyzed" as="xs:string*">
+                        <xsl:analyze-string select="$string-b" regex="{$tokenize-on}">
+                            <xsl:matching-substring>
+                                <xsl:value-of select="."/>
+                            </xsl:matching-substring>
+                            <xsl:non-matching-substring>
+                                <xsl:value-of select="."/>
+                            </xsl:non-matching-substring>
+                        </xsl:analyze-string>
+                    </xsl:variable>
+                    
                     <!-- Reduce each of the two elements to a set of tokens unique to that string -->
-                    <xsl:variable name="input-unique-words" as="element()*">
+                    <!--<xsl:variable name="input-unique-words" as="element()*">
                         <xsl:for-each select="$input-analyzed">
                             <xsl:copy>
                                 <xsl:copy-of select="@*"/>
@@ -697,18 +731,97 @@
                                 </xsl:for-each-group>
                             </xsl:copy>
                         </xsl:for-each>
+                    </xsl:variable>-->
+                    <xsl:variable name="input-a-unique-words" as="xs:string*">
+                        <xsl:for-each-group select="$input-a-analyzed" group-by=".">
+                            <xsl:if test="count(current-group()) = 1">
+                                <xsl:sequence select="current-group()"/>
+                            </xsl:if>
+                        </xsl:for-each-group> 
                     </xsl:variable>
-                    <xsl:variable name="input-core-sequence"
+                    <xsl:variable name="input-b-unique-words" as="xs:string*">
+                        <xsl:for-each-group select="$input-b-analyzed" group-by=".">
+                            <xsl:if test="count(current-group()) = 1">
+                                <xsl:sequence select="current-group()"/>
+                            </xsl:if>
+                        </xsl:for-each-group> 
+                    </xsl:variable>
+                    
+                    
+                    <!--<xsl:variable name="input-core-sequence"
                         select="
                             tan:collate-pair-of-sequences($input-unique-words[1]/tan:tok,
                             $input-unique-words[2]/tan:tok)"
+                    />-->
+                    <xsl:variable name="input-core-sequence"
+                        select="
+                            tan:collate-pair-of-sequences($input-a-unique-words, $input-b-unique-words)"
                     />
+                    
+                    
                     <xsl:variable name="input-core-shared-unique-words-in-same-order"
                         select="$input-core-sequence[exists(@p1) and exists(@p2)]"/>
                     <xsl:variable name="this-unique-sequence-count"
                         select="count($input-core-shared-unique-words-in-same-order)"/>
                     <xsl:variable name="input-analyzed-2" as="element()*">
-                        <xsl:for-each select="$input-analyzed">
+                        <a>
+                            <xsl:for-each-group select="$input-a-analyzed"
+                                group-ending-with=".[. = $input-core-shared-unique-words-in-same-order]">
+                                <xsl:variable name="last-is-not-common"
+                                    select="position() gt $this-unique-sequence-count"/>
+                                <group n="{position()}" input="1">
+                                    <xsl:choose>
+                                        <xsl:when test="$last-is-not-common">
+                                            <distinct input="1">
+                                                <xsl:value-of
+                                                  select="string-join(current-group(), '')"/>
+                                            </distinct>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <distinct input="1">
+                                                <xsl:value-of
+                                                  select="string-join(current-group()[not(position() eq last())], '')"
+                                                />
+                                            </distinct>
+                                            <common>
+                                                <xsl:value-of select="current-group()[last()]"/>
+                                            </common>
+                                        </xsl:otherwise>
+
+                                    </xsl:choose>
+                                </group>
+                            </xsl:for-each-group>
+                        </a>
+                        <b>
+                            <xsl:for-each-group select="$input-b-analyzed"
+                                group-ending-with=".[. = $input-core-shared-unique-words-in-same-order]">
+                                <xsl:variable name="last-is-not-common"
+                                    select="position() gt $this-unique-sequence-count"/>
+                                <group n="{position()}" input="2">
+                                    <xsl:choose>
+                                        <xsl:when test="$last-is-not-common">
+                                            <distinct input="2">
+                                                <xsl:value-of
+                                                  select="string-join(current-group(), '')"/>
+                                            </distinct>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <distinct input="1">
+                                                <xsl:value-of
+                                                    select="string-join(current-group()[not(position() eq last())], '')"
+                                                />
+                                            </distinct>
+                                            <common>
+                                                <xsl:value-of select="current-group()[last()]"/>
+                                            </common>
+                                        </xsl:otherwise>
+
+                                    </xsl:choose>
+                                </group>
+                            </xsl:for-each-group>
+                        </b>
+
+                        <!--<xsl:for-each select="$input-analyzed">
                             <xsl:variable name="this-pos" select="position()"/>
                             <xsl:copy>
                                 <xsl:copy-of select="@*"/>
@@ -738,21 +851,22 @@
                                     </group>
                                 </xsl:for-each-group>
                             </xsl:copy>
-                        </xsl:for-each>
+                        </xsl:for-each>-->
                     </xsl:variable>
                     
                     <xsl:variable name="diagnostics-on" select="false()"/>
                     <xsl:if test="$diagnostics-on">
                         <xsl:message select="'diagnostics on, tan:diff(), branch to preprocess long strings.'"/>
                         <xsl:message select="'next tokenization string (', string-to-codepoints($next-tokenization-string), '): ', $next-tokenization-string"/>
-                        <xsl:message select="'tokenization pattern: ', string($tok-def-of-choice/@pattern)"/>
+                        <xsl:message select="'tokenization pattern: ', $tokenize-on"/>
                         <xsl:message select="'all tokenization strings: ', string-join($characters-to-tokenize-on, ' ')"/>
                         <xsl:message select="'all tokenization string codepoints: ', string-to-codepoints(string-join($characters-to-tokenize-on, ''))"/>
-                        <xsl:message select="'input tokenized: ', serialize($input-analyzed)"/>
-                        <xsl:message select="'input A unique words (', count($input-unique-words[1]/tan:tok), '): ', serialize($input-unique-words[1]/tan:tok)"/>
-                        <xsl:message select="'input B unique words (', count($input-unique-words[2]/tan:tok), '): ', serialize($input-unique-words[2]/tan:tok)"/>
-                        <xsl:message select="'input core sequence (', count($input-core-sequence), '): ', string-join($input-core-sequence, ' ')"/>
-                        <xsl:message select="'Input core unique words shared (', count($input-core-shared-unique-words-in-same-order), '): ', string-join($input-core-shared-unique-words-in-same-order, ' ')"/>
+                        <xsl:message select="'input A analyzed/tokenized (', count($input-a-analyzed), '):', $input-a-analyzed"/>
+                        <xsl:message select="'input B analyzed/tokenized (', count($input-b-analyzed), '):', $input-b-analyzed"/>
+                        <xsl:message select="'input A unique words (', count($input-a-unique-words), '): ', $input-a-unique-words"/>
+                        <xsl:message select="'input B unique words (', count($input-b-unique-words), '): ', $input-b-unique-words"/>
+                        <xsl:message select="'input core sequence (', count($input-core-sequence), '): ', serialize($input-core-sequence)"/>
+                        <xsl:message select="'Input core shared unique words in same order (', count($input-core-shared-unique-words-in-same-order), '): ', string-join($input-core-shared-unique-words-in-same-order, ' ')"/>
                         <xsl:message select="'Input analyzed: ', serialize($input-analyzed-2)"/>
                     </xsl:if>
                     
