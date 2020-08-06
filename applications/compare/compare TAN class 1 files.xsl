@@ -25,7 +25,8 @@
     <!-- The XML output is a straightforward result of tan:diff() or tan:collate(), perhaps with statistical analysis prepended
     inside the root element. The HTML output has been designed to work with specific JavaScript and CSS files, and the HTML output
     will not render correctly unless you have set up dependencies correctly. See comments in code below. -->
-    <!-- This application has considerable potential for development. Desiderata:
+    
+    <!-- This application currently just scratches the surface of what is possible. Desiderata:
         1. Support a single TAN-A as the catalyst or MIRU provider, allowing <alias> to define the groups.
         2. Support MIRUs that point to non-TAN files, e.g., plain text, docx, xml.
         3. Support choice on whether Venn diagrams adjust the common area or not.
@@ -39,9 +40,15 @@
     <xsl:variable name="relative-uri-2" select="'../../../library-arithmeticus/evagrius'"/>
     <xsl:variable name="relative-uri-3" select="'../../../library-arithmeticus/bible'"/>
     
+    <xsl:param name="main-input-relative-uri-directories" as="xs:string*" select="$relative-uri-to-examples"/>
+    
     <!-- In what directory are the class-1 files to be compared? Unless $main-input-resolved-uris has been given values directly, this parameter will be used to get a collection of all files in the directories chosen. -->
     <xsl:param name="main-input-resolved-uri-directories" as="xs:string*"
-        select="string(resolve-uri($relative-uri-3, static-base-uri()))"/>
+        select="
+            for $i in $main-input-relative-uri-directories
+            return
+                string(resolve-uri($i, base-uri(/)))"
+    />
     
     <!-- The input files are at what resolved URIs? Example: 'file:/c:/users/cjohnson/Downloads' -->
     <xsl:param name="main-input-resolved-uris" as="xs:string*">
@@ -1058,7 +1065,7 @@
     <xsl:variable name="resolved-uri-to-js"
         select="($target-output-directory-resolved || 'js/diff.js')"/>
     <xsl:variable name="resolved-uri-to-jquery"
-        select="($target-output-directory-resolved || 'js/jquery-3.4.1.min.js')"/>
+        select="($target-output-directory-resolved || 'js/jquery.js')"/>
     <xsl:variable name="resolved-uri-to-venn-js"
         select="($target-output-directory-resolved || 'js/venn.js/venn.js')"/>
     
@@ -1093,6 +1100,48 @@
     <!-- one row per witness -->
     <xsl:template match="tan:stats/*" mode="diff-to-html">
         <xsl:variable name="is-last-witness" select="(following-sibling::*[1]/(self::tan:collation, self::tan:diff))"/>
+        <xsl:variable name="is-summary" select="self::tan:collation or self::tan:diff"/>
+        <xsl:if test="$is-summary">
+            <xsl:variable name="prec-wits" select="preceding-sibling::tan:witness"/>
+            <tr class="averages" xmlns="http://www.w3.org/1999/xhtml">
+                <td/>
+                <td>
+                    <div>averages</div>
+                </td>
+                <td class="e-length">
+                    <xsl:value-of
+                        select="
+                            format-number(avg(for $i in $prec-wits/tan:length
+                            return
+                                number($i)), '0.0')"
+                    />
+                </td>
+                <td class="e-diff-count">
+                    <xsl:value-of
+                        select="
+                            format-number(avg(for $i in $prec-wits/tan:diff-count
+                            return
+                                number($i)), '0.0')"
+                    />
+                </td>
+                <td class="e-diff-length">
+                    <xsl:value-of
+                        select="
+                            format-number(avg(for $i in $prec-wits/tan:diff-length
+                            return
+                                number($i)), '0.0')"
+                    />
+                </td>
+                <td class="e-diff-portion">
+                    <xsl:value-of
+                        select="
+                            format-number(avg(for $i in $prec-wits/tan:diff-portion
+                            return
+                                number(replace($i, '%', '')) div 100), '0.0%')"
+                    />
+                </td>
+            </tr>
+        </xsl:if>
         <tr xmlns="http://www.w3.org/1999/xhtml">
             <xsl:copy-of select="@class"/>
             <!-- The name of the witness, and the first column, for selection -->
