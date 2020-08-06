@@ -24,19 +24,22 @@
     <xsl:function name="tan:batch-replace" as="xs:string?">
         <!-- Input: a string, a sequence of <[ANY NAME] pattern="" replacement="" [flags=""]> -->
         <!-- Output: the string, after those replaces are processed in order -->
-        <xsl:param name="string" as="xs:string?"/>
+        <xsl:param name="string-to-replace" as="xs:string?"/>
         <xsl:param name="replace-elements" as="element()*"/>
         <xsl:choose>
             <xsl:when test="not(exists($replace-elements))">
-                <xsl:value-of select="$string"/>
+                <xsl:value-of select="$string-to-replace"/>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:variable name="new-string"
                     select="
                         if (exists($replace-elements[1]/@flags)) then
-                            tan:replace($string, $replace-elements[1]/@pattern, $replace-elements[1]/@replacement, $replace-elements[1]/@flags)
+                            tan:replace($string-to-replace, $replace-elements[1]/@pattern, $replace-elements[1]/@replacement, $replace-elements[1]/@flags)
                         else
-                            tan:replace($string, $replace-elements[1]/@pattern, $replace-elements[1]/@replacement)"/>
+                            tan:replace($string-to-replace, $replace-elements[1]/@pattern, $replace-elements[1]/@replacement)"/>
+                <xsl:if test="not($string-to-replace = $new-string) and exists($replace-elements[1]/@message)">
+                    <xsl:message select="string($replace-elements[1]/@message)"/>
+                </xsl:if>
                 <xsl:value-of
                     select="tan:batch-replace($new-string, $replace-elements[position() gt 1])"/>
             </xsl:otherwise>
