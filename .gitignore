@@ -11,7 +11,7 @@ private*
 *[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]*
 .DS_Store
 *- Copy*
-output/*
+output/*.*
 desktop.ini
 
 # Directories

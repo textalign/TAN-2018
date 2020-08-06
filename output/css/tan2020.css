@@ -1,0 +1,634 @@
+/* css for 2018 version of schemas */
+
+/* testing */
+/*td.alias--2{
+    border: 5px solid rgba(102.0, 176.0, 50.0);
+}
+*/
+/* testing */
+
+/* background */
+.label:hover,
+.signal:hover,
+.TAN-T-merge .head > .src:hover,
+.option-item:hover
+{
+    background-color: lightgreen;
+}
+.head,
+.teiHeader,
+div.claim > div:first-of-type,
+tr > td.irrelevant,
+tr > td.label
+{
+    background: lightgray;
+}
+.lookatme {
+    background: green;
+}
+.highlight0 {
+    background: yellow;
+    opacity: 0.8;
+}
+.highlight1 {
+    background: orange;
+    opacity: 0.8;
+}
+.highlight2 {
+    background: lightgreen;
+    opacity: 0.8;
+}
+.alias--1 {
+    background-color: tan;
+}
+.alias--2 {
+    background-color: lightblue;
+}
+.alias--3 {
+    background-color: #ff8080; /* red @ 75% */
+}
+.alias--4 {
+    background-color: yellow;
+}
+.alias--5 {
+    background-color: orchid;
+}
+.alias--6 {
+    background-color: lightgreen;
+}
+.alias--7 {
+    background-color: orange;
+}
+.alias--8 {
+    background-color: gray;
+}
+.alias--9 {
+    background-color: pink;
+}
+.alias--10 {
+    background-color: khaki;
+}
+.alias--11 {
+    background-color: linen;
+}
+.groupitem--1 {
+    background-color: rgba(255, 255, 255, 0.30)
+}
+.groupitem--2 {
+    background-color: rgba(255, 255, 255, 0.40)
+}
+.groupitem--3 {
+    background-color: rgba(255, 255, 255, 0.50)
+}
+.groupitem--4 {
+    background-color: rgba(255, 255, 255, 0.60)
+}
+.groupitem--5 {
+    background-color: rgba(255, 255, 255, 0.65)
+}
+.groupitem--6 {
+    background-color: rgba(255, 255, 255, 0.70)
+}
+.groupitem--7 {
+    background-color: rgba(255, 255, 255, 0.75)
+}
+.groupitem--8 {
+    background-color: rgba(255, 255, 255, 0.80)
+}
+.groupitem--9 {
+    background-color: rgba(255, 255, 255, 0.85)
+}
+.groupitem--10 {
+    background-color: rgba(255, 255, 255, 0.90)
+}
+/*.src--1 {
+    /\*background-color: tan;*\/
+    /\*background-color: rgba(210, 180, 140, 0.6)*\/
+    background-color: rgba(255, 255, 255, 0.95)
+}
+.src--2 {
+    /\*background-color: #dbc3a3;*\/
+    background-color: rgba(255, 255, 255, 0.9)
+}
+.src--3 {
+    background-color: #eadbc8;
+}
+.src--4 {
+    /\*background-color: #f8f3ed;*\/
+    background-color: rgba(248, 243, 237, 0.6)
+}
+.src--5 {
+    background-color: goldenrod;
+}
+.src--6 {
+    background-color: #e4ba4e;
+}
+.src--7 {
+    background-color: #ebcb7a;
+}
+.src--8 {
+    background-color: #f2dca6;
+}
+/\* next up: shades of darkred *\/
+.src--9 {
+    background-color: #ff1a1a;
+}
+.src--10 {
+    background-color: #ff4d4d;
+}
+.src--11 {
+    background-color: #ff8080;
+}
+.src--12 {
+    background-color: #ffb3b3;
+}
+/\* next up: shades of purple *\/
+.src--13 {
+    background-color: #ff33ff;
+}
+.src--14 {
+    background-color: #ff66ff;
+}
+.src--15 {
+    background-color: #ff99ff;
+}
+.src--16 {
+    background-color: #ffccff;
+}*/
+.body div[class *= src--]:not(.td),
+.bibl-item {
+    background-color: inherit
+}
+.filler,
+.rdg,
+.note,
+.signal
+{
+    background-color: white;
+}
+.control .group > .label {
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+/* borders */
+table{
+    border-collapse:collapse;
+}
+.control .group > .label {
+    border-radius: 5px;
+}
+.head,
+.control .group {
+    border: 1px solid tan;
+    border-radius: 5px;
+}
+td.version {
+    border-radius: 3px;
+}
+td.version.filler{
+    border: 0px;
+}
+body > div:first-child ~ div {
+    border-top: 2px solid black
+}
+.td > div.version ~ div.version,
+.consolidated > div.version ~ div.version {
+    border-top: 1px solid gray
+}
+/*.tei .rdg,
+.tei .note {
+    border: 1px solid black;
+}*/
+
+/* color */
+.control .group > .label {
+    color: black;
+}
+.div > .tok > *,
+.score,
+.resp,
+.wit
+{
+    color: blue;
+}
+td .label{
+    color: gray;
+}
+.a,
+.corr {
+    color: green;
+}
+.b,
+.corr ~ .sic {
+    color: red;
+}
+tr td.irrelevant {
+    color: lightgray;
+}
+
+/* content */
+.wit:after,
+.resp:after {
+    content: ': ';
+}
+
+/* cursor */
+.TAN-T-merge .head,
+.control .sortable > * {
+    cursor: move;
+}
+.label,
+.TAN-T-merge .head > .src,
+.switch,
+.signal,
+.tei .lem,
+.classSwitch
+{
+    cursor: pointer
+}
+
+/* direction */
+[lang |= ara],
+[lang |= syr],
+[lang |= hbo]
+{
+    direction: rtl
+}
+
+/* display and flex flow */
+
+.bibl > .label ~ *,
+.head > .label ~ *,
+.control > .group > .label ~ *,
+/* hide specific elements that you wish to suppress */
+.error,
+.warning,
+.expansion,
+.skip,
+.hidden,
+.reassign,
+.rename,
+.type,
+/* TAN-T expansions produce both <ref> and <n>s. Your choice as to which to display */
+/*.TAN-T .ref,*/
+.div > .src,
+/*.ref,  */
+/* one shouldn't hide refs, generally */
+.TAN-T-merge > .label,
+.TAN-T-merge .tr > .src,
+.TAN-T-merge .orig-ref,
+.TAN-T-merge .version > .ref > *,
+/*.TAN-T-merge .version > .n,*/
+/* suppress the info in each TAN-T-merge head so the source id can fit a single cell */
+/*.TAN-T-merge .head > .label ~ *,*/
+.tok-ref > .max,
+.tok > .tok-ref ~ *,
+.div .tok-ref > .src,
+.div .tok-ref > .ref,
+.div .tok-ref > .pos,
+div.version > div.ref,
+div.tei .hidden,
+.meta,
+.meta > .src,
+.display-n ~ .n,
+td .n,
+td.ref > div:first-child ~ *,
+td .display-n,
+.emph > .resp
+{
+    display: none
+}
+
+.tok,
+.non-tok,
+div.p > *,
+.when,
+.who,
+.tok *,
+.tei *
+/*.tei .app,
+.tei .lem,
+.tei .rdg,
+.tei .add,
+.tei .choice,
+.tei .corr,
+.tei .sic,
+.tei .emph*/
+{
+    display: inline;
+}
+.TAN-T_merge .head,
+.div.version > .orig-ref,
+.div > .claim,
+.claim .score,
+.claim .ref,
+.bibl-key-item > *,
+.classSwitch > *,
+.option-item
+{
+    display: inline-block
+}
+.sortable > .group {
+    display: table-cell;
+}
+.group.sortable {
+    display: table-row;
+}
+.TAN-T-merge .td > .version
+{
+    display: block;
+}
+
+.table {
+    display: table;
+    /*width: 100%;*/
+    /*display: flex;*/
+    /*flex-direction: column*/
+}
+.tr {
+    display: table-row;
+    border: 1px solid blue;
+    /*display: flex;*/
+    /*justify-content: space-around;*/
+    /*align-items: center;*/
+}
+.TAN-T-merge .version,
+.align > .tok,
+.td,
+.n,
+.display-n,
+.claim > * {
+    display: table-cell;
+    /*border: 1px solid green;*/
+    vertical-align: middle;
+}
+td.version .version {
+    display: block;
+}
+/*.tr > .td {
+    flex-grow: 3;
+    flex-shrink: 2
+}
+.tr > .version{
+    flex-grow: 1;
+    flex-shrink: 3;
+}*/
+
+/* float */
+/* leaf-div metadata */
+.TAN-T .n
+{
+    float: left;
+    margin-right: 6px;
+    color: gray
+}
+caption,
+.body > .div > .type {
+    float: left;
+}
+.when,
+.who,
+.claimant,
+.switch,
+.filter
+{
+    float: right
+}
+.a,
+.b,
+.common {
+    display: inline
+}
+
+
+/* FONTS */
+/* font faces */
+@font-face
+{
+    font-family: "Rosario";
+    src: url('../../fonts/Rosario-Regular.ttf');
+}
+@font-face {
+    font-family: "Rosario";
+    src: url("../../fonts/Rosario-Bold.ttf");
+    font-weight: bold;
+}
+@font-face {
+    font-family: "Rosario";
+    src: url("../../fonts/Rosario-Italic.ttf");
+    font-style: italic, oblique;
+}
+@font-face {
+    font-family: "Rosario";
+    src: url("../../fonts/Rosario-BoldItalic.ttf");
+    font-weight: bold;
+    font-style: italic;
+}
+@font-face {
+    font-family: "Sorts Mill Goudy";
+    src: url("../../fonts/SortsMillGoudy-Regular.ttf") format("truetype");
+    font-style: normal;
+}
+@font-face {
+    font-family: "Sorts Mill Goudy";
+    src: url("../../fonts/SortsMillGoudy-Italic.ttf") format("truetype");
+    font-style: italic;
+}
+@font-face
+{
+    font-family: noto;
+    src: url('../../fonts/NotoSansSyriacEstrangela-Regular.ttf') format('truetype');
+}
+@font-face
+{
+    font-family: antinoou;
+    src: url('../../fonts/Antinoou.ttf') format('truetype');
+}
+body {
+    font-family: 'Sorts Mill Goudy';
+}
+div[dir = rtl] {
+    font-family: 'noto';
+}
+body > * > .name,
+.type--title {
+    font-family: 'Rosario';
+}
+.when,
+.who,
+.matches-m,
+.IRI {
+    font-family: courier, fixed, monospace
+}
+
+/* font attributes */
+.head,
+.teiHeader,
+.IRI,
+.who,
+.when
+.claimant,
+.desc,
+.src,
+.orig-ref,
+.div > .tok > *,
+.note,
+.resp,
+.wit,
+.signal,
+td.n,
+.option-item,
+td .label,
+td.label{
+    font-size: smaller;
+}
+.name,
+.body > .div > .n,
+.body > .div > .display-n,
+.type
+{
+    font-size: 24px;
+}
+.bibl-key-item > *,
+.bibl-item > * {
+    font-size: inherit
+}
+/*.emph {
+    font-style: italic;
+}*/
+.name,
+.match,
+.boldface,
+.stats-diff,
+.tei .lem /*,
+.tei .emph*/
+{
+    font-weight: 900;
+}
+
+/* height */
+/*div.ref
+{
+    height: 6px
+}*/
+
+/* margins */
+.TAN-A-tok ~ .TAN-T .div,
+.TAN-A-lm ~ .TAN-T .div {
+    margin-top: 60px;
+}
+
+/* margins */
+.control div,
+.classSwitch > *{
+    margin: 3px 6px;
+}
+.control .options * {
+    margin: initial
+}
+.head > .label,
+.bibl-item > .desc {
+    margin-left: 10px;
+}
+.tok,
+.non-tok,
+.div > .tok *,
+div.a,
+div.b,
+div.common,
+.tei div {
+    margin-left: 0px;
+}
+div.group.sortable,
+.claim,
+.bibl-key {
+    margin-bottom: 20px
+}
+/* opacity */
+.suppressed
+{
+    opacity: 0.5;
+}
+.tei .add {
+    opacity: 0.7;
+}
+
+/* padding */
+/*.div.version,*/
+#parameters .td {
+    padding: 0px 8px;
+}
+.n {
+    padding: 0px 5px;
+}
+td,
+td div{
+    padding: 2px;
+}
+td.version.filler{
+    padding: 0px;
+}
+
+
+/* position */
+.div > .tok > * {
+    position: absolute;
+}
+.div > .tok {
+    position: relative;
+}
+/* table */
+table
+{
+    table-layout: auto;
+}
+
+/* text */
+thead td,
+td .label{
+    text-align: center;
+}
+table.tablesorter td.stats,
+table.tablesorter td.stats-diff,
+[lang |= ara],
+[lang |= syr]
+{
+    text-align: right;
+}
+.a,
+.tei .emph {
+    text-decoration: underline;
+}
+.b,
+.corr ~ .sic {
+    text-decoration: line-through;
+}
+.resp {
+    text-decoration: inherit;
+}
+div.ref
+{
+    text-indent: 0px
+}
+/* vertical alignment */
+.resp,
+.wit,
+.signal {
+    vertical-align: super;
+}
+
+/* width */
+table {
+    width: 100%
+}
+td:first-child {
+    width: 25px;
+}
+/*td:first-child ~ td {
+    width: 33%;
+}*/
+/* word break */
+
+.n {
+    word-break: break-word;
+}
