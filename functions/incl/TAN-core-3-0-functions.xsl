@@ -276,9 +276,9 @@
          particular text fragment starts at. -->
       <!-- If there are not enough labels (2nd parameter) for the input strings, the numerical position of 
       the input string will be used as the string label / witness id. -->
-      <!-- If the fourth parameter is true, then tan:diff() will be performed against each pair of strings. Each
+      <!-- If the third parameter is true, then tan:diff() will be performed against each pair of strings. Each
       diff output will be weighed by closeness of the two texts, and sorted accordingly. The results of this 
-      operation will be stored in collation/witness/commonality. This require (n-1)! operations, so should 
+      operation will be stored in collation/witness/commonality. This requires (n-1)! operations, so should 
       be efficient for a few input strings, but will grow progressively longer according to the number and 
       size of the input strings. Preoptimizing strings will likely produces greater congruence in the <u>
       fragments. -->
