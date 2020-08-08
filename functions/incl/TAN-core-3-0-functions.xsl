@@ -152,6 +152,110 @@
    
    <!-- STRING 3.0 FUNCTIONS -->
    
+   <xsl:function name="tan:giant-diff" as="element()">
+      <!-- Input: same parameters as 3-ary tan:diff(); two integers -->
+      <!-- Output: the same as tan:diff(), but handled differently; the first integer specifies the length of segments into 
+         which the first string should be chopped; the second, for the second string -->
+      <xsl:param name="string-a" as="xs:string?"/>
+      <xsl:param name="string-b" as="xs:string?"/>
+      <xsl:param name="snap-to-word" as="xs:boolean"/>
+      <xsl:param name="string-a-segment-length" as="xs:integer"/>
+      <xsl:param name="string-b-segment-length" as="xs:integer"/>
+      <xsl:variable name="str-a-len" select="string-length($string-a)"/>
+      <xsl:variable name="str-b-len" select="string-length($string-b)"/>
+      <xsl:choose>
+         <xsl:when test="$str-a-len lt $string-a-segment-length or $str-b-len lt $string-b-segment-length">
+            <xsl:sequence select="tan:diff($string-a, $string-b, $snap-to-word)"/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:variable name="min-len" select="min(($str-a-len, $str-b-len))"/>
+            <!-- What constitutes a <common> of significant size? -->
+            <xsl:variable name="significant-common-size" select="min((($min-len idiv 0.001), 200))" as="xs:integer"/>
+            <xsl:variable name="diff-count" select="xs:integer(max((ceiling($str-a-len div $string-a-segment-length), ceiling($str-b-len div $string-b-segment-length))))"/>
+            <xsl:variable name="diff-chain" as="element()*">
+               <diff>
+                  <xsl:iterate select="1 to $diff-count">
+                     <xsl:param name="previous-diff" as="element()?" select="$empty-element"/>
+                     <xsl:on-completion select="$previous-diff/*"/>
+                     <xsl:variable name="this-a-start" select="(. - 1) * $string-a-segment-length + 1"/>
+                     <xsl:variable name="this-b-start" select="(. - 1) * $string-b-segment-length + 1"/>
+                     <xsl:variable name="str-a-part"
+                        select="substring($string-a, $this-a-start, $string-a-segment-length)"/>
+                     <xsl:variable name="str-b-part"
+                        select="substring($string-b, $this-b-start, $string-b-segment-length)"/>
+                     <xsl:variable name="this-diff"
+                        select="tan:diff($str-a-part, $str-b-part, $snap-to-word)"/>
+                     <xsl:variable name="previous-diff-last-child" select="$previous-diff/*[last()]"/>
+                     <xsl:variable name="this-diff-first-child" select="$previous-diff/*[1]"/>
+                     <xsl:variable name="two-diffs-adjusted" as="element()+">
+                        <xsl:choose>
+                           <xsl:when test="name($previous-diff-last-child) = ('a', 'b') or name($this-diff-first-child) = ('a', 'b')">
+                              <!-- reconcile the two diffs -->
+                              <xsl:variable name="previous-diff-last-significant-common" select="$previous-diff/tan:common[string-length() ge $significant-common-size][last()]"/>
+                              <xsl:variable name="this-diff-first-significant-common" select="$this-diff/tan:common[string-length() ge $significant-common-size][1]"/>
+                              <xsl:variable name="previous-diff-to-keep" select="$previous-diff-last-significant-common/preceding-sibling::*"/>
+                              <xsl:variable name="this-diff-to-keep" select="$this-diff-first-significant-common/following-sibling::*"/>
+                              <xsl:variable name="border-as"
+                                 select="
+                                    (if (exists($previous-diff-last-significant-common)) then
+                                       $previous-diff-last-significant-common/following-sibling::*[not(self::tan:b)]
+                                    else
+                                       $previous-diff/*[not(self::tan:b)]),
+                                    (if (exists($this-diff-first-significant-common)) then
+                                       $this-diff-first-significant-common/preceding-sibling::*[not(self::tan:b)]
+                                    else
+                                       $this-diff/*[not(self::tan:b)])"
+                              />
+                              <xsl:variable name="border-bs"
+                                 select="
+                                    (if (exists($previous-diff-last-significant-common)) then
+                                       $previous-diff-last-significant-common/following-sibling::*[not(self::tan:a)]
+                                    else
+                                       $previous-diff/*[not(self::tan:a)]),
+                                    (if (exists($this-diff-first-significant-common)) then
+                                       $this-diff-first-significant-common/preceding-sibling::*[not(self::tan:a)]
+                                    else
+                                       $this-diff/*[not(self::tan:a)])"
+                              />
+                              <xsl:variable name="this-border-diff" select="tan:diff(string-join($border-as), string-join($border-bs), $snap-to-word)"/>
+                              
+                              <diff>
+                                 <xsl:copy-of select="$previous-diff-to-keep"/>
+                                 <xsl:copy-of select="$previous-diff-last-significant-common"/>
+                              </diff>
+                              <diff>
+                                 <xsl:copy-of select="$this-border-diff/*"/>
+                                 <xsl:copy-of select="$this-diff-first-significant-common"/>
+                                 <xsl:copy-of select="$this-diff-to-keep"/>
+                              </diff>
+                           </xsl:when>
+                           <xsl:otherwise>
+                              <xsl:sequence select="$previous-diff, $this-diff"/>
+                           </xsl:otherwise>
+                        </xsl:choose>
+                     </xsl:variable>
+                     <xsl:copy-of select="$two-diffs-adjusted[1]/*"/>
+                     <xsl:next-iteration>
+                        <xsl:with-param name="previous-diff" select="$two-diffs-adjusted[2]"/>
+                     </xsl:next-iteration>
+
+                  </xsl:iterate>
+               </diff>
+            </xsl:variable>
+            
+            <xsl:variable name="diagnostics-on" select="false()"/>
+            <xsl:if test="$diagnostics-on">
+               <xsl:message select="'Diagnostics on, tan:giant-diff()'"/>
+               <xsl:message select="'String a (length ' || string($str-a-len) || '): ' || tan:ellipses($string-a, 40)"/>
+               <xsl:message select="'String b (length ' || string($str-b-len) || '): ' || tan:ellipses($string-b, 40)"/>
+               <xsl:message select="'Number of diffs to process:', $diff-count"/>
+            </xsl:if>
+            <xsl:copy-of select="tan:adjust-diff($diff-chain)"/>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:function>
+   
+   
    <xsl:function name="tan:diff-to-collation" as="element()">
       <!-- Input: any single output of diff, two string for the labels of diff strings a and b -->
       <!-- Output: a <collation> with the data prepped for merging with other collations -->
@@ -383,7 +487,7 @@
       <xsl:variable name="first-diff-collated"
          select="tan:diff-to-collation($first-diff-adjusted, $string-labels-re-sorted[1], $string-labels-re-sorted[2])"/>
 
-      <xsl:variable name="diagnostics-on" select="string-length($strings-re-sorted[2]) lt 1"/>
+      <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'Diagnostics on, 2020 version of tan:collate()'"/>
          <xsl:message select="'String count: ', $string-count"/>
@@ -394,6 +498,7 @@
       </xsl:if>
 
       <xsl:variable name="fragmented-collation" as="element()*">
+         <!-- If this is just a 2-way diff, then leave the collation as is -->
          <xsl:if test="not(exists($strings-re-sorted[3]))">
             <xsl:sequence select="$first-diff-collated"/>
          </xsl:if>
@@ -754,7 +859,6 @@
             </xsl:variable>
 
             <xsl:variable name="diagnostics-on" select="false()"/>
-            <xsl:variable name="imprint-diagnostics-on" select="true()"/>
             <xsl:if test="$diagnostics-on">
                <xsl:message select="'Iteration: ', $iteration"/>
                <xsl:message select="'Collation so far: ' || serialize($collation-so-far)"/>
@@ -778,26 +882,21 @@
             <!-- The following diagnostic passage interjects feedback straight into the output, a more drastic method of
                feedback which may or may not be the best way to diagnose a problem. -->
 
-            <xsl:if test="$diagnostics-on and $imprint-diagnostics-on">
+            <xsl:variable name="imprint-diagnostics-on" select="false()"/>
+            <xsl:if test="$imprint-diagnostics-on">
+               <xsl:message select="'Imprinting diagnostic feedback in output of tan:collate()'"/>
                <diagnostics>
                   <previous-collation n="{position()}">
-                     <added-witness>
-                        <xsl:value-of select="$previous-string-label"/>
-                     </added-witness>
+                     <added-witness><xsl:value-of select="$previous-string-label"/></added-witness>
                      <xsl:copy-of select="$collation-so-far"/>
                   </previous-collation>
-                  <diff>
-                     <xsl:copy-of select="$this-diff"/>
-                  </diff>
-                  <diff-adjusted>
-                     <xsl:copy-of select="$this-diff-adjusted"/>
-                  </diff-adjusted>
-                  <base-coll-splintered>
-                     <xsl:copy-of select="$both-collations-splintered[1]"/>
-                  </base-coll-splintered>
-                  <new-coll-splintered>
-                     <xsl:copy-of select="$both-collations-splintered[2]"/>
-                  </new-coll-splintered>
+                  <this-diff><xsl:copy-of select="$this-diff"/></this-diff>
+                  <this-diff-adjusted><xsl:copy-of select="$this-diff-adjusted"/></this-diff-adjusted>
+                  <this-diff-collated><xsl:copy-of select="$this-diff-collation"/></this-diff-collated>
+                  <pos-values-compared><xsl:copy-of select="$pos-values-compared"/></pos-values-compared>
+                  <where-the-two-collations-should-be-broken-up><xsl:copy-of select="$pos-values-to-add"/></where-the-two-collations-should-be-broken-up>
+                  <base-coll-splintered><xsl:copy-of select="$both-collations-splintered[1]"/></base-coll-splintered>
+                  <new-coll-splintered><xsl:copy-of select="$both-collations-splintered[2]"/></new-coll-splintered>
                </diagnostics>
             </xsl:if>
 
@@ -833,6 +932,7 @@
       </xsl:variable>
 
       <!-- output for the entire function -->
+      <xsl:variable name="check-output-integrity" as="xs:boolean" select="true()"/>
       <collation>
          <xsl:for-each select="$string-labels-re-sorted">
             <xsl:variable name="this-string-label" select="."/>
@@ -848,25 +948,32 @@
             </witness>
          </xsl:for-each>
          <xsl:copy-of select="$cleaned-up-collation-pass-2/*"/>
+         
+         <xsl:if test="$check-output-integrity">
+            <xsl:for-each select="1 to count($string-labels-re-sorted)">
+               <xsl:variable name="this-pos" select="."/>
+               <xsl:variable name="this-label" select="$string-labels-re-sorted[$this-pos]"/>
+               <xsl:variable name="this-input-string" select="$strings-re-sorted[$this-pos]"/>
+               <xsl:variable name="this-output-string"
+                  select="string-join($cleaned-up-collation-pass-2/*[tan:wit/@ref = $this-label]/tan:txt)"
+               />
+               <xsl:if test="not($this-input-string eq $this-output-string)">
+                  <xsl:variable name="this-errant-diff" select="tan:diff-cache($this-input-string, $this-output-string, false(), true())"/>
+                  <xsl:message
+                     select="'Error in tan:collate(). String ' || $this-label || ' does not match output.'"/>
+                  <xsl:message
+                     select="serialize(tan:trim-long-text($this-errant-diff, 50))"/>
+                  
+                  <error witness="{$this-label}">
+                     <xsl:comment>a = input string; b = reconstructed output</xsl:comment>
+                     <xsl:copy-of select="$this-errant-diff"/>
+                  </error>
+                  <xsl:copy-of select="$fragmented-collation/descendant-or-self::tan:diagnostics"/>
+               </xsl:if>
+            </xsl:for-each>
+         </xsl:if>
       </collation>
 
-      <xsl:variable name="check-output-integrity" as="xs:boolean" select="true()"/>
-      <xsl:if test="$check-output-integrity">
-         <xsl:for-each select="1 to count($string-labels-re-sorted)">
-            <xsl:variable name="this-pos" select="."/>
-            <xsl:variable name="this-label" select="$string-labels-re-sorted[$this-pos]"/>
-            <xsl:variable name="this-input-string" select="$strings-re-sorted[$this-pos]"/>
-            <xsl:variable name="this-output-string"
-               select="string-join($cleaned-up-collation-pass-2/*[tan:wit/@ref = $this-label]/tan:txt)"
-            />
-            <xsl:if test="not($this-input-string eq $this-output-string)">
-               <xsl:message
-                  select="'Error in tan:collate(). String ' || $this-label || ' does not match output.'"/>
-               <xsl:message
-                  select="serialize(tan:diff-cache($this-input-string, $this-output-string, false(), true()))"/>
-            </xsl:if>
-         </xsl:for-each>
-      </xsl:if>
 
    </xsl:function>
    
@@ -1445,7 +1552,7 @@
             <xsl:choose>
                <xsl:when test="current-grouping-key()">
                   <common>
-                     <xsl:value-of select="current-group()"/>
+                     <xsl:value-of select="string-join(current-group())"/>
                   </common>
                </xsl:when>
                <xsl:otherwise>
@@ -1497,6 +1604,7 @@
       <xsl:param name="preprocess-long-strings" as="xs:boolean"/>
       <xsl:sequence select="tan:diff($string-a, $string-b, $snap-to-word, $preprocess-long-strings)"/>
    </xsl:function>
+   
    
    
    

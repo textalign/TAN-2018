@@ -503,9 +503,17 @@
         </xsl:choose>
     </xsl:function>
 
+    <!-- Parameters for handling strings in diff -->
+
     <!-- At what point is the shortest string so long that it would be better to do some pre-processing? -->
-    <!--<xsl:param name="long-string-length-min" as="xs:integer" select="10 div $vertical-stops[last()]"/>-->
     <xsl:param name="long-string-length-min" as="xs:integer" select="1000"/>
+    <!-- What is the maximum string length that should be allowed in a single diff operation? Anything larger than this will be pushed to tan:giant-diff() and cut into segments -->
+    <xsl:param name="max-small-string-length-allowed-for-diff" as="xs:integer" select="1000000"/>
+    
+    <!-- What is the maximum size for a segment in a giant diff? For speed use something like 320000; for accuracy, try 1000000 -->
+    <xsl:param name="maximum-size-of-giant-string-segments" as="xs:integer" select="1000000"/>
+    <!-- What is the minimum number of segments into which a giant string should be chopped when processing a tan:giant-diff()? -->
+    <xsl:param name="minimum-number-of-giant-string-segments" as="xs:integer" select="2"/>
     
     <xsl:variable name="tok-def-long-string" as="element()">
         <token-definition pattern=".{{30}}" flags="s"/>
@@ -526,13 +534,47 @@
         <xsl:sequence select="tan:diff($string-a, $string-b, $snap-to-word, true())"/>
     </xsl:function>
     <xsl:function name="tan:diff" as="element()">
+        <!-- This function prepares strings for 5-ary tan:diff(), primarily by tending to input strings
+        that are large or giant. -->
         <xsl:param name="string-a" as="xs:string?"/>
         <xsl:param name="string-b" as="xs:string?"/>
         <xsl:param name="snap-to-word" as="xs:boolean"/>
         <xsl:param name="preprocess-long-strings" as="xs:boolean"/>
         <xsl:variable name="str-a-len" select="string-length($string-a)"/>
         <xsl:variable name="str-b-len" select="string-length($string-b)"/>
+        <xsl:variable name="smallest-string-length" select="min(($str-a-len, $str-b-len))"/>
+        <xsl:variable name="diff-must-be-chained"
+            select="$smallest-string-length gt $max-small-string-length-allowed-for-diff"
+        />
         <xsl:choose>
+            <xsl:when test="$diff-must-be-chained">
+                <xsl:variable name="str-a-seg-len" as="xs:decimal"
+                    select="ceiling($str-a-len div $minimum-number-of-giant-string-segments)"
+                />
+                <xsl:variable name="str-b-seg-len" as="xs:decimal"
+                    select="ceiling($str-b-len div $minimum-number-of-giant-string-segments)"
+                />
+                <xsl:variable name="max-str-seg-len" select="max(($str-a-seg-len, $str-b-seg-len))"/>
+                <xsl:variable name="adjustment-ratio"
+                    select="
+                        if ($max-str-seg-len gt $maximum-size-of-giant-string-segments) then
+                            ($maximum-size-of-giant-string-segments div $max-str-seg-len)
+                        else
+                            1"
+                />
+                
+                <xsl:variable name="diagnostics-on" select="true()"/>
+                <xsl:if test="$diagnostics-on">
+                    <xsl:message select="'Diagnostics on, tan:diff(), giant string branch'"/>
+                    <xsl:message select="'String a (length ' || string($str-a-len) || '): ' || tan:ellipses($string-a, 40)"/>
+                    <xsl:message select="'String b (length ' || string($str-b-len) || '): ' || tan:ellipses($string-b, 40)"/>
+                    <xsl:message select="'String a segment length:', $str-a-seg-len"/>
+                    <xsl:message select="'String b segment length:', $str-b-seg-len"/>
+                    <xsl:message select="'Adjustment ratio:', $adjustment-ratio"/>
+                </xsl:if>
+                
+                <xsl:copy-of select="tan:giant-diff($string-a, $string-b, $snap-to-word, xs:integer($str-a-seg-len * $adjustment-ratio), xs:integer($str-b-seg-len * $adjustment-ratio))"/>
+            </xsl:when>
             <xsl:when
                 test="($preprocess-long-strings = false()) or 
                 (($str-a-len lt $long-string-length-min) or ($str-b-len lt $long-string-length-min))">
@@ -591,9 +633,16 @@
     </xsl:function>
     
     <xsl:function name="tan:diff" as="element()">
-        <!-- Input: any two strings; boolean indicating whether results should snap to nearest word; boolean indicating whether long strings should be pre-processed -->
-        <!-- Output: an element with <a>, <b>, and <common> children showing where strings a and b match and depart -->
-        <!-- This function was written to be a rough, fast way to check two strings against each other, suitable for validation while avoiding too much nested recursion. -->
+        <!-- Input: any two strings; boolean indicating whether results should snap to nearest word; boolean 
+            indicating whether long strings should be pre-processed -->
+        <!-- Output: an element with <a>, <b>, and <common> children showing where strings a and b match 
+            and depart -->
+        <!-- This function was written to quickly find differences between any two strings, suitable 
+            for validation. The function has been tested on pairs of strings averaging up to lengths of 4.5M. 
+            At that scale, the only way to efficiently process the diffs is by chaining smaller diffs, which are 
+            optimally about 350K length for the preprocessing phase of the diff function (which requires 
+            unique character discovery and pairwise congruence). -->
+        
         <xsl:param name="string-a" as="xs:string?"/>
         <xsl:param name="string-b" as="xs:string?"/>
         <xsl:param name="snap-to-word" as="xs:boolean"/>
@@ -621,24 +670,6 @@
                 not(exists($characters-to-tokenize-on)) or
                 (min(($str-a-len, $str-b-len)) lt $long-string-length-min)"
         />
-        
-        <!--<xsl:variable name="tok-def-of-choice" as="element()">
-            <!-\-<token-definition pattern="[^{tan:escape($next-tokenization-string)}]+" flags="s"/>-\->
-            <xsl:choose>
-                <xsl:when test="$next-tokenization-string eq '&#xA;'">
-                    <token-definition pattern="[^\n\r]+"/>
-                </xsl:when>
-                <xsl:when test="$next-tokenization-string eq '&#x9;'">
-                    <token-definition pattern="[^\t]+" flags="s"/>
-                </xsl:when>
-                <!-\-<xsl:when test="$loop-counter eq 0">
-                    <token-definition pattern="[^{tan:escape($next-tokenization-string)}\n\r]+"/>
-                </xsl:when>-\->
-                <xsl:otherwise>
-                    <token-definition pattern="[^{tan:escape($next-tokenization-string)}]+" flags="s"/>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>-->
 
         <xsl:variable name="next-tokenization-string" select="$characters-to-tokenize-on[1]"/>
         <xsl:variable name="tokenize-on" as="xs:string"
@@ -696,8 +727,7 @@
                         
                     </xsl:if>
 
-                    <!--<xsl:variable name="input-analyzed"
-                        select="tan:tokenize-text(($string-a, $string-b), $tok-def-of-choice, false())" as="element()*"/>-->
+                    
                     <xsl:variable name="input-a-analyzed" as="xs:string*">
                         <xsl:analyze-string select="$string-a" regex="{$tokenize-on}">
                             <xsl:matching-substring>
@@ -720,18 +750,7 @@
                     </xsl:variable>
                     
                     <!-- Reduce each of the two elements to a set of tokens unique to that string -->
-                    <!--<xsl:variable name="input-unique-words" as="element()*">
-                        <xsl:for-each select="$input-analyzed">
-                            <xsl:copy>
-                                <xsl:copy-of select="@*"/>
-                                <xsl:for-each-group select="*" group-by=".">
-                                    <xsl:if test="count(current-group()) = 1">
-                                        <xsl:copy-of select="current-group()"/>
-                                    </xsl:if>
-                                </xsl:for-each-group>
-                            </xsl:copy>
-                        </xsl:for-each>
-                    </xsl:variable>-->
+                    
                     <xsl:variable name="input-a-unique-words" as="xs:string*">
                         <xsl:for-each-group select="$input-a-analyzed" group-by=".">
                             <xsl:if test="count(current-group()) = 1">
@@ -748,11 +767,6 @@
                     </xsl:variable>
                     
                     
-                    <!--<xsl:variable name="input-core-sequence"
-                        select="
-                            tan:collate-pair-of-sequences($input-unique-words[1]/tan:tok,
-                            $input-unique-words[2]/tan:tok)"
-                    />-->
                     <xsl:variable name="input-core-sequence"
                         select="
                             tan:collate-pair-of-sequences($input-a-unique-words, $input-b-unique-words)"
@@ -760,7 +774,8 @@
                     
                     
                     <xsl:variable name="input-core-shared-unique-words-in-same-order"
-                        select="$input-core-sequence[exists(@p1) and exists(@p2)]"/>
+                        select="$input-core-sequence[exists(@p1) and exists(@p2)][not(. eq $next-tokenization-string)]"/>
+                    
                     <xsl:variable name="this-unique-sequence-count"
                         select="count($input-core-shared-unique-words-in-same-order)"/>
                     <xsl:variable name="input-analyzed-2" as="element()*">
@@ -854,20 +869,44 @@
                         </xsl:for-each>-->
                     </xsl:variable>
                     
+                    <!-- If something goes awry, it can be very helpful to trace a particular phrase as it gets handled. By entering
+                    something in the following variable, the message on $input-analyzed will signify via an asterisk into which fork the  
+                    phrase is being placed. -->
+                    <xsl:variable name="diagnostics-regex" as="xs:string" select="'Enter a regular expression to trace in strings a and b'"/>
                     <xsl:variable name="diagnostics-on" select="false()"/>
                     <xsl:if test="$diagnostics-on">
                         <xsl:message select="'diagnostics on, tan:diff(), branch to preprocess long strings.'"/>
+                        <xsl:message select="'String a (length ' || string($str-a-len) || '): ' || tan:ellipses($string-a, 40)"/>
+                        <xsl:message select="'String b (length ' || string($str-b-len) || '): ' || tan:ellipses($string-b, 40)"/>
                         <xsl:message select="'next tokenization string (', string-to-codepoints($next-tokenization-string), '): ', $next-tokenization-string"/>
                         <xsl:message select="'tokenization pattern: ', $tokenize-on"/>
                         <xsl:message select="'all tokenization strings: ', string-join($characters-to-tokenize-on, ' ')"/>
                         <xsl:message select="'all tokenization string codepoints: ', string-to-codepoints(string-join($characters-to-tokenize-on, ''))"/>
-                        <xsl:message select="'input A analyzed/tokenized (', count($input-a-analyzed), '):', $input-a-analyzed"/>
-                        <xsl:message select="'input B analyzed/tokenized (', count($input-b-analyzed), '):', $input-b-analyzed"/>
-                        <xsl:message select="'input A unique words (', count($input-a-unique-words), '): ', $input-a-unique-words"/>
-                        <xsl:message select="'input B unique words (', count($input-b-unique-words), '): ', $input-b-unique-words"/>
-                        <xsl:message select="'input core sequence (', count($input-core-sequence), '): ', serialize($input-core-sequence)"/>
-                        <xsl:message select="'Input core shared unique words in same order (', count($input-core-shared-unique-words-in-same-order), '): ', string-join($input-core-shared-unique-words-in-same-order, ' ')"/>
-                        <xsl:message select="'Input analyzed: ', serialize($input-analyzed-2)"/>
+                        <xsl:message select="'input A analyzed/tokenized (', count($input-a-analyzed), ') first three:', tan:ellipses($input-a-analyzed, 10)"/>
+                        <xsl:message select="'input B analyzed/tokenized (', count($input-b-analyzed), ') first three:', tan:ellipses($input-b-analyzed, 10)"/>
+                        <xsl:message select="'input A unique words (', count($input-a-unique-words), '): ', tan:ellipses($input-a-unique-words, 10)"/>
+                        <xsl:message select="'input B unique words (', count($input-b-unique-words), '): ', tan:ellipses($input-b-unique-words, 10)"/>
+                        <xsl:message select="'input core sequence (', count($input-core-sequence), '): ', serialize(tan:trim-long-text($input-core-sequence, 10))"/>
+                        <xsl:message
+                            select="
+                                'Input core shared unique words in same order (', count($input-core-shared-unique-words-in-same-order), '): ',
+                                string-join(for $i in $input-core-shared-unique-words-in-same-order
+                                return
+                                    (tan:ellipses($i, 10), concat('(length ', string(string-length($i)), ') ')), ' ')"
+                        />
+                        <xsl:message
+                            select="
+                                'Input analyzed (lengths',
+                                for $i in $input-analyzed-2
+                                return
+                                    concat(' ', name($i), ': ', string-join(for $j in $i//text(),
+                                        $k in matches($j, $diagnostics-regex)
+                                    return
+                                        concat(string(string-length($j)), (if ($k) then
+                                            '*'
+                                        else
+                                            ())), ', ')), '): ', serialize(tan:trim-long-text($input-analyzed-2, 10))"
+                        />
                     </xsl:if>
                     
                     <xsl:for-each-group select="$input-analyzed-2/tan:group" group-by="@n">
