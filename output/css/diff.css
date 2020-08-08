@@ -80,9 +80,9 @@ thead > tr:first-of-type > th[colspan] {
 .e-file {
    display: table-row;
 }
-.e-a,
-.e-b,
-.e-common,
+div.e-a,
+div.e-b,
+div.e-common,
 div.e-collation > *,
 .e-txt,
 .e-u,
