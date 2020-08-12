@@ -26,7 +26,7 @@ as the context -->
          </sourceDesc>
       </fileDesc>
    </teiHeader>
-   <head>
+   <head xmlns="tag:textalign.net,2015:ns">
       <!-- Manually edit: the name -->
       <name>{($p1//tei:title)[1]//text()}</name>
       <!-- Manually edit: license @which (or IRI + name), @licensor -->
