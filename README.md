@@ -4,8 +4,8 @@
 
 Alpha version 2020
 
-This project has submodules, which must be invoked using the `--recursive` option:
-`git clone --recursive [SOURCE PATH]`
+This project has submodules, which must be invoked using the `--recurse-submodules` option:
+`git clone --recurse-submodules [SOURCE PATH]`
 
 New to TAN? Start with directories marked with an asterisk.
 
