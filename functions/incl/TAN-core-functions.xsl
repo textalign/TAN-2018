@@ -42,8 +42,10 @@
          <xsl:copy-of select="."/>
       </xsl:if>
    </xsl:template>
-   <!-- An empty template for a no-name element avoids validation warnings -->
+   <!-- An empty template for the default template avoids validation warnings -->
    <xsl:template match="squelch" priority="-5"/>
+   <!-- An empty template for an unused template helps populate the guidelines -->
+   <xsl:template match="squelch" priority="-5" mode="core-expansion-ad-hoc-pre-pass"/>
    <xsl:template match="tan:error | tan:help | tan:warning | tan:fix | tan:fatal | tan:info"
       priority="-4" mode="#all">
       <xsl:copy-of select="."/>
@@ -83,6 +85,7 @@
    <xsl:variable name="regex-name-space-characters" as="xs:string">[_-]</xsl:variable>
    <xsl:variable name="quot" as="xs:string">"</xsl:variable>
    <xsl:variable name="apos" as="xs:string">'</xsl:variable>
+   <xsl:variable name="zwsp" as="xs:string">&#x200b;</xsl:variable>
    <xsl:variable name="zwj" as="xs:string">&#x200d;</xsl:variable>
    <!-- discretionary hyphens and soft hyphens are synonymous. -->
    <xsl:variable name="dhy" as="xs:string">&#xad;</xsl:variable>
@@ -298,8 +301,7 @@
             for $i in (1 to count($head/tan:source))
             return
                string($i)"/>
-   <!--<xsl:variable name="all-ids"
-      select="$head/(self::*, tan:vocabulary-key/*)/(@xml:id, @id), /tei:TEI//tei:*/@xml:id"/>-->
+
    <xsl:variable name="all-ids"
       select="key('attrs-by-name', ('id', 'xml:id'), $self-resolved)"/>
    <xsl:variable name="all-ids-not-in-inclusions" select="$all-ids[not(ancestor-or-self::tan:inclusion)]"/>
@@ -441,8 +443,8 @@
    </xsl:function>
 
    <xsl:function name="tan:aaa-to-int" as="xs:integer*">
-      <!-- Input: any alphabet numerals -->
-      <!-- Output:the integer equivalent -->
+      <!-- Input: any numerals in the supported letter numeral system -->
+      <!-- Output: the integer equivalent -->
       <!-- Sequence goes a, b, c, ... z, aa, bb, ..., aaa, bbb, ....  E.g., 'ccc' - > 55 -->
       <xsl:param name="arg" as="xs:string*"/>
       <xsl:for-each select="$arg">
@@ -562,7 +564,7 @@
       </xsl:choose>
    </xsl:function>
    <xsl:function name="tan:analyze-numbers-in-string" as="element()*">
-      <!-- Companion function to the above, this function returns the analysis in element form -->
+      <!-- Companion function to tan:string-to-numerals(), to analyze the string as an XML fragment -->
       <xsl:param name="string-to-analyze" as="xs:string"/>
       <xsl:param name="ambig-is-roman" as="xs:boolean?"/>
       <xsl:param name="n-alias-items" as="element()*"/>
@@ -655,10 +657,9 @@
    </xsl:function>
 
    <xsl:function name="tan:ordinal" xml:id="f-ordinal" as="xs:string*">
-      <!-- Input: one or more numerals
-        Output: one or more strings with the English form of the ordinal form of the input number
-        E.g., (1, 4, 17)  ->  ('first','fourth','17th'). 
-        -->
+      <!-- Input: one or more numerals -->
+      <!-- Output: one or more strings with the English form of the ordinal form of the input number -->
+      <!-- Example: (1, 4, 17)  ->  ('first', 'fourth', '17th') -->
       <xsl:param name="in" as="xs:integer*"/>
       <xsl:variable name="ordinals"
          select="
@@ -830,7 +831,7 @@
    </xsl:function>
    
    <xsl:function name="tan:collate-sequence-loop" as="xs:string*">
-      <!-- This companion function to the one above takes a pair of sequences and merges them -->
+      <!-- This companion function to tan:collate-sequences() takes a pair of sequences and merges them. -->
       <xsl:param name="elements-with-elements" as="element()*"/>
       <xsl:param name="results-so-far" as="xs:string*"/>
       <xsl:choose>
@@ -854,18 +855,20 @@
 
 
    <xsl:function name="tan:collate-pair-of-sequences" as="element()*">
-      <!-- Two-parameter version of the fuller one below, intended for collating pairs of sequences -->
+      <!-- Input: two sequences of strings -->
+      <!-- Output: an element sequence that collates the two sequences as a single sequence, attempting to preserve the longest common subsequence. -->
       <!-- This function has been written for two different scenarios: 
         1. @n values in two sets of <div>s that must be collated;
-        2. pre-processing two long strings that need to be compared 
+        2. pre-processing two long strings that need to be compared. 
       Although the primary context are two sets of unique string-sequences, one could imagine situations 
-      where one or both input strings have repetition, in which cas it is best to retain information about 
+      where one or both input strings have repetition, in which case it is best to retain information about the
       sequence. Hence the output is a sequence of elements, with @p1, @p2, or both signifying the position
       of the original input. Hence the transformation is lossless, and the original input can be reconstructed
       if needed.
       -->
       <xsl:param name="string-sequence-1" as="xs:string*"/>
       <xsl:param name="string-sequence-2" as="xs:string*"/>
+      
       <xsl:variable name="string-1-length" select="count($string-sequence-1)"/>
       <xsl:variable name="string-1-prep" as="element()">
          <string-1>
@@ -936,6 +939,7 @@
          <xsl:message select="'String 2 grouped: ', $string-2-groups"/>
          
       </xsl:if>
+      
       <xsl:for-each-group select="$string-1-groups/*, $string-2-groups/*" group-by="@pos">
          <xsl:variable name="s1-last" select="current-group()[1]/*[last()]"/>
          <xsl:variable name="s2-last" select="current-group()[2]/*[last()]"/>
@@ -997,7 +1001,7 @@
    <xsl:function name="tan:xml-to-string" as="xs:string?">
       <!-- Input: any fragment of XML; boolean indicating whether whitespace nodes should be ignored -->
       <!-- Output: a string representation of the fragment -->
-      <!-- This function is used to represent XML fragments in a plain text message, useful in validation reports or in generating guidelines -->
+      <!-- This function is a proxy of serialize(), used to represent XML fragments in plain text, useful in validation reports or in generating guidelines -->
       <xsl:param name="fragment" as="item()*"/>
       <xsl:param name="ignore-whitespace-text-nodes" as="xs:boolean"/>
       <xsl:variable name="results" as="xs:string*">
@@ -1531,7 +1535,7 @@
    </xsl:function>
    <xsl:function name="tan:stamp-q-id" as="item()*">
       <!-- Input: any XML fragments -->
-      <!-- Output: the fragments with @q added to each element with the value of generate-id() -->
+      <!-- Output: the fragments with @q added to each element via generate-id() -->
       <xsl:param name="items-to-stamp" as="item()*"/>
       <xsl:param name="stamp-shallowly" as="xs:boolean"/>
       <xsl:apply-templates select="$items-to-stamp" mode="stamp-q-id">
@@ -1594,7 +1598,7 @@
       />
    </xsl:function>
    <xsl:function name="tan:copy-indentation" as="item()*">
-      <!-- Input: items that should be indented; an element whose indentation should be followed -->
+      <!-- Input: items that should be indented; an element whose indentation should be imitated -->
       <!-- Output: the items, indented according to the pattern -->
       <xsl:param name="items-to-indent" as="item()*"/>
       <xsl:param name="model-element" as="element()"/>
@@ -1762,12 +1766,12 @@
       <!-- Output: <analysis> with an expansion of the sequence placed in children elements that have the name of the second parameter (with @attr); those children have @from or @to if part of a range. -->
       <!-- If a sequence has a numerical value no numerals other than Arabic should be used. That means @pos and @chars in their original state, but also if @n, then it needs to have been normalized to Arabic numerals before entering this function -->
       <!-- The exception is @ref, which cannot be accurately converted to Arabic numerals before being studied in the context of a class 1 source -->
-      <!-- This function expands only those @refs that are situated within an  <adjustments>, which need to be calculated before being taken to a class 1 source. -->
+      <!-- This function expands only those @refs that are situated within an <adjustments>, which needs to be calculated before being applied to a class 1 source. -->
       <!-- If this function is asked to expand ranges within a @ref sequence, it will do so under the strict assumption that all ranges consist of numerically calculable sibling @ns that share the same mother reference. -->
       <!-- Matt 1 4-7 is ok. These are not: Matt-Mark, Matt 1:3-Matt 2, Matt 1:3-4:7 -->
       <!-- If a request for help is detected, the flag will be removed and @help will be inserted in the appropriate child element. -->
       <!-- If ranges are requested to be expanded, it is expected to apply only to integers, and will not operate on values of 'max' or 'last' -->
-      <!-- This function normalizes numerals and strings; no need to run that function beforehand -->
+      <!-- This function normalizes input numerals and strings. -->
       <xsl:param name="sequence-string" as="xs:string?"/>
       <xsl:param name="name-of-attribute" as="xs:string?"/>
       <xsl:param name="expand-ranges" as="xs:boolean"/>
@@ -1969,10 +1973,10 @@
       </xsl:choose>
    </xsl:template>
    <xsl:function name="tan:analyze-ref-loop" as="element()*">
-      <!-- Input: elements from tan:analyze-sequence() that should have missing or assumed <n>s inserted into the <ref>s -->
-      <!-- Output: the likely resolution of those <ref>s -->
-      <!-- If the function moves from one <ref> to one with greater than or equal number of <n>s, the new one becomes the context; otherwise, the new <ref> attracts from the context any missing <n>s at its head -->
+      <!-- Input: elements from tan:analyze-sequence() -->
+      <!-- Output: each <ref> is supplied with any missing, and calculable, <n>s -->
       <!-- This function takes a string such as "1.3-5, 8, 4.2-3" and converts it to "1.3, 1.5, 1.8, 4.2, 4.3" -->
+      <!-- If the function moves from one <ref> to one with greater than or equal number of <n>s, the new one becomes the context; otherwise, the new <ref> attracts from the context any missing <n>s at its head -->
       <xsl:param name="elements-to-process" as="element()*"/>
       <xsl:param name="number-of-ns-in-last-item-processed" as="xs:integer?"/>
       <xsl:param name="current-contextual-ref" as="element()?"/>
@@ -2017,9 +2021,9 @@
       <!-- Input: any elements that are <pos> or <chars>; an integer value for 'max' -->
       <!-- Output: the elements converted to integers they represent -->
       <!-- Because the results are normally positive integers, the following should be treated as error codes:
-            0 = value that falls below 1
-            -1 = value that cannot be converted to an integer
-            -2 = ranges that call for negative steps, e.g., '4 - 2' -->
+            0 = value that falls below 1;
+            -1 = value that cannot be converted to an integer;
+            -2 = ranges that call for negative steps, e.g., '4 - 2'. -->
       <xsl:param name="elements" as="element()*"/>
       <xsl:param name="max" as="xs:integer?"/>
       <xsl:variable name="elements-prepped" as="element()">
@@ -2089,10 +2093,10 @@
       <!-- Output: a sequence of numbers representing the positions selected, unsorted, and retaining duplicate values.
             Example: ("2 - 4, last-5 - last, 36", 50) -> (2, 3, 4, 45, 46, 47, 48, 49, 50, 36)
             Errors will be flagged as follows:
-            0 = value that falls below 1
-            -1 = value that surpasses the value of $max
-            -2 = ranges that call for negative steps, e.g., '4 - 2' -->
-      <!-- This function assumes that all numerals are Arabic -->
+            0 = value that falls below 1;
+            -1 = value that surpasses the value of $max;
+            -2 = ranges that call for negative steps, e.g., '4 - 2'. -->
+      <!-- This function assumes that all numerals are Arabic. -->
       <xsl:param name="selector" as="xs:string?"/>
       <xsl:param name="max" as="xs:integer?"/>
       <!-- first normalize syntax -->
@@ -2205,7 +2209,7 @@
 
    <xsl:function name="tan:cfn" as="xs:string*">
       <!-- Input: any items -->
-      <!-- Output: the Current File Name, without extension, of the host document node of each item -->
+      <!-- Output: the Current File Name, without extension, of the host document node of each item, or of the input string if detected as a uri -->
       <xsl:param name="item" as="item()*"/>
       <xsl:for-each select="$item">
          <xsl:variable name="this-base"
@@ -2220,7 +2224,7 @@
    </xsl:function>
    <xsl:function name="tan:cfne" as="xs:string*">
       <!-- Input: any items -->
-      <!-- Output: the Current File Name, with Extension, of the host document node of each item -->
+      <!-- Output: the Current File Name, with Extension, of the host document node of each item, or of the input string if detected as a uri -->
       <xsl:param name="item" as="item()*"/>
       <xsl:for-each select="$item">
          <xsl:variable name="this-base"
@@ -2574,7 +2578,7 @@
    </xsl:function>
    <xsl:function name="tan:class-number" as="xs:integer*">
       <!-- Input: any nodes of a TAN document -->
-      <!-- Output: one digit per node, specifying which TAN class the file fits, based on the name of the root element. If no match is found in the root element, 0 is returned -->
+      <!-- Output: one integer per node, specifying the TAN class for the file, based on the name of the root element. If no match is found in the root element, 0 is returned -->
       <xsl:param name="nodes" as="node()*"/>
       <xsl:for-each select="$nodes">
          <xsl:variable name="this-root-name" select="tan:tan-type(.)"/>
@@ -2721,8 +2725,7 @@
    </xsl:function>
    <xsl:function name="tan:all-conditions-hold-evaluation-loop" as="xs:boolean">
       <!-- Companion function to the one above, indicating whether every condition holds -->
-      <!-- It iterates through elements with condition attributes and checks each against the context; if a false is found, the loop ends 
-         with a false; if no conditions are found the default value is returned; otherwise it returns true -->
+      <!-- This loop function iterates through elements with condition attributes and checks each against the context; if a false is found, the loop ends returning false; if no conditions are found the default value is returned; otherwise it returns true -->
       <!-- We use a loop function to avoid evaluating conditions that might be time-consuming -->
       <xsl:param name="elements-with-condition-attributes-to-be-evaluated" as="element()*"/>
       <xsl:param name="context-to-evaluate-against" as="item()*"/>
@@ -2784,39 +2787,11 @@
    -->
 
    <xsl:key name="q-ref" match="*" use="@q"/>
-   <xsl:function name="tan:q-ref" as="xs:string*">
-      <!-- Input: any elements -->
-      <!-- Output: the q-ref of each element-->
-      <!-- A q-ref is defined as a concatenated string consisting of, for each ancestor and self, the name plus the number indicating which sibling it is of that type of element. -->
-      <!-- This function is useful when trying to correlate an unbreadmarked file (an original TAN file) against its breadcrumbed counterpart (e.g., $self-resolved), to check for errors. If any changes in element names, e.g., TEI - > TAN-T, are made during the standard preparation process, those changes are made here as well. -->
-      <xsl:param name="elements" as="element()*"/>
-      <xsl:for-each select="$elements">
-         <xsl:variable name="pass1" as="xs:string*">
-            <xsl:for-each select="(ancestor::*[not(self::tei:text)], self::*)">
-               <xsl:variable name="this-name" select="name()"/>
-               <xsl:copy-of
-                  select="
-                     if ($this-name = 'TEI') then
-                        'TAN-T'
-                     else
-                        $this-name"/>
-               <xsl:copy-of
-                  select="
-                     if (exists(@q)) then
-                        @q
-                     else
-                        string(count(preceding-sibling::*[name(.) = $this-name]) + 1)"
-               />
-            </xsl:for-each>
-         </xsl:variable>
-         <xsl:value-of select="string-join($pass1, ' ')"/>
-      </xsl:for-each>
-   </xsl:function>
 
    <xsl:function name="tan:get-via-q-ref" as="node()*">
-      <!-- Input: any number of qrefs, any number of q-reffed documents -->
+      <!-- Input: any number of q-refs, any number of q-reffed documents -->
       <!-- Output: the elements corresponding to the q-refs -->
-      <!-- This function is used by the core validation routine, especially to associate errors in included elements with the primary including element -->
+      <!-- This function is used by the core validation routine, mainly to find errors in expanded output -->
       <xsl:param name="q-ref" as="xs:string*"/>
       <xsl:param name="q-reffed-document" as="document-node()*"/>
       <xsl:for-each select="$q-reffed-document">
@@ -2884,7 +2859,7 @@
    </xsl:function>
 
    <xsl:function name="tan:attribute-vocabulary" as="element()*">
-      <!-- Input: attributes, assumed to be tethered to their resolved document context -->
+      <!-- Input: attributes, assumed to be still tethered to their resolved document context -->
       <!-- Output: the vocabulary items for that element's attributes (@which, etc.) -->
       <!-- See full tan:vocabulary() function below -->
       <xsl:param name="attributes" as="attribute()*"/>

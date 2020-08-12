@@ -68,7 +68,7 @@
   </define>
   <define name="cond-attr-m-has-how-many-features">
     <attribute name="m-has-how-many-features">
-      <a:documentation>specifies a range or sequence of integers (e.g., 2-4). If the quantity of features in an &lt;m&gt; matches a number from that sequence, the condition is true, and false otherwise. If the keyword 'last' or 'max' is used, the number of features will be substituted. </a:documentation>
+      <a:documentation>specifies a range or sequence of integers (e.g., 2-4). If the quantity of features in an &lt;m&gt; matches a number from that sequence, the condition is true, and false otherwise. If the keyword 'last' or 'max' is used, the total number of features will be substituted. </a:documentation>
       <a:documentation>This test is useful for non-category based grammars to put a limit on the number of features that can be declared in an &lt;m&gt;. This is one of four tests for determining whether to process a &lt;report&gt; or &lt;assert&gt;</a:documentation>
       <ref name="data-picker-sequence"/>
     </attribute>
@@ -84,7 +84,7 @@
   <define name="element-category">
     <element name="category">
       <a:documentation>groups a set of features that share a common grammatical trait such as gender, number, etc.
-The sequence of consecutive &lt;category&gt;s is important, dictating the sequence in which codes should appear in a dependent TAN-A-lm file.</a:documentation>
+The sequence of consecutive &lt;category&gt;s is important, dictating the sequence in which codes should appear in the values of &lt;m&gt; in a dependent TAN-A-lm file.</a:documentation>
       <optional>
         <ref name="ed-stamp"/>
       </optional>
@@ -140,7 +140,7 @@ The sequence of consecutive &lt;category&gt;s is important, dictating the sequen
   </define>
   <define name="voc-element-feature">
     <element name="feature">
-      <a:documentation>names, through its IRI + name pattern, a grammatical feature or concept (e.g., plural, subjunctive, 1st person) that is part of a language. In the context of &lt;feature&gt; a @code is always included. The first &lt;feature&gt; of a &lt;category&gt; never has @code, and refers to the grammatical feature that characterizes the category.</a:documentation>
+      <a:documentation>names, through its IRI + name pattern, a grammatical feature or concept (e.g., plural, subjunctive, 1st person) that is part of a language. In the context of &lt;category&gt; a @code is always included. The first &lt;feature&gt; of a &lt;category&gt;, however, never has a @code, because it describes the grammatical class of the &lt;category&gt;.</a:documentation>
       <a:documentation>The sequence of consecutive &lt;feature&gt;s is immaterial.</a:documentation>
       <a:documentation>See main.xml#vocabularies-features for a list of standard features.</a:documentation>
       <ref name="entity-nondigital-id"/>

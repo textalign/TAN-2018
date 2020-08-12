@@ -11,7 +11,7 @@
       <xsl:copy-of select="tan:expand-doc($tan-doc, $validation-phase, $is-validation)"/>
    </xsl:function>
    <xsl:function name="tan:expand-doc" as="document-node()*">
-      <!-- one-parameter version of the fuller one below -->
+      <!-- two-parameter version of the fuller one below -->
       <xsl:param name="tan-doc" as="document-node()?"/>
       <xsl:param name="target-phase" as="xs:string"/>
       <xsl:copy-of select="tan:expand-doc($tan-doc, $target-phase, $is-validation)"/>
@@ -33,16 +33,19 @@
    </xsl:function>
 
    <xsl:function name="tan:expand-doc">
-      <!-- Input: a tan document, a string indicating a phase of expansion, a boolean indicating whether the function is intended
+      <!-- Input: a resolved TAN document, a string indicating a phase of expansion, a boolean indicating whether the function is intended
       to serve validation -->
-      <!-- Output: the document and its dependencies expanded at the phase indicated. -->
+      <!-- Output: the document and its dependencies expanded to the phase indicated. -->
       <!-- If validation mode is true, then the results will be stripped down to root element and the bare markers for errors, 
          warnings, and fixes. If validation mode is false, then the complete, expanded document and its dependencies will be
          returned.
       -->
       <!-- Because class 2 files are expanded hand-in-glove with the class 1 files they depend upon, expansion is necessarily 
          synchronized with its dependent sources. The expanded form of the original class-2 document is the first document of the 
-         result, and the expanded class-1 or -3 files follow. -->
+         result, and the expanded class-1 or -3 files follow. A TAN-A file expanded verbosely will return as its last document
+         one TAN-A_merge file per work detected. TAN-A_merge files collate into a single master reference system all <source>s of 
+         the TAN-A file that are versions of that work.  
+      -->
       <xsl:param name="tan-doc" as="document-node()?"/>
       <xsl:param name="target-phase" as="xs:string"/>
       <xsl:param name="use-validation-mode" as="xs:boolean"/>
@@ -643,7 +646,7 @@
 
 
    <xsl:template match="tan:inclusion/* | tan:vocabulary/tan:item" priority="1" mode="check-referred-doc">
-      <!-- ignore anything deeper than inclusion -->
+      <!-- Ignore anything deeper than inclusion. -->
       <xsl:copy-of select="."/>
    </xsl:template>
    <xsl:template match="tan:algorithm | tan:TAN-T/tan:head/tan:source | tei:TEI/tan:head/tan:source"

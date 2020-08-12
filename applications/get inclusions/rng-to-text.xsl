@@ -45,12 +45,18 @@
         <xsl:if test="$is-complex = true()">
             <xsl:text>(</xsl:text>
         </xsl:if>
+        <!--<xsl:variable name="this-connector" as="xs:string?">
+            <xsl:choose>
+                <xsl:when test="self::rng:group">, </xsl:when>
+                <xsl:when test="self::rng:choice"> | </xsl:when>
+                <xsl:when test="self::rng:interleave"> &amp; </xsl:when>
+            </xsl:choose>
+        </xsl:variable>-->
         <xsl:choose>
             <xsl:when test="count(rng:*) gt 1">
                 <xsl:for-each select="rng:*">
                     <xsl:variable name="pos" select="position()"/>
-                    <xsl:if
-                        test="$has-complex-children = true() and $pos gt 1 and $has-complex-children = false()">
+                    <xsl:if test="$has-complex-children = true() and $pos gt 1">
                         <xsl:value-of select="$lf || $current-indent"/>
                     </xsl:if>
                     <xsl:apply-templates mode="formaldef" select=".">
@@ -214,6 +220,7 @@
                     ()"/>
         <xsl:value-of select="@type || ' ' || string-join(text(), ' ')"/>
         <xsl:apply-templates mode="formaldef"/>
+        <xsl:call-template name="comma-check"/>
     </xsl:template>
     <xsl:template match="rng:text" mode="formaldef">
         <xsl:text>text</xsl:text>

@@ -25,7 +25,7 @@ include "incl/TAN-class-2.rnc" {
 # ATTRIBUTES
 attr-def-ref =
     
-    ## identifies which definition is meant. This attribute is essential in cases where a lexicon has multiple entries for lexemes (lexical headwords) that are identical. 
+    ## identifies which lexical definition is meant. This attribute is essential in cases where a lexicon has multiple entries for lexemes (lexical headwords) that are identical. 
     
     ## Because there is no TAN format for lexicons, assertions about lexica will not be validated.
     attribute def-ref { text }
@@ -68,9 +68,9 @@ element-ana =
     }
 element-l =
     
-    ## names a lexeme, by pointing to the main word entry in the lexicon defined by the element's inherited value(s) of @lexicon. This element should not be used to point to roots, only to lexical headwords. 
+    ## names a lexeme, by pointing to the main word entry in the lexicon identified by the element's inherited value(s) of @lexicon. This element should not be used to point to roots, only to lexical headwords. 
     
-    ## In many languages, especially those that are lightly inflected, the lexeme will be identical to the word token itself. If <l> is omitted, the value of <tok> is to be inferred.
+    ## In many languages, especially those that are lightly inflected, the lexeme will be identical to the word token itself. If <l> is omitted, the calculated value of <tok> is to be inferred as its value.
     
     ## The sequence of consecutive <l>s is immaterial.
     element l { ptr-attr-lexicon?, attr-def-ref?, certainty-stamp?, text }
@@ -108,7 +108,7 @@ element-tok-abstract =
     element tok { certainty-stamp?, (attr-val | attr-rgx), attr-chars? }
 element-tok-is =
     
-    ## specifies an exact value of @val of <tok>s in the file. Collectively, every <tok> should point to at least on <tok-is>.
+    ## specifies an exact value of @val of <tok>s in the file. Collectively, every <tok> should point to at least one <tok-is>.
     
     ## This element is an optional way to improve the efficiency of validation and applications. 
     
@@ -125,7 +125,7 @@ element-tok-starts-with =
 # Vocabulary items
 voc-element-lexicon =
     
-    ## names a lexicographical authority. This element is optional, because the lexical informat could be based upon the knowledge of the <agent>s who wrote the data.
+    ## names a lexicographical authority.
     element lexicon { entity-digital-tan-id | entity-nondigital-id }
 voc-element-morphology =
     

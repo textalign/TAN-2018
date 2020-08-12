@@ -9,25 +9,24 @@
    rest of the function library has been upgraded to v. 3.0 -->
 
    <xsl:function name="tan:longest-ascending-subsequence" as="element()*">
-      <!-- Input: a sequence of integers or sequences of integers (or items with child elements that can be cast into integers) -->
-      <!-- Output: a sequence of elements, each with a text node of an integer greater than the preceding element text node, 
-         and the entire sequence of integers in the text nodes being one of the longet ascending subsequences of the input 
-         elements. Each output element has a @pos with an integer identifying the position of the input item that has been 
-         chosen (to handle repetitions) -->
-      <!-- Although this function claims by its name to find the longest subsequence, in the interests of efficiency, it modifies 
-         the so-called Patience method of finding the string, which may return only a long string, not the longest possible string. 
-         Such an approach allows the number of operations to be directly proportionate to the number of input values; to
-         backtrack would be proportionate to that number squared. The routine does "remember" gaps. If adding a number
-         to the sequence would require a jumps, the sequence is created, along with a copy of the pre-gapped sequence, in case
-         it can resume later. 
+      <!-- Input: a sequence of items. Each item is either an integer or a sequence of integers (via child elements) -->
+      <!-- Output: a sequence of elements. Each one has in its text node an integer greater than the preceding element's text node. 
+         Each output element has a @pos with an integer identifying the position of the input item that has been chosen (to handle 
+         repetitions in the input) -->
+      <!-- Although this function claims by its name to find the longest subsequence, in the interests of efficiency, it applies 
+         the so-called Patience method of finding the string, which may return only a very long string, not the longest possible string. 
+         Such an approach allows the number of operations to be directly proportionate to the number of input values (backtracking would 
+         be computationally intensive on long sequences). The routine does "remember" gaps. If adding a number to the sequence would 
+         require a jump, the sequence is created, but a copy of the pre-gapped sequence is memoized, in case it is later discovered that
+         the pre-gapped sequence is better. 
       --> 
       <!-- The input is a sequence of elements, not integers, because this function has been written to support 
          tan:collate-pairs-of-sequences(), which requires choice options. That is, you may have a situation
          where you are comparing two sequences, either of which may have values that repeat, e.g., (a, b, c, b, d) and 
-         (c, b, d). The first sequence might get converted to integers 1-5. In finding a corresponding sequence of integers
-         for the second set, b must be allowed to be either 2 or 4, i.e., (3, (2, 4), 5). These would ideally be expressed as arrays of
-         integers, but this function serves an XSLT 2.0 library (where arrays are not recognized), and arrays are difficult to 
-         construct in XSLT 3.0. -->
+         (c, b, d). The first sequence is converted (1, 2, 3, 4, 5). In finding a corresponding sequence of integers
+         for the second set, b must be allowed to be either 2 or 4, i.e., the array [3, [2, 4], 5]. Both items of input would ideally 
+         be expressed as arrays of integers, but this function serves an XSLT 2.0 library (where arrays are not recognized), and 
+         arrays are not as easy to construct in XSLT 3.0 as maps are. -->
       <xsl:param name="integer-sequence" as="item()*"/>
       <xsl:variable name="sequence-count" select="count($integer-sequence)"/>
       <xsl:variable name="first-item" select="$integer-sequence[1]"/>
@@ -147,6 +146,7 @@
             </xsl:for-each>
          </xsl:if>
       </xsl:for-each>
+      
    </xsl:function>
    
    
@@ -154,8 +154,7 @@
    
    <xsl:function name="tan:giant-diff" as="element()">
       <!-- Input: same parameters as 3-ary tan:diff(); two integers -->
-      <!-- Output: the same as tan:diff(), but handled differently; the first integer specifies the length of segments into 
-         which the first string should be chopped; the second, for the second string -->
+      <!-- Output: the same as tan:diff(), but handled differently; the two integers specify the segment lengths into which the first and second strings, respectively, should be cut. -->
       <xsl:param name="string-a" as="xs:string?"/>
       <xsl:param name="string-b" as="xs:string?"/>
       <xsl:param name="snap-to-word" as="xs:boolean"/>
@@ -257,7 +256,7 @@
    
    
    <xsl:function name="tan:diff-to-collation" as="element()">
-      <!-- Input: any single output of diff, two string for the labels of diff strings a and b -->
+      <!-- Input: any single output of tan:diff(), two strings for the labels of diff strings a and b -->
       <!-- Output: a <collation> with the data prepped for merging with other collations -->
       <!-- This function was written to support the XSLT 3.0 version of tan:collate() -->
       <xsl:param name="diff-output" as="element()?"/>
@@ -330,7 +329,7 @@
    
    <xsl:function name="tan:collation-to-strings" as="element()*">
       <!-- Input: any output from tan:collate (version for XSLT 3.0) -->
-      <!-- Output: a sequence of <witness id="">[ORIGINAL STRING] -->
+      <!-- Output: a sequence of <witness id="">[ORIGINAL STRING]</witness> -->
       <!-- This function was written to reverse, and therefore test the integrity of, the output of tan:collate() -->
       <xsl:param name="tan-collate-output" as="element()?"/>
       <xsl:apply-templates select="$tan-collate-output/tan:witness" mode="collation-to-strings"/>
@@ -1218,8 +1217,7 @@
    
    <xsl:function name="tan:common-start-or-end-string" as="xs:string?">
       <!-- Input: two strings; a boolean -->
-      <!-- Output: the longest string that can be formed by comparing a common end of both strings,
-      the starting end if the boolean is true, otherwise the -->
+      <!-- Output: the longest common start (param 2 is true) or end (param 2 is false) portion of the two strings. -->
       <xsl:param name="string-a" as="xs:string?"/>
       <xsl:param name="string-b" as="xs:string?"/>
       <xsl:param name="find-common-start" as="xs:boolean"/>
@@ -1596,8 +1594,8 @@
    </xsl:template>
    
    
-   <!-- Shadow cached function for tan:diff(), used by tan:collate() to avoid repeating diffs -->
    <xsl:function name="tan:diff-cache" as="element()" cache="yes">
+      <!-- This is a shadow function for tan:diff(). It uses XSLT 3.0 @cache, so that tan:collate() can avoid repeating diffs -->
       <xsl:param name="string-a" as="xs:string?"/>
       <xsl:param name="string-b" as="xs:string?"/>
       <xsl:param name="snap-to-word" as="xs:boolean"/>

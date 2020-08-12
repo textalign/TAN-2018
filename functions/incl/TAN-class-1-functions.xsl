@@ -9,15 +9,9 @@
 
    <!-- The following key presumes that the class 1 document has been expanded at least tersely -->
    <xsl:key name="div-via-ref" match="tan:div" use="tan:ref/text()"/>
-   <xsl:key name="div-via-orig-ref" match="tan:div"
-      use="(tan:ref/tan:orig-ref, tan:ref[not(tan:orig-ref)]/text())"/>
    <xsl:key name="tok-via-val" match="tan:tok" use="text()"/>
 
    <!-- CLASS 1 GLOBAL VARIABLES -->
-
-   <xsl:variable name="tokenization-nonspace"
-      select="$token-definitions-reserved[following-sibling::tan:name = 'nonspace']"/>
-   <xsl:variable name="dependency-vocabulary-should-be-resolved" select="true()"/>
 
    <!-- redivisions -->
    <xsl:variable name="redivisions-1st-da" select="tan:get-1st-doc($head/tan:redivision)"
@@ -31,23 +25,15 @@
 
    <!-- models -->
    <xsl:variable name="model-1st-da" select="tan:get-1st-doc($head/tan:model[1])"/>
-   <!--<xsl:variable name="model-resolved"
-      select="tan:resolve-doc($model-1st-da, false(), 'model', (), $dependency-vocabulary-should-be-resolved)"/>-->
    <xsl:variable name="model-resolved"
       select="tan:resolve-doc($model-1st-da, false(), tan:attr('relationship', 'model'))"/>
 
-   <!-- annotations -->
-   <xsl:variable name="annotations-1st-da" select="tan:get-1st-doc($head/tan:annotation)"/>
-   <!--<xsl:variable name="annotations-resolved"
-      select="tan:resolve-doc($annotations-1st-da, false(), 'annotation', (), $dependency-vocabulary-should-be-resolved)"/>-->
-   <xsl:variable name="annotations-resolved"
-      select="tan:resolve-doc($annotations-1st-da, false(), tan:attr('relationship', 'annotation'))"/>
 
 
 
    <!-- CLASS 1 FUNCTIONS: TEXT -->
 
-   <xsl:variable name="special-end-div-chars" select="($zwj, $dhy)" as="xs:string+"/>
+   <xsl:variable name="special-end-div-chars" select="($zwj, $dhy, $zwsp)" as="xs:string+"/>
    <xsl:variable name="special-end-div-chars-regex"
       select="concat('\s*[', string-join($special-end-div-chars, ''), ']\s*$')" as="xs:string"/>
    <!-- regular expression to detect parts of a transcription that specify a line, column, or page break; these should be excluded from transcriptions and be rendered with markup -->
@@ -58,7 +44,7 @@
       <!-- Input: any document fragment of a TAN class 1 body, whether raw or resolved -->
       <!-- Output: a single string that joins and normalizes the leaf div text according to TAN rules -->
       <!-- All special leaf-div-end characters will be stripped including the last -->
-      <!-- Do not apply this template to  -->
+      <!-- Do not apply this template to class-1 files that have been expanded, because normalization will have already occurred. -->
       <xsl:param name="items" as="item()*"/>
       <xsl:variable name="results" as="element()">
          <results>
@@ -101,7 +87,7 @@
    <xsl:function name="tan:normalize-div-text" as="xs:string*">
       <!-- Input: any sequence of strings, presumed to be text nodes of a single leaf div; a boolean indicating whether special div-end characters should be retained or not -->
       <!-- Output: the same sequence, normalized according to TAN rules. Each item in the sequence is space normalized and then if its end matches one of the special div-end characters, ZWJ U+200D or SOFT HYPHEN U+AD, the character is removed; otherwise a space is added at the end. Zero-length strings are skipped. -->
-      <!-- This function is designed specifically for TAN's commitment to nonmixed content. That is, every TAN element contains either elements or non-whitespace text but not both, which also means that whitespace text nodes are effectively ignored. It is assumed that every TAN element is followed by a notional whitespace. -->
+      <!-- This function is designed specifically for TAN's commitment to nonmixed content. That is, every TAN element contains either elements or non-space text but not both, which also means that space-only text nodes are effectively ignored. It is assumed that every TAN element is followed by a notional space. -->
       <!-- The second parameter is important, because output will be used to normalize and repopulate leaf <div>s (where special div-end characters should be retained) or to concatenate leaf <div> text (where those characters should be deleted) -->
       <xsl:param name="single-leaf-div-text-nodes" as="xs:string*"/>
       <xsl:param name="remove-special-div-end-chars" as="xs:boolean"/>
@@ -402,15 +388,14 @@
       <xsl:apply-templates mode="#current"/>
    </xsl:template>
    
-   <!-- remove whitespace nodes -->
+   <!-- remove space-only nodes -->
    <xsl:template match="*:body/text() | *:div[*:div]/text()" mode="dependency-adjustments-pass-1">
       <xsl:if test="matches(., '\S')">
          <xsl:message select="root(.)/*/@id, 'has illegal text at', tan:path(.)"/>
       </xsl:if>
    </xsl:template>
    
-   <xsl:template match="tan:div | tei:div"
-      mode="core-expansion-terse dependency-expansion-terse-no-adjustments">
+   <xsl:template match="tan:div | tei:div" mode="core-expansion-terse">
       <!-- streamlined expansion of <div>s; applied to dependencies of class-2 files only when there are no more adjustment items to process -->
       <xsl:param name="parent-new-refs" as="element()*" select="$empty-element"/>
       <xsl:variable name="is-tei" select="namespace-uri() = 'http://www.tei-c.org/ns/1.0'"
@@ -421,8 +406,7 @@
             if (exists(@n)) then
                tan:analyze-sequence(@n, 'n', $expand-n)
             else
-               ()"
-      />
+               ()"/>
       <xsl:variable name="new-refs" as="element()*">
          <xsl:for-each select="$parent-new-refs">
             <xsl:variable name="this-ref" select="."/>
@@ -2487,8 +2471,8 @@
       </xsl:copy>
    </xsl:template>
    <xsl:template match="tan:redivision/tan:diff" mode="class-1-expansion-verbose-pass-2">
-      <!-- The goal here is first to punctuate the diff elements with empty <div string-pos=""> anchors -->
-      <!-- and then to rebuild the diff fragments within newly built <div>s  -->
+      <!-- The goal here is first to punctuate the diff elements with empty <div string-pos=""> anchors 
+         and then to rebuild the diff fragments within newly built <div>s  -->
       <xsl:variable name="diff-spiked" as="element()">
          <xsl:copy>
             <xsl:copy-of select="@*"/>
@@ -2908,42 +2892,35 @@
    
    <!-- The following functions and templates define how tan:merge-expanded-docs() handles class 1 files in particular -->
    
-   <xsl:function name="tan:merge-expanded-class-1-docs" as="document-node()?">
-      <!-- Input: Any TAN class-1 documents that have been expanded at least tersely -->
-      <!-- Output: A collation of the documents in a single document. There is one <head> per source, but only one <body>, with contents merged. -->
-      <!-- NB: Class 1 files must have their hierarchies in proper order; use reset-hierarchy beforehand if you're unsure -->
+   <xsl:template match="/*" mode="merge-tan-docs">
       <!-- A merged TAN-T file is a collation of multiple TAN-T(EI) files, with each head preserved intact, and the 
       single body consisting of a hierarchy of divs grouped by a common reference scheme, dictated by @n. 
       This function has assumed the following principles, most important first:
-      - merged output need not have everything needed to reconstruct the original sources, but the data
-      must allow enough differentiation among sources to allow a variety of later uses, and therefor different configurations
+      - merged output need not have everything needed to reconstruct the original sources, but the data must permit 
+      enough differentiation among sources to facilitate a variety of later uses, and therefore different configurations:
       - merged versions should retain their relative order
       - in a merge, <div>s should be sorted by numerical order, or by relative order, taking the group of divs as a whole
       - merges on the leaf div level should not lack any version, including versions that span or bridge other leaf divs
-      - if a a merge results in multiple copies, or parts, of a div, the div should be tagged with appropriate metadata
+      - if a merge results in multiple copies, or parts, of a div, the div should be tagged with appropriate metadata
       
-      The above list may be difficult to understand, so study it again after reading some of the specific challenges 
-      in class 1 merges, below.
-   -->
-      <!-- Some challenges in merging TAN-T files, discussed point by point:
-      
-      Challenge: A div with a particular ref/n might be split, with other divs in-between
+      The above list will be better understood in light of specific challenges in class 1 merges, discussed below. -->
+      <!-- Some challenges in merging TAN-T files, discussed point by point: --> 
+      <!-- Challenge: A div with a particular ref/n might be split, with other divs in-between
       Resolution: all split divs will be grouped together, because the whole point of a merge is, well, to merge.
-      Suppose you had to merge a leaf div from version A with a split leaf div from version B. Not to fully merge B 
-      would require putting A into one split or the other, or putting one copy in one split and another in the other. 
+      Suppose you had to merge a leaf div from version A with a split leaf div from version B. If you did not fully merge 
+      B you would need to move A into one B split or the other, or put one copy of A in one split and another in the other. 
       The situation would get even more complicated for a version C with non-leaf divs that would need to be 
       merged. On the other hand, the grouping does not mean consolidation. The two, three, or more parts of a 
       split div will be preserved as sibling elements within a merge. To assist in later processing, such split divs will
       be given @part and @part-count and appropriate integers (to be able to express something like "part 1 of 3"). 
-      In addition, each split div element will have the same value for @q, to facilitate referencing. 
+      In addition, each split div element will have the same value for @q, to facilitate referencing. --> 
       
-      Challenge: A particular version might have div where numerical @ns do not follow their original sequence 
-      (remember, a TAN-T file is supposed to follow the sequence of the text within the scriptum, and not 
-      be rearranged to conform to the reference system)
-      Resolution: A merge necessarily has to be prepared to rearrange divs. As a general rule, the order of divs
-      should be determined by adhering to the numerical value of @ns.
+      <!-- Challenge: A particular version might have a div where numerical @ns do not follow their original sequence 
+      (remember, a TAN-T file should follow the sequence of the text within the scriptum, not the reference system)
+      Resolution: A merge necessarily has to rearrange divs. As a general rule, the order of divs should be determined 
+      by adhering to the numerical value of @ns.--> 
       
-      Challenge: Many @ns are not numbers, and a non-numerical div may appear in rather different places in 
+      <!-- Challenge: Many @ns are not numbers, and a non-numerical div may appear in rather different places in 
       different versions.
       Resolution: The position of a merged div with a non-numerical @n should be determined in accordance
       with principles outlined above regarding the order of divs. Suppose you have version one with div @ns
@@ -2952,15 +2929,15 @@
       a version two with divs (title), (1), should result in the order of version one, and not something like 
       (1), (2), ... (15), (title), (16), ... (59), (60). The position of non-numerical divs should be determined by 
       nearby numerical div context, specifically the closest previous numerical @n value, then the distance from
-      it (i.e., calculate the number of intervening divs with non-numerical @n values that intervene).
+      it (i.e., calculate the number of intervening divs with non-numerical @n values that intervene). --> 
       
-      Challenge: Some @n types might all be non-numerical, with versions putting the divs in different orders.
+      <!-- Challenge: Some non-numerical @n's appear in different orders in different versions.
       Resolution: An example of the challenge would be the Old Testament / Tanakh. Modern editions have an
       order of books that diverges from what is in the Septuagint, and a merge of those two versions, according
       to the principles outlined above, would result in an idiosyncractic order followed by no version. If the
-      user wishes such divs to follow a particular order, it is up to a later process to re-sort the items.
+      user wishes such divs to follow a particular order, it is up to a later process to re-sort the output. --> 
       
-      Challenge: Some @ns might have multiple values, with complex overlap patterns
+      <!-- Challenge: Some @ns might have multiple values, with complex overlap patterns
       Resolution: In a merge, when the algorithm encounters multiple values of @n, any numerical values are
       retained, excluding any non-numerical values, and the numerals are treated as requiring distribution.
       That is, if @n points to multiple numerical references, copies of the div are to distributed to the 
@@ -2977,24 +2954,15 @@
       complex/spanning range, requires distribution. Three merge groups are created. The three copies of the
       fourth div are each imprinted with @copy (value 1, 2, or 3) and @copy-count (value 3). Each copy retains 
       intact its @q id, and its content. If an application using a merge requires the content to be reallocated
-      proportionally, it will need to perform that operation upon the merged output. (There are many methods of
+      proportionately, it will need to perform that operation upon the merged output. (There are many methods of
       proportional reallocation, and some of them require inspection of other versions that are in the merge, so
       there is little point in implementing in this merge algorithm a complex process that many users will not
       find useful or representative of their assumptions.)
          The position of merged divs follow the principles detailed earlier. Those with numerical references retain 
       their position relative to their @n value. Those with only non-numerical references will attract a position 
-      computed by their position relative to the closest preceding div with a numerical value for @n.  
-      
-   -->
-      <xsl:param name="expanded-docs" as="document-node()*"/>
-      <xsl:apply-templates select="$expanded-docs[1]" mode="merge-tan-docs">
-         <!-- $documents-to-merge becomes $elements-to-merge at the first template, the document node -->
-         <xsl:with-param name="documents-to-merge" select="$expanded-docs[position() gt 1]"/>
-      </xsl:apply-templates>
-   </xsl:function>
-   
-   <xsl:template match="/*" mode="merge-tan-docs">
+      computed by their position relative to the closest preceding div with a numerical value for @n. -->
       <xsl:param name="elements-to-merge"/>
+      
       <xsl:variable name="this-root-name" select="name(.)"/>
       <xsl:variable name="mergable-elements" select="$elements-to-merge[name(.) = $this-root-name]"/>
       <xsl:variable name="pre-merge-bodies-pass-1" as="element()*">
@@ -3359,7 +3327,7 @@
       <!-- Input: (1) any set of divs with content to be transferred into the structure of (2) another set of divs; and (3) a snap marker. -->
       <!-- Output: The div structure of (2), infused with the content of (1). The content is allocated  proportionately, with preference given to punctuation, within a certain range, and then word breaks. -->
       <!-- This function is useful for converting class-1 documents from one reference system to another. Normally the conversion is flawed, because two versions of the same work rarely synchronize, but this function provides a good estimate, or a starting point for manual correction. -->
-      <!-- The raw text will be tokenized based on the third parameter, so that words, clauses, or sentences are not broken up. -->
+      <!-- The raw text will be tokenized based on the third parameter, so that, if you so wish, words, clauses, or sentences are not broken up. -->
       <xsl:param name="items-with-div-content-to-be-transferred" as="item()*"/>
       <xsl:param name="items-whose-divs-should-be-infused-with-new-content" as="item()*"/>
       <xsl:param name="break-at-regex" as="xs:string"/>
@@ -3371,7 +3339,7 @@
 
    <xsl:function name="tan:infuse-divs" as="item()*">
       <!-- Input: a string; an XML fragment that has <div>s -->
-      <!-- Output: the latter, infused with the former, following infusing text proportionate to the relative quantities of text being replaced -->
+      <!-- Output: the latter, infused with the former, infusing text proportionate to the quantity of <div> text being replaced -->
       <xsl:param name="new-content-to-be-transferred" as="xs:string?"/>
       <xsl:param name="items-whose-divs-should-be-infused-with-new-content" as="item()*"/>
       <xsl:param name="break-at-regex" as="xs:string"/>
@@ -3517,7 +3485,7 @@
    <xsl:function name="tan:analyze-string-length" as="item()*">
       <!-- Input: any class-1 document or fragment (or a result of tan:diff()); an indication whether string lengths should be added only to leaf divs, or to every div. -->
       <!-- Output: the same document, with @string-length and @string-pos added to every element -->
-      <!-- Function to calculate string lengths of each leaf elements and their relative position, so that a raw text can be segmented proportionally and given the structure of a model exemplar. NB: any $special-end-div-chars that terminate a <div> not only will not be counted, but the
+      <!-- Function to calculate string lengths of each leaf elements and their relative position, so that a raw text can be segmented proportionately and given the structure of a model exemplar. NB: any $special-end-div-chars that terminates a <div> not only will not be counted, but the
          assumed space that follows will also not be counted. On the other hand, the lack of a special
          character at the end means that the nominal space that follows a div will be included in both
          the length and the position. Thus input...

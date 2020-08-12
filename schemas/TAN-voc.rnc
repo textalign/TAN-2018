@@ -19,14 +19,14 @@ attribute-scope =
     
     ## This attribute is weakly inheritable. An element will be affected only by the values of the closest @affects-attribute.
     
-    ## Currently this attribute may have scope over only @n.
+    ## Currently this attribute may be applied only to @n.
     attribute affects-attribute { "n" }
 # ELEMENTS
 element-item =
     
     ## provides a container for IRI, names, and descriptions of something. The item is assumed to be a type (or types) of thing indicated by the values of the closest @affects-attribute or @affects-element.
     
-    ## Verbs are special, and cannot be assigned any other categories, so <verb> is used for them instead of <item>.
+    ## An <item> does not describe verbs, which have special constraints. Use <verb> instead.
     element item {
         ed-stamp?,
         (inclusion
@@ -41,6 +41,6 @@ element-scope =
     
     ## names one or more TAN elements that an item applies to.
     
-    ## This attribute is weakly inheritable. An element will be affected only by the values of the closest @affects-element.
+    ## This attribute is weakly inheritable. An element is be affected only by the values of the closest @affects-element.
     attribute affects-element { text }
 # PATTERNS

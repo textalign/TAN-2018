@@ -10,37 +10,6 @@
 
    <!-- FUNCTIONS -->
    
-   <!-- FUNCTIONS: SEQUENCES -->
-   
-   <xsl:function name="tan:feature-test-to-groups" as="element()*">
-      <!-- Input: any value of @feature-test -->
-      <!-- Output: the value converted into a series of <group>ed <item>s, observing the accepted syntax for this attribute -->
-      <!-- Example: "a b + c" - > 
-               <group>
-                  <item>a</item>
-               </group>
-               <group>
-                  <item>b</item>
-                  <item>c</item>
-               </group>
- -->
-      <xsl:param name="attr-feature-test" as="xs:string?"/>
-      <xsl:variable name="attr-norm" select="tan:normalize-text($attr-feature-test)"/>
-      <xsl:if test="string-length($attr-feature-test) gt 0">
-         <xsl:analyze-string select="$attr-feature-test" regex="[^\s\+]+(\s\+\s[^\s\+]+)*">
-            <xsl:matching-substring>
-               <group>
-                  <xsl:for-each select="tokenize(., ' \+ ')">
-                     <item>
-                        <xsl:value-of select="lower-case(.)"/>
-                     </item>
-                  </xsl:for-each>
-               </group>
-            </xsl:matching-substring>
-         </xsl:analyze-string>
-      </xsl:if>
-   </xsl:function>
-
    <!-- FILE PROCESSING: EXPANSION -->
 
    <xsl:template match="tan:TAN-mor/tan:body" mode="dependency-adjustments-pass-1 core-expansion-terse">

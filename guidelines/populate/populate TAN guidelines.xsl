@@ -7,7 +7,7 @@
    xmlns:exsl="http://exslt.org/common" xmlns:doc="http://nwalsh.com/xsl/documentation/1.0"
    xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:tei="http://www.tei-c.org/ns/1.0"
    xmlns:rng="http://relaxng.org/ns/structure/1.0" xmlns:sch="http://purl.oclc.org/dsdl/schematron"
-   xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:tan="tag:textalign.net,2015:ns"
+   xmlns:tan="tag:textalign.net,2015:ns"
    xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
    xmlns:sqf="http://www.schematron-quickfix.com/validator/process"
    xpath-default-namespace="http://docbook.org/ns/docbook"
@@ -16,15 +16,19 @@
 
    <!-- Stylesheet to generate major parts of the official TAN guidelines -->
    
-   <!-- Input: any XML file (including this one) -->
+   <!-- Catalyzing input: any XML file (including this one) -->
+   <!-- Primary input: the RELAX-NG schema library, the TAN function library, the TAN vocabulary library -->
    <!-- Primary output: none -->
-   <!-- Secondary output: the files specified in the initial template (see end of this file) -->
+   <!-- Secondary output: the appendix sections of the Guidelines, converting major parts of TAN to docbook format (see end of this file) -->
+   <!-- This process takes about 25 seconds. -->
+   
+   <xsl:param name="output-diagnostics-on" as="xs:boolean" select="false()" static="yes"/>
 
    <xsl:output method="xml" indent="no"/>
 
+   <xsl:include href="../../applications/get%20inclusions/rng-to-text.xsl"/>
    <xsl:include href="../../functions/incl/TAN-core-functions.xsl"/>
    <xsl:include href="../../functions/TAN-extra-functions.xsl"/>
-   <xsl:include href="../../applications/get%20inclusions/rng-to-text.xsl"/>
    <xsl:include href="../../applications/get%20inclusions/tan-snippet-to-docbook.xsl"/>
    <xsl:include href="../../applications/get%20inclusions/tan-vocabularies-to-docbook.xsl"/>
    <xsl:include href="../../applications/get%20inclusions/XSLT%20analysis.xsl"/>
@@ -61,6 +65,7 @@
          <sec n="TAN-core-expand"/>
          <sec n="TAN-core-errors"/>
          <sec n="TAN-core-string"/>
+         <sec n="TAN-core-3-0"/>
          <sec n="regex-ext-tan"/>
          <sec n="TAN-class-1">
             <sec n="TAN-T"/>
@@ -161,7 +166,18 @@
                         select="((1 to 11)[string-length(regex-group(.)) gt 0])[1]"/>
                      <xsl:variable name="match-type"
                         select="tokenize($component-syntax/*/*[$first-match]/@type, ' ')[1]"/>
-                     <xsl:variable name="match-name" select="regex-group($first-match)"/>
+                     <!-- The regex group sometimes has to be massaged -->
+                     <xsl:variable name="match-name-parts" as="xs:string*">
+                        <xsl:analyze-string select="regex-group($first-match)" regex="(\.)$">
+                           <xsl:matching-substring>
+                              <xsl:value-of select="."/>
+                           </xsl:matching-substring>
+                           <xsl:non-matching-substring>
+                              <xsl:value-of select="."/>
+                           </xsl:non-matching-substring>
+                        </xsl:analyze-string>
+                     </xsl:variable>
+                     <xsl:variable name="match-name" select="$match-name-parts[1]"/>
                      <xsl:variable name="is-valid-link" as="xs:boolean">
                         <xsl:choose>
                            <xsl:when
@@ -179,25 +195,13 @@
                         </xsl:choose>
                      </xsl:variable>
                      <xsl:variable name="linkend"
-                        select="$match-type || '-' || replace($match-name, '[:#]|tan:', '')"/>
+                        select="$match-type || '-' || replace($match-name, '[:#]|(tan|rgx):', '')"/>
                      <code>
                         <xsl:choose>
                            <xsl:when test="$is-valid-link">
-                              <!--<xsl:variable name="linktext"
-                              select="
-                                 if ($match-type = 'function') then
-                                    replace(., $replacement-for-function-result-to-put-inside-link[1], $replacement-for-function-result-to-put-inside-link[2])
-                                 else
-                                    ."/>-->
                               <link linkend="{$linkend}">
-                                 <!--<xsl:value-of select="$linktext"/>-->
                                  <xsl:value-of select="replace(., '\($', '')"/>
                               </link>
-                              <!--<xsl:if test="$match-type = 'function' and $is-valid-link">
-                              <xsl:value-of
-                                 select="replace(., $replacement-for-function-result-to-put-outside-link[1], $replacement-for-function-result-to-put-outside-link[2])"
-                              />
-                           </xsl:if>-->
                               <xsl:if test="$match-type = 'function'">
                                  <xsl:text>(</xsl:text>
                               </xsl:if>
@@ -207,6 +211,7 @@
                            </xsl:otherwise>
                         </xsl:choose>
                      </code>
+                     <xsl:value-of select="$match-name-parts[2]"/>
                   </xsl:matching-substring>
                   <xsl:non-matching-substring>
                      <xsl:analyze-string select="." regex="main\.xml#[-_\w]+|iris\.xml|https?://\S+">
@@ -257,29 +262,39 @@
 
    <xsl:function name="tan:component-comments-to-docbook" as="element()*">
       <!-- Input: one or more XSLT elements -->
-      <!-- Output: one docbook <para> per comment -->
+      <!-- Output: one docbook <programlisting> per comment -->
       <xsl:param name="xslt-elements" as="element()*"/>
-      <xsl:for-each select="$xslt-elements/comment()[not(preceding-sibling::*)]">
-         <xsl:for-each select="tokenize(., '\n(\s+\n)+')">
-            <xsl:variable name="this-para-norm" select="tan:rewrap-para(., 72)"/>
-            <programlisting>
+      
+      <xsl:for-each select="$xslt-elements">
+         <!-- template mode comments are hard to read, because they have so many instances, so we need label based on @match -->
+         <xsl:if test="self::xsl:template/@match">
+            <para>
+               <code>
+                  <xsl:value-of select="tan:xml-to-string(tan:shallow-copy(.))"/>
+               </code>
+            </para>
+         </xsl:if>
+         <xsl:for-each select="comment()[not(preceding-sibling::*)]">
+            <xsl:for-each select="tokenize(., '\n(\s+\n)+')">
+               <xsl:variable name="this-para-norm" select="tan:rewrap-para(., 72)"/>
+               <programlisting>
                <xsl:copy-of select="tan:prep-string-for-docbook($this-para-norm)"/>
             </programlisting>
-         </xsl:for-each>
-      </xsl:for-each>
+            </xsl:for-each>
+         </xsl:for-each></xsl:for-each>
    </xsl:function>
    <xsl:function name="tan:rewrap-para" as="xs:string?">
       <!-- Input: a string; an integer -->
       <!-- Output: the string with new lines inserted at the first word break possible after the integer length has been reached -->
       <xsl:param name="input-text" as="xs:string?"/>
       <xsl:param name="break-after-what-column" as="xs:integer"/>
-      <xsl:variable name="this-input-normalized" select="fn:normalize-space($input-text)"/>
-      <xsl:variable name="these-input-words" select="fn:tokenize($this-input-normalized, ' ')"/>
+      <xsl:variable name="this-input-normalized" select="normalize-space($input-text)"/>
+      <xsl:variable name="these-input-words" select="tokenize($this-input-normalized, ' ')"/>
       <xsl:variable name="words-marked-for-wrapping" as="xs:string*">
          <xsl:iterate select="$these-input-words">
             <xsl:param name="col-count-so-far" select="0"/>
             <xsl:variable name="this-word" select="."/>
-            <xsl:variable name="this-word-length" select="fn:string-length($this-word)"/>
+            <xsl:variable name="this-word-length" select="string-length($this-word)"/>
             <xsl:variable name="new-col-count" select="$this-word-length + $col-count-so-far"/>
             <xsl:choose>
                <xsl:when test="$new-col-count ge $break-after-what-column">
@@ -303,7 +318,7 @@
             </xsl:next-iteration>
          </xsl:iterate>
       </xsl:variable>
-      <xsl:value-of select="fn:string-join($words-marked-for-wrapping)"/>
+      <xsl:value-of select="string-join($words-marked-for-wrapping)"/>
    </xsl:function>
    <xsl:function name="tan:component-dependees-to-docbook" as="element()*">
       <!-- Input: one or more XSLT elements -->
@@ -495,7 +510,7 @@
       <xsl:variable name="catalog-is-of-interest"
          select="
             some $i in $these-base-uris
-               satisfies fn:matches($i, 'catalog')"
+               satisfies matches($i, 'catalog')"
       />
       <section xml:id="{$this-node-type || '-' || replace($this-node-name,':','')}">
          <title>
@@ -506,7 +521,8 @@
             </code>
          </title>
          <xsl:for-each-group select="$rng-element-or-attribute-group" group-by="base-uri(.)">
-            <xsl:variable name="this-base-uri" select="fn:current-grouping-key()"/>
+            <xsl:variable name="this-base-uri" select="current-grouping-key()"/>
+            <xsl:variable name="this-group-count" select="count(current-group())"/>
             <para>
                <emphasis>
                   <code>
@@ -516,26 +532,36 @@
                   </code>
                </emphasis>
             </para>
-            <!-- part 1, documentation -->
-            <xsl:apply-templates select="fn:current-group()/a:documentation" mode="rng-to-docbook"/>
-            <!-- part 2a, formal definiton -->
-            <para>Formal Definition</para>
-            <synopsis>
-               <xsl:apply-templates select="fn:current-group()/rng:*" mode="formaldef">
-                  <xsl:with-param name="current-indent" select="$indent" tunnel="yes"/>
-               </xsl:apply-templates>
-               <xsl:if test="fn:not(exists(fn:current-group()/rng:*))">
-                  <xsl:text>text</xsl:text>
+            <xsl:for-each select="current-group()">
+               <xsl:if test="$this-group-count gt 1">
+                  <para>
+                     <emphasis>
+                        <xsl:value-of select="'Definition ' || string(position())"/></emphasis>
+                  </para>
                </xsl:if>
-            </synopsis>
+               <!-- part 1, documentation -->
+               <xsl:apply-templates select="a:documentation" mode="rng-to-docbook"/>
+               <xsl:if test="exists(rng:*)">
+                  <para>Formal Definition</para>
+                  <!-- part 2a, formal definiton -->
+                  <synopsis>
+                     <xsl:apply-templates select="rng:*" mode="formaldef">
+                        <xsl:with-param name="current-indent" select="$indent" tunnel="yes"/>
+                     </xsl:apply-templates>
+                     <xsl:if test="not(exists(rng:*))">
+                        <xsl:text>text</xsl:text>
+                     </xsl:if>
+                  </synopsis>
+               </xsl:if>
+            </xsl:for-each>
             <para>
                <xsl:text> </xsl:text>
             </para>
          </xsl:for-each-group> 
          
-         <xsl:if test="fn:exists($these-target-element-names)">
+         <xsl:if test="$this-node-type = 'attribute' and exists($these-target-element-names)">
             <para>
-               <xsl:text>Takes ID refs that must point to </xsl:text>
+               <xsl:text>Takes IDrefs to vocabulary items </xsl:text>
                <xsl:copy-of
                   select="
                      tan:prep-string-for-docbook(string-join(for $i in $these-target-element-names
@@ -574,8 +600,18 @@
       </section>
    </xsl:template>
 
-   <xsl:template match="/*">
+   <xsl:template match="/*" use-when="$output-diagnostics-on">
+      <xsl:variable name="rng-file-picked" select="$rng-collection-without-TEI[4]"/>
+      <diagnostics>
+         <!--<rng-file-picked><xsl:copy-of select="$rng-file-picked"/></rng-file-picked>-->
+         <rng-file-to-text>
+            <xsl:apply-templates select="$rng-file-picked" mode="formaldef"/>
+         </rng-file-to-text>
+      </diagnostics>
+   </xsl:template>
 
+   <xsl:template match="/*" use-when="not($output-diagnostics-on)">
+      
       <!-- Docbook inclusion for elements, attributes, and patterns -->
 
       <xsl:result-document href="{$target-uri-1}">
@@ -693,6 +729,11 @@
                      tokenize($i, '\s+'))) || ' templates (Ŧ = named template; ŧ = template mode) defined in the TAN function library, are the following:'"
                />
             </para>
+            <para>Dependencies refer exclusively to components of the TAN function library, both the
+               core validation procedures and the extra functions. A variable, function, or template
+               listed as not being relied upon may have dependencies in the files in the
+               subdirectory <code>applications</code>.</para>
+            <xsl:copy-of select="$chapter-caveat"/>
             <xsl:for-each-group
                select="($function-library-keys, $function-library-functions, $function-library-variables, $function-library-templates)"
                group-by="
@@ -704,6 +745,8 @@
                         substring(replace($i, '^\w+:', ''), 1, 1)">
                <xsl:sort select="lower-case(current-grouping-key())"/>
                <xsl:variable name="this-letter" select="lower-case(current-grouping-key())"/>
+               
+               <!-- alphabetical index -->
                <para>
                   <xsl:for-each-group select="current-group()"
                      group-by="
@@ -725,7 +768,7 @@
                <xsl:text>
 </xsl:text>
             </xsl:for-each-group>
-            <xsl:copy-of select="$chapter-caveat"/>
+            
             <!-- First, group according to place in the TAN hierarchy the variables, keys, functions, and named templates, which are all unique and so can take an id; because template modes spread out across components, they need to be handled outside the TAN hierarchical structure -->
             <xsl:for-each-group group-by="replace(tan:cfn(.), '-functions', '')"
                select="($function-library-keys, $function-library-functions[not(@name = $names-of-functions-to-append)], $function-library-variables-unique, $function-library-templates[@name])">
@@ -820,6 +863,16 @@
                                                 </code>
                                              </para>
                                           </xsl:when>
+                                          <xsl:when test="exists(text()[matches(., '\S')]) and not(exists(*))">
+                                             <para>
+                                                <xsl:text>Definition: </xsl:text>
+                                                <code>
+                                                  <xsl:copy-of
+                                                  select="tan:copy-of-except(tan:prep-string-for-docbook(string(.)), (), (), (), (), 'code')"
+                                                  />
+                                                </code>
+                                             </para>
+                                          </xsl:when>
                                           <xsl:otherwise>
                                              <para>This variable has a complex definition. See
                                                 stylesheet for definiton.</para>
@@ -889,19 +942,14 @@
                               />
                            </code>
                         </title>
-                        <para>
-                           <xsl:value-of select="count(current-group()) || ' '"/>
-                           <code>xsl:template</code>
-                           <xsl:text> element</xsl:text>
-                           <xsl:if test="count(current-group()) gt 1">s</xsl:if>
-                           <xsl:text>: </xsl:text>
-                           <xsl:for-each-group select="current-group()" group-by="tan:cfn(.)">
+                        <xsl:for-each-group select="current-group()" group-by="tan:cfn(.)">
+                           <bridgehead>
                               <code>
                                  <xsl:value-of select="current-grouping-key() || '.xsl '"/>
                               </code>
-                           </xsl:for-each-group>
-                        </para>
-                        <xsl:copy-of select="tan:component-comments-to-docbook(current-group())"/>
+                           </bridgehead>
+                           <xsl:copy-of select="tan:component-comments-to-docbook(current-group())"/>
+                        </xsl:for-each-group>
                         <xsl:copy-of select="tan:component-dependees-to-docbook(current-group()[1])"/>
                         <xsl:copy-of select="tan:component-dependencies-to-docbook(current-group())"
                         />

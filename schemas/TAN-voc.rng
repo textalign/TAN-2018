@@ -51,7 +51,7 @@
     <attribute name="affects-attribute">
       <a:documentation>names one or more TAN attributes that an item applies to.</a:documentation>
       <a:documentation>This attribute is weakly inheritable. An element will be affected only by the values of the closest @affects-attribute.</a:documentation>
-      <a:documentation>Currently this attribute may have scope over only @n.</a:documentation>
+      <a:documentation>Currently this attribute may be applied only to @n.</a:documentation>
       <value>n</value>
     </attribute>
   </define>
@@ -59,7 +59,7 @@
   <define name="element-item">
     <element name="item">
       <a:documentation>provides a container for IRI, names, and descriptions of something. The item is assumed to be a type (or types) of thing indicated by the values of the closest @affects-attribute or @affects-element.</a:documentation>
-      <a:documentation>Verbs are special, and cannot be assigned any other categories, so &lt;verb&gt; is used for them instead of &lt;item&gt;.</a:documentation>
+      <a:documentation>An &lt;item&gt; does not describe verbs, which have special constraints. Use &lt;verb&gt; instead.</a:documentation>
       <optional>
         <ref name="ed-stamp"/>
       </optional>
@@ -90,7 +90,7 @@
   <define name="element-scope">
     <attribute name="affects-element">
       <a:documentation>names one or more TAN elements that an item applies to.</a:documentation>
-      <a:documentation>This attribute is weakly inheritable. An element will be affected only by the values of the closest @affects-element.</a:documentation>
+      <a:documentation>This attribute is weakly inheritable. An element is be affected only by the values of the closest @affects-element.</a:documentation>
     </attribute>
   </define>
 </grammar>

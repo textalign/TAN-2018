@@ -42,9 +42,9 @@ element-align =
     }
 voc-element-brel =
     
-    ## identifies how the text of one text-bearing object relates to that of another by specifying a relationship, e.g., B is a direct copy of A, B and A descent from a commont parent, etc. See main.xml#tan-a-tok for theoretical background.
+    ## identifies how the text of one text-bearing object relates to that of another by specifying a relationship, e.g., B is a direct copy of A; B and A descend from a commont parent, etc. See main.xml#tan-a-tok for theoretical background.
     
-    ## In most cases, there will be need for only one of these elements. But multiple values may be helpful for cases where a bitext has a complex history, for example, a textual object that was created over time, and in different phases.
+    ## In most cases, there will be need for only one of these elements as a vocabulary item. But multiple values may be helpful for cases where a bitext has a complex history, for example, a textual object that was created over time, and in different phases.
     
     ## This element should not be used to describe any activities (e.g., translation, copying), reserved for <reuse-type>. 
     

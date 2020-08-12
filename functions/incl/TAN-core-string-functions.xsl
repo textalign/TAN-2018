@@ -59,17 +59,15 @@
         <xsl:copy-of select="tan:normalize-text($text, false())"/>
     </xsl:function>
     <xsl:function name="tan:normalize-name" as="xs:string*">
-        <!-- one-parameter version of full function below -->
-        <!-- this version is for handling <name> -->
+        <!-- one-parameter, name-normalizing version of tan:normalize-text() -->
         <xsl:param name="text" as="xs:string*"/>
         <xsl:copy-of select="tan:normalize-text($text, true())"/>
     </xsl:function>
     <xsl:function name="tan:normalize-text" as="xs:string*">
-        <!-- Input: any sequence of strings; a boolean indicating whether the results should be normalized further to a common form -->
+        <!-- Input: any sequence of strings; a boolean indicating whether the results should be name-normalized -->
         <!-- Output: that sequence, with each item's space normalized, and removal of any help requested -->
-        <!-- A common form is one where the string is converted to lower-case, and hyphens are replaced by spaces -->
-        <!-- A final set of spaces is normalized to a single space, not removed altogether (because the text in every leaf <div> terminates either in a special character or a space character) -->
-        <!-- Special end div characters are not removed in this operation; for that, see tan:normalize-div-text(). -->
+        <!-- In name-normalization, the string is converted to lower-case, and spaces replace hyphens, underscores, and illegal characters. -->
+        <!-- Special end div characters are not removed in this operation, nor is tail-end space adjusted according to TAN rules; for that, see tan:normalize-div-text(). -->
         <xsl:param name="text" as="xs:string*"/>
         <xsl:param name="treat-as-name-values" as="xs:boolean"/>
         <xsl:for-each select="$text">
@@ -125,9 +123,9 @@
     </xsl:function>
     <xsl:function name="tan:chop-string" as="xs:string*">
         <!-- Input: any string, a regular expression, a boolean -->
-        <!-- Output: the input string broken into strings using the regular expression as a signal that a new item should be started -->
+        <!-- Output: the input string cut into a sequence of strings using the regular expression as the cut marker -->
         <!-- If the last boolean is true, then nested clauses (parentheses, direct quotations, etc.) will be preserved. -->
-        <!-- This function is useful for conserving a string but dividing it into words, clauses, sentences, etc. -->
+        <!-- This function differs from the 1-parameter version in that it is used to chop the string not into individual characters but into words, clauses, sentences, etc. -->
         <xsl:param name="input" as="xs:string?"/>
         <xsl:param name="chop-after-regex" as="xs:string"/>
         <xsl:param name="preserve-nested-clauses" as="xs:boolean"/>
@@ -442,7 +440,7 @@
     <xsl:function name="tan:unique-char" as="xs:string?">
         <!-- Input: any sequence of strings -->
         <!-- Output: a single character that is not to be found in those strings -->
-        <!-- This function, written to support tan:collate-sequences(), provides a contextually unique way to join or replace strings -->
+        <!-- This function, written to support tan:collate-sequences(), provides unique way to join any sequence strings in such a way that it can later be tokenized. -->
         <xsl:param name="context-strings" as="xs:string*"/>
         <xsl:variable name="codepoints-used" as="xs:integer*"
             select="
@@ -514,10 +512,6 @@
     <xsl:param name="maximum-size-of-giant-string-segments" as="xs:integer" select="1000000"/>
     <!-- What is the minimum number of segments into which a giant string should be chopped when processing a tan:giant-diff()? -->
     <xsl:param name="minimum-number-of-giant-string-segments" as="xs:integer" select="2"/>
-    
-    <xsl:variable name="tok-def-long-string" as="element()">
-        <token-definition pattern=".{{30}}" flags="s"/>
-    </xsl:variable>
 
 
     <xsl:function name="tan:diff" as="element()">
@@ -535,7 +529,9 @@
     </xsl:function>
     <xsl:function name="tan:diff" as="element()">
         <!-- This function prepares strings for 5-ary tan:diff(), primarily by tending to input strings
-        that are large or giant. -->
+        that are large or really large (giant). Large pairs of strings are parsed to find common characters
+        that might be used to find pairwise congruence of large segments. Giant pairs of strings are passed 
+        to tan:giant-diff(). -->
         <xsl:param name="string-a" as="xs:string?"/>
         <xsl:param name="string-b" as="xs:string?"/>
         <xsl:param name="snap-to-word" as="xs:boolean"/>
@@ -637,11 +633,10 @@
             indicating whether long strings should be pre-processed -->
         <!-- Output: an element with <a>, <b>, and <common> children showing where strings a and b match 
             and depart -->
-        <!-- This function was written to quickly find differences between any two strings, suitable 
-            for validation. The function has been tested on pairs of strings averaging up to lengths of 4.5M. 
-            At that scale, the only way to efficiently process the diffs is by chaining smaller diffs, which are 
-            optimally about 350K length for the preprocessing phase of the diff function (which requires 
-            unique character discovery and pairwise congruence). -->
+        <!-- This function was written to assist the validation of <redivision>s quickly find differences 
+            between any two strings. The function has been tested on pairs of strings up to combined lengths of 
+            9M characters. At that scale, the only way to efficiently process the diffs is by chaining smaller 
+            diffs, which are still large, optimally about 350K in length. -->
         
         <xsl:param name="string-a" as="xs:string?"/>
         <xsl:param name="string-b" as="xs:string?"/>
@@ -1817,6 +1812,7 @@
     <xsl:function name="tan:collate-loop-outer" as="element()">
         <!-- Input: a collation element (see template mode diff-to-collation), some strings to process, and corresponding string labels -->
         <!-- Output: a series of collation elements, marking where there is commonality and differences -->
+        <!-- This function supports the XSLT 2.0 version of tan:collate() -->
         <xsl:param name="collation-so-far" as="element()"/>
         <xsl:param name="strings-to-process" as="xs:string*"/>
         <xsl:param name="string-labels" as="xs:string*"/>
@@ -1865,6 +1861,7 @@
         <!-- Input: a collation element (see template mode diff-to-collation), one string to process, and the corresponding string label -->
         <!-- Output: a series of collation elements, marking where there is commonality and differences -->
         <!-- This inner loop returns only the children of the collation element; the outer loop handles the parent element -->
+        <!-- This function supports the XSLT 2.0 version of tan:collate() -->
         <xsl:param name="collation-so-far" as="element()"/>
         <xsl:param name="string-to-process" as="xs:string?"/>
         <xsl:param name="string-label" as="xs:string?"/>

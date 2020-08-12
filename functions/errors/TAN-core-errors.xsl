@@ -126,6 +126,7 @@
    <xsl:function name="tan:error-codes" as="xs:string*">
       <!-- Input: a string -->
       <!-- Output: the error codes found within the string -->
+      <!-- This function is used primarily in TAN-core.sch, to parse comments in functions/errors/*.xml and see which errors are expected. -->
       <xsl:param name="string-with-error-codes" as="xs:string?"/>
       <xsl:if test="string-length($string-with-error-codes) gt 0">
          <xsl:analyze-string select="$string-with-error-codes" regex="\w\w\w\d\d">

@@ -1042,8 +1042,9 @@
       <xsl:copy-of select="tan:resolve-href($xml-node, $add-q-ids, $this-base-uri)"/>
    </xsl:function>
    <xsl:function name="tan:resolve-href" as="node()?">
-      <!-- Input: any XML node; a boolean -->
-      <!-- Output: the same node, but with @href resolved to absolute form, with @orig-href if the 2nd parameter is true -->
+      <!-- Input: any XML node, a boolean, a string -->
+      <!-- Output: the same node, but with @href in itself and all descendant elements resolved to absolute form, with @orig-href inserted preserving the original if there is a change -->
+      <!-- The second parameter is provided because this function works closely with tan:resolve-doc(). -->
       <xsl:param name="xml-node" as="node()?"/>
       <xsl:param name="add-q-ids" as="xs:boolean"/>
       <xsl:param name="this-base-uri" as="xs:string"/>
@@ -1182,82 +1183,6 @@
          </xsl:choose>
       </xsl:copy>
    </xsl:template>
-   
-   <xsl:function name="tan:consolidate-resolved-vocab-items" as="element()*">
-      <!-- Input: vocabulary items -->
-      <!-- Output: the items, consolidated accordin to matches in <IRI> -->
-      <!-- Elements that are empty and distinct, e.g., <location>, should not be consolidated. -->
-      <!-- Although this function is no longer used for validation, it is helpful for grouping elements by IRI -->
-      <xsl:param name="elements-to-consolidate" as="element()*"/>
-      <xsl:copy-of select="tan:consolidate-resolved-vocab-items-loop($elements-to-consolidate, 1)"/>
-   </xsl:function>
-   <xsl:function name="tan:consolidate-resolved-vocab-items-loop" as="element()*">
-      <xsl:param name="elements-to-consolidate" as="element()*"/>
-      <xsl:param name="loop-counter" as="xs:integer"/>
-      <xsl:choose>
-         <xsl:when test="$loop-counter gt $loop-tolerance">
-            <xsl:message
-               select="concat('Cannot loop more than ', string($loop-tolerance), ' times')"/>
-            <xsl:copy-of select="$elements-to-consolidate"/>
-         </xsl:when>
-         <xsl:otherwise>
-            <xsl:for-each-group select="$elements-to-consolidate" group-by="exists(*)">
-               <xsl:choose>
-                  <xsl:when test="current-grouping-key() = false()">
-                     <!-- If we have elements that have no other elements, then they are either empty, or have text nodes -->
-                     
-                     <xsl:for-each-group select="current-group()"
-                        group-by="exists(text()[matches(., '\S')])">
-                        <xsl:choose>
-                           <xsl:when test="current-grouping-key() = true()">
-                              <!-- elements with text nodes should be consolidated only if their name and text content are identical, and attributes should be ignored -->
-                              <xsl:for-each-group select="current-group()"
-                                 group-by="concat(name(.), '#', string-join(text(), ''))">
-                                 <xsl:element name="{name(current-group()[1])}">
-                                    <xsl:copy-of select="current-group()/@*"/>
-                                    <xsl:value-of select="current-group()[1]"/>
-                                 </xsl:element>
-                              </xsl:for-each-group>
-                           </xsl:when>
-                           <xsl:otherwise>
-                              <!-- empty elements should not be consolidated, but duplicates should be removed -->
-                              <xsl:for-each-group select="current-group()" group-by="name(.)">
-                                 <xsl:variable name="this-element-name"
-                                    select="current-grouping-key()"/>
-                                 <xsl:for-each-group select="current-group()"
-                                    group-by="tan:element-fingerprint(.)">
-                                    <xsl:element name="{$this-element-name}">
-                                       <xsl:copy-of select="current-group()/@*"/>
-                                       <xsl:value-of select="current-group()[1]"/>
-                                    </xsl:element>
-                                 </xsl:for-each-group>
-                              </xsl:for-each-group>
-                           </xsl:otherwise>
-                        </xsl:choose>
-                     </xsl:for-each-group>
-                     
-                  </xsl:when>
-                  <xsl:otherwise>
-                     <xsl:variable name="this-group-grouped-by-iri" as="element()*"
-                        select="tan:group-elements-by-IRI(current-group())"/>
-                     <xsl:for-each select="$this-group-grouped-by-iri">
-                        <xsl:for-each-group select="*" group-by="name(.)">
-                           <xsl:variable name="this-element-name" select="current-grouping-key()"/>
-                           <xsl:element name="{$this-element-name}">
-                              <xsl:copy-of select="current-group()/@*"/>
-                              <xsl:copy-of
-                                 select="tan:consolidate-resolved-vocab-items-loop(current-group()/*, $loop-counter + 1)"
-                              />
-                           </xsl:element>
-                        </xsl:for-each-group>
-                     </xsl:for-each>
-                  </xsl:otherwise>
-               </xsl:choose>
-            </xsl:for-each-group>
-         </xsl:otherwise>
-      </xsl:choose>
-   </xsl:function>
-   
    
 
 </xsl:stylesheet>

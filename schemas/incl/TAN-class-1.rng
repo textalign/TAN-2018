@@ -67,8 +67,8 @@
   </define>
   <define name="element-normalization">
     <element name="normalization">
-      <a:documentation>specifies an alteration that has been made to a source file to bring the transcription into conformity with standards or common expectations. This element is used typically for minor corrections, e.g., suppression of discretionary hyphenation. You should declare every change you have made to the source.</a:documentation>
-      <a:documentation>&lt;normalization&gt; is especially helpful in reference to nondigital sources, but it may be made also for digital sources, to declare global changes that would be cumbersome, difficult, or impossible to describe in &lt;replace&gt;. </a:documentation>
+      <a:documentation>specifies an alteration that has been made to a source file to bring the transcription into conformity with standards or common expectations. This element is used typically for minor corrections, e.g., suppression of discretionary hyphenation. You should declare every normalizing change you have made to the source.</a:documentation>
+      <a:documentation>&lt;normalization&gt; is especially helpful in reference to nondigital sources, but it may be made also for digital sources, to declare global changes that would be cumbersome, difficult, or impossible to describe via regular expressions in &lt;replace&gt;. </a:documentation>
       <a:documentation>The sequence of consecutive &lt;normalization&gt; is immaterial.</a:documentation>
       <a:documentation>See main.xml#vocabularies-normalizations for standard TAN vocabulary for normalizations. For general discussion see main.xml#normalizing_transcriptions </a:documentation>
       <ref name="entity-nondigital-no-id"/>
@@ -77,7 +77,7 @@
   <define name="element-replace">
     <element name="replace">
       <a:documentation>contains the equivalent of the XPath replace() function plus parameters, indicating a replacement operation that should be, or has been, applied to a digital file.</a:documentation>
-      <a:documentation>Multiple &lt;replace&gt;s will be assumed to have been implemented in document order.</a:documentation>
+      <a:documentation>Multiple &lt;replace&gt;s will be assumed to have been implemented in the given order.</a:documentation>
       <a:documentation>The conventions of this element and its children parallel the XPath function replace(). See http://www.w3.org/TR/xpath-functions-30/#func-replace</a:documentation>
       <a:documentation>The sequence of consecutive &lt;replace&gt;s is important, reflecting the order in which replacements occured. Results may differ depending upon the order of replace operations.</a:documentation>
       <optional>
@@ -103,7 +103,7 @@
   <define name="element-version">
     <element name="version">
       <a:documentation>identifies the version of a work. Applicable to sources that contain multiple versions, e.g., original text and facing translations. Like &lt;work&gt;, &lt;version&gt; points to a conceptual entity, not a physical one.</a:documentation>
-      <a:documentation>In the context of a class 1 file, the entity identified by &lt;version&gt; is assumed to be a version of the entity defined in &lt;work&gt;. In TAN-c files, however, no relationship is assumed between &lt;version&gt; and any putative work, unless explicitly stated in that file. </a:documentation>
+      <a:documentation>In the context of a class 1 file, the entity identified by &lt;version&gt; is assumed to be a version of the entity defined in &lt;work&gt;.  </a:documentation>
       <a:documentation>Very few work-versions have their own URN names. It is advisable to assign a tag URN or a UUID. If you have used an IRI for &lt;work&gt; that you are entitled to modify, you may wish to add a suffix that will name the version. If you need to specify exactly where on a text-bearing object a version appears, &lt;desc&gt; or &lt;comment&gt; should be used.</a:documentation>
       <a:documentation>For more, see main.xml#conceptual_works</a:documentation>
       <ref name="entity-nondigital-no-id"/>
@@ -127,14 +127,13 @@
   <define name="link-element-model">
     <element name="model">
       <a:documentation>identifies a class-1 file has been used as a model for how the current file has been segmented and labeled.</a:documentation>
-      <a:documentation>To declare a model is to indicate that the reference system used is likely not native to the scriptum. For example, if a file modeled on another has &lt;div type="sentence"&gt;, it should not be assumed that the text that falls in that &lt;div&gt; is really a sentence.</a:documentation>
       <a:documentation>A file need not follow its model exactly. Upon verbose validation, differences between the file and its model will be reported only as warnings.</a:documentation>
       <ref name="entity-digital-tan-no-id"/>
     </element>
   </define>
   <define name="link-element-redivision">
     <element name="redivision">
-      <a:documentation>identifies a class-1 file that has the same work, scriptum, and version, but segmented according to a different reference system.</a:documentation>
+      <a:documentation>identifies a class-1 file that has the same work, scriptum, and version, but is segmented according to a different reference system.</a:documentation>
       <a:documentation>The normalized transcriptions of redivided texts must be identical.</a:documentation>
       <a:documentation>The sequence of consecutive &lt;redivision&gt;s is immaterial.</a:documentation>
       <ref name="entity-digital-tan-no-id"/>

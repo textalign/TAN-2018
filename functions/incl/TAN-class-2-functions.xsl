@@ -7,8 +7,6 @@
 
    <!-- Core functions for class 2 files. Written principally for Schematron validation, but suitable for general use in other contexts -->
 
-   <xsl:key name="tok-via-ref" match="tan:tok" use="tan:ref/text()"/>
-
    <!-- GLOBAL VARIABLES AND PARAMETERS -->
    <!-- Source picking and identification -->
    <xsl:variable name="src-ids" as="xs:string*">
@@ -388,7 +386,7 @@
 
    <!-- NORMAL EXPANSION -->
 
-   <xsl:template match="tan:div-ref" mode="core-expansion-normal">
+   <xsl:template match="tan:div-ref" mode="core-expansion-normal class-2-expansion-normal">
       <xsl:copy-of select="."/>
    </xsl:template>
    

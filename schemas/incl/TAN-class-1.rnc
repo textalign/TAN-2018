@@ -22,9 +22,9 @@ element-n-alias =
     element n-alias { ptr-attr-div-type }
 element-normalization =
     
-    ## specifies an alteration that has been made to a source file to bring the transcription into conformity with standards or common expectations. This element is used typically for minor corrections, e.g., suppression of discretionary hyphenation. You should declare every change you have made to the source.
+    ## specifies an alteration that has been made to a source file to bring the transcription into conformity with standards or common expectations. This element is used typically for minor corrections, e.g., suppression of discretionary hyphenation. You should declare every normalizing change you have made to the source.
     
-    ## <normalization> is especially helpful in reference to nondigital sources, but it may be made also for digital sources, to declare global changes that would be cumbersome, difficult, or impossible to describe in <replace>. 
+    ## <normalization> is especially helpful in reference to nondigital sources, but it may be made also for digital sources, to declare global changes that would be cumbersome, difficult, or impossible to describe via regular expressions in <replace>. 
     
     ## The sequence of consecutive <normalization> is immaterial.
     
@@ -34,7 +34,7 @@ element-replace =
     
     ## contains the equivalent of the XPath replace() function plus parameters, indicating a replacement operation that should be, or has been, applied to a digital file.
     
-    ## Multiple <replace>s will be assumed to have been implemented in document order.
+    ## Multiple <replace>s will be assumed to have been implemented in the given order.
     
     ## The conventions of this element and its children parallel the XPath function replace(). See http://www.w3.org/TR/xpath-functions-30/#func-replace
     
@@ -48,7 +48,7 @@ element-version =
     
     ## identifies the version of a work. Applicable to sources that contain multiple versions, e.g., original text and facing translations. Like <work>, <version> points to a conceptual entity, not a physical one.
     
-    ## In the context of a class 1 file, the entity identified by <version> is assumed to be a version of the entity defined in <work>. In TAN-c files, however, no relationship is assumed between <version> and any putative work, unless explicitly stated in that file. 
+    ## In the context of a class 1 file, the entity identified by <version> is assumed to be a version of the entity defined in <work>.  
     
     ## Very few work-versions have their own URN names. It is advisable to assign a tag URN or a UUID. If you have used an IRI for <work> that you are entitled to modify, you may wish to add a suffix that will name the version. If you need to specify exactly where on a text-bearing object a version appears, <desc> or <comment> should be used.
     
@@ -72,13 +72,11 @@ link-element-model =
     
     ## identifies a class-1 file has been used as a model for how the current file has been segmented and labeled.
     
-    ## To declare a model is to indicate that the reference system used is likely not native to the scriptum. For example, if a file modeled on another has <div type="sentence">, it should not be assumed that the text that falls in that <div> is really a sentence.
-    
     ## A file need not follow its model exactly. Upon verbose validation, differences between the file and its model will be reported only as warnings.
     element model { entity-digital-tan-no-id }
 link-element-redivision =
     
-    ## identifies a class-1 file that has the same work, scriptum, and version, but segmented according to a different reference system.
+    ## identifies a class-1 file that has the same work, scriptum, and version, but is segmented according to a different reference system.
     
     ## The normalized transcriptions of redivided texts must be identical.
     

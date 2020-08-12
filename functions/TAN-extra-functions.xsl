@@ -36,6 +36,11 @@
    <xsl:variable name="sources-resolved" as="document-node()*"
       select="tan:resolve-doc($sources-1st-da, $sources-must-be-adjusted, 'src', $source-ids, ($validation-phase = 'verbose'))"/>-->
    
+   <!-- annotations (class-1 files pointing to corresponding class-2 files) -->
+   <xsl:variable name="annotations-1st-da" select="tan:get-1st-doc($head/tan:annotation)"/>
+   <xsl:variable name="annotations-resolved"
+      select="tan:resolve-doc($annotations-1st-da, false(), tan:attr('relationship', 'annotation'))"/>
+   
    <!-- see-also, context -->
    <xsl:variable name="see-alsos-1st-da" select="tan:get-1st-doc($head/tan:see-also)"/>
    <!--<xsl:variable name="see-alsos-resolved" select="tan:resolve-doc($see-alsos-1st-da, false(), 'see-also', (), ($validation-phase = 'verbose'))"/>-->
@@ -51,6 +56,11 @@
    <xsl:variable name="successors-1st-da" select="tan:get-1st-doc($head/tan:successor)"/>
    <!--<xsl:variable name="successors-resolved" select="tan:resolve-doc($successors-1st-da, false(), 'successor', (), ($validation-phase = 'verbose'))"/>-->
    <xsl:variable name="successors-resolved" select="tan:resolve-doc($successors-1st-da, false(), tan:attr('relationship', 'successor'))"/>
+   
+   <!-- morphologies -->
+   <xsl:variable name="morphologies-expanded"
+      select="tan:expand-doc($morphologies-resolved, 'terse', false())" as="document-node()*"/>
+   
    
    <xsl:variable name="most-common-indentations" as="xs:string*">
       <xsl:for-each-group select="//text()[not(matches(., '\S'))][following-sibling::*]"
@@ -357,7 +367,7 @@
 
    <xsl:function name="tan:outliers" as="xs:anyAtomicType*">
       <!-- Input: any sequence of numbers -->
-      <!-- Output: outliers in the sequence, -->
+      <!-- Output: outliers in the sequence -->
       <xsl:param name="numbers" as="xs:anyAtomicType*"/>
       <xsl:variable name="numbers-sorted" select="tan:number-sort($numbers)" as="xs:anyAtomicType*"/>
       <xsl:variable name="half-point" select="count($numbers) idiv 2"/>
@@ -378,6 +388,7 @@
          <xsl:message select="'diagnostics on for tan:outliers()'"/>
          <xsl:message select="'numbers sorted: ', $numbers-sorted"/>
       </xsl:if>
+      
       <xsl:for-each select="$numbers">
          <xsl:variable name="this-number"
             select="
@@ -961,7 +972,7 @@
 
    <xsl:function name="tan:tree-to-sequence" as="item()*">
       <!-- Input: any XML fragment -->
-      <!-- Output: a sequence of XML nodes representing the original fragment. Each element is given a new @level specifying the level of hierarchy the element had in the original. -->
+      <!-- Output: a flattened sequence of XML nodes representing the original fragment. Each element is given a new @level specifying the level of hierarchy the element had in the original. -->
       <xsl:param name="xml-fragment" as="item()*"/>
       <xsl:apply-templates select="$xml-fragment" mode="tree-to-sequence">
          <xsl:with-param name="current-level" select="1"/>
@@ -1534,7 +1545,7 @@
 
    <xsl:function name="tan:normalize-xml-element-space" as="element()?">
       <!-- Input: an element -->
-      <!-- Output: the same element, but with text node descendants with space normalized -->
+      <!-- Output: the same element, but with text node descendants space-normalized -->
       <!-- If a text node begins with a space, and its first preceding sibling text node ends with a space, then the preceding space is dropped, otherwise it is normalized to a single space -->
       <xsl:param name="element-to-normalize" as="element()?"/>
       <xsl:apply-templates select="$element-to-normalize" mode="normalize-xml-fragment-space"/>
@@ -1648,7 +1659,7 @@
    <xsl:function name="tan:possible-bibliography-id" as="xs:string">
       <!-- Input: a string with a bibliographic entry -->
       <!-- Output: unique values of the two longest words and the first numeral that looks like a date -->
-      <!-- When working with bibliographical data, it is next to impossible to rely upon an exact match to tell whether two citations are for the same item -->
+      <!-- When working with bibliographical data, it is next to impossible to rely upon an exact match to tell whether two citations refer to the same item. -->
       <!-- Many times, however, the longest word or two, plus the four-digit date, are good ways to try to find matches. -->
       <xsl:param name="bibl-cit" as="xs:string"/>
       <xsl:variable name="this-citation-dates" as="xs:string*">

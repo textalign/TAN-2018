@@ -22,7 +22,7 @@
   <define name="element-div">
     <element name="div">
       <a:documentation>marks a textual unit. Contains other &lt;div&gt;s or text, but not both (i.e., no mixed content).</a:documentation>
-      <a:documentation>TAN's &lt;div&gt; differs from the TEI's, in that the latter is intended for the first level or levels of subdivision in the front, body, or back of a text, but not for paragraphs or anonymous blocks. The TAN &lt;div&gt; better resembles HTML's, and can be applied to any kind of textual division, even a letter.</a:documentation>
+      <a:documentation>TAN's &lt;div&gt; differs from the TEI's, in that the latter is intended for the first level or levels of subdivision in the front, body, or back of a text, but not for paragraphs or anonymous blocks. The TAN &lt;div&gt; better resembles HTML's, and can be applied to any kind of textual division, even a single character.</a:documentation>
       <optional>
         <ref name="ed-stamp"/>
       </optional>

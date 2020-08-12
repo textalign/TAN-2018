@@ -45,7 +45,7 @@ cond-attr-m-has-features =
     }
 cond-attr-m-has-how-many-features =
     
-    ## specifies a range or sequence of integers (e.g., 2-4). If the quantity of features in an <m> matches a number from that sequence, the condition is true, and false otherwise. If the keyword 'last' or 'max' is used, the number of features will be substituted. 
+    ## specifies a range or sequence of integers (e.g., 2-4). If the quantity of features in an <m> matches a number from that sequence, the condition is true, and false otherwise. If the keyword 'last' or 'max' is used, the total number of features will be substituted. 
     
     ## This test is useful for non-category based grammars to put a limit on the number of features that can be declared in an <m>. This is one of four tests for determining whether to process a <report> or <assert>
     attribute m-has-how-many-features { data-picker-sequence }
@@ -59,7 +59,7 @@ element-assert =
 element-category =
     
     ## groups a set of features that share a common grammatical trait such as gender, number, etc.
-    ## The sequence of consecutive <category>s is important, dictating the sequence in which codes should appear in a dependent TAN-A-lm file.
+    ## The sequence of consecutive <category>s is important, dictating the sequence in which codes should appear in the values of <m> in a dependent TAN-A-lm file.
     element category {
         ed-stamp?,
         (inclusion
@@ -84,7 +84,7 @@ element-rule =
 ptr-element-feature = element feature { ptr-attr-type, attr-code }
 voc-element-feature =
     
-    ## names, through its IRI + name pattern, a grammatical feature or concept (e.g., plural, subjunctive, 1st person) that is part of a language. In the context of <feature> a @code is always included. The first <feature> of a <category> never has @code, and refers to the grammatical feature that characterizes the category.
+    ## names, through its IRI + name pattern, a grammatical feature or concept (e.g., plural, subjunctive, 1st person) that is part of a language. In the context of <category> a @code is always included. The first <feature> of a <category>, however, never has a @code, because it describes the grammatical class of the <category>.
     
     ## The sequence of consecutive <feature>s is immaterial.
     

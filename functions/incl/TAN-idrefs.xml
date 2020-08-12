@@ -16,6 +16,7 @@
     <id>
         <element>period</element>
         <idrefs attribute="period"/>
+        <idrefs attribute="claim-period"/>
     </id>
     <id>
         <element>rights</element>

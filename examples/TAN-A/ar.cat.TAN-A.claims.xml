@@ -178,6 +178,14 @@
                 <IRI>http://schema.org/creator</IRI>
                 <name xml:lang="eng">creator</name>
             </role>
+            <period xml:id="per2010s" from="2010-01-01" to="2019-12-31"/>
+            <period xml:id="late-antiquty">
+                <IRI>tag:parkj@textalign.net,2015:period:late-antiquity</IRI>
+                <name>late antiquity</name>
+                <desc>Roughly starting in the second to fourth century and finishing from the sixth
+                    to ninth, depending upon the context. Late antiquity tends to be later than you
+                    think.</desc>
+            </period>
         </vocabulary-key>
         <file-resp who="park"/>
         <resp who="xslt1" roles="stylesheet"/>
@@ -190,35 +198,38 @@
             <comment when="2018-08-05-04:00" who="park">Finish file. Only the first couple of claims have been filled in.</comment>
         </to-do>
     </head>
-    <body claimant="xslt1">
+    <body claimant="park" claim-period="per2010s">
         <!-- examples of claims relevant to the apparatus criticus -->
-        <comment when="2017-03-10-05:00" who="park">The next two claims interpret
-            Minio-Paluello's apparatus criticus entry for 1a2, which claims that Andronicus and
-            Boethus might have omitted τῆς οὐσίας (based on what Porphyry and Dexippus say) and
-            asserts that the reading adopted is found in the seven commentators. This interpretation
-            sticks close to M-P's original, and does not fill in important gaps. For example,
-            Dexippus's remark comes from his commentary, 1.18 (p. 21.20) and is reliant wholly on a
-            fragment of Porphyry preserved in Simplicius's commentary, p. 30.1-2. Furthermore, a
-            careful reading of these texts shows that Porphyry claimed not that Andronicus and
-            Boethus omitted the text, or relied on sources that had omitted it, but that they
-            observed that there were manuscripts that had done so.</comment>
+        <comment when="2017-03-10-05:00" who="park">The next two claims interpret Minio-Paluello's
+            apparatus criticus entry for 1a2, which claims that Andronicus and Boethus might have
+            omitted τῆς οὐσίας (based on what Porphyry and Dexippus say) and asserts that the
+            reading adopted is found in the seven commentators. The interpretation below sticks
+            close to M-P's original, and does not fill in important gaps. For example, Dexippus's
+            remark comes from his commentary, 1.18 (p. 21.20) and is reliant wholly on a fragment of
+            Porphyry preserved in Simplicius's commentary, p. 30.1-2. Furthermore, a careful reading
+            of these texts shows that Porphyry claimed not that Andronicus and Boethus omitted the
+            text, or relied on sources that had omitted it, but that they observed that there were
+            manuscripts that had done so.</comment>
         <claim subject="andronicus boethus" adverb="perhaps" verb="om" xml:id="cl1a2a">
             <at-ref src="grc" ref="1 a 2">
                 <tok pos="3-4"/>
             </at-ref>
         </claim>
         <claim subject="δ π" verb="shows" object="cl1a2a"/>
+        
         <claim subject="comm-omnes" verb="attests">
             <object src="grc" ref="1 a 2">
                 <tok pos="3-4"/>
             </object>
         </claim>
+        
         <claim subject="comm-omnes" verb="attests" xml:id="cl1a2b">
             <object src="grc" ref="1 a 2">
                 <tok pos="3-4"/>
             </object>
         </claim>
         <claim subject="π" verb="shows" object="cl1a2b"/>
+        
         <comment when="2017-03-10" who="park">The next three claims assert that the reading, ἀποδιδῷ
             τις, is attested to by π α φ ο but B transposes the words, and perhaps Boethius does as
             well. The claim sticks close to M-P's syntax, and does not fill in statements he would
@@ -242,7 +253,8 @@
                 <tok pos="1-2"/>
             </object>
         </claim>
-        <!-- examples of general claims -->
+        
+        <!-- example of a general claims -->
         <claim verb="refers-to">
             <subject src="grc" ref="1 b 25"/>
             <object work="grc" ref="1 a 16"/>

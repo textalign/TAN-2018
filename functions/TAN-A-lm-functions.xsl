@@ -14,9 +14,8 @@
 
    <!-- TAN-A-LM GLOBAL VARIABLES -->
    
-   <xsl:variable name="morphologies-expanded"
-      select="tan:expand-doc($morphologies-resolved, 'terse', false())" as="document-node()*"/>
-
+   <!-- none at present -->
+   
    <!-- FUNCTIONS -->
    
    <xsl:template match="@m-matches" mode="evaluate-conditions">

@@ -81,8 +81,8 @@
   </define>
   <define name="voc-element-brel">
     <element name="bitext-relation">
-      <a:documentation>identifies how the text of one text-bearing object relates to that of another by specifying a relationship, e.g., B is a direct copy of A, B and A descent from a commont parent, etc. See main.xml#tan-a-tok for theoretical background.</a:documentation>
-      <a:documentation>In most cases, there will be need for only one of these elements. But multiple values may be helpful for cases where a bitext has a complex history, for example, a textual object that was created over time, and in different phases.</a:documentation>
+      <a:documentation>identifies how the text of one text-bearing object relates to that of another by specifying a relationship, e.g., B is a direct copy of A; B and A descend from a commont parent, etc. See main.xml#tan-a-tok for theoretical background.</a:documentation>
+      <a:documentation>In most cases, there will be need for only one of these elements as a vocabulary item. But multiple values may be helpful for cases where a bitext has a complex history, for example, a textual object that was created over time, and in different phases.</a:documentation>
       <a:documentation>This element should not be used to describe any activities (e.g., translation, copying), reserved for &lt;reuse-type&gt;. </a:documentation>
       <a:documentation>For examples see main.xml#vocabularies-bitext-relations</a:documentation>
       <ref name="entity-nondigital-id"/>
