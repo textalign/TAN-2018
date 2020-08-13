@@ -4,7 +4,7 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:xi="http://www.w3.org/2001/XInclude" version="5.0">
    <info>
-      <title>The Text Alignment Network: Official Guidelines</title>
+      <title>Guide to the Text Alignment Network, Version 2020</title>
       <legalnotice>
          <info>
             <title>Text Alignment Network: Official Guidelines</title>
@@ -37,8 +37,8 @@
                   >https://github.com/textalign/TAN-2020/tree/dev</link></releaseinfo>
          </info>
          <revision>
-            <revnumber>Alpha version 2020</revnumber>
-            <date>2020-08-06</date>
+            <revnumber>Version 2020 (alpha)</revnumber>
+            <date>2020-08-13</date>
             <revdescription>
                <para>Formats: <link
                      xlink:href="http://textalign.net/release/TAN-2020/guidelines/xhtml/index.xhtml"

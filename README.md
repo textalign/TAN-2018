@@ -2,10 +2,10 @@
 
 [http://textalign.net](http://textalign.net)
 
-Alpha version 2020
+Version 2020 (alpha release)
 
-This project has submodules, which must be invoked using the `--recurse-submodules` option:
-`git clone --recurse-submodules [SOURCE PATH]`
+TAN has submodules, which must be invoked using the `--recurse-submodules` option:
+`git clone --recurse-submodules [GIT_SOURCE_PATH]`
 
 New to TAN? Start with directories marked with an asterisk.
 
@@ -21,4 +21,4 @@ New to TAN? Start with directories marked with an asterisk.
 
 If you wish to add the TAN function library to your XSLT applications, use `<xsl:include href="functions/TAN-A-functions.xsl"/>` and `<xsl:include href="functions/TAN-extra-functions.xsl"/>`. 
 
-Participation in developing TAN is welcome. If you create or maintain a library of TAN files, share it.
+This is an alpha release of TAN. Many new features and enhancements are planned. Participation in developing TAN is welcome. If you create or maintain a library of TAN files, share it.
