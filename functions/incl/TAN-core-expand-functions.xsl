@@ -1459,7 +1459,7 @@
                      <xsl:copy-of select="$target-name"/>
                      <xsl:copy-of select="$target-desc"/>
                      <location accessed-when="{current-dateTime()}"
-                        href="{tan:uri-relative-to(@href, $doc-uri)}"/>
+                        href="{tan:uri-relative-to(., $doc-uri)}"/>
                   </xsl:element>
                </xsl:variable>
                <xsl:copy-of select="tan:error('tan08', $this-message, $this-fix, 'replace-self')"
